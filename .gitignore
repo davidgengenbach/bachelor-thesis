@@ -1,2 +1,3 @@
 .ipynb_checkpoints
 notebooks/datasets
+__pycache__
