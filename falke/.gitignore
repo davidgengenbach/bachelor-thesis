@@ -1,0 +1,10 @@
+code/data
+code/models
+code/ext_models
+code/lib
+datasets/*.txt
+libraries/
+semilar
+openie
+code/.settings
+code/WordNet-JWI

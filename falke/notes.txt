@@ -1,0 +1,188 @@
+14.07.2017
+    - PipelineGroupedConceptRecall
+        - textPattern/mapName auch anpassen
+        - String[] pipeline = { "extraction.PropositionExtractor", "grouping.ConceptGrouperBase", "grouping.ExtractionResultsSerializer", "extraction.AllConceptsMap" };
+            - String[] pipeline = { "extraction.PropositionExtractor", "grouping.ConceptGrouperSimLog", "grouping.ExtractionResultsSerializer"};
+    - Später schauen, ob man die Pipeline erweitert
+    - Workflow
+        - PipelinePreprocessing
+        - PipelineOpenIE
+        - PipelineGroupedConceptRecall
+        - scoring.concepts.features.ExportGraphs
+
+19.07.2017
+    - How to speed-up gram-matrix calculation?
+    - k-fold cross-validation with graphs?
+    - Server!
+    - Weisfeiler-Lehman
+        - Input
+            - n Graphs with...
+            - adjacency matrices: n x Array(m, m)
+            - node_labels: n x Array(SOME_NUMBER_OF_LABELS)
+        - Gram Matrix
+
+20.07.2017
+    - Abschlussarbeit Formular Studiensekretariat
+        - Macht Tobias
+    - Dokumente an Tobias schicken
+        - Tobias berechnet Graphen
+    - Kernel genauer anschauen
+    - Warum SVM, wenn Kernel similarity zwischen Graphen ausgibt?
+    - Ab und zu Dokument mit Ergebnissen/Status (als GitHub)
+    - Co-Occurence Graph
+        - Bestehenden Code mit Window Size?
+        - Mit oder ohne Gewichtung?
+        - Cut-Off danach?
+        - Was ist ein Knoten? Part of Speech, Stopwords rauswerfen
+    - Bei Vergleich zwischen Baselines immer das Beste
+    - Vielleicht Visualisierung
+        - Antoine Jean-Pierre Tixier
+    - https://github.com/ipython/talks/blob/master/parallel/text_analysis.py
+
+Terms
+    - clf: classifier
+    - sim: similarity
+    - (j)cas: common analysis system
+
+src/
+└── main
+    ├── java
+    │   ├── extraction
+    │   │   ├── AllConceptsMap (j)
+    │   │   ├── AllPropsMap (j)
+    │   │   ├── PipelineConceptRecall (j)
+    │   │   ├── PipelineSerialization (j) (*)
+                /// Input: *.oie.bin6
+                /// Output: *.groups.ser
+    │   │   └── PropositionExtractor (j)
+    │   ├── grouping
+    │   │   ├── ConceptGrouperBase (j)
+    │   │   ├── ConceptGrouperSimLog (j)
+    │   │   ├── ExtractionResultsSerializer (j)
+    │   │   ├── LabelSelector (j)
+    │   │   ├── LemmaGrouper (j)
+    │   │   ├── PipelineFeatureExtraction (j)
+    │   │   ├── PipelineGroupedConceptRecall (j)
+    │   │   ├── clf
+    │   │   │   ├── FeatureExtractor (j)
+    │   │   │   ├── SingletonFeatureExtractor (j)
+    │   │   │   ├── ThresholdClassifier (j)
+                /// Weka
+    │   │   │   └── sim
+                /// Similarities
+    │   │   │       ├── CachedSim (j)
+    │   │   │       ├── ConceptSimilarityMeasure (j)
+    │   │   │       ├── EditDistance (j)
+    │   │   │       ├── JaccardDistance (j)
+    │   │   │       ├── SemilarSentenceMeasure (j)
+    │   │   │       ├── StemMatch (j)
+    │   │   │       ├── StringMatch (j)
+    │   │   │       ├── WordBasedMeasure (j)
+    │   │   │       └── WordEmbeddingDistance (j)
+    │   │   ├── clustering
+    │   │   │   ├── AbstractConceptClusterer (j)
+    │   │   │   ├── BeamSearchClusterer (j)
+    │   │   │   ├── CompClusterer (j)
+    │   │   │   ├── GreedyLocalOptimizer (j)
+    │   │   │   ├── ILPClusterer_Cplex (j)
+    │   │   │   └── ILPClusterer_LpSolve (j)
+    │   │   └── exp
+    │   │       ├── RunExperimentsClassification (j)
+    │   │       ├── RunExperimentsClustering (j)
+    │   │       └── RunLabelSelection (j)
+    │   ├── mapbuilding
+            /// Remove duplicate concepts
+            /// Find best subgraph with #concepts < maxConcepts
+    │   │   ├── MapBuilderBase (j)
+    │   │   ├── MapBuilderGreedy (j)
+    │   │   ├── MapBuilderILP (j)
+    │   │   ├── MapBuilderIterative (j)
+    │   │   ├── RelationSelector (j)
+    │   │   └── ilp
+    │   │       ├── GraphSummarizer (j)
+    │   │       ├── SubgraphILP (j)
+    │   │       ├── SubgraphILPByComponent (j)
+    │   │       └── SubgraphILPFast (j)
+    │   ├── model
+    │   │   ├── CPair (j)
+    │   │   ├── Concept (j)
+    │   │   ├── ConceptGroup (j)
+            /// Members of a concept (= different labels for the same concept)
+    │   │   ├── ConceptMap (j)
+            /// Concepts + Prepositions
+    │   │   ├── ExtractionResult (j)
+    │   │   ├── PToken (j)
+    │   │   ├── Proposition (j)
+    │   │   └── io
+    │   │       ├── ConceptMapReader (j)
+                /// TSV
+                /// source_concept[tab]preposition[tab]target_concept
+    │   │       ├── ConceptMapWriter (j)
+    │   │       └── Format (j)
+    │   ├── pipeline
+    │   │   ├── CmmComponent (j)
+            /// Abstract concept-map-mining class
+    │   │   ├── ConceptMapMining (j)
+            /// Gets DocumentMetaData
+            /// 
+    │   │   └── Extractor (j)
+    │   ├── preprocessing
+    │   │   ├── CorpusStatWriter (j)
+    │   │   ├── NonUIMAPreprocessor (j)
+    │   │   ├── OpenIEAnnotator (j)
+    │   │   ├── PipelineOpenIE (j) (*)
+                /// Input: .txt.bin6
+                /// Output: .oie.bin6
+    │   │   └── PipelinePreprocessing (j) (*)
+                /// Input: .txt
+                /// Output: .txt.bin6
+    │   ├── scoring
+    │   │   └── concepts
+    │   │       ├── ConceptScorer (j)
+    │   │       ├── ConceptScorerRanking (j)
+    │   │       ├── ExtractionResultsDeserializer (j)
+    │   │       ├── PipelineScoredMapBuilding (j)
+    │   │       ├── RankingSVM (j)
+    │   │       ├── exp
+    │   │       │   ├── CreateTrainingData (j)
+    │   │       │   ├── RunCVClassifier (j)
+    │   │       │   ├── RunCVRegression (j)
+    │   │       │   ├── TrainRankingSVM (j)
+    │   │       │   └── TrainingData (j)
+    │   │       └── features
+    │   │           ├── ConcFeatures (j)
+    │   │           ├── ExportGraphs (j)
+                    /// Input: *.ser
+                    /// Output: *..
+    │   │           ├── FeatureExtractor (j)
+    │   │           ├── IndexWeb1T (j)
+    │   │           ├── LIWCFeatures (j)
+    │   │           └── MRCFeatures (j)
+    │   └── util
+    │       ├── AdjustedRandIndex (j)
+    │       ├── Beam (j)
+    │       ├── ConnectedComponents (j)
+    │       ├── CountedSet (j)
+    │       ├── Dumper (j)
+    │       ├── FrequencyProvider (j)
+    │       ├── KeyValuePair (j)
+    │       ├── Muter (j)
+    │       ├── Span (j)
+    │       ├── Stopwords (j)
+    │       ├── StringPair (j)
+    │       ├── UnionFind (j)
+    │       └── features
+    │           ├── Feature (j)
+    │           └── FeatureContainer (j)
+    ├── resources
+    │   ├── dict
+    │   └── lists
+    │       ├── functionwords_en.txt
+    │       ├── stopwords_en_eval.txt
+    │       └── stopwords_en_semilar.txt
+    └── scripts
+        └── scoring
+            ├── compute_graph_features.py
+            ├── run_ranking_svm.py
+            ├── run_ranking_svm.sh
+            └── util.py
