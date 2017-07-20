@@ -1,0 +1,67 @@
+## 13.07.2017
+- Idee
+    - Concept Maps als Input für Text-Klassifikation, Vergleich gegen andere Repräsentationen
+- Experimente:
+    - Hypothese
+        - Concept Map Graphen sind bessere Repräsentation für die Klassifizierungsaufgabe
+    - Daten
+        - Text-Klassifikation (Paare Dokument + Klassenlabel)
+            - Start: 20newsgroups
+            - Weitere: anschließend entscheiden
+    - Methoden
+        - Baselines
+            - Bag of Words -> n-gram Häufigkeit in Standard-Classifier (Logistic Regression, Bayes, SVM, etc.)
+            - Bag of Words, aber word embeddings statt n-grams, dann simples MLP (= Multilayer Perceptron)?
+            - Word Co-Occurrence-Graph, dann Graph-Verfahren
+        - Aus Dokumenten extrahierte Concept Maps, dann Graph-Verfahren
+    - Graph-Methoden (für graph-basierten Input)
+        - Verschiedene Graphkernel
+        - Graph Deep Learning
+    - Implementierung
+        - Pointer für existierende Graph-Methoden
+            - Notizen von Kristian
+        - Extraktion von Concept Maps
+            - Von Tobias
+- Orga
+    - Dokumentation der Ergebnisse in Dropbox o.ä.
+
+## 14.07.2017
+- PipelineGroupedConceptRecall
+    - textPattern/mapName auch anpassen
+    - String[] pipeline = { "extraction.PropositionExtractor", "grouping.ConceptGrouperBase", "grouping.ExtractionResultsSerializer", "extraction.AllConceptsMap" };
+        - String[] pipeline = { "extraction.PropositionExtractor", "grouping.ConceptGrouperSimLog", "grouping.ExtractionResultsSerializer"};
+- Später schauen, ob man die Pipeline erweitert
+- Workflow
+    - PipelinePreprocessing
+    - PipelineOpenIE
+    - PipelineGroupedConceptRecall
+    - scoring.concepts.features.ExportGraphs
+
+## 19.07.2017
+- How to speed-up gram-matrix calculation?
+- k-fold cross-validation with graphs?
+- Server!
+- Weisfeiler-Lehman
+    - Input
+        - n Graphs with...
+        - adjacency matrices: n x Array(m, m)
+        - node_labels: n x Array(SOME_NUMBER_OF_LABELS)
+    - Gram Matrix
+
+## 20.07.2017
+- Abschlussarbeit Formular Studiensekretariat
+    - Macht Tobias
+- Dokumente an Tobias schicken
+    - Tobias berechnet Graphen
+- Kernel genauer anschauen
+- Warum SVM, wenn Kernel similarity zwischen Graphen ausgibt?
+- Ab und zu Dokument mit Ergebnissen/Status (als GitHub)
+- Co-Occurence Graph
+    - Bestehenden Code mit Window Size?
+    - Mit oder ohne Gewichtung?
+    - Cut-Off danach?
+    - Was ist ein Knoten? Part of Speech, Stopwords rauswerfen
+- Bei Vergleich zwischen Baselines immer das Beste
+- Vielleicht Visualisierung
+    - Antoine Jean-Pierre Tixier
+- https://github.com/ipython/talks/blob/master/parallel/text_analysis.py
