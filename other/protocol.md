@@ -1,3 +1,21 @@
+## 27.07.2017
+- Prediction Error: "Wieso eine Klasse oft mispredicted?"
+    - Skewed labels?
+    - von Graphen-Größe abhängig?
+- Statistiken der Dokument/Graphen-Größe
+- Neue Datensets
+    - An Tobias schicken (Namen, Link)
+- Co-Occurence Graphs auch benutzen
+- Bei SGDClassifier Features normalisieren
+- Mehrere Classifier bei Graphen
+- Alle Dokumenten-Graphen pro Thema in einem Graph?
+    - Train-Split an Tobias schicken (gleichviele Dokumente pro Topic)
+- Co-Referenz Auflösung bei WL zwischen Node-Labels
+    - Word-Embeddings per w2v: Feature Vektoren von Labels (cosine)
+- Limitierung: Alle Labels müssen zu Beginn bekannt sein
+- Paper von Tobias lesen
+
+
 ## 20.07.2017
 - Abschlussarbeit Formular Studiensekretariat
     - Macht Tobias
@@ -55,6 +73,7 @@
             - Von Tobias
 - Orga
     - Dokumentation der Ergebnisse in Dropbox o.ä.
+
 
 ## 14.07.2017
 - PipelineGroupedConceptRecall
