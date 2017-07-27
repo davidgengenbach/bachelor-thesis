@@ -1,3 +1,34 @@
+## 20.07.2017
+- Abschlussarbeit Formular Studiensekretariat
+    - Macht Tobias
+- Dokumente an Tobias schicken
+    - Tobias berechnet Graphen
+- Kernel genauer anschauen
+- Warum SVM, wenn Kernel similarity zwischen Graphen ausgibt?
+- Ab und zu Dokument mit Ergebnissen/Status (als GitHub)
+- Co-Occurence Graph
+    - Bestehenden Code mit Window Size?
+    - Mit oder ohne Gewichtung?
+    - Cut-Off danach?
+    - Was ist ein Knoten? Part of Speech, Stopwords rauswerfen
+- Bei Vergleich zwischen Baselines immer das Beste
+- Vielleicht Visualisierung
+    - Antoine Jean-Pierre Tixier
+- https://github.com/ipython/talks/blob/master/parallel/text_analysis.py
+
+
+## 19.07.2017
+- How to speed-up gram-matrix calculation?
+- k-fold cross-validation with graphs?
+- Server!
+- Weisfeiler-Lehman
+    - Input
+        - n Graphs with...
+        - adjacency matrices: n x Array(m, m)
+        - node_labels: n x Array(SOME_NUMBER_OF_LABELS)
+    - Gram Matrix
+
+
 ## 13.07.2017
 - Idee
     - Concept Maps als Input für Text-Klassifikation, Vergleich gegen andere Repräsentationen
@@ -36,32 +67,3 @@
     - PipelineOpenIE
     - PipelineGroupedConceptRecall
     - scoring.concepts.features.ExportGraphs
-
-## 19.07.2017
-- How to speed-up gram-matrix calculation?
-- k-fold cross-validation with graphs?
-- Server!
-- Weisfeiler-Lehman
-    - Input
-        - n Graphs with...
-        - adjacency matrices: n x Array(m, m)
-        - node_labels: n x Array(SOME_NUMBER_OF_LABELS)
-    - Gram Matrix
-
-## 20.07.2017
-- Abschlussarbeit Formular Studiensekretariat
-    - Macht Tobias
-- Dokumente an Tobias schicken
-    - Tobias berechnet Graphen
-- Kernel genauer anschauen
-- Warum SVM, wenn Kernel similarity zwischen Graphen ausgibt?
-- Ab und zu Dokument mit Ergebnissen/Status (als GitHub)
-- Co-Occurence Graph
-    - Bestehenden Code mit Window Size?
-    - Mit oder ohne Gewichtung?
-    - Cut-Off danach?
-    - Was ist ein Knoten? Part of Speech, Stopwords rauswerfen
-- Bei Vergleich zwischen Baselines immer das Beste
-- Vielleicht Visualisierung
-    - Antoine Jean-Pierre Tixier
-- https://github.com/ipython/talks/blob/master/parallel/text_analysis.py
