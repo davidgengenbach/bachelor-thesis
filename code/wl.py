@@ -42,66 +42,6 @@ def compute_phi(graph, phi_shape, label_lookups, label_counters, h):
         labels = np.copy(new_labels)
     return phi_list
 
-def WL_compute_new(ad_list, node_label, h, k_prev, phi_prev, label_lookups_prev, label_counters_prev, all_nodes = (), DEBUG = False):
-    current_index = 0
-
-    num_graphs = len(ad_list)
-    tot_nodes = len(all_nodes) + sum(len(x) for x in node_label)
-
-    label_counter = label_counters_prev[0]
-
-    num_graph_orig = phi_prev[0].shape[1]
-    phi_added = (sum(len(x) for x in node_label), num_graphs)
-    phi = add_row_and_column(phi_prev[current_index], added = phi_added, dtype = np.int32)
-
-    current_label_lookup = label_lookups_prev[current_index].tolist()
-    labels = [0] * num_graphs
-    for i, node_labels in enumerate(node_label):
-        labels[i] = np.zeros(len(node_labels), dtype = np.int32)
-        for j, label in enumerate(node_labels):
-            assert label in current_label_lookup.keys()
-            label_id = current_label_lookup[label]
-            labels[i][j] = label_id
-            phi[labels[i][j], i + num_graph_orig ] += 1
-    phi_list = [0] * (h + 1)
-    phi_list[0] = phi
-    K = [0] * (h + 1)
-    K[0] = phi.transpose().dot(phi).astype(np.float32)
-    new_labels = np.copy(labels)
-
-    for it in range(h):
-        current_index += 1
-        label_lookup = label_lookups_prev[current_index].tolist()
-        label_counter = label_counters_prev[current_index]
-        phi = phi_prev[current_index]
-        phi = add_row_and_column(lil_matrix(phi), phi_added, dtype = np.int32)
-        for graph_idx in range(num_graphs):
-            l_aux_long = np.copy(labels[graph_idx])
-            for v in range(len(ad_list[graph_idx])):
-                new_node_label = tuple([l_aux_long[v]]) 
-                num_nodes = len(ad_list[graph_idx][v])
-                new_ad = np.argwhere(ad_list[i][v] > 0)
-                if len(new_ad):
-                    ad_aux = tuple([l_aux_long[int(j)] for j in new_ad])
-                    long_label = tuple(tuple(new_node_label)+tuple(sorted(ad_aux)))
-                else:
-                    long_label = tuple(new_node_label)
-                # if the multiset label has not yet occurred , add
-                # it to the lookup table and assign a number to it
-                if not long_label in label_lookup:
-                    label_lookup[long_label] = str(label_counter)
-                    new_labels[graph_idx][v] = str(label_counter)
-                    label_counter += 1
-                else:
-                    new_labels[graph_idx][v] = label_lookup[long_label]
-            aux = np.bincount(new_labels[graph_idx])
-            phi[new_labels[graph_idx], num_graph_orig + graph_idx] += aux[new_labels[graph_idx]].reshape(-1, 1)
-        phi_sparse = lil_matrix(phi)
-        phi_list[it + 1] = phi_sparse
-        K[it + 1] = K[it] + phi_sparse.transpose().dot(phi_sparse).astype(np.float32)
-        #assert np.array_equal(K[it + 1][:num_graph_orig,:num_graph_orig], k_prev[it + 1])
-        labels = copy.deepcopy(new_labels)
-    return K, phi_list
 
 def WL_compute(ad_list, node_label, h, all_nodes = (), compute_k = True, DEBUG = False):
     """Computes weisfeiler lehman of the given graphs
@@ -273,6 +213,69 @@ def WL_compute(ad_list, node_label, h, all_nodes = (), compute_k = True, DEBUG =
         # increment the iteration
         it = it + 1 
 
-        label_lookups.append(np.copy(label_lookup))
+        label_lookups.append(label_lookup)
         label_counters.append(label_counter)
     return K, phi_list, label_lookups, label_counters
+
+
+
+def WL_compute_new(ad_list, node_label, h, k_prev, phi_prev, label_lookups_prev, label_counters_prev, all_nodes = (), DEBUG = False):
+    current_index = 0
+
+    num_graphs = len(ad_list)
+    tot_nodes = len(all_nodes) + sum(len(x) for x in node_label)
+
+    label_counter = label_counters_prev[0]
+
+    num_graph_orig = phi_prev[0].shape[1]
+    phi_added = (sum(len(x) for x in node_label), num_graphs)
+    phi = add_row_and_column(phi_prev[current_index], added = phi_added, dtype = np.int32)
+
+    current_label_lookup = label_lookups_prev[current_index].tolist()
+    labels = [0] * num_graphs
+    for i, node_labels in enumerate(node_label):
+        labels[i] = np.zeros(len(node_labels), dtype = np.int32)
+        for j, label in enumerate(node_labels):
+            assert label in current_label_lookup.keys()
+            label_id = current_label_lookup[label]
+            labels[i][j] = label_id
+            phi[labels[i][j], i + num_graph_orig ] += 1
+    phi_list = [0] * (h + 1)
+    phi_list[0] = phi
+    K = [0] * (h + 1)
+    K[0] = phi.transpose().dot(phi).astype(np.float32)
+    new_labels = np.copy(labels)
+
+    for it in range(h):
+        current_index += 1
+        label_lookup = label_lookups_prev[current_index].tolist()
+        label_counter = label_counters_prev[current_index]
+        phi = phi_prev[current_index]
+        phi = add_row_and_column(lil_matrix(phi), phi_added, dtype = np.int32)
+        for graph_idx in range(num_graphs):
+            l_aux_long = np.copy(labels[graph_idx])
+            for v in range(len(ad_list[graph_idx])):
+                new_node_label = tuple([l_aux_long[v]]) 
+                num_nodes = len(ad_list[graph_idx][v])
+                new_ad = np.argwhere(ad_list[i][v] > 0)
+                if len(new_ad):
+                    ad_aux = tuple([l_aux_long[int(j)] for j in new_ad])
+                    long_label = tuple(tuple(new_node_label)+tuple(sorted(ad_aux)))
+                else:
+                    long_label = tuple(new_node_label)
+                # if the multiset label has not yet occurred , add
+                # it to the lookup table and assign a number to it
+                if not long_label in label_lookup:
+                    label_lookup[long_label] = str(label_counter)
+                    new_labels[graph_idx][v] = str(label_counter)
+                    label_counter += 1
+                else:
+                    new_labels[graph_idx][v] = label_lookup[long_label]
+            aux = np.bincount(new_labels[graph_idx])
+            phi[new_labels[graph_idx], num_graph_orig + graph_idx] += aux[new_labels[graph_idx]].reshape(-1, 1)
+        phi_sparse = lil_matrix(phi)
+        phi_list[it + 1] = phi_sparse
+        K[it + 1] = K[it] + phi_sparse.transpose().dot(phi_sparse).astype(np.float32)
+        #assert np.array_equal(K[it + 1][:num_graph_orig,:num_graph_orig], k_prev[it + 1])
+        labels = copy.deepcopy(new_labels)
+    return K, phi_list
