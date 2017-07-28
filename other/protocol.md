@@ -1,4 +1,32 @@
-## 27.07.2017
+## 28.07.2017
+- Datasets
+    - WebKB
+        - Webpages with categories
+        - http://www.cs.cmu.edu/afs/cs.cmu.edu/project/theo-20/www/data/
+        - Download
+            - http://www.cs.cmu.edu/afs/cs.cmu.edu/project/theo-20/www/data/webkb-data.gtar.gz
+    - Reuters
+        - Reuters-21578
+            - http://kdd.ics.uci.edu/databases/reuters21578/reuters21578.html
+            - Download
+                - http://kdd.ics.uci.edu/databases/reuters21578/reuters21578.tar.gz
+        - RCV1-v2
+            - Sources (= Text) NOT available, only feature vectors
+            - http://www.daviddlewis.com/resources/testcollections/rcv1/
+            - Download
+                - http://www.ai.mit.edu/projects/jmlr/papers/volume5/lewis04a/a01-list-of-topics/rcv1.topics.txt
+                - http://www.ai.mit.edu/projects/jmlr/papers/volume5/lewis04a/a02-orig-topics-hierarchy/rcv1.topics.hier.orig
+                - http://www.ai.mit.edu/projects/jmlr/papers/volume5/lewis04a/a03-expanded-topics-hierarchy/rcv1.topics.hier.expanded
+    - LingSpam
+        - http://csmining.org/index.php/ling-spam-datasets.html
+        - Download
+            - http://csmining.org/index.php/ling-spam-datasets.html?file=tl_files/Project_Datasets/Ling-Spam%20data%20set/lingspam_public.tar.tar
+            - http://csmining.org/index.php/ling-spam-datasets.html?file=tl_files/Project_Datasets/Ling-Spam%20data%20set/lingspam_public01.tar.tar
+            - http://csmining.org/index.php/ling-spam-datasets.html?file=tl_files/Project_Datasets/Ling-Spam%20data%20set/lingspam_public02.tar.tar
+    - Amazon reviews
+        - 
+
+## 27.07.2017 (Treffen)
 - Prediction Error: "Wieso eine Klasse oft mispredicted?"
     - Skewed labels?
     - von Graphen-Größe abhängig?
@@ -17,7 +45,7 @@
 - Abschlussarbeit Formular ans Studiensekretariat
 
 
-## 20.07.2017
+## 20.07.2017 (Treffen)
 - Abschlussarbeit Formular Studiensekretariat
     - Macht Tobias
 - Dokumente an Tobias schicken
@@ -48,7 +76,20 @@
     - Gram Matrix
 
 
-## 13.07.2017
+## 14.07.2017
+- PipelineGroupedConceptRecall
+    - textPattern/mapName auch anpassen
+    - String[] pipeline = { "extraction.PropositionExtractor", "grouping.ConceptGrouperBase", "grouping.ExtractionResultsSerializer", "extraction.AllConceptsMap" };
+        - String[] pipeline = { "extraction.PropositionExtractor", "grouping.ConceptGrouperSimLog", "grouping.ExtractionResultsSerializer"};
+- Später schauen, ob man die Pipeline erweitert
+- Workflow
+    - PipelinePreprocessing
+    - PipelineOpenIE
+    - PipelineGroupedConceptRecall
+    - scoring.concepts.features.ExportGraphs
+
+
+## 13.07.2017 (Treffen)
 - Idee
     - Concept Maps als Input für Text-Klassifikation, Vergleich gegen andere Repräsentationen
 - Experimente:
@@ -74,16 +115,3 @@
             - Von Tobias
 - Orga
     - Dokumentation der Ergebnisse in Dropbox o.ä.
-
-
-## 14.07.2017
-- PipelineGroupedConceptRecall
-    - textPattern/mapName auch anpassen
-    - String[] pipeline = { "extraction.PropositionExtractor", "grouping.ConceptGrouperBase", "grouping.ExtractionResultsSerializer", "extraction.AllConceptsMap" };
-        - String[] pipeline = { "extraction.PropositionExtractor", "grouping.ConceptGrouperSimLog", "grouping.ExtractionResultsSerializer"};
-- Später schauen, ob man die Pipeline erweitert
-- Workflow
-    - PipelinePreprocessing
-    - PipelineOpenIE
-    - PipelineGroupedConceptRecall
-    - scoring.concepts.features.ExportGraphs

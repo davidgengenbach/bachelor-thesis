@@ -65,7 +65,7 @@ def WL_compute(ad_list, node_label, h, all_nodes = (), compute_k = True, DEBUG =
     n = len(ad_list)
     
     # Total number of nodes in dataset: initialized as zero
-    tot_nodes = len(all_nodes) + sum(len(x) for x in node_label)
+    tot_nodes = sum(len(x) for x in node_label)
     # list of kernel matrices
     K = [0]*(h+1)
     # list of feature mtrices
