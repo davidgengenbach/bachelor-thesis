@@ -9,11 +9,11 @@ def add_row_and_column(mat, added = (0, 0), num = 1, dtype = None):
     mat_b[:mat.shape[0],:mat.shape[1]] = mat.todense()
     return mat_b
 
-def compute_phi(graph, phi_shape, label_lookups, label_counters, h):
+def compute_phi(graph, phi_shape, label_lookups, label_counters, h, keep_history = True):
     num_nodes = len(graph.nodes())
     labels = [label_lookups[0].tolist()[node] for node in sorted(graph.nodes())]
     phi = np.zeros(phi_shape[0], dtype = np.int32)
-    phi_list = [0] * (h + 1)
+    phi_list = [0] * (h + 1) if keep_history else [0]
     adj_mat = nx.adjacency_matrix(graph, nodelist = sorted(graph.nodes()))
     for label in labels:
         phi[label] += 1
@@ -21,7 +21,9 @@ def compute_phi(graph, phi_shape, label_lookups, label_counters, h):
     new_labels = np.copy(labels)
     for it in range(h):
         long_labels = np.copy(labels)
-        label_lookup = label_lookups[it + 1].tolist()
+        label_lookup = label_lookups[it + 1]
+        if not isinstance(label_lookup, dict):
+            label_lookups = label_counter.tolist()
         label_counter = label_counters[it + 1]
         phi = np.zeros(phi_shape[0], dtype = np.int32)
         for node_idx in range(num_nodes):
@@ -38,7 +40,7 @@ def compute_phi(graph, phi_shape, label_lookups, label_counters, h):
                 new_labels[node_idx] = label_lookup[long_label]
         aux = np.bincount(new_labels)
         phi[new_labels] += aux[new_labels]
-        phi_list[it + 1] = phi
+        phi_list[it + 1 if keep_history else 0] = phi
         labels = np.copy(new_labels)
     return phi_list
 
