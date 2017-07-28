@@ -2,12 +2,16 @@ import numpy as np
 from scipy.sparse import lil_matrix
 from nltk.tokenize import word_tokenize, sent_tokenize
 import networkx as nx
+import collections
 
 def words_to_dict(words, remove_point = True):
     words = set(words) - set('.')
     words = sorted(list(words))
     word2id = {word: idx for idx, word in enumerate(words)}
     return word2id, {idx: word for word, idx in word2id.items()}
+
+def get_coocurrence_matrix(text, window_size = 2, ignore_sentence_bounds = True, only_forward_window = False):
+    q = collections.deque(maxlen = WINDOW_SIZE)
 
 def get_coocurrence_matrix(text, window_size = 2, ignore_sentence_bounds = True, only_forward_window = False):
     text = text.replace('.', ' ' if ignore_sentence_bounds else ' . ').lower()
@@ -28,26 +32,6 @@ def get_coocurrence_matrix(text, window_size = 2, ignore_sentence_bounds = True,
 
             if not only_forward_window and word_1 != word_2:
                 mat[word2id[word_2], word2id[word_1]] += 1
-    return word2id, id2word, mat
-
-def get_coocurrence_matrix_old(text, window_size = 5, ignore_sentence_bounds = True, directed = True):
-    if ignore_sentence_bounds:
-        text = " ".join(text.split('.'))
-    else:
-        text = text.replace('.', ' ')
-    words = [x.strip() for x in text.lower().split()]
-    word2id, id2word = words_to_dict(words)
-    num_words = len(word2id.keys())
-    mat = lil_matrix((num_words, num_words), dtype=np.uint8)
-    for word1, word2 in zip(words[:-1], words[1:]):
-        if not directed and word2 < word1:
-            tmp = word1
-            word1 = word2
-            word2 = tmp
-        mat[word2id[word1], word2id[word2]] += 1
-        # Create symmetric matrix
-        if not directed:
-            mat[word2id[word2], word2id[word1]] += 1
     return word2id, id2word, mat
 
 def plot_cooccurrence_matrix(id2word, mat, ax = None):

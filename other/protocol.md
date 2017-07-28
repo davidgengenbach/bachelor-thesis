@@ -14,6 +14,7 @@
     - Word-Embeddings per w2v: Feature Vektoren von Labels (cosine)
 - Limitierung: Alle Labels müssen zu Beginn bekannt sein
 - Paper von Tobias lesen
+- Abschlussarbeit Formular ans Studiensekretariat
 
 
 ## 20.07.2017
