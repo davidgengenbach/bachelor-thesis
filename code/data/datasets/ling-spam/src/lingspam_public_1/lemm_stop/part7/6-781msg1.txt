@@ -1,0 +1,3 @@
+Subject: english parser
+
+logo corporation pretty english semantico-syntactic parser ( tagger minimum ) incorporate machine translation product . package independent unix - base software package institut fuer deutsche sprache mannheim , germany , quite possibily copy available researcher . readysometime next monthor two , understand . parser dictionary c . 40 , 0 entry . interest , please send description intend , input format consideration , etc . ' ll pass power . usage include parser ( tagger ) evaluation , error rate , error feedback , etc . , much better . bud scott

@@ -1,0 +1,3 @@
+Subject: parse preference v2 language
+
+claim ( incorrectly ) german sentence nominative / accusative case syncretism ( 1 ) unambiguous , clause-initial noun phrase construe subject . ( 1 ) die tochter hat die mutter gek " usst . the-nom / acc daughter the-nom / acc mother kiss allegedly svo : daughter kiss mother . allegedly ovs : mother kiss daughter . although ( 1 ) fact ambiguous , svo interpretation seem prefer over ovs interpretation , least out-of - the-blue context . anyone steer discussion example ( german verb-second language ) parse literature ? many thanks , beatrice santorinus b-santorinus @ nwu . edu

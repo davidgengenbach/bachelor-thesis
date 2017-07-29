@@ -1,0 +1,3 @@
+Subject: parse preference in v2 language
+
+it have be claim ( incorrectly ) that a german sentence with nominative / accusative case syncretism like ( 1 ) be unambiguous , with the clause-initial noun phrase construe as the subject . ( 1 ) die tochter hat die mutter gek " usst . the-nom / acc daughter have the-nom / acc mother kiss allegedly only svo : the daughter kiss the mother . allegedly not ovs : the mother kiss the daughter . although ( 1 ) be in fact ambiguous , the svo interpretation do seem to be prefer over the ovs interpretation , at least in out-of - the-blue context . can anyone steer me to a discussion of such example ( in german or any other verb-second language ) in the parse literature ? many thanks , beatrice santorinus b-santorinus @ nwu . edu

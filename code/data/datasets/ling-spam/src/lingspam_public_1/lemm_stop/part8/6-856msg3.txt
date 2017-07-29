@@ -1,0 +1,3 @@
+Subject: ipa font unix ( tex )
+
+linguist 6 . 810 , steve anderson request english version documentation tsipa font . prof . fukuus reus , one author font , supply translation indicate version tsipa package ctan archive prepare contain documentation . meantime , documentation available vium ftp taptet . sscl . uwo . ca subdirectory pub . download file tsipadoc . p tsipadoc . lj ( postscript , pcl version ) depend printer . wish process documentation yourself , download tsipa . sty . gz tsipadoc . tar . gz . latex 2 . 09 , latex2e . chet creider < creider @ julian . uwo . ca >

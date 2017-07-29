@@ -1,0 +1,4 @@
+datasets/ling-spam/src/ filter=lfs diff=lfs merge=lfs -text
+datasets/reuters-21578/src/ filter=lfs diff=lfs merge=lfs -text
+datasets/webkb/src/webkb filter=lfs diff=lfs merge=lfs -text
+datasets/webkb/src/webkb-data.gtar.gz filter=lfs diff=lfs merge=lfs -text
