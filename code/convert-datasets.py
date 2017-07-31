@@ -41,6 +41,8 @@ def get_args():
     parser.add_argument('--max_elements',
                         type=int,
                         default=-1)
+    parser.add_argument('--concat_train_instances',
+                        action='store_true')
     parser.add_argument('--dataset_name',
                         type=str,
                         default='ng20')
@@ -81,7 +83,7 @@ def get_dataset(dataset_name, dataset_folder):
     assert len(data), 'Dataset is empty'
     return data
 
-def process(dataset_name, out_folder, train_size, random_state_for_shuffle, one_document_per_folder, rename, max_elements, dataset_folder, force, args):
+def process(dataset_name, out_folder, train_size, random_state_for_shuffle, one_document_per_folder, rename, max_elements, dataset_folder, force, args, concat_train_instances):
     TOPIC_ID_OFFSET = 100
     
     data = get_dataset(dataset_name, dataset_folder)
@@ -120,6 +122,10 @@ def process(dataset_name, out_folder, train_size, random_state_for_shuffle, one_
                 train_size=train_size,
                 random_state=random_state_for_shuffle
             )
+
+        if concat_train_instances:
+            docs_train = ['\n'.join(docs_train)]
+
         if max_elements != -1:
             max_elements_train = min(int(max_elements * train_size), len(docs_train))
             max_elements_test = min(int(max_elements * (1 - train_size)), len(docs_test))
@@ -135,6 +141,7 @@ def process(dataset_name, out_folder, train_size, random_state_for_shuffle, one_
             sets = [('all', docs_train)]
         else:
             sets = [('train', docs_train), ('test', docs_test)]
+
         # Save sets
         for doc_set_name, doc_set in sets:
             # Create set folder if not one_document_per_folder
