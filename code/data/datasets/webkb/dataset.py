@@ -9,13 +9,8 @@ from joblib import Parallel, delayed
 
 PATH_TO_HERE = os.path.dirname(os.path.abspath(__file__))
 
-def fetch(use_cached = True, n_jobs = 2):
-    npy_file = os.path.join(PATH_TO_HERE, 'src', 'docs.npy')
 
-    if use_cached and os.path.isfile(npy_file):
-        with open(npy_file, 'rb') as f:
-            return pickle.load(f)
-
+def fetch(n_jobs=2):
     folder = os.path.join(PATH_TO_HERE, 'src', 'webkb')
     categories = get_categories(folder)
     X, Y = [], []
@@ -25,17 +20,17 @@ def fetch(use_cached = True, n_jobs = 2):
         files = glob(cat_folder + '/*/*')
         new_data = Parallel(n_jobs=n_jobs)(delayed(get_text_from_cat)(cat, d) for d in files)
         for x, y in new_data:
-            if not x or not y: continue
+            if not x or not y:
+                continue
             X.append(x)
             Y.append(y)
     print('\rCompleted reading in categories')
     print()
-    with open(npy_file, 'wb') as f:
-        pickle.dump((X, Y), f)
     return X, Y
 
+
 def get_text_from_cat(cat, file):
-    with io.open(file, errors = 'ignore') as f:
+    with io.open(file, errors='ignore') as f:
         try:
             text = f.read()
             text = "\n".join(text.split('\n\n', maxsplit=1)[1:])
@@ -44,12 +39,15 @@ def get_text_from_cat(cat, file):
             print("Read error: {}\nException: {}\n".format(file, e))
     return (None, None)
 
+
 def get_categories(folder):
     return [x.strip() for x in os.listdir(folder) if os.path.isdir(os.path.join(folder, x))]
+
 
 def get_text_from_html(html):
     parsed = BeautifulSoup(html, 'lxml')
     html = parsed.find('html')
     return html.text if html else parsed.get_text()
 
-if __name__ == '__main__': fetch()
+if __name__ == '__main__':
+    fetch()

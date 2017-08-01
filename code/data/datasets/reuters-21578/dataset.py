@@ -1,9 +1,6 @@
 from nltk.corpus import reuters 
 
 def fetch():
-    return get_dataset()
-
-def get_dataset():
     categories = reuters.categories()
     X, Y = [], []
     for cat in categories:

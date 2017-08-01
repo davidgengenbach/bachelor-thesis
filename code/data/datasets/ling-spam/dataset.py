@@ -5,12 +5,14 @@ import codecs
 SPAM_LABEL = 'spam'
 NOT_SPAM_LABEL = 'no_spam'
 
-def fetch(remove_subject = True):
+
+def fetch(remove_subject=True):
     X, Y = [], []
     current_folder = os.path.dirname(os.path.abspath(__file__))
     for directory in os.listdir(os.path.join(current_folder, 'src')):
         directory = os.path.join(current_folder, 'src', directory)
-        if not os.path.isdir(directory): continue
+        if not os.path.isdir(directory):
+            continue
         for file in glob(directory + '/bare/*/*.txt'):
             filename = file.split('/')[-1]
             is_spam = filename.startswith('spmsg')
@@ -18,7 +20,7 @@ def fetch(remove_subject = True):
             with codecs.open(file) as f:
                 text = f.read()
                 if remove_subject:
-                    text = '\n'.join(text.split('\n', maxsplit = 3)[2:])
+                    text = '\n'.join(text.split('\n', maxsplit=3)[2:])
                 X.append(text)
                 Y.append(label)
     return X, Y

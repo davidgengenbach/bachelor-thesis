@@ -69,6 +69,7 @@ def main():
     args = vars(get_args())
     process(**args, args=args)
 
+
 def process(dataset_name, out_folder, train_size, random_state_for_shuffle, one_document_per_folder, rename, max_elements, dataset_folder, force, args, concat_train_instances):
     X, Y = dataset_helper.get_dataset(dataset_name, dataset_folder)
     data = [(topic, preprocessing.preprocess_text(text)) for topic, text in zip(Y, X)]
@@ -148,8 +149,6 @@ def process(dataset_name, out_folder, train_size, random_state_for_shuffle, one_
             'topic_train_counts': topic_doc_counts,
             'params': args
         }, f, indent=4)
-
-
 
 
 if __name__ == '__main__':
