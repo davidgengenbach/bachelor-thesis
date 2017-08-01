@@ -23,13 +23,15 @@ def split_dataset(X, Y, train_size = 0.8, random_state_for_shuffle = 42):
             random_state = random_state_for_shuffle
         ), []
 
+def preprocess(X):
+    return [preprocessing.preprocess_text(text) for text in X]
 
 def get_dataset_dict_preprocessed(dataset_name, dataset_folder = DATASET_FOLDER, use_cached = True):
     X, Y = get_dataset(dataset_name, dataset_folder = dataset_folder, use_cached = use_cached)
-    X = [preprocessing.preprocess_text(text) for text in X]
-    return X, Y, list(set(Y))
+    X = preprocess(X)
+    return X, Y
 
-def get_dataset(dataset_name, use_cached = True, dataset_folder=DATASET_FOLDER):
+def get_dataset(dataset_name, use_cached = True, preprocessed = False, dataset_folder=DATASET_FOLDER):
     """Returns the dataset as a list of docs with labels: [(topic1, document1], (topic2, document2))]
     
     Args:
@@ -48,34 +50,36 @@ def get_dataset(dataset_name, use_cached = True, dataset_folder=DATASET_FOLDER):
 
     if use_cached and os.path.exists(dataset_npy):
         with open(dataset_npy, 'rb') as f:
-            return pickle.load(f)
+            X, Y = pickle.load(f)
+    else:
+        dataset_module = importlib.import_module(dataset_folder_.replace('/', '.'))
+        assert hasattr(dataset_module, 'fetch'), 'dataset {} does not have a fetch method'.format(dataset_name)
+        X, Y = dataset_module.fetch()
+        assert isinstance(X, list), 'X must be a list'
+        assert isinstance(Y, list), 'Y must be a list'
+        assert len(X) and len(Y), 'Dataset is empty'
+        assert len(X) == len(Y), 'X and Y must have same length'
 
-    dataset_module = importlib.import_module(dataset_folder_.replace('/', '.'))
-    assert hasattr(dataset_module, 'fetch'), 'dataset {} does not have a fetch method'.format(dataset_name)
-    X, Y = dataset_module.fetch()
-    assert isinstance(X, list), 'X must be a list'
-    assert isinstance(Y, list), 'Y must be a list'
-    assert len(X) and len(Y), 'Dataset is empty'
-    assert len(X) == len(Y), 'X and Y must have same length'
+        with open(dataset_npy, 'wb') as f:
+            pickle.dump((X, Y), f)
 
-    with open(dataset_npy, 'wb') as f:
-        pickle.dump((X, Y), f)
-
+    if preprocessed:
+        X = preprocess(X)
     return X, Y
 
 
-def get_all_datasets_raw(dataset_dir=DATASET_FOLDER):
+def get_all_datasets(dataset_folder = DATASET_FOLDER, **kwargs):
     """Returns a dict with the available datasets as key and the documents as values
 
     Args:
-        dataset_dir (str, optional): Where to search for datasets
+        dataset_folder (str, optional): Where to search for datasets
 
     Returns:
         dict: Keys are the dataset names, the values is a list of docs like [(topic1, document1], (topic2, document2))]
     """
-    datasets = glob('{}/*/dataset.py'.format(dataset_dir))
+    datasets = glob('{}/*/dataset.py'.format(dataset_folder))
     dataset_folders = [x.replace('/dataset.py', '').replace('/', '.') for x in datasets]
-    return {x.split('.')[-1]: get_dataset(x.split('.')[-1], dataset_dir) for x in dataset_folders}
+    return {x.split('.')[-1]: get_dataset(x.split('.')[-1], **kwargs) for x in dataset_folders}
 
 def get_dataset_dict(X, Y = None):
     """Returns a dictionary where the keys are the topics, the values are the documents of that topic. 
@@ -102,4 +106,4 @@ def get_dataset_dict(X, Y = None):
     return topics
 
 if __name__ == '__main__':
-    get_all_datasets_raw()
+    get_all_datasets()
