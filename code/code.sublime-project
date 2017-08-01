@@ -1,0 +1,9 @@
+{
+	"folders":
+	[
+		{
+			"path": ".",
+            "folder_exclude_patterns": ["data/datasets", "data/datasets-prepared", "data/datasets-prepared.bck"]
+		}
+	]
+}

@@ -70,23 +70,11 @@ def preprocess_text(text):
     reg = r'\n\n+'
     text = '\n'.join(x.strip() for x in text.split('\n') if x.strip() != '')
     text = re.sub('\n', ' ', re.sub(reg, '//', text)).replace('//', '\n')
-    return text
-
-def get_dataset(dataset_name, dataset_folder):
-    dataset_py = os.path.join(dataset_folder, dataset_name, 'dataset')
-    assert os.path.exists(dataset_py + '.py'), 'dataset.py for dataset "{}" does not exist! ({})'.format(dataset_name, dataset_py + '.py')
-
-    dataset_module = importlib.import_module(dataset_py.replace('/', '.'))
-    assert hasattr(dataset_module, 'fetch'), 'dataset {} does not have a fetch method'.format(dataset_name)
-    data = dataset_module.fetch()
-    assert isinstance(data, list), 'data must be a list of tuples'
-    assert len(data), 'Dataset is empty'
-    return data
+    return text.lower()
 
 def process(dataset_name, out_folder, train_size, random_state_for_shuffle, one_document_per_folder, rename, max_elements, dataset_folder, force, args, concat_train_instances):
-    TOPIC_ID_OFFSET = 100
     
-    data = get_dataset(dataset_name, dataset_folder)
+    data = dataset_helper.get_dataset(dataset_name, dataset_folder)
 
     for idx, a in enumerate(data):
         data[idx] = (a[0], preprocess_text(a[1]))
@@ -103,13 +91,10 @@ def process(dataset_name, out_folder, train_size, random_state_for_shuffle, one_
     
     os.makedirs(out_folder, exist_ok = True)
 
-    with open(os.path.join(out_folder, 'params.json'), 'w') as f:
-        json.dump(args, f, indent = 4)
-    # Map from topics to their ids
-    topics_2_id = {topic: TOPIC_ID_OFFSET + idx for idx, topic in enumerate(topics.keys())}
+    topic_doc_counts = {}
 
     for topic, docs in topics.items():
-        topic_id = topics_2_id[topic] if rename else topic
+        topic_id = topic
 
         # Create train/test split
         if train_size == 1.0:
@@ -133,6 +118,8 @@ def process(dataset_name, out_folder, train_size, random_state_for_shuffle, one_
         assert train_size == 1.0 or len(docs_test) > 0, "\t-> len(docs_test) == 0"
 
         print('Category: {:<27} #docs: train {:>3}, test {:>3}'.format('"' + topic + '"', len(docs_train), len(docs_test)))
+
+        topic_doc_counts[topic] = {'train': len(docs_train), 'test': len(docs_test)}
         
         if train_size == 1.0:
             sets = [('all', docs_train)]
@@ -152,7 +139,7 @@ def process(dataset_name, out_folder, train_size, random_state_for_shuffle, one_
             for idx, doc in enumerate(doc_set):
                 doc_id = str(idx).zfill(4)
                 if concat_train_instances and doc_set_name == 'train':
-                    filename = '{}/{}/{}.txt'.format(folder, topic_id, doc_id, '0')
+                    filename = '{}/{}/{}.txt'.format(folder, topic_id, doc_id)
                 elif one_document_per_folder:
                     filename = '{}/{}_{}/{}.txt'.format(folder, topic_id, doc_id, '0')
                 else:
@@ -164,7 +151,10 @@ def process(dataset_name, out_folder, train_size, random_state_for_shuffle, one_
     with open(os.path.join(out_folder, 'stats.json'), 'w') as f:
         json.dump({
             'total_docs': len(data),
-            'categories': list(set(topic for topic, x in data))
+            'categories': list(set(topic for topic, x in data)),
+            'topic_counts': topics_count,
+            'topic_train_counts': topic_doc_counts,
+            'params': args
         }, f, indent = 4)
 
 def get_by_topics(X, Y):
