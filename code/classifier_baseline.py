@@ -57,7 +57,7 @@ def get_classifiers(iterations=500):
         'LogisticRegression': sklearn.linear_model.LogisticRegression(max_iter=iterations),
         'SGDClassifier': sklearn.linear_model.SGDClassifier(n_iter=iterations),
         'MostFrequentLabel': MostFrequentLabelClassifier(),
-        'Doc2VecClassifier': Doc2VecClassifier(n_iter = iterations),
+        #'Doc2VecClassifier': Doc2VecClassifier(n_iter = iterations),
         #'kNN': sklearn.neighbors.KNeighborsClassifier()
     }
 
