@@ -22,6 +22,8 @@ import re
 import importlib
 import sys
 import json
+import dataset_helper
+import preprocessing
 
 from sklearn.model_selection import train_test_split
 from sklearn.utils import shuffle
@@ -57,39 +59,28 @@ def get_args():
                         type=str,
                         default='data/datasets')
     parser.add_argument('--force',
-                        action = 'store_true')
+                        action='store_true')
     args = parser.parse_args()
     assert args.train_size > 0 and args.train_size <= 1
     return args
 
+
 def main():
     args = vars(get_args())
-    process(**args, args = args)
-
-def preprocess_text(text):
-    reg = r'\n\n+'
-    text = '\n'.join(x.strip() for x in text.split('\n') if x.strip() != '')
-    text = re.sub('\n', ' ', re.sub(reg, '//', text)).replace('//', '\n')
-    return text.lower()
+    process(**args, args=args)
 
 def process(dataset_name, out_folder, train_size, random_state_for_shuffle, one_document_per_folder, rename, max_elements, dataset_folder, force, args, concat_train_instances):
-    
-    data = dataset_helper.get_dataset(dataset_name, dataset_folder)
-
-    for idx, a in enumerate(data):
-        data[idx] = (a[0], preprocess_text(a[1]))
-    Y = [x[0] for x in data]
-    X = [x[1] for x in data]
-    topics = get_by_topics(X, Y)
-
+    X, Y = dataset_helper.get_dataset(dataset_name, dataset_folder)
+    data = [(topic, preprocessing.preprocess_text(text)) for topic, text in zip(Y, X)]
+    topics = dataset_helper.get_dataset_dict(data)
     topics_count = {topic: len(docs) for topic, docs in topics.items()}
     out_folder = os.path.join(out_folder, dataset_name)
 
     if not force and os.path.isdir(out_folder):
         print('Outfolder existing! Aborting ({})'.format(out_folder))
         sys.exit(1)
-    
-    os.makedirs(out_folder, exist_ok = True)
+
+    os.makedirs(out_folder, exist_ok=True)
 
     topic_doc_counts = {}
 
@@ -117,10 +108,11 @@ def process(dataset_name, out_folder, train_size, random_state_for_shuffle, one_
         assert len(docs_train) > 0, "\t-> len(docs_train) == 0"
         assert train_size == 1.0 or len(docs_test) > 0, "\t-> len(docs_test) == 0"
 
-        print('Category: {:<27} #docs: train {:>3}, test {:>3}'.format('"' + topic + '"', len(docs_train), len(docs_test)))
+        print('Category: {:<27} #docs: train {:>3}, test {:>3}'.format(
+            '"' + topic + '"', len(docs_train), len(docs_test)))
 
         topic_doc_counts[topic] = {'train': len(docs_train), 'test': len(docs_test)}
-        
+
         if train_size == 1.0:
             sets = [('all', docs_train)]
         else:
@@ -155,26 +147,9 @@ def process(dataset_name, out_folder, train_size, random_state_for_shuffle, one_
             'topic_counts': topics_count,
             'topic_train_counts': topic_doc_counts,
             'params': args
-        }, f, indent = 4)
+        }, f, indent=4)
 
-def get_by_topics(X, Y):
-    """Returns a dictionary where the keys are the topics, the values are the documents of that topic.
 
-    Args:
-        X (list of list of str): The documents
-        Y (list of str): The topics for the topics. len(X) == len(Y)
-
-    Returns:
-        dict: Keys are topics, values are the corresponding docs
-    """
-    assert len(X) == len(Y)
-    assert len(set(Y)) > 0
-
-    topics = {x: [] for x in set(Y)}
-    for clazz, words in zip(Y, X):
-        if words.strip() != '':
-            topics[clazz].append(words)
-    return topics
 
 
 if __name__ == '__main__':

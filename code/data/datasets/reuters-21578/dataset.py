@@ -4,9 +4,10 @@ def fetch():
     return get_dataset()
 
 def get_dataset():
-    cats = reuters.categories()
-    data = []
-    for cat in cats:
+    categories = reuters.categories()
+    X, Y = [], []
+    for cat in categories:
         cat_files = reuters.fileids(cat)
-        data += [(cat, reuters.raw(x)) for x in cat_files]
-    return data
+        X += [reuters.raw(x) for x in cat_files]
+        Y += cat
+    return X, Y

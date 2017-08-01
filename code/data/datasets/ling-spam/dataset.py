@@ -5,11 +5,8 @@ import codecs
 SPAM_LABEL = 'spam'
 NOT_SPAM_LABEL = 'no_spam'
 
-def fetch():
-    return get_dataset()
-
-def get_dataset(remove_subject = True):
-    data = []
+def fetch(remove_subject = True):
+    X, Y = [], []
     current_folder = os.path.dirname(os.path.abspath(__file__))
     for directory in os.listdir(os.path.join(current_folder, 'src')):
         directory = os.path.join(current_folder, 'src', directory)
@@ -22,8 +19,9 @@ def get_dataset(remove_subject = True):
                 text = f.read()
                 if remove_subject:
                     text = '\n'.join(text.split('\n', maxsplit = 3)[2:])
-                data.append((label, text))
-    return data
+                X.append(text)
+                Y.append(label)
+    return X, Y
 
 if __name__ == '__main__':
     fetch()

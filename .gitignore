@@ -2,3 +2,4 @@
 notebooks/datasets
 __pycache__
 *.npy
+code/code.sublime-*

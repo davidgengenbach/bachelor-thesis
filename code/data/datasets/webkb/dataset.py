@@ -18,19 +18,21 @@ def fetch(use_cached = True, n_jobs = 2):
 
     folder = os.path.join(PATH_TO_HERE, 'src', 'webkb')
     categories = get_categories(folder)
-    data = []
-
+    X, Y = [], []
     for idx, cat in enumerate(categories):
         sys.stdout.write('\rCategory: {:>2}/{}'.format(idx + 1, len(categories)))
         cat_folder = os.path.join(folder, cat)
         files = glob(cat_folder + '/*/*')
-        data += Parallel(n_jobs=n_jobs)(delayed(get_text_from_cat)(cat, d) for d in files)
+        new_data = Parallel(n_jobs=n_jobs)(delayed(get_text_from_cat)(cat, d) for d in files)
+        for x, y in new_data:
+            if not x or not y: continue
+            X.append(x)
+            Y.append(y)
     print('\rCompleted reading in categories')
     print()
-    data = [x for x in data if x[0]]
     with open(npy_file, 'wb') as f:
-        pickle.dump(data, f)
-    return data
+        pickle.dump((X, Y), f)
+    return X, Y
 
 def get_text_from_cat(cat, file):
     with io.open(file, errors = 'ignore') as f:
@@ -51,6 +53,3 @@ def get_text_from_html(html):
     return html.text if html else parsed.get_text()
 
 if __name__ == '__main__': fetch()
-
-
-#if idx % 10 == 0: sys.stdout.write('\r\t{:>3}/{}'.format(idx, len(files) - 1))
