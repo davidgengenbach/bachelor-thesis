@@ -1,3 +1,28 @@
+## 30.07.2017
+- Drei Paper von Tobias
+    - Text classification using Semantic Information and Graph Kernels
+        - http://www.di.uevora.pt/~pq/papers/epia2011a.pdf
+        - Datasets: Reuters
+    - Concept Graph Preserving Semantic Relationship for Biomedical Text Categorization
+        - http://www.researchpublications.org/IJCSA/NCRMC-14/08.pdf
+        - Datasets: Mediline
+    - Text Categorization as a Graph Classification Problem
+        - http://www.aclweb.org/anthology/P15-1164
+        - Datasets:
+            - WebKB: 4 most frequent categories among labeled webpages from various CS departments – split into 2,803 for training and 1,396 for test (Cardoso-Cachopo, 2007, p. 39–41).
+                - Ana Cardoso-Cachopo. 2007. Improving Methods for Single-label Text Categorization. Ph.D. thesis, Instituto Superior Técnico, Universidade de Lisboa, Lisbon, Portugal.
+                - http://web.ist.utl.pt/~acardoso/docs/2007-phd-thesis.pdf
+            - R8: 8 most frequent categories of Reuters- 21578, a set of labeled news articles from the 1987 Reuters newswire – split into 5,485 for training and 2,189 for test (Debole and Sebastiani, 2005).
+                - Franca Debole and Fabrizio Sebastiani. 2005. An Analysis of the Relative Hardness of Reuters-21578 Subsets: Research Articles. Journal of the American Society for Information Science and Technology, 56(6):584–596.
+                - http://onlinelibrary.wiley.com/doi/10.1002/asi.20147/full
+            - LingSpam: 2,893 emails classified as spam or legitimate messages – split into 10 sets for 10-fold cross validation (Androutsopoulos et al., 2000).
+                - Ion Androutsopoulos, John Koutsias, Konstantinos V. Chandrinos, George Paliouras, and Constantine D. Spyropoulos. 2000. An Evaluation of Naive Bayesian Anti-Spam Filtering. In Proceedings of the Workshop on Machine Learning in the New Information Age, 11th European Conference on Machine Learning, pages 9–17.
+                - https://arxiv.org/abs/cs/0006013
+            - Amazon: 8,000 product reviews over four different sub-collections (books, DVDs, electronics and kitchen appliances) classified as positive or negative – split into 1,600 for training and 400 for test each (Blitzer et al., 2007).
+                - John Blitzer, Mark Dredze, and Fernando Pereira. 2007. Biographies, bollywood, boomboxes and blenders: Domain adaptation for sentiment classi- fication. In Proceedings of the 45th Annual Meeting of the Association of Computational Linguistics, ACL ’07, pages 440–447.
+                - http://anthology.aclweb.org/P/P07/P07-1.pdf#page=478
+                - https://www.cs.jhu.edu/~mdredze/datasets/sentiment/
+
 ## 28.07.2017
 - Datasets
     - WebKB

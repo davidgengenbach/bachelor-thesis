@@ -123,9 +123,6 @@ def process(dataset_name, out_folder, train_size, random_state_for_shuffle, one_
                 random_state=random_state_for_shuffle
             )
 
-        if concat_train_instances:
-            docs_train = ['\n'.join(docs_train)]
-
         if max_elements != -1:
             max_elements_train = min(int(max_elements * train_size), len(docs_train))
             max_elements_test = min(int(max_elements * (1 - train_size)), len(docs_test))
@@ -154,11 +151,13 @@ def process(dataset_name, out_folder, train_size, random_state_for_shuffle, one_
             os.makedirs(folder, exist_ok=True)
             for idx, doc in enumerate(doc_set):
                 doc_id = str(idx).zfill(4)
-                if one_document_per_folder:
+                if concat_train_instances and doc_set_name == 'train':
+                    filename = '{}/{}/{}.txt'.format(folder, topic_id, doc_id, '0')
+                elif one_document_per_folder:
                     filename = '{}/{}_{}/{}.txt'.format(folder, topic_id, doc_id, '0')
-                    os.makedirs(os.path.join(*filename.split('/')[:-1]), exist_ok=True)
                 else:
                     filename = '{}/{}.txt'.format(folder, str(idx).zfill(4))
+                os.makedirs(os.path.join(*filename.split('/')[:-1]), exist_ok=True)
                 with codecs.open(filename, 'w') as f:
                     f.write(doc)
 
