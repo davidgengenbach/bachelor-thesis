@@ -12,30 +12,6 @@ DATASET_FOLDER = 'data/datasets'
 CACHE = {}
 
 
-class MostFrequentLabelClassifier(object):
-     
-    def __init__(self):
-        pass
-
-    def fit(self, x = None, y = None):
-        label_counts = {}
-        for y_ in y:
-            if y_ not in label_counts:
-                label_counts[y_] = 0
-            label_counts[y_] += 1
-        self.label_to_return = max(label_counts.items(), key = lambda x: x[1])[0]
-
-    def predict(self, x = None):
-        return [self.label_to_return] * x.shape[0]
-
-def get_classifiers(iterations = 500):
-    return {
-        'PassiveAggressiveClassifier': sklearn.linear_model.PassiveAggressiveClassifier(),
-        'Perceptron': sklearn.linear_model.Perceptron(n_iter = iterations),
-        'LogisticRegression': sklearn.linear_model.LogisticRegression(max_iter = iterations),
-        'SGDClassifier': sklearn.linear_model.SGDClassifier(n_iter = iterations),
-        'MostFrequentLabel': MostFrequentLabelClassifier()
-    }
 
 
 def get_tsne_embedding(model_w2v):
