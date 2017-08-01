@@ -9,39 +9,25 @@ import pickle
 PATH_TO_HERE = os.path.dirname(os.path.abspath(__file__))
 DATASET_FOLDER = 'data/datasets'
 
-def split_dataset(dataset_dict, train_size = 0.8, random_state_for_shuffle = 42, max_elements = -1):
-    train_set = []
-    test_set = []
-    for topic, docs in dataset_dict.items():
-        topic_id = topic
-        # Create train/test split
-        if train_size == 1.0:
-            docs_train, docs_test = shuffle(
-                docs, random_state=random_state_for_shuffle
-            ), []
-        else:
-            docs_train, docs_test = train_test_split(
-                docs,
-                train_size=train_size,
-                random_state=random_state_for_shuffle
-            )
-        if max_elements != -1:
-            max_elements_train = min(int(max_elements * train_size), len(docs_train))
-            max_elements_test = min(int(max_elements * (1 - train_size)), len(docs_test))
-            docs_train = docs_train[:max_elements_train]
-            docs_test = docs_test[:max_elements_test]
-
-        assert len(docs_train) > 0, "\t-> len(docs_train) == 0"
-        assert train_size == 1.0 or len(docs_test) > 0, "\t-> len(docs_test) == 0"
-        train_set += docs_train
-        test_set += docs_test
-    return train_set, test_set
+def split_dataset(X, Y, train_size = 0.8, random_state_for_shuffle = 42):
+    if train_size != 1.0:
+        return train_test_split(
+            X, Y,
+            train_size = train_size,
+            random_state = random_state_for_shuffle,
+            stratify = Y
+        )
+    else:
+        return shuffle(
+            X, Y,
+            random_state = random_state_for_shuffle
+        ), []
 
 
 def get_dataset_dict_preprocessed(dataset_name, dataset_folder = DATASET_FOLDER, use_cached = True):
     X, Y = get_dataset(dataset_name, dataset_folder = dataset_folder, use_cached = use_cached)
     X = [preprocessing.preprocess_text(text) for text in X]
-    return X, Y, set(Y)
+    return X, Y, list(set(Y))
 
 def get_dataset(dataset_name, use_cached = True, dataset_folder=DATASET_FOLDER):
     """Returns the dataset as a list of docs with labels: [(topic1, document1], (topic2, document2))]
