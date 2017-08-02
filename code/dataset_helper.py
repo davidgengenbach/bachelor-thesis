@@ -5,6 +5,7 @@ import preprocessing
 from sklearn.model_selection import train_test_split
 from sklearn.utils import shuffle
 import pickle
+from joblib import Parallel, delayed
 
 PATH_TO_HERE = os.path.dirname(os.path.abspath(__file__))
 DATASET_FOLDER = 'data/datasets'
@@ -23,15 +24,15 @@ def split_dataset(X, Y, train_size = 0.8, random_state_for_shuffle = 42):
             random_state = random_state_for_shuffle
         ), []
 
-def preprocess(X):
-    return [preprocessing.preprocess_text(text) for text in X]
+def preprocess(X, n_jobs = 4, **kwargs):
+    return Parallel(n_jobs=n_jobs)(delayed(preprocessing.preprocess_text)(text, **kwargs) for text in X)
 
 def get_dataset_dict_preprocessed(dataset_name, dataset_folder = DATASET_FOLDER, use_cached = True):
     X, Y = get_dataset(dataset_name, dataset_folder = dataset_folder, use_cached = use_cached)
     X = preprocess(X)
     return X, Y
 
-def get_dataset(dataset_name, use_cached = True, preprocessed = False, dataset_folder=DATASET_FOLDER):
+def get_dataset(dataset_name, use_cached = True, preprocessed = False, dataset_folder=DATASET_FOLDER, preprocessing_args = None):
     """Returns the dataset as a list of docs with labels: [(topic1, document1], (topic2, document2))]
     
     Args:
@@ -64,7 +65,7 @@ def get_dataset(dataset_name, use_cached = True, preprocessed = False, dataset_f
             pickle.dump((X, Y), f)
 
     if preprocessed:
-        X = preprocess(X)
+        X = preprocess(X, **preprocessing_args)
     return X, Y
 
 

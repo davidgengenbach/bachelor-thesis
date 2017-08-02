@@ -1,3 +1,25 @@
+## 02.08.2017
+- Zeiten
+    - Co-occurence
+        - ng20
+            - retrieve dataset and pre-processing
+                - 20s
+            - generate co-occurence graphs
+                - 1min 30s
+            - convert to networkx graph + save to gml
+                - 1min 40s
+- Coding
+    - Co-occurence graphs
+        - Directed or un-directed?
+        - Graphs als npy speichern, um GML parsen zu vermeiden
+        - How to prune graph?
+    - Pre-processing
+        - lowercase
+        - remove "more than one" linebreaks
+        - (optional) remove stopwords
+        - (optional) remove interpuncation
+    - Graph statistics
+
 ## 30.07.2017
 - Drei Paper von Tobias
     - Text classification using Semantic Information and Graph Kernels
