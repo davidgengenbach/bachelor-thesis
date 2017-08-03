@@ -11,9 +11,6 @@ def words_to_dict(words, remove_point = True):
     return word2id, {idx: word for word, idx in word2id.items()}
 
 def get_coocurrence_matrix(text, window_size = 2, ignore_sentence_bounds = True, only_forward_window = False):
-    q = collections.deque(maxlen = WINDOW_SIZE)
-
-def get_coocurrence_matrix(text, window_size = 2, ignore_sentence_bounds = True, only_forward_window = False):
     text = text.replace('.', ' ' if ignore_sentence_bounds else ' . ').lower()
     words = word_tokenize(text)
     word2id, id2word = words_to_dict(words)

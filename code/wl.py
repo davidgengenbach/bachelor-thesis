@@ -225,7 +225,7 @@ def WL_compute_new(ad_list, node_label, h, k_prev, phi_prev, label_lookups_prev,
     current_index = 0
 
     num_graphs = len(ad_list)
-    tot_nodes = len(all_nodes) + sum(len(x) for x in node_label)
+    tot_nodes = len(all_nodes)
 
     label_counter = label_counters_prev[0]
 

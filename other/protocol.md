@@ -1,3 +1,22 @@
+## 03.08.2017 (Treffen)
+- Kernel
+    - Graph product implementieren
+    - Vielleicht most-frequent subgraph mining (K-core etc.)
+- Co-occurence
+    - In einheitliches Format übertragen
+    - Un-directed
+    - How to prune graph?
+        - Nur Node hinzufügen, wenn höchstens x mal im Text
+        - Part-of-speech, dann nur Nomen benutzen (spacy)
+        - So stark verkleinern wie möglich, dann Ergebnisse vergleichen
+            - Parameter (Window Size, POS tagging)
+- Pre-processing
+    - "Substitute TAB, NEWLINE and RETURN characters by SPACE."
+- Datasets
+    - r-21578 zu r-8 (direkt mit Graphen)
+- Graph statistics
+    - Histogramm #nodes, Achse?
+
 ## 02.08.2017
 - Zeiten
     - Co-occurence
