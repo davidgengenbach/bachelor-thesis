@@ -123,6 +123,11 @@ def get_dataset_subset_with_most_frequent_classes(dataset_name, num_classes_to_k
         return [x[0] for x in data], [x[1] for x in data]
 
 
+def get_all_available_dataset_names(dataset_folder=DATASET_FOLDER):
+    datasets = glob('{}/*/dataset.py'.format(dataset_folder)) + glob('{}/dataset_*.py'.format(dataset_folder))
+    dataset_folders = [x.replace('/dataset.py', '').replace('dataset_', '').replace('.py', '').replace('/', '.') for x in datasets]
+    return [x.split('.')[-1] for x in dataset_folders]
+
 def get_all_datasets(dataset_folder=DATASET_FOLDER, **kwargs):
     """Returns a dict with the available datasets as key and the documents as values
 
@@ -132,9 +137,7 @@ def get_all_datasets(dataset_folder=DATASET_FOLDER, **kwargs):
     Returns:
         dict: Keys are the dataset names, the values is a list of docs like [(topic1, document1], (topic2, document2))]
     """
-    datasets = glob('{}/*/dataset.py'.format(dataset_folder)) + glob('{}/dataset_*.py'.format(dataset_folder))
-    dataset_folders = [x.replace('/dataset.py', '').replace('dataset_', '').replace('.py', '').replace('/', '.') for x in datasets]
-    return {x.split('.')[-1]: get_dataset(x.split('.')[-1], **kwargs) for x in dataset_folders}
+    return { dataset: get_dataset(dataset, **kwargs) for dataset in get_all_available_dataset_names(dataset_folder) }
 
 
 def get_dataset_dict(X, Y=None):
