@@ -3,8 +3,17 @@ from glob import glob
 import os
 
 
-
 def convert_from_numpy_to_nx(word2id, id2word, mat):
+    """Converts from the co-occurrence format to the networkx
+    
+    Args:
+        word2id (dict): keys are the labels, values are the ids
+        id2word (dict): vice versa
+        mat (sparse matrix): the adjacency matrix
+    
+    Returns:
+        networkx.Graph: the graph corresponding to the adjacency matrix
+    """
     graph = nx.from_numpy_matrix(mat.toarray())
     nx.relabel_nodes(graph, mapping=id2word, copy=False)
     return graph
@@ -17,7 +26,59 @@ def get_graph_topic_stats(graphs_per_topic):
     df_graphs_per_topic['avg_edges'] = df_graphs_per_topic.num_edges.apply(lambda x: np.mean(x))
     return df_graphs_per_topic
 
+
+def get_graphs_from_folder(folder, ext = 'gml', undirected = True, verbose = False):
+    """Reads in and parses all gml graphs from a folder.
+    
+    Args:
+        folder (str): where to search for graphs
+        ext (str, optional): the file extension
+        undirected (bool, optional): whether to keep or remove edge directions
+        verbose (bool, optional): log more or less
+    
+    Returns:
+        tuple of lists: first list contains the graphs, second the corresponding labels
+    """
+    X, Y = [], []
+    empty_graphs = []
+    files = sorted(glob(folder + '/*' + ext))
+    file_list = list(enumerate(files))
+    for idx, graph_file in sorted(file_list):
+        topic_and_id = graph_file.split('/')[-1].replace('.gml', '')
+        topic = topic_and_id.split('_')[0]
+        with open(graph_file) as f:
+            graph_str = f.read()
+        graph = get_gml_graph(graph_str, undirected)
+        # Ignore empty graphs and graphs that could not be parsed
+        if graph and graph.number_of_nodes() > 0 and graph.number_of_edges() > 0:
+            X.append(graph)
+            Y.append(topic)
+        else:
+            if graph is None:
+                break
+            if verbose: print("Empty graph: {}".format(topic_and_id))
+            empty_graphs.append(topic_and_id)
+
+    assert len(X) and len(Y), 'X or Y empty'
+    assert len(X) == len(Y), 'X has not the same dimensions as Y'
+    return X, Y
+
+
+
+
 def get_gml_graph(graph_str, undirected = False, num_tries = 5, verbose = False):
+    """Given a gml string, this function returns a networkx graph.
+    Mostly tries to resolve "duplicate node label" exceptions by replacing node labels with the first occurrence of that label.
+    
+    Args:
+        graph_str (str): the graph in gml
+        undirected (bool, optional): Whether to keep the direction
+        num_tries (int, optional): how often to try to solve "duplicate node label" exceptions
+        verbose (bool, optional): logs more
+    
+    Returns:
+        networkx.(Di)Graph or None: Returns a networkx graph on success, None otherwise
+    """
     graph_str_lines = graph_str.split('\n')
     for idx, line in enumerate(graph_str_lines):
         if line.startswith('label'):
@@ -64,28 +125,3 @@ def get_gml_graph(graph_str, undirected = False, num_tries = 5, verbose = False)
         else:
             return result
     return None
-
-def get_graphs_from_folder(folder, ext = 'gml', undirected = True, verbose = False):
-    X, Y = [], []
-    empty_graphs = []
-    files = sorted(glob(folder + '/*' + ext))
-    file_list = list(enumerate(files))
-    for idx, graph_file in sorted(file_list):
-        topic_and_id = graph_file.split('/')[-1].replace('.gml', '')
-        topic = topic_and_id.split('_')[0]
-        with open(graph_file) as f:
-            graph_str = f.read()
-        graph = get_gml_graph(graph_str, undirected)
-        # Ignore empty graphs and graphs that could not be parsed
-        if graph and graph.number_of_nodes() > 0 and graph.number_of_edges() > 0:
-            X.append(graph)
-            Y.append(topic)
-        else:
-            if graph is None:
-                break
-            if verbose: print("Empty graph: {}".format(topic_and_id))
-            empty_graphs.append(topic_and_id)
-
-    assert len(X) and len(Y), 'X or Y empty'
-    assert len(X) == len(Y), 'X has not the same dimensions as Y'
-    return X, Y
