@@ -1,3 +1,12 @@
+## 03.08.2017
+- Kernel
+    - Most frequent Subgraph
+        - Only for recurring subgraphs - not interesting for co-occurence or concept maps
+- Co-occurence
+- Pre-processing
+    - 
+
+
 ## 03.08.2017 (Treffen)
 - Kernel
     - Graph product implementieren
