@@ -10,22 +10,22 @@ from joblib import Parallel, delayed
 PATH_TO_HERE = os.path.dirname(os.path.abspath(__file__))
 
 
-def fetch(n_jobs=2):
+def fetch(n_jobs=2, parallel = True):
     folder = os.path.join(PATH_TO_HERE, 'src', 'webkb')
     categories = get_categories(folder)
     X, Y = [], []
     for idx, cat in enumerate(categories):
-        sys.stdout.write('\rCategory: {:>2}/{}'.format(idx + 1, len(categories)))
         cat_folder = os.path.join(folder, cat)
         files = glob(cat_folder + '/*/*')
-        new_data = Parallel(n_jobs=n_jobs)(delayed(get_text_from_cat)(cat, d) for d in files)
-        for x, y in new_data:
+        if parallel:
+            new_data = Parallel(n_jobs=n_jobs)(delayed(get_text_from_cat)(cat, d) for d in files)
+        else:
+            new_data = [get_text_from_cat(cat, d) for d in files]
+        for y, x in new_data:
             if not x or not y:
                 continue
             X.append(x)
             Y.append(y)
-    print('\rCompleted reading in categories')
-    print()
     return X, Y
 
 

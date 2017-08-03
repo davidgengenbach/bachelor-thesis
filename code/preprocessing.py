@@ -27,9 +27,16 @@ def preprocess_text_(text, min_length = -1):
     doc = nlp(text)
     return " ".join(word.text for word in doc if word.pos_ == 'NOUN' and (min_length != -1 or len(word.text) > min_length)).lower()
 
-def preprocess_text(text, remove_stopwords_ = False, remove_interpunction_ = False):
+def preprocess_text_old(text):
     reg = r'\n\n+'
-    text = text.lower()
+    text = '\n'.join(x.strip() for x in text.split('\n') if x.strip() != '')
+    text = re.sub('\n', ' ', re.sub(reg, '//', text)).replace('//', '\n')
+    return text
+
+def preprocess_text(text, lower = True, remove_stopwords_ = False, remove_interpunction_ = False):
+    reg = r'\n\n+'
+    if lower:
+        text = text.lower()
     text = '\n'.join(x.strip() for x in text.split('\n') if x.strip() != '')
     if remove_stopwords_ or remove_interpunction_:
         tokens = to_tokens(text)
