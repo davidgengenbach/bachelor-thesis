@@ -1,16 +1,29 @@
 import networkx as nx
 from glob import glob
 import os
+import preprocessing
+import cooccurrence
+from joblib import Parallel, delayed
+
+def convert_dataset_to_co_occurence_graph_dataset(X, Y, n_jobs = 4):
+    #X, Y = X[:10], Y[:10]
+    print('Pre-processing')
+    X = preprocessing.preprocess_text_spacy(X, min_length = 2)
+    print('Creating adjadency mats')
+    mats = Parallel(n_jobs=n_jobs)(delayed(cooccurrence.get_coocurrence_matrix)(text) for text in X)
+    print('Converting to networkx graphs')
+    graphs = Parallel(n_jobs=n_jobs)(delayed(convert_from_numpy_to_nx)(*mat) for mat in mats)
+    return graphs, Y
 
 
 def convert_from_numpy_to_nx(word2id, id2word, mat):
     """Converts from the co-occurrence format to the networkx
-    
+
     Args:
         word2id (dict): keys are the labels, values are the ids
         id2word (dict): vice versa
         mat (sparse matrix): the adjacency matrix
-    
+
     Returns:
         networkx.Graph: the graph corresponding to the adjacency matrix
     """
@@ -27,15 +40,15 @@ def get_graph_topic_stats(graphs_per_topic):
     return df_graphs_per_topic
 
 
-def get_graphs_from_folder(folder, ext = 'gml', undirected = True, verbose = False):
+def get_graphs_from_folder(folder, ext='gml', undirected=True, verbose=False):
     """Reads in and parses all gml graphs from a folder.
-    
+
     Args:
         folder (str): where to search for graphs
         ext (str, optional): the file extension
         undirected (bool, optional): whether to keep or remove edge directions
         verbose (bool, optional): log more or less
-    
+
     Returns:
         tuple of lists: first list contains the graphs, second the corresponding labels
     """
@@ -56,7 +69,8 @@ def get_graphs_from_folder(folder, ext = 'gml', undirected = True, verbose = Fal
         else:
             if graph is None:
                 break
-            if verbose: print("Empty graph: {}".format(topic_and_id))
+            if verbose:
+                print("Empty graph: {}".format(topic_and_id))
             empty_graphs.append(topic_and_id)
 
     assert len(X) and len(Y), 'X or Y empty'
@@ -64,18 +78,16 @@ def get_graphs_from_folder(folder, ext = 'gml', undirected = True, verbose = Fal
     return X, Y
 
 
-
-
-def get_gml_graph(graph_str, undirected = False, num_tries = 5, verbose = False):
+def get_gml_graph(graph_str, undirected=False, num_tries=5, verbose=False):
     """Given a gml string, this function returns a networkx graph.
     Mostly tries to resolve "duplicate node label" exceptions by replacing node labels with the first occurrence of that label.
-    
+
     Args:
         graph_str (str): the graph in gml
         undirected (bool, optional): Whether to keep the direction
         num_tries (int, optional): how often to try to solve "duplicate node label" exceptions
         verbose (bool, optional): logs more
-    
+
     Returns:
         networkx.(Di)Graph or None: Returns a networkx graph on success, None otherwise
     """
@@ -101,10 +113,12 @@ def get_gml_graph(graph_str, undirected = False, num_tries = 5, verbose = False)
             is_duplicate_label_error = str(result).startswith('node label ') and str(result).endswith(' is duplicated')
             if not is_duplicate_label_error:
                 break
-            # This code resolves the duplicate label error by replacing the occurrences of a duplicate label by its first occurrence
+            # This code resolves the duplicate label error by replacing the
+            # occurrences of a duplicate label by its first occurrence
             delim = "'" if str(result).count('\'') == 2 else '"'
             duplicate_label = "'".join(str(result).split(delim)[1:-1])
-            if verbose: print('\tFound duplicate node label: "{}", trying to replace with first occurence'.format(duplicate_label))
+            if verbose:
+                print('\tFound duplicate node label: "{}", trying to replace with first occurence'.format(duplicate_label))
             # Try to recover
             occurences = []
             for idx, line in enumerate(graph_str_lines):
@@ -121,7 +135,8 @@ def get_gml_graph(graph_str, undirected = False, num_tries = 5, verbose = False)
                 for i in range(end - start + 1):
                     graph_str_lines[start + i] = ''
                 for idx, line in enumerate(graph_str_lines):
-                    graph_str_lines[idx] = line.replace('source {}'.format(label_id), 'source {}'.format(first_occurence_id)).replace('target {}'.format(label_id), 'target {}'.format(first_occurence_id))
+                    graph_str_lines[idx] = line.replace('source {}'.format(label_id), 'source {}'.format(
+                        first_occurence_id)).replace('target {}'.format(label_id), 'target {}'.format(first_occurence_id))
         else:
             return result
     return None

@@ -9,20 +9,22 @@ from joblib import Parallel, delayed
 from collections import Counter
 import numpy as np
 import pandas as pd
+import graph_helper
 
 PATH_TO_HERE = os.path.dirname(os.path.abspath(__file__))
 DATASET_FOLDER = 'data/datasets'
-
+GRAPHS_FOLDER = 'data/graphs'
+CACHE_PATH = 'data/CACHE'
 
 def split_dataset(X, Y, train_size=0.8, random_state_for_shuffle=42):
     """Returns a train/test split for the given dataset.
-    
+
     Args:
         X (list): The docs/graphs
         Y (list of str): The labels
         train_size (float, optional): from 0.0 to 1.0, which percentage is used for train
         random_state_for_shuffle (int, optional): Description
-    
+
     Returns:
         tuple(list): four array corresponding to:
             data_train_X, data_test_X, data_train_Y, data_test_Y
@@ -38,17 +40,11 @@ def split_dataset(X, Y, train_size=0.8, random_state_for_shuffle=42):
         return shuffle(
             X, Y,
             random_state=random_state_for_shuffle
-        ), []
+        ), [], []
 
 
 def preprocess(X, n_jobs=4, **kwargs):
     return Parallel(n_jobs=n_jobs)(delayed(preprocessing.preprocess_text)(text, **kwargs) for text in X)
-
-
-def get_dataset_dict_preprocessed(dataset_name, dataset_folder=DATASET_FOLDER, use_cached=True):
-    X, Y = get_dataset(dataset_name, dataset_folder=dataset_folder, use_cached=use_cached)
-    X = preprocess(X)
-    return X, Y
 
 
 def get_dataset_module(dataset_folder, dataset_name):
@@ -56,11 +52,11 @@ def get_dataset_module(dataset_folder, dataset_name):
     Searches for the module definition in:
     - {dataset_folder}/{dataset_name}/dataset.py
     - {dataset_folder}/dataset_{dataset_name}.py
-    
+
     Args:
         dataset_folder (str): where to search for the dataset py
         dataset_name (str): which dataset to search for
-    
+
     Returns:
         module: the dataset module that has a fetch method
     """
@@ -83,27 +79,34 @@ def get_dataset_module(dataset_folder, dataset_name):
     return dataset_module
 
 
-def get_dataset(dataset_name, use_cached=True, preprocessed=False, dataset_folder=DATASET_FOLDER, preprocessing_args=None, cache_path='data/CACHE'):
-    """Returns the dataset as a list of docs with labels: [(topic1, document1], (topic2, document2))]
+def test_dataset(X, Y):
+    assert isinstance(X, list), 'X must be a list'
+    assert isinstance(Y, list), 'Y must be a list'
+    assert len(X) and len(Y), 'Dataset is empty'
+    assert len(X) == len(Y), 'X and Y must have same length'
+
+
+def get_dataset(dataset_name, use_cached=True, preprocessed=False, dataset_folder=DATASET_FOLDER, preprocessing_args=None, cache_path=CACHE_PATH, transform_fn = None, cache_file = None):
+    """Returns the dataset as a tuple of lists. The first list contains the data, the second the labels
     
     Args:
-        dataset_name (str): The name of the dataset
-        use_cached (bool, optional): Whether to use the cached dataset
-        preprocessed (bool, optional): 
-        dataset_folder (str, optional): Where to search the dataset
-        preprocessing_args (None, optional): 
+        dataset_name (str): the name of the dataset
+        use_cached (bool, optional): whether to use the cached dataset
+        preprocessed (bool, optional): whether to preprocess the text
+        dataset_folder (str, optional): where to search the dataset
+        preprocessing_args (None, optional)
         cache_path (str, optional): folder to save the dataset to after fetching it
+        transform_fn (function, optional): gets applied to the dataset before saving it (only when use_cache=False or the dataset_npy does not exist!)
+        cache_file (str, optional): used to overwrite the cache-path
     
     Returns:
-        list(tuples): a list of documents with labels
+        tuple(list): two lists, the first the data, the second the labels
     """
-    def test_dataset(X, Y):
-        assert isinstance(X, list), 'X must be a list'
-        assert isinstance(Y, list), 'Y must be a list'
-        assert len(X) and len(Y), 'Dataset is empty'
-        assert len(X) == len(Y), 'X and Y must have same length'
 
-    dataset_npy = os.path.join(cache_path, 'dataset_{}.npy'.format(dataset_name))
+    if cache_file:
+        dataset_npy = cache_file
+    else:
+        dataset_npy = os.path.join(cache_path, 'dataset_{}.npy'.format(dataset_name))
 
     if use_cached and os.path.exists(dataset_npy):
         with open(dataset_npy, 'rb') as f:
@@ -114,31 +117,56 @@ def get_dataset(dataset_name, use_cached=True, preprocessed=False, dataset_folde
         # Test dataset validity before saving it
         test_dataset(X, Y)
 
+        if transform_fn:
+            X, Y = transform_fn(X, Y)
+
         with open(dataset_npy, 'wb') as f:
             pickle.dump((X, Y), f)
 
     test_dataset(X, Y)
-
-    if preprocessed:
-        X = preprocess(X, **preprocessing_args)
     return X, Y
 
 
-def get_dataset_subset_with_most_frequent_classes(dataset_name, num_classes_to_keep=2):
+def get_gml_graph_dataset(dataset_name, use_cached = True, graphs_folder = GRAPHS_FOLDER, cache_folder = CACHE_PATH):
+    graph_folder = os.path.join(GRAPHS_FOLDER, dataset_name)
+    cache_npy = os.path.join(CACHE_PATH, 'dataset_graph_gml_{}.npy'.format(dataset_name))
+
+    if use_cached and os.path.exists(cache_npy):
+        with open(cache_npy, 'rb') as f:
+            X, Y = pickle.load(f)
+    else:
+        X, Y = graph_helper.get_graphs_from_folder(graph_folder, undirected = True)
+
+        # Test dataset validity before saving it
+        test_dataset(X, Y)
+
+        with open(cache_npy, 'wb') as f:
+            pickle.dump((X, Y), f)
+    return X, Y
+
+def get_dataset_subset_with_most_frequent_classes(dataset_name, num_classes_to_keep=2, use_numpy=False):
     X, Y = get_dataset(dataset_name)
     most_common_classes = [label for label, count in Counter(Y).most_common(num_classes_to_keep)]
-    if False:
+    if use_numpy:
+        # A little slower
         indices = np.in1d(Y, most_common_classes)
         return np.array(X, dtype=str)[indices], np.array(Y, dtype=str)[indices]
     else:
+        most_common_classes = set(most_common_classes)
         data = [(text, label) for text, label in zip(X, Y) if label in most_common_classes]
         return [x[0] for x in data], [x[1] for x in data]
 
 
 def get_all_available_dataset_names(dataset_folder=DATASET_FOLDER):
-    datasets = glob('{}/*/dataset.py'.format(dataset_folder)) + glob('{}/dataset_*.py'.format(dataset_folder))
-    dataset_folders = [x.replace('/dataset.py', '').replace('dataset_', '').replace('.py', '').replace('/', '.') for x in datasets]
-    return [x.split('.')[-1] for x in dataset_folders]
+    datasets = glob('{}/*/dataset.py'.format(dataset_folder))
+    datasets += glob('{}/dataset_*.py'.format(dataset_folder))
+
+    dataset_folders = [
+        x.replace('/dataset.py', '').replace('dataset_', '').replace('.py', '').replace('/', '.').split('.')[-1]
+        for x in datasets
+    ]
+    return dataset_folders
+
 
 def get_all_datasets(dataset_folder=DATASET_FOLDER, **kwargs):
     """Returns a dict with the available datasets as key and the documents as values
@@ -149,7 +177,7 @@ def get_all_datasets(dataset_folder=DATASET_FOLDER, **kwargs):
     Returns:
         dict: Keys are the dataset names, the values is a list of docs like [(topic1, document1], (topic2, document2))]
     """
-    return { dataset: get_dataset(dataset, **kwargs) for dataset in get_all_available_dataset_names(dataset_folder) }
+    return {dataset: get_dataset(dataset, **kwargs) for dataset in get_all_available_dataset_names(dataset_folder)}
 
 
 def get_dataset_dict(X, Y=None):
@@ -179,11 +207,10 @@ def get_dataset_dict(X, Y=None):
 
 def plot_dataset_class_distribution(X, Y, figsize=(14, 8)):
     x_per_topic = get_dataset_dict(X, Y)
-    df_graphs_per_topic = pd.DataFrame([(topic, len(docs)) for topic, docs in x_per_topic.items()], columns=[
-                                       'topic', 'num_docs']).set_index(['topic']).sort_values(by='num_docs')
+    df_graphs_per_topic = pd.DataFrame([
+        (topic, len(docs)) for topic, docs in x_per_topic.items()],
+        columns=['topic', 'num_docs']
+    ).set_index(['topic']).sort_values(by='num_docs')
     ax = df_graphs_per_topic.plot.barh(title='Docs per topic', legend=False, figsize=figsize)
     ax.set_xlabel('# docs')
     return ax
-
-if __name__ == '__main__':
-    get_all_datasets()
