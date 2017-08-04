@@ -1,11 +1,22 @@
+## 04.08.2017
+- Datensets
+    - Graph dataset retrieval vereinfacht (wird gecached)
+    - Vielleicht alle Zwischenstufen speichern? (pre-processing, co-occurence graph, ...)
+        - Derzeit werden nur Endprodukte gespeichert (Co-occurence graph)
+    - Graphen
+        - Mehr Statistiken sammeln
+            - Most-frequent node label
+            - Most-frequent edge label
+            - Sparsity/Density
+            - Avg labels per dataset
+            - Reduction to initial dataset
+
 ## 03.08.2017
 - Kernel
-    - Most frequent Subgraph
+    - Most frequent Subgraphs
         - Only for recurring subgraphs - not interesting for co-occurence or concept maps
 - Co-occurence
 - Pre-processing
-    - 
-
 
 ## 03.08.2017 (Treffen)
 - Kernel
