@@ -199,13 +199,14 @@ def get_dataset_dict(X, Y=None):
     assert len(set(Y)) > 0
 
     topics = {x: [] for x in set(Y)}
-    for clazz, words in zip(Y, X):
-        if words.strip() != '':
-            topics[clazz].append(words)
+    for clazz, doc in zip(Y, X):
+        #if hasattr(words, 'strip') and words.strip() != '':
+        #    topics[clazz].append(words)
+        topics[clazz].append(doc)
     return topics
 
 
-def plot_dataset_class_distribution(X, Y, figsize=(14, 8)):
+def plot_dataset_class_distribution(X, Y, title = 'Docs per topic', figsize=(14, 8)):
     x_per_topic = get_dataset_dict(X, Y)
     df_graphs_per_topic = pd.DataFrame([
         (topic, len(docs)) for topic, docs in x_per_topic.items()],
