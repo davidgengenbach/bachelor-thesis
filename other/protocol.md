@@ -1,3 +1,11 @@
+## 05.08.2017
+- DeepWalk
+    - per Graph
+    - generiert Random-Walks auf dem Graph
+    - trainiert Word2Vec mit den Random Walks, um Vektor-Repräsentationen für Nodes zu finden
+    - Wie DeepWalk für Text-Klassifikation verwenden?
+- Code in sklearn Pipeline umschreiben (Klassen, die 'transform' methode haben)?
+
 ## 04.08.2017
 - Datensets
     - Graph dataset retrieval vereinfacht (wird gecached)
@@ -10,6 +18,46 @@
             - Sparsity/Density
             - Avg labels per dataset
             - Reduction to initial dataset
+- Kernel
+    - WL
+        - Phi Erweiterung: Tests schreiben
+        - Weighting of phi by norm?
+- Classifier
+    - Class weighting
+    - Normalize Phi!
+    - Combine classical and graph vector
+- Other graph embedding/... approaches
+    - Deep Walk
+        - by Perozzi
+        - Paper: ""
+            - http://perozzi.net/publications/14_kdd_deepwalk.pdf
+    - LINE
+        - by Tang
+        - Paper: "LINE: Large-scale Information Network Embedding"
+            - http://dl.acm.org/citation.cfm?id=2736277.2741093
+    - GraRep
+        - by Cao
+        - "... a novel model for learning vertex representations of weighted graphs."
+        - Paper: "GraRep: Learning Graph Representations with Global Structural Information"
+            - http://dl.acm.org/citation.cfm?id=2806512
+        - Repo: https://github.com/ShelsonCao/GraRep
+    - GGSNN
+        - by Li et al
+        - Paper: "Gated Graph Sequence Neural Networks"
+            - https://arxiv.org/pdf/1511.05493.pdf
+    - CENE
+        - by Sun et al
+        - Paper: "A General Framework for Content-enhanced Network Representation Learning"s
+            - https://arxiv.org/pdf/1610.02906.pdf
+    - Community Preserving Network Embedding
+        - by Wang et al
+        - Paper: "Community Preserving Network Embedding"
+            - 
+    - Fast Network Embedding Enhancement via High Order Proximity Approximation
+        - Paper
+            - http://nlp.csai.tsinghua.edu.cn/~lzy/publications/ijcai2017_fastnrl.pdf
+    - https://github.com/thunlp/NRLPapers
+
 
 ## 03.08.2017
 - Kernel

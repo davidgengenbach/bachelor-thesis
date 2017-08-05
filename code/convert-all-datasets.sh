@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 
-for i in "ling-spam" "ng20" "reuters-21578" "webkb"; do
+set -x
+
+for i in $(python -c "for i in __import__('dataset_helper').get_all_available_dataset_names(): print(i)"); do
     echo "############### Preparing dataset: $i"
     ./convert-datasets.py --dataset_name $i --force --concat_train_instances --one_document_per_folder
+    exit
 done

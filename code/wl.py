@@ -14,7 +14,7 @@ def compute_phi(graph, phi_shape, label_lookups, label_counters, h, keep_history
     labels = [label_lookups[0].tolist()[node] for node in sorted(graph.nodes())]
     phi = np.zeros(phi_shape[0], dtype = np.int32)
     phi_list = [0] * (h + 1) if keep_history else [0]
-    adj_mat = nx.adjacency_matrix(graph, nodelist = sorted(graph.nodes()))
+    adj_mat = nx.adjacency_matrix(graph, nodelist = sorted(graph.nodes()))# / nx.number_of_edges(graph)
     for label in labels:
         phi[label] += 1
     phi_list[0] = phi

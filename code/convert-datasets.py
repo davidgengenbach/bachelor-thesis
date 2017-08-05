@@ -24,6 +24,7 @@ import sys
 import json
 import dataset_helper
 import preprocessing
+from collections import defaultdict
 
 from sklearn.model_selection import train_test_split
 from sklearn.utils import shuffle
@@ -71,82 +72,64 @@ def main():
 
 
 def process(dataset_name, out_folder, train_size, random_state_for_shuffle, one_document_per_folder, rename, max_elements, dataset_folder, force, args, concat_train_instances):
-    X, Y = dataset_helper.get_dataset(dataset_name, dataset_folder)
-    data = [(topic, preprocessing.preprocess_text(text)) for topic, text in zip(Y, X)]
-    topics = dataset_helper.get_dataset_dict(data)
-    topics_count = {topic: len(docs) for topic, docs in topics.items()}
+
     out_folder = os.path.join(out_folder, dataset_name)
 
     if not force and os.path.isdir(out_folder):
         print('Outfolder existing! Aborting ({})'.format(out_folder))
         sys.exit(1)
 
+    X, Y = dataset_helper.get_dataset(dataset_name, dataset_folder)
+    X = [preprocessing.preprocess_text_old(text) for text in X]
+    print(len(X))
+    #topics = dataset_helper.get_dataset_dict(X, Y)
+    #topics_count = {topic: len(docs) for topic, docs in topics.items()}
+    data_train_X, data_test_X, data_train_Y, data_test_Y = dataset_helper.split_dataset(X, Y, random_state_for_shuffle = random_state_for_shuffle, train_size = train_size)
+    if train_size == 1.0:
+        sets = [
+            ('all', data_train_X, data_train_Y)
+        ]
+    else:
+        sets = [
+            ('train', data_train_X, data_train_Y),
+            ('test', data_test_X, data_test_Y)
+        ]
+
+    # Create folder
     os.makedirs(out_folder, exist_ok=True)
+    all_topic_counts = defaultdict(int)
+    for set_name, X, Y in sets:
+        topic_id_counters = defaultdict(int)
+        set_folder = os.path.join(out_folder, set_name)
+        assert len(X) == len(Y)
 
-    topic_doc_counts = {}
-
-    for topic, docs in topics.items():
-        topic_id = topic
-
-        # Create train/test split
-        if train_size == 1.0:
-            docs_train, docs_test = shuffle(
-                docs, random_state=random_state_for_shuffle
-            ), []
-        else:
-            docs_train, docs_test = train_test_split(
-                docs,
-                train_size=train_size,
-                random_state=random_state_for_shuffle
-            )
-
-        if max_elements != -1:
-            max_elements_train = min(int(max_elements * train_size), len(docs_train))
-            max_elements_test = min(int(max_elements * (1 - train_size)), len(docs_test))
-            docs_train = docs_train[:max_elements_train]
-            docs_test = docs_test[:max_elements_test]
-
-        assert len(docs_train) > 0, "\t-> len(docs_train) == 0"
-        assert train_size == 1.0 or len(docs_test) > 0, "\t-> len(docs_test) == 0"
-
-        print('Category: {:<27} #docs: train {:>3}, test {:>3}'.format(
-            '"' + topic + '"', len(docs_train), len(docs_test)))
-
-        topic_doc_counts[topic] = {'train': len(docs_train), 'test': len(docs_test)}
-
-        if train_size == 1.0:
-            sets = [('all', docs_train)]
-        else:
-            sets = [('train', docs_train), ('test', docs_test)]
-
-        # Save sets
-        for doc_set_name, doc_set in sets:
+        for x, y in zip(X, Y):
             # Create set folder if not one_document_per_folder
             if one_document_per_folder:
-                dataset_folder = os.path.join(out_folder, '{}')
-                folder = dataset_folder.format(doc_set_name)
+                folder = set_folder
             else:
-                dataset_folder = os.path.join(out_folder, '{}', str(topic_id))
-                folder = dataset_folder.format(doc_set_name)
+                folder = os.path.join(set_folder, str(y))
             os.makedirs(folder, exist_ok=True)
-            for idx, doc in enumerate(doc_set):
-                doc_id = str(idx).zfill(4)
-                if concat_train_instances and doc_set_name == 'train':
-                    filename = '{}/{}/{}.txt'.format(folder, topic_id, doc_id)
-                elif one_document_per_folder:
-                    filename = '{}/{}_{}/{}.txt'.format(folder, topic_id, doc_id, '0')
-                else:
-                    filename = '{}/{}.txt'.format(folder, str(idx).zfill(4))
-                os.makedirs(os.path.join(*filename.split('/')[:-1]), exist_ok=True)
-                with codecs.open(filename, 'w') as f:
-                    f.write(doc)
+
+            doc_id = str(topic_id_counters[y]).zfill(4)
+
+            if concat_train_instances and set_name == 'train':
+                filename = '{}/{}/{}.txt'.format(folder, y, doc_id)
+            elif one_document_per_folder:
+                filename = '{}/{}_{}/{}.txt'.format(folder, y, doc_id, '0')
+            os.makedirs(os.path.join(*filename.split('/')[:-1]), exist_ok=True)
+
+            with codecs.open(filename, 'w') as f:
+                f.write(x)
+            all_topic_counts[y] += 1
+            topic_id_counters[y] += 1
 
     with open(os.path.join(out_folder, 'stats.json'), 'w') as f:
         json.dump({
-            'total_docs': len(data),
-            'categories': list(set(topic for topic, x in data)),
-            'topic_counts': topics_count,
-            'topic_train_counts': topic_doc_counts,
+            'total_docs': sum(all_topic_counts.values()),
+            'categories': list(set(Y)),
+            'topic_counts': all_topic_counts,
+            'set_counts': {name: len(X) for name, X, Y in sets},
             'params': args
         }, f, indent=4)
 
