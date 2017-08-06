@@ -1,18 +1,26 @@
 import numpy as np
+import spacy
+from spacy.tokens.doc import Doc
 from scipy.sparse import lil_matrix
 from nltk.tokenize import word_tokenize, sent_tokenize
 import networkx as nx
 import collections
 
 def words_to_dict(words, remove_point = True):
-    words = set(words) - set('.')
+    words = set(words)
     words = sorted(list(words))
     word2id = {word: idx for idx, word in enumerate(words)}
     return word2id, {idx: word for word, idx in word2id.items()}
 
 def get_coocurrence_matrix(text, window_size = 2, ignore_sentence_bounds = True, only_forward_window = False):
-    text = text.replace('.', ' ' if ignore_sentence_bounds else ' . ').lower()
-    words = word_tokenize(text)
+    if isinstance(text, list):
+        if isinstance(text, spacy.tokens.doc.Doc):
+            words = [word.text for word in doc if not ignore_sentence_bounds or word.pos != spacy.symbols.PUNCT]
+        else:
+            words = text
+    else:
+        text = text.replace('.', ' ' if ignore_sentence_bounds else ' . ').lower()
+        words = word_tokenize(text)
     word2id, id2word = words_to_dict(words)
     num_words = len(word2id.keys())
     mat = lil_matrix((num_words, num_words), dtype=np.int8)

@@ -88,6 +88,13 @@ def test_dataset_validity(X, Y):
     assert len(set(Y)), 'Y must contain at least one label'
 
 
+def get_dataset_cached(cache_file):
+    assert os.path.exists(cache_file), 'Could not find cache_file: {}'.format(cache_file)
+    with open(cache_file, 'rb') as f:
+        X, Y = pickle.load(f)
+    test_dataset_validity(X, Y)
+    return X, Y
+
 def get_dataset(dataset_name, use_cached=True, preprocessed=False, dataset_folder=DATASET_FOLDER, preprocessing_args=None, cache_path=CACHE_PATH, transform_fn=None, cache_file=None):
     """Returns the dataset as a tuple of lists. The first list contains the data, the second the labels
     TODO: Caching could be done with decorator.
@@ -112,8 +119,7 @@ def get_dataset(dataset_name, use_cached=True, preprocessed=False, dataset_folde
         dataset_npy = os.path.join(cache_path, 'dataset_{}.npy'.format(dataset_name))
 
     if use_cached and os.path.exists(dataset_npy):
-        with open(dataset_npy, 'rb') as f:
-            X, Y = pickle.load(f)
+        X, Y = get_dataset_cached(dataset_npy)
     else:
         X, Y = get_dataset_module(dataset_folder, dataset_name).fetch()
 

@@ -45,9 +45,9 @@ class WLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Transfor
                 TEST_LABEL = 'ajksdlkajslkj'
                 X[idx].add_node(TEST_LABEL)
                 X[idx].add_edge(TEST_LABEL, TEST_LABEL)
+                labels.append(TEST_LABEL)
 
         ad_list = [nx.adjacency_matrix(g, nodelist=labels) for g, labels in zip(X, node_label)]
-
         # TODO: do this in batches
         K, phi_list, label_lookups, label_counters = wl.WL_compute(
             ad_list, node_label, self.H, all_nodes=self.all_nodes, compute_k=False, DEBUG=False)

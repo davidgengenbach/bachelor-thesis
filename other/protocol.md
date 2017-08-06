@@ -7,10 +7,23 @@
         - Aufaddieren der Word2Vec Vektoren von DeepWalk Embedding als Repräsentation von Dokument
     - Fast_WL benutzen?
         - https://github.com/rmgarnett/fast_wl
-- Hyperparameter Tuning
-    - Vielleicht lieber stochastisch anstatt Grid?
+- Cross-Validation und Hyperparameter Tuning
+    - Hyperparameter Tuning eher stochastisch anstatt Grid?
         - http://www.jmlr.org/papers/volume13/bergstra12a/bergstra12a.pdf
-
+    - Neuen Transformer für verschiedene Classifier
+    - Preprocessing Transformer für sklearn schreiben
+- WL Kernel Transformer
+    - Batching?
+- Fast WL
+    - Funktion um neues Label/Color für einen Node zu finden ist:
+        - l_new(x) = l_old(x) + sum_{y element neighbours(x)}:(log(prime_number_with_index(label_old(y))))
+    - Frage ist, wo verschnellerung ist, wenn sowieso keine String-Vergleiche gemacht werden, sondern ein Label Lookup über die IDs der Labels gemacht wird
+- Graph Convolutional Networks
+    - https://tkipf.github.io/graph-convolutional-networks/
+    - http://www.inference.vc/how-powerful-are-graph-convolutions-review-of-kipf-welling-2016-2/
+    - Paper: "Semi-supervised Classification With Graph Convolutional Networks"
+        - https://arxiv.org/pdf/1609.02907.pdf
+- word2vec gradient through document?
 
 ## 05.08.2017
 - DeepWalk
@@ -19,6 +32,7 @@
     - trainiert Word2Vec mit den Random Walks, um Vektor-Repräsentationen für Nodes zu finden
     - Wie DeepWalk für Text-Klassifikation verwenden?
 - Code in sklearn Pipeline umschreiben (Klassen, die 'transform' methode haben)?
+
 
 ## 04.08.2017
 - Datensets
@@ -66,7 +80,6 @@
     - Community Preserving Network Embedding
         - by Wang et al
         - Paper: "Community Preserving Network Embedding"
-            - 
     - Fast Network Embedding Enhancement via High Order Proximity Approximation
         - Paper
             - http://nlp.csai.tsinghua.edu.cn/~lzy/publications/ijcai2017_fastnrl.pdf
@@ -79,6 +92,7 @@
         - Only for recurring subgraphs - not interesting for co-occurence or concept maps
 - Co-occurence
 - Pre-processing
+
 
 ## 03.08.2017 (Treffen)
 - Kernel
@@ -98,6 +112,7 @@
     - r-21578 zu r-8 (direkt mit Graphen)
 - Graph statistics
     - Histogramm #nodes, Achse?
+
 
 ## 02.08.2017
 - Zeiten
@@ -120,6 +135,7 @@
         - (optional) remove stopwords
         - (optional) remove interpuncation
     - Graph statistics
+
 
 ## 30.07.2017
 - Drei Paper von Tobias
@@ -145,6 +161,7 @@
                 - John Blitzer, Mark Dredze, and Fernando Pereira. 2007. Biographies, bollywood, boomboxes and blenders: Domain adaptation for sentiment classi- fication. In Proceedings of the 45th Annual Meeting of the Association of Computational Linguistics, ACL ’07, pages 440–447.
                 - http://anthology.aclweb.org/P/P07/P07-1.pdf#page=478
                 - https://www.cs.jhu.edu/~mdredze/datasets/sentiment/
+
 
 ## 28.07.2017
 - Datasets
@@ -172,7 +189,7 @@
             - http://csmining.org/index.php/ling-spam-datasets.html?file=tl_files/Project_Datasets/Ling-Spam%20data%20set/lingspam_public01.tar.tar
             - http://csmining.org/index.php/ling-spam-datasets.html?file=tl_files/Project_Datasets/Ling-Spam%20data%20set/lingspam_public02.tar.tar
     - Amazon reviews
-        - 
+
 
 ## 27.07.2017 (Treffen)
 - Prediction Error: "Wieso eine Klasse oft mispredicted?"
