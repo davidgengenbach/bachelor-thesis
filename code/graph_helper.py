@@ -4,11 +4,15 @@ import os
 import preprocessing
 import cooccurrence
 from joblib import Parallel, delayed
+import sklearn
+from sklearn.base import TransformerMixin
+import logging
+import wl
 
-def convert_dataset_to_co_occurence_graph_dataset(X, Y, n_jobs = 4):
-    #X, Y = X[:10], Y[:10]
+
+def convert_dataset_to_co_occurence_graph_dataset(X, Y, n_jobs=4):
     print('Pre-processing')
-    X = preprocessing.preprocess_text_spacy(X, min_length = 2)
+    X = preprocessing.preprocess_text_spacy(X, min_length=2)
     print('Creating adjadency mats')
     mats = Parallel(n_jobs=n_jobs)(delayed(cooccurrence.get_coocurrence_matrix)(text) for text in X)
     print('Converting to networkx graphs')
