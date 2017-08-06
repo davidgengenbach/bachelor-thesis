@@ -1,3 +1,17 @@
+## 06.08.2017
+- Unterhaltung Prof. Kersting per Skype
+    - Cross-Validation benutzen
+    - Hyperparameter Tuning durch GridSearch, ...
+    - Gewichtung der Edges durch Word2Vec
+        - Bei DeepWalk?
+        - Aufaddieren der Word2Vec Vektoren von DeepWalk Embedding als Repräsentation von Dokument
+    - Fast_WL benutzen?
+        - https://github.com/rmgarnett/fast_wl
+- Hyperparameter Tuning
+    - Vielleicht lieber stochastisch anstatt Grid?
+        - http://www.jmlr.org/papers/volume13/bergstra12a/bergstra12a.pdf
+
+
 ## 05.08.2017
 - DeepWalk
     - per Graph

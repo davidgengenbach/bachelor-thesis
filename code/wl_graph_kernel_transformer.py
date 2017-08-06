@@ -4,6 +4,7 @@ import logging
 import networkx as nx
 import graph_helper
 import wl
+from joblib import Parallel, delayed
 
 class WLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.TransformerMixin):
     """Weisfeiler-Lehman transformer. Fits the training set by calculating the phi for each instance
@@ -15,9 +16,10 @@ class WLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Transfor
         phi_list (list(lil_matrix)): the phis for the iterations
     """
 
-    def __init__(self, H=1, remove_missing_labels=True):
+    def __init__(self, H=1, remove_missing_labels=True, n_jobs = 1):
         self.remove_missing_labels = remove_missing_labels
         self.H = H
+        self.n_jobs = n_jobs
 
     def fit(self, X, y=None, **fit_params):
         """Initializes the list of node labels.
@@ -29,7 +31,7 @@ class WLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Transfor
         Returns:
             WLGraphKernelTransformer: returns self
         """
-        print('fitting: len(X)={}, H={}, params={}'.format(len(X), self.H, fit_params))
+        print('WLGraphKernelTransformer.fit: len(X)={}, H={}'.format(len(X), self.H))
         all_nodes = set()
         for x in X:
             all_nodes |= set(x.nodes())
@@ -39,7 +41,7 @@ class WLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Transfor
 
         for idx, labels in enumerate(node_label):
             if len(labels) == 0:
-                print("Found empty graph in training set!")
+                print("WLGraphKernelTransformer.fit: Found empty graph in training set!")
                 TEST_LABEL = 'ajksdlkajslkj'
                 X[idx].add_node(TEST_LABEL)
                 X[idx].add_edge(TEST_LABEL, TEST_LABEL)
@@ -57,7 +59,7 @@ class WLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Transfor
         return self
 
     def transform(self, X, y=None, **fit_params):
-        print('transform: len(X)={}, H={}, params={}'.format(len(X), self.H, fit_params))
+        print('WLGraphKernelTransformer.transform: len(X)={}, H={}'.format(len(X), self.H))
         # This is to cache the prior transformation of the training samples.
         # This is deeply problematic and must be changed eventually!
         if len(X) == self.train_graph_count:
@@ -65,7 +67,7 @@ class WLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Transfor
             return self.phi_list[-1].T
 
         def process(graph):
-            # Remove nodes that are in the training set, but not in the
+            # Remove nodes from the graphs in X where the node label has not been seen in training
             if self.remove_missing_labels:
                 missing_nodes = frozenset(graph.nodes()) - self.all_nodes
                 if len(missing_nodes):

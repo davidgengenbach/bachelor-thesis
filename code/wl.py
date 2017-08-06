@@ -9,18 +9,20 @@ def add_row_and_column(mat, added = (0, 0), num = 1, dtype = None):
     mat_b[:mat.shape[0],:mat.shape[1]] = mat.todense()
     return mat_b
 
-def compute_phi(graph, phi_shape, label_lookups, label_counters, h, keep_history = True):
+def compute_phi(graph, phi_shape, label_lookups, label_counters, h, keep_history = True, allow_new_nodes = False):
     assert len(label_lookups) == h + 1
     assert len(label_counters) == h + 1
+
     num_nodes = len(graph.nodes())
     labels = [label_lookups[0].tolist()[node] for node in sorted(graph.nodes())]
     phi = np.zeros(phi_shape[0], dtype = np.int32)
     phi_list = [0] * (h + 1) if keep_history else [0]
     nodes = graph.nodes()
+
     if not len(nodes):
         return [phi], [{} for i in range(h)], label_counters
 
-    adj_mat = nx.adjacency_matrix(graph, nodelist = sorted(graph.nodes()))# / nx.number_of_edges(graph)
+    adj_mat = nx.adjacency_matrix(graph, nodelist = sorted(graph.nodes()))
     for label in labels:
         phi[label] += 1
     phi_list[0] = phi
