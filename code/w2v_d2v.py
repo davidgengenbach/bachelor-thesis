@@ -33,9 +33,10 @@ def lemmatize(ambiguous_word, pos=None, neverstem=True,
     else:
         return lemma
 
+tokenizer = sklearn.feature_extraction.text.CountVectorizer(stop_words='english').build_tokenizer()
 
 def w2v_preproess(doc, lemmatize_word=False):
-    return [lemmatize(x.lower()) if lemmatize_word else x.lower() for x in sklearn.feature_extraction.text.CountVectorizer(stop_words='english').build_tokenizer()(doc)]
+    return [lemmatize(x.lower()) if lemmatize_word else x.lower() for x in tokenizer(doc)]
 
 
 def train_w2v(w2v_data, iterations=50):
