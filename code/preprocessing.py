@@ -26,7 +26,11 @@ def preprocess_text_spacy(texts, min_length=-1, concat=True, n_jobs=2, batch_siz
     Returns:
         list of str: the pre-processed text
     """
-    return [" ".join([word.text for word in doc if word.pos_ == 'NOUN' and (min_length == -1 or len(word.text) > min_length)]) for doc in get_spacy_parse(texts, batch_size=batch_size, n_threads=n_jobs)]
+    res = [[word for word in doc if word.pos_ == 'NOUN' and (min_length == -1 or len(word.text) > min_length)] for doc in get_spacy_parse(texts, batch_size=batch_size, n_threads=n_jobs)]
+    if concat:
+        return [" ".join([word.text for word in doc] for doc in res)]
+    else:
+        return res
 
 
 def preprocess_text_(text, min_length=-1):

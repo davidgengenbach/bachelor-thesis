@@ -10,11 +10,11 @@ import logging
 import wl
 
 
-def convert_dataset_to_co_occurence_graph_dataset(X, Y, n_jobs=4):
+def convert_dataset_to_co_occurence_graph_dataset(X, Y, min_length = 2, n_jobs=4, **cooccurrence_kwargs):
     print('Pre-processing')
-    X = preprocessing.preprocess_text_spacy(X, min_length=2)
+    X = preprocessing.preprocess_text_spacy(X, min_length=min_length, concat = False)
     print('Creating adjadency mats')
-    mats = Parallel(n_jobs=n_jobs)(delayed(cooccurrence.get_coocurrence_matrix)(text) for text in X)
+    mats = Parallel(n_jobs=n_jobs)(delayed(cooccurrence.get_coocurrence_matrix)(text, **cooccurrence_kwargs) for text in X)
     print('Converting to networkx graphs')
     graphs = Parallel(n_jobs=n_jobs)(delayed(convert_from_numpy_to_nx)(*mat) for mat in mats)
     return graphs, Y
