@@ -1,7 +1,6 @@
 from glob import glob
 import os
 import importlib
-import preprocessing
 from sklearn.model_selection import train_test_split
 from sklearn.utils import shuffle
 import pickle
@@ -10,12 +9,12 @@ from collections import Counter
 import numpy as np
 import pandas as pd
 import graph_helper
+import scipy.sparse
 
 PATH_TO_HERE = os.path.dirname(os.path.abspath(__file__))
 DATASET_FOLDER = 'data/datasets'
 GRAPHS_FOLDER = 'data/graphs'
 CACHE_PATH = 'data/CACHE'
-
 
 def split_dataset(X, Y, train_size=0.8, random_state_for_shuffle=42):
     """Returns a train/test split for the given dataset.
@@ -45,6 +44,7 @@ def split_dataset(X, Y, train_size=0.8, random_state_for_shuffle=42):
         return X_, [], Y_, []
 
 def preprocess(X, n_jobs=4, **kwargs):
+    import preprocessing
     return Parallel(n_jobs=n_jobs)(delayed(preprocessing.preprocess_text)(text, **kwargs) for text in X)
 
 
@@ -81,10 +81,19 @@ def get_dataset_module(dataset_folder, dataset_name):
 
 
 def test_dataset_validity(X, Y):
-    assert isinstance(X, list), 'X must be a list'
+    def sparse_matrix_type(a):
+        types = [scipy.sparse.lil_matrix, scipy.sparse.coo_matrix]
+        for t in types:
+            if isinstance(a, t): return True
+        return False
+    assert isinstance(X, list) or sparse_matrix_type(X), 'X must be a list, it is: {}'.format(type(X))
     assert isinstance(Y, list), 'Y must be a list'
-    assert len(X) and len(Y), 'Dataset is empty'
-    assert len(X) == len(Y), 'X and Y must have same length'
+    if sparse_matrix_type(X):
+        assert X.shape[0] and len(Y), 'Dataset is empty'
+        assert X.shape[0] == len(Y), 'X and Y must have same length'
+    else:
+        assert len(X) and len(Y), 'Dataset is empty'
+        assert len(X) == len(Y), 'X and Y must have same length'
     assert len(set(Y)), 'Y must contain at least one label'
 
 
@@ -208,8 +217,13 @@ def get_all_available_dataset_names(dataset_folder=DATASET_FOLDER):
         x.replace('/dataset.py', '').replace('dataset_', '').replace('.py', '').replace('/', '.').split('.')[-1]
         for x in datasets
     ]
-    return dataset_folders
+    return sorted(dataset_folders)
 
+def get_all_cached_datasets(cache_path = CACHE_PATH):
+    return sorted(glob(cache_path + '/*.npy'))
+
+def get_all_cached_graph_datasets(cache_path = CACHE_PATH):
+    return [x for x in get_all_cached_datasets(cache_path) if x.split('/')[-1].startswith('dataset_graph') and 'phi' not in x]
 
 def get_all_datasets(dataset_folder=DATASET_FOLDER, **kwargs):
     """Returns a dict with the available datasets as key and the documents as values
@@ -247,12 +261,12 @@ def get_dataset_dict(X, Y=None):
     return topics
 
 
-def plot_dataset_class_distribution(X, Y, title='Docs per topic', figsize=(14, 8)):
+def plot_dataset_class_distribution(X, Y, title='Docs per topic', figsize=(14, 8), ax = None):
     x_per_topic = get_dataset_dict(X, Y)
     df_graphs_per_topic = pd.DataFrame([
         (topic, len(docs)) for topic, docs in x_per_topic.items()],
         columns=['topic', 'num_docs']
     ).set_index(['topic']).sort_values(by='num_docs')
-    ax = df_graphs_per_topic.plot.barh(title='Docs per topic', legend=False, figsize=figsize)
+    ax = df_graphs_per_topic.plot.barh(title='Docs per topic', legend=False, figsize=figsize, ax = ax)
     ax.set_xlabel('# docs')
     return ax

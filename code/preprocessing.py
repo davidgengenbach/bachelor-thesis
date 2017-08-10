@@ -5,14 +5,14 @@ from nltk.corpus import stopwords
 import string
 from time import time
 import spacy
-nlp = spacy.load('en')
 
+nlp = spacy.load('en')
 nlp.pipeline = [nlp.tagger]
 
 def get_spacy_parse(texts, batch_size = 100, n_threads = 1):
     return nlp.pipe(texts, batch_size=batch_size, n_threads=n_threads)
 
-def preprocess_text_spacy(texts, min_length=-1, concat=True, n_jobs=2, batch_size=100):
+def preprocess_text_spacy(texts, min_length=-1, concat=True, n_jobs=2, batch_size=100, only_nouns = True):
     """Preprocesses text by
     - only keeping the NOUNs
     - only keeping the words that are longer than min_length (optional)
@@ -26,7 +26,7 @@ def preprocess_text_spacy(texts, min_length=-1, concat=True, n_jobs=2, batch_siz
     Returns:
         list of str: the pre-processed text
     """
-    res = [[word for word in doc if word.pos_ == 'NOUN' and (min_length == -1 or len(word.text) > min_length)] for doc in get_spacy_parse(texts, batch_size=batch_size, n_threads=n_jobs)]
+    res = [[word for word in doc if (not only_nouns or word.pos_ == 'NOUN') and (min_length == -1 or len(word.text) > min_length)] for doc in get_spacy_parse(texts, batch_size=batch_size, n_threads=n_jobs)]
     if concat:
         return [" ".join([word.text for word in doc] for doc in res)]
     else:

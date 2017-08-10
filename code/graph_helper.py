@@ -12,12 +12,33 @@ import wl
 
 def convert_dataset_to_co_occurence_graph_dataset(X, Y, min_length = 2, n_jobs=4, **cooccurrence_kwargs):
     print('Pre-processing')
-    X = preprocessing.preprocess_text_spacy(X, min_length=min_length, concat = False)
+    X = preprocessing.preprocess_text_spacy(X, min_length=min_length, concat = False, only_nouns = False)
     print('Creating adjadency mats')
     mats = Parallel(n_jobs=n_jobs)(delayed(cooccurrence.get_coocurrence_matrix)(text, **cooccurrence_kwargs) for text in X)
     print('Converting to networkx graphs')
     graphs = Parallel(n_jobs=n_jobs)(delayed(convert_from_numpy_to_nx)(*mat) for mat in mats)
     return graphs, Y
+
+
+def get_wl_args(graphs):
+    nodes = [sorted(g.nodes()) for g in graphs]
+    adjs = [nx.adjacency_matrix(g, nodelist = labels).toarray() for g, labels in zip(graphs, nodes)]
+    return adjs, nodes
+
+
+def get_all_node_labels(graphs):
+    """Returns all unique labels in a list of graphs.
+    
+    Args:
+        graphs (list(nx.Graph)): list of graphs
+    
+    Returns:
+        list(str): the unique labels
+    """
+    labels = set()
+    for graph in graphs:
+        labels |= set(graph.nodes())
+    return sorted(list(labels))
 
 
 def convert_from_numpy_to_nx(word2id, id2word, mat):

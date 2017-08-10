@@ -1,3 +1,12 @@
+## 10.08.2017 (Treffen)
+- Graphen
+    - "no-nouns" -> "only-nouns"
+- Results
+    - alle Parameter mit Ergebnissen in Tabelle
+- Co-reference
+    - Glove Embeddings
+
+
 ## 06.08.2017
 - Unterhaltung Prof. Kersting per Skype
     - Cross-Validation benutzen
@@ -24,6 +33,7 @@
     - Paper: "Semi-supervised Classification With Graph Convolutional Networks"
         - https://arxiv.org/pdf/1609.02907.pdf
 - word2vec gradient through document?
+
 
 ## 05.08.2017
 - DeepWalk
