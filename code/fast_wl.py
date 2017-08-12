@@ -1,7 +1,13 @@
+"""Implementation of the fast hashing-based algorithm.
+Ported from the MATLAB version: https://github.com/rmgarnett/fast_wl
+
+Attributes:
+    primes_arguments_required (list):
+"""
 import networkx as nx
 import sympy
 import numpy as np
-from scipy.sparse import lil_matrix, coo_matrix
+from scipy.sparse import bsr_matrix, coo_matrix, csc_matrix, csr_matrix, dia_matrix, dok_matrix, lil_matrix
 from collections import defaultdict
 import primes
 
@@ -9,70 +15,85 @@ import primes
 primes_arguments_required = [2, 3, 7, 19, 53, 131, 311, 719, 1619, 3671, 8161, 17863, 38873, 84017, 180503, 386093, 821641, 1742537, 3681131, 7754077, 16290047]
 
 
-def fast_wl_compute(graphs, h=1, label_lookups=None, label_counters=None, primes_arguments_required=primes_arguments_required):
-    new_label_lookups = []
-    new_label_counters = []
+def fast_wl_compute(graphs, h=1, label_lookups=None, label_counters=None, primes_arguments_required=primes_arguments_required, phi_dim = None, labels_dtype = np.uint32):
+    # If no previous label counters/lookups are given, create empty ones
     if not label_lookups:
         label_lookups = [{} for x in range(h + 1)]
     if not label_counters:
-        label_counters = [1] * (h + 1)
+        label_counters = [0] * (h + 1)
 
-    print('Relabeling graphs')
-    label_lookup, label_counter, relabeled_labels, adjs = relabel_graphs(graphs, label_lookups[0])
-    print('Relabeling graphs: END')
-
-    assert len(relabeled_labels) == len(graphs)
-
-    new_label_counters.append(label_counter)
-    new_label_lookups.append(label_lookup)
+    # Relabel the graphs, mapping the string labels to unique IDs (ints)
+    label_lookup, label_counter, graph_labels, adjacency_matrices = relabel_graphs(graphs, label_counter = label_counters[0], label_lookup = label_lookups[0], labels_dtype = labels_dtype)
 
     num_labels = len(label_lookup.keys())
     num_graphs = len(graphs)
 
+    assert len(graph_labels) == len(graphs)
+
+    # Save the label_lookups/label_counters for later use
+    new_label_lookups = [label_counter]
+    new_label_counters = [label_counter]
+
+    # The upper bound up to which the prime numbers have to be retrieved
     primes_needed = primes_arguments_required[int(np.ceil(np.log2(num_labels)) + 2)]
 
     log_primes = primes.get_log_primes(1, primes_needed)
 
-    #labels = [sorted(g.nodes()) for g in graphs]
-    #adjs = [nx.adjacency_matrix(graph, nodelist=labels_) for graph, labels_ in zip(graphs, relabeled_labels)]
-    phi_shape = (sum(len(x) for x in relabeled_labels), num_graphs)
-    # Uncomment when gram/kernel matrix should be calculated
-    #K = np.zeros((num_graphs, num_graphs), dtype = np.uint32)
-    phi_lists = []
-    print('Starting iterations')
+    # The number of unique labels (= the total number of nodes in graphs)
+    if not phi_dim:
+        phi_dim = sum(len(x) for x in graph_labels)
+        
+    phi_shape = (phi_dim, num_graphs)
+
+    # Just count the labels in the 0-th iteration. This corresponds to the graph_labels, but indexed correctly into phi
+    phi = lil_matrix(phi_shape, dtype=np.uint8)
+    for idx, labels in enumerate(graph_labels):
+        phi[labels, idx] = 1
+
+    phi_lists = [phi]
+
+    # For the number of iterations h...
     for i in range(h):
+        # ... use previous label counters/lookups, if given
         label_lookup = label_lookups[i + 1]
         label_counter = label_counters[i + 1]
         phi = lil_matrix(phi_shape, dtype=np.uint8)
-        for idx, (labels_, A) in enumerate(zip(relabeled_labels, adjs)):
-            signatures = np.round((labels_ + A * log_primes[np.array(labels_) - 1]), decimals=10)
-            new_labels = np.zeros(len(signatures), dtype=np.uint8)
-            for idx_, signature in enumerate(signatures):
+        # ... go over all graphs
+        for idx, (labels, adjacency_matrix) in enumerate(zip(graph_labels, adjacency_matrices)):
+            # ... generate the signatures (see paper) for each graph
+            signatures = np.round((labels + adjacency_matrix * log_primes[labels]), decimals=10)
+
+            # ... add missing signatures to the label lookup
+            for signature in signatures:
                 if signature not in label_lookup:
                     label_lookup[signature] = label_counter
                     label_counter += 1
-                new_labels[idx_] = label_lookup[signature]
-            relabeled_labels[idx] = new_labels
-            phi[new_labels - 1, idx] = np.ones(phi[new_labels - 1, idx].shape, dtype=np.uint8)
+            # ... relabel the graphs with the new (compressed) labels
+            new_labels = np.array([label_lookup[signature] for signature in signatures], dtype = labels_dtype)
+            graph_labels[idx] = new_labels
+            # ... set the entries in phi to one, where a label is given
+            phi[new_labels, idx] = 1
+        # ... save phi
         phi_lists.append(phi)
+        # ... save label counters/lookups for later use
         new_label_counters.append(label_counter)
         new_label_lookups.append(label_lookups)
-        # Uncomment when gram/kernel matrix is wanted
-        #K += phi.T.dot(phi)
+    # Return the phis, the lookups and counter, so the calculation can resumed later on with new graphs
     return phi_lists, new_label_lookups, new_label_counters
 
 
-def relabel_graphs(graphs, label_lookup={}):
-    label_counter = 1
+def relabel_graphs(graphs, label_counter = 0, label_lookup={}, labels_dtype = np.uint32):
+    assert isinstance(label_counter, int)
+    assert isinstance(label_lookup, dict)
+
     labels = [[] for i in range(len(graphs))]
-    adjs = [[] for i in range(len(graphs))]
+    adjacency_matrices = [[] for i in range(len(graphs))]
     for idx, graph in enumerate(graphs):
         nodes = list(graph.nodes())
         for label in nodes:
             if label not in label_lookup:
                 label_lookup[label] = label_counter
                 label_counter += 1
-        labels[idx] = [label_lookup[x] for x in nodes]
-        adjs[idx] = nx.adjacency_matrix(graph, nodelist = nodes)
-        #nx.relabel_nodes(graph, {k: v for k, v in label_lookup.items() if k in graph}, copy=False)
-    return label_lookup, label_counter, labels, adjs
+        labels[idx] = np.array([label_lookup[x] for x in nodes], dtype=labels_dtype)
+        adjacency_matrices[idx] = nx.adjacency_matrix(graph, nodelist = nodes)
+    return label_lookup, label_counter, labels, adjacency_matrices

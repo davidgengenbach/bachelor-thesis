@@ -1,3 +1,9 @@
+"""Crude implementation to retrieve primes in a given range. Caches (= memoizes) them naively by range to increase lookup speed
+
+Attributes:
+    CACHE (dict): keys are the ranges (start, end) for the primes, values are the primes in that range
+"""
+
 import sympy
 import numpy as np
 
