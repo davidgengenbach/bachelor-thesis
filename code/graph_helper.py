@@ -8,6 +8,9 @@ import sklearn
 from sklearn.base import TransformerMixin
 import logging
 import wl
+import dataset_helper
+import pandas as pd
+import numpy as np
 
 
 def convert_dataset_to_co_occurence_graph_dataset(X, Y, min_length = 2, n_jobs=4, **cooccurrence_kwargs):
@@ -56,10 +59,9 @@ def convert_from_numpy_to_nx(word2id, id2word, mat):
     nx.relabel_nodes(graph, mapping=id2word, copy=False)
     return graph
 
-
-def get_graph_topic_stats(graphs_per_topic):
-    df_graphs_per_topic = pd.DataFrame([(topic, len(graphs), [len(x.nodes()) for x in graphs], [len(x.edges()) for x in graphs]) for topic, graphs in graphs_per_topic.items(
-    )], columns=['topic', 'num_graphs', 'num_nodes', 'num_edges']).set_index(['topic']).sort_values(by='num_graphs')
+def get_graph_stats(X, Y):
+    graphs_per_topic = dataset_helper.get_dataset_dict(X, Y)
+    df_graphs_per_topic = pd.DataFrame([(topic, len(graphs), [len(x.nodes()) for x in graphs], [len(x.edges()) for x in graphs]) for topic, graphs in graphs_per_topic.items()], columns = ['topic', 'num_graphs', 'num_nodes', 'num_edges']).set_index(['topic']).sort_values(by = 'num_graphs')
     df_graphs_per_topic['avg_nodes'] = df_graphs_per_topic.num_nodes.apply(lambda x: np.mean(x))
     df_graphs_per_topic['avg_edges'] = df_graphs_per_topic.num_edges.apply(lambda x: np.mean(x))
     return df_graphs_per_topic
@@ -101,6 +103,7 @@ def get_graphs_from_folder(folder, ext='gml', undirected=True, verbose=False):
     assert len(X) and len(Y), 'X or Y empty'
     assert len(X) == len(Y), 'X has not the same dimensions as Y'
     return X, Y
+
 
 
 def get_gml_graph(graph_str, undirected=False, num_tries=5, verbose=False):

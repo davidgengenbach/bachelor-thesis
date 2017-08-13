@@ -63,11 +63,6 @@ class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Tran
 
     def transform(self, X, y=None, **fit_params):
         print('FastWLGraphKernelTransformer.transform: len(X)={}, H={}'.format(len(X), self.h))
-        # This is to cache the prior transformation of the training samples.
-        # This is deeply problematic and must be changed eventually!
-        if False and len(X) == self.train_graph_count:
-            print('FastWLGraphKernelTransformer.transform: using pre-calculated phi list')
-            return self.phi_list
 
         # remove missing nodes
         if self.remove_missing_labels:
@@ -81,5 +76,4 @@ class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Tran
 
         self.label_lookups = label_lookups
         self.label_counters = label_counters
-
         return phi_list

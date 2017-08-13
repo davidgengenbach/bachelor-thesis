@@ -1,7 +1,29 @@
+## 14.08.2017
+- Ergebnisse (vorerst!)
+    - Höhere Iterationen von WL -> niedrigerer F1 score
+        - Mögliche Erklärung
+            - Damit zwei Graphen ein nicht-null Dot-Produkt haben, muss es in beiden auch Nachbarschaften geben, die exakt (!) die gleichen Knoten haben
+            - Bei der nullten Iteration von WL werden nur die Labels gezählt (also CBOW), also sind sich zwei Graphen schon ähnlich, wenn sie gleiche Labels (= Wörter) im Text haben
+- Neuer (?) Ansatz
+    - Word2Vec lernen auf allen Dokumenten des Datensets...
+        - ... dann Ähnlichkeit der Labels über die gelernten Embeddings
+        - ... dann Binning der Labels -> zwei oder mehr ähnliche Labels werden zu einem Label zusammengefasst
+        - Vorteil: weniger Rechenzeit
+            - da die Embeddings wahrscheinlich kleiner sein können
+            - und nur relevante Labels gelernt werden
+    - Bestehende Word2Vec Embedder benutzen (Google)...
+        - (weiteres dann gleich wie oben drüber)
+        - Nachteil: höhere Rechenzeit
+            - Bei großen Datensets gibt es bei N unique Labels dann N(N-1) Kombinationen, die getestet werden müssen
+
+
 ## 13.08.2017
 - fast_wl
     - implemented fast hashing-based WL
     - (is really faster, added numpy optimizations/shortcuts)
+    - mit alter Implementierung vergleichen!
+        - F1 und Performanz
+        - Korrektheit
 - Statistiken
     - Dateigrößen
         - Zusammenhang Window Size <-> Dateigröße
