@@ -16,9 +16,9 @@ class WLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Transfor
         phi_list (list(lil_matrix)): the phis for the iterations
     """
 
-    def __init__(self, H=1, remove_missing_labels=True, n_jobs = 1):
+    def __init__(self, h=1, remove_missing_labels=True, n_jobs = 1):
         self.remove_missing_labels = remove_missing_labels
-        self.H = H
+        self.h = h
         self.n_jobs = n_jobs
 
     def fit(self, X, y=None, **fit_params):
@@ -31,7 +31,7 @@ class WLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Transfor
         Returns:
             WLGraphKernelTransformer: returns self
         """
-        print('WLGraphKernelTransformer.fit: len(X)={}, H={}'.format(len(X), self.H))
+        print('WLGraphKernelTransformer.fit: len(X)={}, H={}'.format(len(X), self.h))
         all_nodes = set()
         for x in X:
             all_nodes |= set(x.nodes())
@@ -52,7 +52,7 @@ class WLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Transfor
         ad_list = [nx.adjacency_matrix(g, nodelist=labels) for g, labels in zip(X, node_label)]
         # TODO: do this in batches
         phi_list, label_lookups, label_counters = wl.WL_compute_batched(
-            adjs = ad_list, node_label = node_label, h = self.H, all_nodes=self.all_nodes, compute_k=False, DEBUG=True)
+            adjs = ad_list, node_label = node_label, h = self.h, all_nodes=self.all_nodes, compute_k=False, DEBUG=True)
 
         self.phi_list = phi_list[-1]
         self.phi_shape = self.phi_list.shape
@@ -63,7 +63,7 @@ class WLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Transfor
         return self
 
     def transform(self, X, y=None, **fit_params):
-        print('WLGraphKernelTransformer.transform: len(X)={}, H={}'.format(len(X), self.H))
+        print('WLGraphKernelTransformer.transform: len(X)={}, H={}'.format(len(X), self.h))
         # This is to cache the prior transformation of the training samples.
         # This is deeply problematic and must be changed eventually!
         if len(X) == self.train_graph_count:
@@ -89,7 +89,7 @@ class WLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Transfor
             initial_label_lookups = self.label_lookups,
             initial_label_counters = self.label_counters,
             phi_dim = self.phi_shape[0],
-            h = self.H,
+            h = self.h,
             DEBUG = True
         )
         # Execute kernel

@@ -31,18 +31,18 @@ def fast_wl_compute(graphs, h=1, label_lookups=None, label_counters=None, primes
     assert len(graph_labels) == len(graphs)
 
     # Save the label_lookups/label_counters for later use
-    new_label_lookups = [label_counter]
+    new_label_lookups = [label_lookup]
     new_label_counters = [label_counter]
 
     # The upper bound up to which the prime numbers have to be retrieved
-    primes_needed = primes_arguments_required[int(np.ceil(np.log2(num_labels)) + 2)]
+    primes_needed = primes_arguments_required[int(np.ceil(np.log2(num_labels)) + 3)]
 
     log_primes = primes.get_log_primes(1, primes_needed)
 
     # The number of unique labels (= the total number of nodes in graphs)
     if not phi_dim:
         phi_dim = sum(len(x) for x in graph_labels)
-        
+
     phi_shape = (phi_dim, num_graphs)
 
     # Just count the labels in the 0-th iteration. This corresponds to the graph_labels, but indexed correctly into phi
@@ -57,12 +57,13 @@ def fast_wl_compute(graphs, h=1, label_lookups=None, label_counters=None, primes
         # ... use previous label counters/lookups, if given
         label_lookup = label_lookups[i + 1]
         label_counter = label_counters[i + 1]
+        assert isinstance(label_counter, int)
+        assert isinstance(label_lookup, dict)
         phi = lil_matrix(phi_shape, dtype=np.uint8)
         # ... go over all graphs
         for idx, (labels, adjacency_matrix) in enumerate(zip(graph_labels, adjacency_matrices)):
             # ... generate the signatures (see paper) for each graph
-            signatures = np.round((labels + adjacency_matrix * log_primes[labels]), decimals=10)
-
+            signatures = np.round((labels + adjacency_matrix * log_primes[labels]), decimals=10).astype(np.uint32)
             # ... add missing signatures to the label lookup
             for signature in signatures:
                 if signature not in label_lookup:
@@ -77,7 +78,7 @@ def fast_wl_compute(graphs, h=1, label_lookups=None, label_counters=None, primes
         phi_lists.append(phi)
         # ... save label counters/lookups for later use
         new_label_counters.append(label_counter)
-        new_label_lookups.append(label_lookups)
+        new_label_lookups.append(label_lookup)
     # Return the phis, the lookups and counter, so the calculation can resumed later on with new graphs
     return phi_lists, new_label_lookups, new_label_counters
 

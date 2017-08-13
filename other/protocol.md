@@ -1,3 +1,33 @@
+## 13.08.2017
+- fast_wl
+    - implemented fast hashing-based WL
+    - (is really faster, added numpy optimizations/shortcuts)
+- Statistiken
+    - Dateigrößen
+        - Zusammenhang Window Size <-> Dateigröße
+- Beobachtungen
+    - Vorerst!
+        - mehr Iterationen von WL -> niedriger F1
+        - Vergleich Co-occurence vs Concept Maps
+            - Co-occurence grundsätzlich höherer F1
+            - Graphen größer bei Co-occurence, Beispiel:
+                - dataset_graph_cooccurrence_1_all_ng20.npy
+                    - Window Size: 1
+                    - Alle Wörter
+                    - 126MB
+                - dataset_graph_cooccurrence_1_only-nouns_ng20.npy
+                    - Window Size: 1
+                    - Nur Nomen
+                    - 38MB
+                - dataset_graph_gml_ng20-single.npy
+                    - Concept-Map
+                    - 31MB
+                - dataset_ng20.npy
+                    - Als Text
+                    - Alle Wörter
+                    - 22MB
+
+
 ## 10.08.2017 (Treffen)
 - Graphen
     - "no-nouns" -> "only-nouns"

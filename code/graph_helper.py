@@ -26,7 +26,7 @@ def get_wl_args(graphs):
     return adjs, nodes
 
 
-def get_all_node_labels(graphs):
+def get_all_node_labels(graphs, as_sorted_list = True):
     """Returns all unique labels in a list of graphs.
     
     Args:
@@ -38,7 +38,7 @@ def get_all_node_labels(graphs):
     labels = set()
     for graph in graphs:
         labels |= set(graph.nodes())
-    return sorted(list(labels))
+    return sorted(list(labels)) if as_sorted_list else labels
 
 
 def convert_from_numpy_to_nx(word2id, id2word, mat):
