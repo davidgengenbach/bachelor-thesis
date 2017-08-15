@@ -38,6 +38,9 @@ tokenizer = sklearn.feature_extraction.text.CountVectorizer(stop_words='english'
 def w2v_preproess(doc, lemmatize_word=False):
     return [lemmatize(x.lower()) if lemmatize_word else x.lower() for x in tokenizer(doc)]
 
+def init_w2v_google(googlenews_vector_file = 'data/GoogleNews-vectors-negative300.bin'):
+    model = gensim.models.KeyedVectors.load_word2vec_format(googlenews_vector_file, binary=True)
+    return model
 
 def train_w2v(w2v_data, iterations=50):
     model_w2v = gensim.models.Word2Vec(w2v_data, iter=iterations)
