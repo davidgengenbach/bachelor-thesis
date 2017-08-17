@@ -26,7 +26,7 @@ from transformers.preprocessing_transformer import PreProcessingTransformer
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-N_JOBS = 1
+N_JOBS = 4
 
 for dataset_name in dataset_helper.get_all_available_dataset_names():
     break
@@ -79,6 +79,9 @@ for cache_file in dataset_helper.get_all_cached_graph_phi_datasets():
         if os.path.exists(result_file):
             logger.warning('\tAlready calculated result: {}'.format(result_file))
             continue
+        with open(result_file, 'w') as f:
+            f.write('NOT DONE')
+
         X = [x.T for x in X_all[h]]
 
         p = Pipeline([
@@ -103,13 +106,10 @@ for cache_file in dataset_helper.get_all_cached_graph_phi_datasets():
             n_jobs=N_JOBS,
             verbose = 11
         )
-        if 1 == 1:
-            try:
-                gscv_result = gscv.fit(X, Y)
-            except Exception as e:
-                logger.exception(e)
-                continue
-        else:
+        try:
             gscv_result = gscv.fit(X, Y)
-        with open(result_file, 'wb') as f:
-            pickle.dump(gscv_result.cv_results_, f)
+            with open(result_file, 'wb') as f:
+                pickle.dump(gscv_result.cv_results_, f)
+        except Exception as e:
+            logger.exception(e)
+            continue

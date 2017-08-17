@@ -55,7 +55,7 @@ class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Tran
 
         self.train_graph_count = len(X)
         self.all_nodes = graph_helper.get_all_node_labels(X, as_sorted_list = False)
-        self.phi_list = phi_list
+        self.phi_list = [x.T for x in phi_list]
         self.phi_shape = self.phi_list[-1].shape
         self.label_lookups = label_lookups
         self.label_counters = label_counters
@@ -76,4 +76,4 @@ class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Tran
 
         self.label_lookups = label_lookups
         self.label_counters = label_counters
-        return phi_list
+        return [x.T for x in phi_list]
