@@ -3,6 +3,7 @@
 from glob import glob
 import dataset_helper
 import os
+import traceback
 
 def main():
     args = get_args()
@@ -11,7 +12,11 @@ def main():
         if not os.path.isdir(graph_folder): continue
         print('Processing: {}'.format(graph_folder))
         graph_dataset_name = graph_folder.split('/')[-1]
-        X, Y = dataset_helper.get_gml_graph_dataset(dataset_name = graph_dataset_name, graphs_folder=args.graphs_folder, cache_folder=args.cache_folder)
+        try:
+            X, Y = dataset_helper.get_gml_graph_dataset(dataset_name = graph_dataset_name, graphs_folder=args.graphs_folder, cache_folder=args.cache_folder)
+        except Exception as e:
+            traceback.print_exc()
+            print('Error:', e)
 
 def get_args():
     import argparse
