@@ -73,7 +73,7 @@ for cache_file in dataset_helper.get_all_cached_graph_phi_datasets():
         continue
     gc.collect()
     
-    X, Y = dataset_helper.get_dataset_cached(cache_file, check_validity)
+    X, Y = dataset_helper.get_dataset_cached(cache_file, check_validity = False)
     #X, Y = np.array(X), np.array(Y)
     
     p = Pipeline([
