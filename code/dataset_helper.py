@@ -97,11 +97,12 @@ def test_dataset_validity(X, Y):
     assert len(set(Y)), 'Y must contain at least one label'
 
 
-def get_dataset_cached(cache_file):
+def get_dataset_cached(cache_file, check_validity = True):
     assert os.path.exists(cache_file), 'Could not find cache_file: {}'.format(cache_file)
     with open(cache_file, 'rb') as f:
         X, Y = pickle.load(f)
-    test_dataset_validity(X, Y)
+    if check_validity:
+        test_dataset_validity(X, Y)
     return X, Y
 
 def get_dataset(dataset_name, use_cached=True, preprocessed=False, dataset_folder=DATASET_FOLDER, preprocessing_args=None, cache_path=CACHE_PATH, transform_fn=None, cache_file=None):
@@ -224,6 +225,9 @@ def get_all_cached_datasets(cache_path = CACHE_PATH):
 
 def get_all_cached_graph_datasets(cache_path = CACHE_PATH):
     return [x for x in get_all_cached_datasets(cache_path) if x.split('/')[-1].startswith('dataset_graph') and 'phi' not in x]
+
+def get_all_cached_graph_phi_datasets(cache_path = CACHE_PATH):
+    return [x for x in get_all_cached_datasets(cache_path) if 'phi' in x]
 
 def get_all_datasets(dataset_folder=DATASET_FOLDER, **kwargs):
     """Returns a dict with the available datasets as key and the documents as values

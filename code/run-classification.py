@@ -77,15 +77,15 @@ for cache_file in dataset_helper.get_all_cached_graph_datasets():
     X, Y = np.array(X), np.array(Y)
     
     p = Pipeline([
-        ('wl_transformer', FastWLGraphKernelTransformer()),
+        #('wl_transformer', FastWLGraphKernelTransformer()),
         ('phi_picker', PhiPickerTransformer()),
         ('scaler', None),
         ('clf', None)
     ])
 
     param_grid = dict(
-        wl_transformer__h=[2],
-        phi_picker__return_iteration=[0, 1, 2],
+        #wl_transformer__h=[2],
+        phi_picker__return_iteration=[0, 1, 2, 3, 4],
         scaler = [None, sklearn.preprocessing.Normalizer(norm="l1", copy = False)],
         clf = [sklearn.linear_model.PassiveAggressiveClassifier(max_iter = 1000)],
         clf__max_iter=[1000],
