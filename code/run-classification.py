@@ -26,6 +26,8 @@ from transformers.preprocessing_transformer import PreProcessingTransformer
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
+N_JOBS = 4
+
 for dataset_name in dataset_helper.get_all_available_dataset_names():
     result_file = 'data/results/text_{}.results.npy'.format(dataset_name)
 
@@ -49,7 +51,7 @@ for dataset_name in dataset_helper.get_all_available_dataset_names():
     )
 
     cv = sklearn.model_selection.StratifiedKFold(n_splits = 3, random_state= 42, shuffle= True)
-    gscv = GridSearchCV(estimator = p, param_grid=param_grid, cv=cv, scoring = 'f1_macro', n_jobs=1, verbose = 11)
+    gscv = GridSearchCV(estimator = p, param_grid=param_grid, cv=cv, scoring = 'f1_macro', n_jobs=N_JOBS, verbose = 11)
     gscv_result = gscv.fit(X, Y)
     
     with open(result_file, 'wb') as f:
@@ -97,7 +99,7 @@ for cache_file in dataset_helper.get_all_cached_graph_datasets():
         param_grid=param_grid,
         cv=cv,
         scoring = 'f1_macro',
-        n_jobs=1,
+        n_jobs=N_JOBS,
         verbose = 11
     )
     if 1 == 1:
