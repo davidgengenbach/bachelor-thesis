@@ -1,6 +1,8 @@
-from nltk.corpus import reuters 
-
+import nltk
 def fetch():
+    nltk.download('reuters')
+    
+    from nltk.corpus import reuters 
     categories = reuters.categories()
     X, Y = [], []
     for category in categories:

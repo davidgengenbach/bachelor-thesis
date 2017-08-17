@@ -1,4 +1,9 @@
-import matplotlib.pyplot as plt
+# If no $DISPLAY is given, this fails
+try:
+    import matplotlib.pyplot as plt
+except:
+    pass
+
 import numpy as np
 import itertools
 import codecs
@@ -68,13 +73,13 @@ def plot_confusion_matrix(cm,
                           classes = None,
                           normalize=False,
                           title='Confusion matrix',
-                          cmap=plt.cm.Blues,
                           round_confusion=2,
                           x_rotation=90):
     """
     Plots the confusion matrix.
     Taken from: http://scikit-learn.org/stable/auto_examples/model_selection/plot_confusion_matrix.html#sphx-glr-auto-examples-model-selection-plot-confusion-matrix-py
     """
+    cmap = plt.cm.Blues
     if normalize:
         cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
     plt.imshow(cm, interpolation='nearest', cmap=cmap)

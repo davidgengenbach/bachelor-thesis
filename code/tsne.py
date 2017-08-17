@@ -1,7 +1,10 @@
 # TODO: imports etc.
 import sklearn
 from sklearn import manifold
-import matplotlib.pyplot as plt
+try:
+    import matplotlib.pyplot as plt
+except:
+    pass
 import numpy as np
 
 
