@@ -158,7 +158,7 @@ def get_gml_graph_dataset(dataset_name, use_cached=True, graphs_folder=GRAPHS_FO
     Returns:
         tuple(list, list): X and Y
     """
-    graph_folder = os.path.join(GRAPHS_FOLDER, dataset_name)
+    graph_folder = os.path.join(graphs_folder, dataset_name)
     cache_npy = os.path.join(CACHE_PATH, 'dataset_graph_gml_{}.npy'.format(dataset_name))
 
     if use_cached and os.path.exists(cache_npy):
