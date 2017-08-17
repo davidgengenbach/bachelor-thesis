@@ -58,7 +58,7 @@ for dataset_name in dataset_helper.get_all_available_dataset_names():
         pickle.dump(gscv_result.cv_results_, f)
     logger.info('Best score:\t{:.5f}\nBest params:\t{}'.format(gscv_result.best_score_, gscv_result.best_params_))
 
-for cache_file in dataset_helper.get_all_cached_graph_datasets():
+for cache_file in dataset_helper.get_all_cached_graph_phi_datasets():
     graph_dataset_cache_file = cache_file.split('/')[-1]
     
     result_file = 'data/results/{}.results.npy'.format(graph_dataset_cache_file)
@@ -73,8 +73,8 @@ for cache_file in dataset_helper.get_all_cached_graph_datasets():
         continue
     gc.collect()
     
-    X, Y = dataset_helper.get_dataset_cached(cache_file)
-    X, Y = np.array(X), np.array(Y)
+    X, Y = dataset_helper.get_dataset_cached(cache_file, check_validity)
+    #X, Y = np.array(X), np.array(Y)
     
     p = Pipeline([
         #('wl_transformer', FastWLGraphKernelTransformer()),
