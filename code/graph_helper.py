@@ -85,7 +85,7 @@ def get_graphs_from_folder(folder, ext='gml', undirected=True, verbose=False):
     file_list = list(enumerate(files))
     for idx, graph_file in sorted(file_list):
         topic_and_id = graph_file.split('/')[-1].replace('.gml', '')
-        topic = '_'.split(topic_and_id.split('_')[:-1])
+        topic = '_'.join(topic_and_id.split('_')[:-1])
         with open(graph_file) as f:
             graph_str = f.read()
         graph = get_gml_graph(graph_str, undirected)

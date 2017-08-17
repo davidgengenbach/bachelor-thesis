@@ -11,10 +11,7 @@ def main():
         if not os.path.isdir(graph_folder): continue
         print('Processing: {}'.format(graph_folder))
         graph_dataset_name = graph_folder.split('/')[-1]
-        try:
-            X, Y = dataset_helper.get_gml_graph_dataset(dataset_name = graph_dataset_name, graphs_folder=args.graphs_folder, cache_folder=args.cache_folder)
-        except Exception as e:
-            print('Error: {}'.format(e))
+        X, Y = dataset_helper.get_gml_graph_dataset(dataset_name = graph_dataset_name, graphs_folder=args.graphs_folder, cache_folder=args.cache_folder)
 
 def get_args():
     import argparse
