@@ -2,12 +2,16 @@
 - Input von Tobias
     - Vielleicht pre-trained GloVe Embeddings anstatt pre-trained Word2Vec
         - Anzahl der fehlenden Labels?
-- Idee
-    - Problem: beim pre-trained GoogleNews Word2Vec fehlen viele Labels vom Datensatz
-    - Mögliche Lösung
-        - eigene Embeddings über Word2Vec lernen auf Datensatz (mit allen Labels) ...
-        - ... dann fehlende Labels durch ähnliche Labels ersetzen, die im pre-trained GoogleNews Word2Vec sind
-        - ... dann normal weiter machen
+- Word2Vec Ansatz für Label-Binning
+    - Problem
+        - Beim pre-trained GoogleNews Word2Vec fehlen viele Labels vom Datensatz
+        - Mögliche Lösung
+            - eigene Embeddings über Word2Vec lernen auf Datensatz (mit allen Labels) ...
+            - ... dann fehlende Labels durch ähnliche Labels ersetzen, die im pre-trained GoogleNews Word2Vec sind
+            - ... dann normal weiter machen
+    - Problem
+        - Die Labels in den Concept Maps sind lemmatized etc., und sind wahrscheinlich nicht in pre-trained Embeddings von Google w2v
+
 
 ## 15.08.2017
 - Ansatz: Word2Vec der Graph Labels
