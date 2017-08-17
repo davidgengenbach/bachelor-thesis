@@ -13,9 +13,9 @@ import pandas as pd
 import numpy as np
 
 
-def convert_dataset_to_co_occurence_graph_dataset(X, Y, min_length = 2, n_jobs=4, **cooccurrence_kwargs):
+def convert_dataset_to_co_occurence_graph_dataset(X, Y, min_length = 2, n_jobs=4, only_nouns = False, **cooccurrence_kwargs):
     print('Pre-processing')
-    X = preprocessing.preprocess_text_spacy(X, min_length=min_length, concat = False, only_nouns = False)
+    X = preprocessing.preprocess_text_spacy(X, min_length=min_length, concat = False, only_nouns = only_nouns)
     print('Creating adjadency mats')
     mats = Parallel(n_jobs=n_jobs)(delayed(cooccurrence.get_coocurrence_matrix)(text, **cooccurrence_kwargs) for text in X)
     print('Converting to networkx graphs')
