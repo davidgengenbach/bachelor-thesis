@@ -17,4 +17,6 @@ for dataset in dataset_helper.get_all_available_dataset_names():
                 print('Cachefile already exists.')
                 continue
             print('Cache file: {}'.format(cache_file))
+            with open(cache_file, 'w') as f:
+                f.write('TODO!')
             X, Y = dataset_helper.get_dataset(dataset, preprocessed = False, use_cached=True, transform_fn=process, cache_file=cache_file)
