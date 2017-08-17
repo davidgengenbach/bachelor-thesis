@@ -1,9 +1,29 @@
+## 17.08.2017
+- Input von Tobias
+    - Vielleicht pre-trained GloVe Embeddings anstatt pre-trained Word2Vec
+        - Anzahl der fehlenden Labels?
+- Idee
+    - Problem: beim pre-trained GoogleNews Word2Vec fehlen viele Labels vom Datensatz
+    - Mögliche Lösung
+        - eigene Embeddings über Word2Vec lernen auf Datensatz (mit allen Labels) ...
+        - ... dann fehlende Labels durch ähnliche Labels ersetzen, die im pre-trained GoogleNews Word2Vec sind
+        - ... dann normal weiter machen
+
+## 15.08.2017
+- Ansatz: Word2Vec der Graph Labels
+    - Problem: für viele Labels gibt es kein Embedding im Google News Datensatz 
+        - Vorhanden: 25943
+        - Fehlend: 34217
+    - (mögliche) Lösung
+        - Word2Vec auf ganzen Datenset selber trainieren
+
+
 ## 14.08.2017
 - Ergebnisse (vorerst!)
     - Höhere Iterationen von WL -> niedrigerer F1 score
         - Mögliche Erklärung
             - Damit zwei Graphen ein nicht-null Dot-Produkt haben, muss es in beiden auch Nachbarschaften geben, die exakt (!) die gleichen Knoten haben
-            - Bei der nullten Iteration von WL werden nur die Labels gezählt (also CBOW), also sind sich zwei Graphen schon ähnlich, wenn sie gleiche Labels (= Wörter) im Text haben
+            - Bei der nullten Iteration von WL werden nur die Labels gezählt, also sind sich zwei Graphen schon ähnlich, wenn sie gleiche Labels (= Wörter) im Text haben
 - Neuer (?) Ansatz
     - Word2Vec lernen auf allen Dokumenten des Datensets...
         - ... dann Ähnlichkeit der Labels über die gelernten Embeddings
