@@ -5,8 +5,8 @@ import dataset_helper
 import graph_helper
 from glob import glob
 
-CHECK_GLOVE = False
-CHECK_GOOGLE_NEWS = False
+CHECK_GLOVE = True
+CHECK_GOOGLE_NEWS = True
 CHECK_OWN_EMBEDDINGS = True
 GLOVE_FILES = 'data/embeddings/glove/*.w2v.txt'
 GOOGLE_NEWS_W2V_FILE = 'data/embeddings/GoogleNews-vectors-negative300.bin'
@@ -35,7 +35,7 @@ def main():
                 graph_cache_files.append(cache_file)
 
         if len(graph_cache_files) != 2:
-                print('\tDid not find: gml: {}, all: {}'.format(found_gml_cache, found_all_cache))
+                print('\tFound: gml: {}, all: {}'.format(found_gml_cache, found_all_cache))
         for model_name, model in used_models:
             print('\tModel: {}'.format(model_name))
             for graph_cache_file in graph_cache_files:
