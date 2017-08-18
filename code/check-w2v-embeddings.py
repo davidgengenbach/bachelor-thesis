@@ -38,7 +38,7 @@ def main():
         if len(graph_cache_files) != 2:
                 print('\tFound: gml: {}, all: {}'.format(found_gml_cache, found_all_cache))
         for model_name, model in used_models:
-            embedding_results[dataset_name][model] = {}
+            embedding_results[dataset_name][model_name] = {}
             print('\tModel: {}'.format(model_name))
             for graph_cache_file in graph_cache_files:
                 print('\t\tGraph: {}'.format(graph_cache_file))
@@ -52,7 +52,7 @@ def main():
                     else:
                         counter['not_found'] += 1
                 print('\t\t{}, Found: {}%'.format(counter, int(100 * counter['found'] / len(labels))))
-                embedding_results[dataset_name][model][graph_cache_file] = {
+                embedding_results[dataset_name][model_name][graph_cache_file] = {
                     'num_labels': len(labels),
                     'counts': counter
                 }

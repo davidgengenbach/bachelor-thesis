@@ -5,6 +5,7 @@
     - bei Concept Maps
         - ling-spam: 90%
 
+
 ## 17.08.2017
 - Input von Tobias
     - Vielleicht pre-trained GloVe Embeddings anstatt pre-trained Word2Vec
@@ -17,7 +18,8 @@
             - ... dann fehlende Labels durch ähnliche Labels ersetzen, die im pre-trained GoogleNews Word2Vec sind
             - ... dann normal weiter machen
     - Problem
-        - Die Labels in den Concept Maps sind lemmatized etc., und sind wahrscheinlich nicht in pre-trained Embeddings von Google w2v
+        - Die Labels in den Concept Maps sind lemmatized, und sind wahrscheinlich nicht in pre-trained Embeddings von Google w2v
+        - (Doch kein Problem, da die Labels _nicht_ lemmatized sind)
 
 
 ## 15.08.2017
