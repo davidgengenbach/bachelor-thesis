@@ -33,10 +33,11 @@ def lemmatize(ambiguous_word, pos=None, neverstem=True,
     else:
         return lemma
 
-tokenizer = sklearn.feature_extraction.text.CountVectorizer(stop_words='english').build_tokenizer()
+tokenizer = sklearn.feature_extraction.text.CountVectorizer().build_tokenizer()
+tokenizer_without_stopwords = sklearn.feature_extraction.text.CountVectorizer(stop_words='english').build_tokenizer()
 
 def w2v_preproess(doc, lemmatize_word=False):
-    return [lemmatize(x.lower()) if lemmatize_word else x.lower() for x in tokenizer(doc)]
+    return [lemmatize(x.lower()) if lemmatize_word else x.lower() for x in tokenizer_without_stopwords(doc)]
 
 def init_w2v_google(googlenews_vector_file = 'data/GoogleNews-vectors-negative300.bin'):
     model = gensim.models.KeyedVectors.load_word2vec_format(googlenews_vector_file, binary=True)
