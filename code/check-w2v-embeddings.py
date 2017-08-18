@@ -59,7 +59,7 @@ def main():
                 }
     with open(args.results_file, 'w') as f:
         json.dump(embedding_results, f)
-    print('Saved results')
+    print('Saved results', json.dumps(embedding_results))
 
 def get_embedding_model(w2v_file, binary = False, first_line_header = True):
     if binary:
