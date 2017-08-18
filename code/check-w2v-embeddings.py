@@ -1,13 +1,18 @@
 #!/usr/bin/env python
 
-import gensim
-import dataset_helper
-import graph_helper
-from glob import glob
 
 def main():
     args = get_args()
 
+    print('Args: {}'.format(args))
+
+    import gensim
+    import dataset_helper
+    import graph_helper
+    from glob import glob
+    import json
+
+    embedding_results = {}
     embedding_models = []
     # GloVe embeddings
     if args.check_glove:
@@ -18,6 +23,7 @@ def main():
 
     for dataset_name in dataset_helper.get_all_available_dataset_names():
         print('Processing: {}'.format(dataset_name))
+        embedding_results[dataset_name] = {}
         used_models = embedding_models + [('trained', dataset_helper.get_w2v_embedding_for_dataset(dataset_name))] if args.check_own_embeddings else embedding_models
         all_graph_cache_files = [x for x in dataset_helper.get_all_cached_graph_datasets() if dataset_name in x]
         graph_cache_files = []
@@ -33,6 +39,7 @@ def main():
         if len(graph_cache_files) != 2:
                 print('\tFound: gml: {}, all: {}'.format(found_gml_cache, found_all_cache))
         for model_name, model in used_models:
+            embedding_results[dataset_name][model] = {}
             print('\tModel: {}'.format(model_name))
             for graph_cache_file in graph_cache_files:
                 print('\t\tGraph: {}'.format(graph_cache_file))
@@ -46,6 +53,13 @@ def main():
                     else:
                         counter['not_found'] += 1
                 print('\t\t{}, Found: {}%'.format(counter, int(100 * counter['found'] / len(labels))))
+                embedding_results[dataset_name][model][graph_cache_file] = {
+                    'num_labels': len(labels),
+                    'counts': counter
+                }
+    with open(args.results_file, 'w') as f:
+        json.dump(embedding_results, f)
+    print('Saved results')
 
 def get_embedding_model(w2v_file, binary = False, first_line_header = True):
     if binary:
@@ -67,6 +81,7 @@ def get_args():
     parser.add_argument('--check_own_embeddings', action = 'store_true')
     parser.add_argument('--glove_files', type = str, default = 'data/embeddings/glove/*.w2v.txt')
     parser.add_argument('--google_news_file', type = str, default = 'data/embeddings/GoogleNews-vectors-negative300.bin')
+    parser.add_argument('--results_file', type = str, default = 'data/embeddings/results.json')
     args = parser.parse_args()
     return args
 
