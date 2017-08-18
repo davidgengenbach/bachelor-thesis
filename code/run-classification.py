@@ -71,7 +71,7 @@ def main():
         param_grid = dict(
             preprocessing=[None, PreProcessingTransformer(only_nouns=True)],
             count_vectorizer__stop_words=['english'],
-            clf=[sklearn.linear_model.PassiveAggressiveClassifier(max_iter=1000)],
+            clf=[sklearn.linear_model.PassiveAggressiveClassifier(max_iter=1000, tol = 1e-4)],
             clf__class_weight=['balanced']
         )
 
@@ -106,7 +106,7 @@ def main():
             with open(result_file, 'w') as f:
                 f.write('NOT DONE')
 
-            X = [x.T for x in X_all[h]]
+            X = X_all[h].T
 
             p = Pipeline([
                 #('scaler', None),
@@ -115,7 +115,7 @@ def main():
 
             param_grid = dict(
                 #scaler = [None, sklearn.preprocessing.Normalizer(norm="l1", copy = False)],
-                clf=[sklearn.linear_model.PassiveAggressiveClassifier(max_iter=1000, class_weight='balanced')]
+                clf=[sklearn.linear_model.PassiveAggressiveClassifier(max_iter=1000, tol = 1e-4, class_weight='balanced')]
             )
 
             gscv = GridSearchCV(
