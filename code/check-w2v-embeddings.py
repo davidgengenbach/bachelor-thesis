@@ -5,24 +5,20 @@ import dataset_helper
 import graph_helper
 from glob import glob
 
-CHECK_GLOVE = True
-CHECK_GOOGLE_NEWS = True
-CHECK_OWN_EMBEDDINGS = True
-GLOVE_FILES = 'data/embeddings/glove/*.w2v.txt'
-GOOGLE_NEWS_W2V_FILE = 'data/embeddings/GoogleNews-vectors-negative300.bin'
-
 def main():
+    args = get_args()
+
     embedding_models = []
     # GloVe embeddings
-    if CHECK_GLOVE:
-        embedding_models += [(x, get_embedding_model(x, binary = False)) for x in glob(GLOVE_FILES)]
+    if args.check_glove:
+        embedding_models += [(x, get_embedding_model(x, binary = False)) for x in glob(args.glove_files)]
 
-    if CHECK_GOOGLE_NEWS:
-        embedding_models.append((GOOGLE_NEWS_W2V_FILE, get_embedding_model(GOOGLE_NEWS_W2V_FILE, binary = True)))
+    if args.check_google_news:
+        embedding_models.append((args.google_news_file, get_embedding_model(args.google_news_file, binary = True)))
 
     for dataset_name in dataset_helper.get_all_available_dataset_names():
         print('Processing: {}'.format(dataset_name))
-        used_models = embedding_models + [('trained', dataset_helper.get_w2v_embedding_for_dataset(dataset_name))] if CHECK_OWN_EMBEDDINGS else embedding_models
+        used_models = embedding_models + [('trained', dataset_helper.get_w2v_embedding_for_dataset(dataset_name))] if args.check_own_embeddings else embedding_models
         all_graph_cache_files = [x for x in dataset_helper.get_all_cached_graph_datasets() if dataset_name in x]
         graph_cache_files = []
         found_all_cache = False
@@ -62,6 +58,18 @@ def get_embedding_model(w2v_file, binary = False, first_line_header = True):
                 num_labels, num_dim = [int(x) for x in first_line.split(' ')]
             embeddings = {x.split(' ', 1)[0].strip(): x.split(' ', 1)[1].strip() for x in f}
     return embeddings
+
+def get_args():
+    import argparse
+    parser = argparse.ArgumentParser(description='Checks whether the graph labels are in different embeddings models (like GoogleNews or GloVe)')
+    parser.add_argument('--check_glove', action = 'store_true')
+    parser.add_argument('--check_google_news', action = 'store_true')
+    parser.add_argument('--check_own_embeddings', action = 'store_true')
+    parser.add_argument('--glove_files', type = str, default = 'data/embeddings/glove/*.w2v.txt')
+    parser.add_argument('--google_news_file', type = str, default = 'data/embeddings/GoogleNews-vectors-negative300.bin')
+    args = parser.parse_args()
+    return args
+
 
 if __name__ == '__main__':
     main()
