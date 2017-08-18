@@ -1,16 +1,15 @@
 #!/usr/bin/env python
 
+from glob import glob
+import json
 
 def main():
     args = get_args()
 
     print('Args: {}'.format(args))
 
-    import gensim
     import dataset_helper
     import graph_helper
-    from glob import glob
-    import json
 
     embedding_results = {}
     embedding_models = []
@@ -62,6 +61,7 @@ def main():
     print('Saved results', json.dumps(embedding_results))
 
 def get_embedding_model(w2v_file, binary = False, first_line_header = True):
+    import gensim
     if binary:
         embeddings = gensim.models.KeyedVectors.load_word2vec_format(w2v_file, binary=True)
     else:
