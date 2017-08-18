@@ -1,7 +1,9 @@
 ## 18.08.2017
 - W2V Embeddings für alle Datensets generiert
 - Phi Cache für Datensets eingebaut, um Klassifizierung zu beschleunigen
-
+- Fehlende W2V Embeddings
+    - bei Concept Maps
+        - ling-spam: 90%
 
 ## 17.08.2017
 - Input von Tobias

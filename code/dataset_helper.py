@@ -241,7 +241,7 @@ def get_all_datasets(dataset_folder=DATASET_FOLDER, **kwargs):
     return {dataset: get_dataset(dataset, **kwargs) for dataset in get_all_available_dataset_names(dataset_folder)}
 
 
-def get_w2v_embedding_for_dataset(dataset_name, embedding_folder = 'data/embeddings'):
+def get_w2v_embedding_for_dataset(dataset_name, embedding_folder = 'data/embeddings/trained'):
     embedding_file = os.path.join(embedding_folder, dataset_name + '.npy')
     assert os.path.exists(embedding_file)
     with open(embedding_file, 'rb') as f:
