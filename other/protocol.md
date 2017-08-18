@@ -1,9 +1,56 @@
 ## 18.08.2017
 - W2V Embeddings für alle Datensets generiert
 - Phi Cache für Datensets eingebaut, um Klassifizierung zu beschleunigen
+- Klassifizierungsergebnisse für Datensets zusammengesammelt
+    - müssen noch harmonisiert werden
+        - (anscheinend) gibt sklearn die Params für GridSearchCV unterschiedlich aus
 - Fehlende W2V Embeddings
+    - "trained" Embeddings: auf den einzelnen Datensets selbst trainierte Word2Vec Embeddings
+    - Recht viele fehlende Embeddings, die aufgelöst werden müssen
     - bei Concept Maps
-        - ling-spam: 90%
+        - Fehlende Labels (Mean über alle Datensets)
+            - GoogleNews-vectors-negative300    93%
+            - glove.42B.300d                    91%
+            - glove.6B.100d                     92%
+            - glove.6B.200d                     92%
+            - glove.6B.300d                     92%
+            - glove.6B.50d                      92%
+            - glove.840B.300d                   92%
+            - glove.twitter.27B.100d            92%
+            - glove.twitter.27B.200d            92%
+            - glove.twitter.27B.25d             92%
+            - glove.twitter.27B.50d             92%
+            - trained                           91%
+
+            - (total)                           92%
+        - ... liegt wohl daran, dass die Label in den Concept Graphs nicht nur ein Wort beinhalten
+            - (mögliche) Lösung
+                - Wörter splitten ...
+                - ... dann Word2Vec für Einzelwörter
+                - ... dann Mean von den Vektoren der Einzelwörter
+    - bei Co-occurence graphs
+        - Fehlende Labels (Mean über alle Datensets)
+            - GoogleNews-vectors-negative300    47%
+            - glove.42B.300d                    27%
+            - glove.6B.100d                     40%
+            - glove.6B.200d                     40%
+            - glove.6B.300d                     40%
+            - glove.6B.50d                      40%
+            - glove.840B.300d                   27%
+            - glove.twitter.27B.100d            46%
+            - glove.twitter.27B.200d            46%
+            - glove.twitter.27B.25d             46%
+            - glove.twitter.27B.50d             46%
+            - trained                           29%
+
+            - (total)                           39%
+        - mögliche Gründe für fehlende Labels
+            - bei den pre-trained Embeddings
+                - Rechtschreibfehler: ein Teil der Datensätze kommt direkt aus Foren/Emails
+                - Zu spezielle Wörter
+            - bei den selbst trainierten Embeddings
+                - ???
+                - Hier dürfte es keine fehlenden Labels geben!
 
 
 ## 17.08.2017

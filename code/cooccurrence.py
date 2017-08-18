@@ -20,7 +20,7 @@ def get_coocurrence_matrix(text, window_size = 2, ignore_sentence_bounds = True,
         text = text.replace('.', ' ' if ignore_sentence_bounds else ' . ').lower()
         words = word_tokenize(text)
     elif isinstance(text, list):
-        words = words = [word if isinstance(word, str) else word.text for word in text]
+        words = [word if isinstance(word, str) else word.text for word in text]
     else:
         assert False,"Not a string, not a doc: '{}', type(text)=={}".format(text, type(text))
     word2id, id2word = words_to_dict(words)
