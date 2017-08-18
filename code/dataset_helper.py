@@ -241,6 +241,13 @@ def get_all_datasets(dataset_folder=DATASET_FOLDER, **kwargs):
     return {dataset: get_dataset(dataset, **kwargs) for dataset in get_all_available_dataset_names(dataset_folder)}
 
 
+def get_w2v_embedding_for_dataset(dataset_name, embedding_folder = 'data/embeddings'):
+    embedding_file = os.path.join(embedding_folder, dataset_name + '.npy')
+    assert os.path.exists(embedding_file)
+    with open(embedding_file, 'rb') as f:
+        return pickle.load(f)
+
+
 def get_dataset_dict(X, Y=None):
     """Returns a dictionary where the keys are the topics, the values are the documents of that topic. 
 

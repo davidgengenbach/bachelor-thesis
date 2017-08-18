@@ -1,3 +1,8 @@
+## 18.08.2017
+- W2V Embeddings für alle Datensets generiert
+- Phi Cache für Datensets eingebaut, um Klassifizierung zu beschleunigen
+
+
 ## 17.08.2017
 - Input von Tobias
     - Vielleicht pre-trained GloVe Embeddings anstatt pre-trained Word2Vec

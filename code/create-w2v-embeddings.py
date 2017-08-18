@@ -18,7 +18,7 @@ for dataset_name in dataset_helper.get_all_available_dataset_names():
 
     X, Y = dataset_helper.get_dataset(dataset_name=dataset_name)
     X = [[word.lower() for word in w2v_d2v.tokenizer(doc) ] for doc in X]
-    model = w2v_d2v.train_w2v(X)
+    model = w2v_d2v.train_w2v(X, min_count = 0, size = 50, iter = 10)
     word_vectors = model.wv
     del model
     with open(embeddings_file, 'wb') as f:

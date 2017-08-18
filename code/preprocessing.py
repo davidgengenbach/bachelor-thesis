@@ -6,10 +6,17 @@ import string
 from time import time
 import spacy
 
-nlp = spacy.load('en')
-nlp.pipeline = [nlp.tagger]
+nlp = None
+
+
+def init_spacy():
+    global nlp
+    if nlp: return
+    nlp = spacy.load('en')
+    nlp.pipeline = [nlp.tagger]
 
 def get_spacy_parse(texts, batch_size = 100, n_threads = 1):
+    init_spacy()
     return nlp.pipe(texts, batch_size=batch_size, n_threads=n_threads)
 
 def preprocess_text_spacy(texts, min_length=-1, concat=True, n_jobs=2, batch_size=100, only_nouns = True):
@@ -34,6 +41,7 @@ def preprocess_text_spacy(texts, min_length=-1, concat=True, n_jobs=2, batch_siz
 
 
 def preprocess_text_(text, min_length=-1):
+    init_spacy()
     doc = nlp(text)
     return " ".join(word.text for word in doc if word.pos_ == 'NOUN' and (min_length != -1 or len(word.text) > min_length)).lower()
 
