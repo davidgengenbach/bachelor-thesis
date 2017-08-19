@@ -1,10 +1,19 @@
+## 19.08.2017
+- Problem: fehlende W2V Embeddings für Graph-Labels bei *Concept Maps*
+    - (Mögliche) Lösungen
+        - Ignorieren
+        - Labels aufsplitten (manche Labels bestehen aus 2 oder mehr Wörtern), dann jeweils die Embeddings davon aufaddieren (und average)
+        - Andere Co-reference Auflösung
+        - selbst trainierte W2V Embeddings vom Ausgangsdatenset verwenden, um ähnliche Wörter zu den Labels zu finden, die dann in pre-trained (GloVe, Google) W2V suchen
+
+
 ## 18.08.2017
-- W2V Embeddings für alle Datensets generiert
 - Phi Cache für Datensets eingebaut, um Klassifizierung zu beschleunigen
 - Klassifizierungsergebnisse für Datensets zusammengesammelt
     - müssen noch harmonisiert werden
         - (anscheinend) gibt sklearn die Params für GridSearchCV unterschiedlich aus
 - Fehlende W2V Embeddings
+    - W2V Embeddings für alle Datensets generiert
     - "trained" Embeddings: auf den einzelnen Datensets selbst trainierte Word2Vec Embeddings
     - Recht viele fehlende Embeddings, die aufgelöst werden müssen
     - bei Concept Maps
@@ -56,13 +65,12 @@
     - Vielleicht pre-trained GloVe Embeddings anstatt pre-trained Word2Vec
         - Anzahl der fehlenden Labels?
 - Word2Vec Ansatz für Label-Binning
-    - Problem
-        - Beim pre-trained GoogleNews Word2Vec fehlen viele Labels vom Datensatz
+    - Problem: Beim pre-trained GoogleNews Word2Vec fehlen viele Labels vom Datensatz
         - Mögliche Lösung
             - eigene Embeddings über Word2Vec lernen auf Datensatz (mit allen Labels) ...
             - ... dann fehlende Labels durch ähnliche Labels ersetzen, die im pre-trained GoogleNews Word2Vec sind
             - ... dann normal weiter machen
-    - Problem
+    - Problem: Lemmatized Labels sind nicht in Embeddings bei den Concept-Maps
         - Die Labels in den Concept Maps sind lemmatized, und sind wahrscheinlich nicht in pre-trained Embeddings von Google w2v
         - (Doch kein Problem, da die Labels _nicht_ lemmatized sind)
 
@@ -70,8 +78,6 @@
 ## 15.08.2017
 - Ansatz: Word2Vec der Graph Labels
     - Problem: für viele Labels gibt es kein Embedding im Google News Datensatz 
-        - Vorhanden: 25943
-        - Fehlend: 34217
     - (mögliche) Lösung
         - Word2Vec auf ganzen Datenset selber trainieren
 
@@ -89,6 +95,7 @@
         - Vorteil: weniger Rechenzeit
             - da die Embeddings wahrscheinlich kleiner sein können
             - und nur relevante Labels gelernt werden
+            - (Nicht relevant, da es O(n^2) Vergleiche gibt - das dominiert gegenüber dem linearen Speedup)
     - Bestehende Word2Vec Embedder benutzen (Google)...
         - (weiteres dann gleich wie oben drüber)
         - Nachteil: höhere Rechenzeit
@@ -98,7 +105,7 @@
 ## 13.08.2017
 - fast_wl
     - implemented fast hashing-based WL
-    - (is really faster, added numpy optimizations/shortcuts)
+    - (Wirklich schneller, numpy optimizations/shortcuts selbst hinzugefügt)
     - mit alter Implementierung vergleichen!
         - F1 und Performanz
         - Korrektheit
