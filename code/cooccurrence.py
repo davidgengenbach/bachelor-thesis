@@ -15,12 +15,12 @@ def words_to_dict(words, remove_point = True):
 def get_coocurrence_matrix(text, window_size = 2, ignore_sentence_bounds = True, only_forward_window = False):
     # TODO
     if isinstance(text, spacy.tokens.doc.Doc):
-        words = [word.text for word in text if not ignore_sentence_bounds or word.pos != spacy.symbols.PUNCT]
+        words = [word.text.lower() for word in text if not ignore_sentence_bounds or word.pos != spacy.symbols.PUNCT]
     elif isinstance(text, str):
         text = text.replace('.', ' ' if ignore_sentence_bounds else ' . ').lower()
         words = word_tokenize(text)
     elif isinstance(text, list):
-        words = [word if isinstance(word, str) else word.text for word in text]
+        words = [word.lower() if isinstance(word, str) else word.text.lower() for word in text]
     else:
         assert False,"Not a string, not a doc: '{}', type(text)=={}".format(text, type(text))
     word2id, id2word = words_to_dict(words)
