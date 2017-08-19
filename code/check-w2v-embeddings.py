@@ -33,15 +33,19 @@ def process_dataset(dataset_name, args, embedding_models):
             labels = graph_helper.get_all_node_labels(X)
             print('\tdataset: {:20} - #unique labels: {}'.format(dataset_name, len(labels)))
             counter = {'found': 0, 'not_found': 0}
+            not_found_labels = []
             for idx, label in enumerate(labels):
                 if label in model:
                     counter['found'] += 1
                 else:
+                    if len(not_found_labels) < 100:
+                        not_found_labels.append(label)
                     counter['not_found'] += 1
             print('\tdataset: {:20} - {}, Found: {}%'.format(dataset_name, counter, int(100 * counter['found'] / len(labels))))
             results[model_name][graph_cache_file] = {
                 'num_labels': len(labels),
-                'counts': counter
+                'counts': counter,
+                'not_found_sample': not_found_labels
             }
     print('\tdataset: {:20} - Finished'.format(dataset_name))
     return results
