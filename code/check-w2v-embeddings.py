@@ -7,7 +7,7 @@ import graph_helper
 from joblib import delayed, Parallel
 
 def process_dataset(dataset_name, args, embedding_models):
-    print('{:20} - Processing'.format(dataset_name))
+    print('\tdataset: {:20} - Processing'.format(dataset_name))
     results = {}
     used_models = embedding_models + [('trained', dataset_helper.get_w2v_embedding_for_dataset(dataset_name))] if args.check_own_embeddings else embedding_models
     all_graph_cache_files = [x for x in dataset_helper.get_all_cached_graph_datasets() if dataset_name in x]
@@ -23,27 +23,27 @@ def process_dataset(dataset_name, args, embedding_models):
             graph_cache_files.append(cache_file)
 
     if len(graph_cache_files) != 2:
-            print('{:20} - Found: gml: {}, all: {}'.format(found_gml_cache, found_all_cache))
+            print('\tdataset: {:20} - Found: gml: {}, all: {}'.format(dataset_name, found_gml_cache, found_all_cache))
     for model_name, model in used_models:
         results[model_name] = {}
-        print('{:20} -Model: {}'.format(model_name))
+        print('\tdataset: {:20} - Model: {}'.format(dataset_name, model_name))
         for graph_cache_file in graph_cache_files:
-            print('{:20} - Graph: {}'.format(dataset_name, graph_cache_file))
+            print('\tdataset: {:20} - Graph: {}'.format(dataset_name, graph_cache_file))
             X, Y = dataset_helper.get_dataset_cached(graph_cache_file)
             labels = graph_helper.get_all_node_labels(X)
-            print('{:20} - #unique labels: {}'.format(dataset_name, len(labels)))
+            print('\tdataset: {:20} - #unique labels: {}'.format(dataset_name, len(labels)))
             counter = {'found': 0, 'not_found': 0}
             for idx, label in enumerate(labels):
                 if label in model:
                     counter['found'] += 1
                 else:
                     counter['not_found'] += 1
-            print('{:20} - {}, Found: {}%'.format(dataset_name, counter, int(100 * counter['found'] / len(labels))))
+            print('\tdataset: {:20} - {}, Found: {}%'.format(dataset_name, counter, int(100 * counter['found'] / len(labels))))
             results[model_name][graph_cache_file] = {
                 'num_labels': len(labels),
                 'counts': counter
             }
-    print('{:20} - Finished'.format(dataset_name))
+    print('\tdataset: {:20} - Finished'.format(dataset_name))
     return results
 
 def main():
