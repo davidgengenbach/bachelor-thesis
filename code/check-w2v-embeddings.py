@@ -7,7 +7,7 @@ import graph_helper
 from joblib import delayed, Parallel
 
 def process_dataset(dataset_name, args, embedding_models):
-    print('Processing: {}'.format(dataset_name))
+    print('{:20} - Processing'.format(dataset_name))
     results = {}
     used_models = embedding_models + [('trained', dataset_helper.get_w2v_embedding_for_dataset(dataset_name))] if args.check_own_embeddings else embedding_models
     all_graph_cache_files = [x for x in dataset_helper.get_all_cached_graph_datasets() if dataset_name in x]
@@ -23,26 +23,27 @@ def process_dataset(dataset_name, args, embedding_models):
             graph_cache_files.append(cache_file)
 
     if len(graph_cache_files) != 2:
-            print('\tFound: gml: {}, all: {}'.format(found_gml_cache, found_all_cache))
+            print('{:20} - Found: gml: {}, all: {}'.format(found_gml_cache, found_all_cache))
     for model_name, model in used_models:
         results[model_name] = {}
-        print('\tModel: {}'.format(model_name))
+        print('{:20} -Model: {}'.format(model_name))
         for graph_cache_file in graph_cache_files:
-            print('\t\tGraph: {}'.format(graph_cache_file))
+            print('{:20} - Graph: {}'.format(dataset_name, graph_cache_file))
             X, Y = dataset_helper.get_dataset_cached(graph_cache_file)
             labels = graph_helper.get_all_node_labels(X)
-            print('\t\t#unique labels: {}'.format(len(labels)))
+            print('{:20} - #unique labels: {}'.format(dataset_name, len(labels)))
             counter = {'found': 0, 'not_found': 0}
             for idx, label in enumerate(labels):
                 if label in model:
                     counter['found'] += 1
                 else:
                     counter['not_found'] += 1
-            print('\t\t{}, Found: {}%'.format(counter, int(100 * counter['found'] / len(labels))))
+            print('{:20} - {}, Found: {}%'.format(dataset_name, counter, int(100 * counter['found'] / len(labels))))
             results[model_name][graph_cache_file] = {
                 'num_labels': len(labels),
                 'counts': counter
             }
+    print('{:20} - Finished'.format(dataset_name))
     return results
 
 def main():
@@ -50,19 +51,25 @@ def main():
 
     print('Args: {}'.format(args))
 
+    print('Loading embeddings')
     embedding_models = []
     # GloVe embeddings
     if args.check_glove:
+        print('\tLoading GloVe embeddings')
         embedding_models += [(x, get_embedding_model(x, binary = False)) for x in glob(args.glove_files)]
 
     if args.check_google_news:
+        print('\tLoading Google News embeddings')
         embedding_models.append((args.google_news_file, get_embedding_model(args.google_news_file, binary = True)))
+
+    print('\tFinished')
 
     all_datasets = dataset_helper.get_all_available_dataset_names()
 
+    print('Starting checking the embedding results')
     # ...
     embedding_results = {dataset_name: result for dataset_name, result in zip(all_datasets, Parallel(n_jobs=args.n_jobs)(delayed(process_dataset)(dataset_name, args, embedding_models) for dataset_name in all_datasets))}
-        
+    
     with open(args.results_file, 'w') as f:
         json.dump(embedding_results, f)
     print('Saved results', json.dumps(embedding_results))
