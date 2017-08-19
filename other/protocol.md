@@ -21,7 +21,6 @@
             - glove.twitter.27B.25d             92%
             - glove.twitter.27B.50d             92%
             - trained                           91%
-
             - (total)                           92%
         - ... liegt wohl daran, dass die Label in den Concept Graphs nicht nur ein Wort beinhalten
             - (mögliche) Lösung
@@ -42,7 +41,6 @@
             - glove.twitter.27B.25d             46%
             - glove.twitter.27B.50d             46%
             - trained                           29%
-
             - (total)                           39%
         - mögliche Gründe für fehlende Labels
             - bei den pre-trained Embeddings
