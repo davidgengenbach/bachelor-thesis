@@ -14,7 +14,7 @@ def get_args():
     parser.add_argument('--embedding_size', type=int, default=50)
     parser.add_argument('--embedding_iter', type=int, default=10)
     parser.add_argument('--embedding_min_count', type=int, default=0)
-    parser.add_argument('--embedding_save_path', type=str, default="data/embeddings")
+    parser.add_argument('--embedding_save_path', type=str, default="data/embeddings/trained")
     parser.add_argument('--force', action = 'store_true')
     args = parser.parse_args()
     return args

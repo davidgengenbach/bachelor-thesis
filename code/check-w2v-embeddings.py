@@ -9,6 +9,7 @@ from joblib import delayed, Parallel
 def process_dataset(dataset_name, args, embedding_models):
     print('\tdataset: {:20} - Processing'.format(dataset_name))
     results = {}
+    if dataset_name != 'ling-spam': return results
     used_models = embedding_models + [('trained', dataset_helper.get_w2v_embedding_for_dataset(dataset_name))] if args.check_own_embeddings else embedding_models
     all_graph_cache_files = [x for x in dataset_helper.get_all_cached_graph_datasets() if dataset_name in x]
     graph_cache_files = []
@@ -41,7 +42,7 @@ def process_dataset(dataset_name, args, embedding_models):
                     if len(not_found_labels) < 100:
                         not_found_labels.append(label)
                     counter['not_found'] += 1
-            print('\tdataset: {:20} - {}, Found: {}%'.format(dataset_name, counter, int(100 * counter['found'] / len(labels))))
+            print('\tdataset: {:20} - {}, Found: {}%, Missing Labels Sample: {}'.format(dataset_name, counter, int(100 * counter['found'] / len(labels)), not_found_labels[:10]))
             results[model_name][graph_cache_file] = {
                 'num_labels': len(labels),
                 'counts': counter,
