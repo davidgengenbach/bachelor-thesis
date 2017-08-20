@@ -1,3 +1,13 @@
+## 20.08.2017
+- Problem: Wann sind zwei Labels gleich?
+    - Wie groß darf der Cosine Abstand sein, damit zwei Labels gleich sind? 
+    - Mögliche Lösung
+        - Clustering
+            - zB. K-Means auf die Word2Vec Embeddings der Labels
+            - mit K Cluster (= Anzahl Bins)
+            - Wörter zusammenfassen, wenn im gleichen Cluster
+
+
 ## 19.08.2017
 - Problem: fehlende W2V Embeddings für Graph-Labels bei *Concept Maps*
     - (Mögliche) Lösungen
