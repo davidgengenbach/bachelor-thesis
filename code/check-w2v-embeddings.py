@@ -10,7 +10,7 @@ def process_dataset(dataset_name, args, embedding_models):
     print('\tdataset: {:20} - Processing'.format(dataset_name))
     results = {}
     used_models = embedding_models + [('trained', dataset_helper.get_w2v_embedding_for_dataset(dataset_name))] if args.check_own_embeddings else embedding_models
-    all_graph_cache_files = [x for x in dataset_helper.get_all_cached_graph_datasets() if dataset_name in x]
+    all_graph_cache_files = [x for x in dataset_helper.get_all_cached_graph_datasets() if x.endswith('{}.npy'.format(dataset_name))]
     graph_cache_files = []
     found_all_cache = False
     found_gml_cache = False
