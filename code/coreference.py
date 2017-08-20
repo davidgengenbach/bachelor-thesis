@@ -4,27 +4,7 @@ from joblib import delayed, Parallel
 import dataset_helper
 import graph_helper
 import embeddings
-
-def get_embeddings_for_labels(labels, embedding, check_most_similar = False, restrict_vocab = None, lookup_embedding = None, topn = 20):
-    assert not check_most_similar or lookup_embedding is not None
-    not_found, embeddings = [], {}
-
-    for label in labels:
-        label = label.lower()
-        if label in embedding:
-            embeddings[label] = embedding[label]
-        elif check_most_similar and label in lookup_embedding:
-            most_similar = lookup_embedding.similar_by_word(label, topn = topn)
-            most_similar_labels = [label for label, similarity in most_similar]
-            match = set(most_similar_labels) & set(restrict_vocab)
-
-            if len(match):
-                embeddings[label] = embedding[list(match)[0]]
-            else:
-                not_found.append(label)
-        else:
-            not_found.append(label)
-    return embeddings, not_found
+import pickle
 
 
 def process_dataset(dataset_name, pre_trained_embedding, args):
@@ -51,9 +31,15 @@ def process_dataset(dataset_name, pre_trained_embedding, args):
 
     in_both = embeddings_trained_labels & embeddings_pre_trained_labels
 
-    embeddings_pre_trained, not_found_pre_trained_coreferenced = get_embeddings_for_labels(all_labels, pre_trained_embedding, check_most_similar = True, restrict_vocab = in_both, lookup_embedding = trained_embedding)
+    embeddings_pre_trained, not_found_pre_trained_coreferenced = embeddings.get_embeddings_for_labels(all_labels, pre_trained_embedding, check_most_similar = True, restrict_vocab = in_both, lookup_embedding = trained_embedding)
     
-    print('Not found:\n\ttrained: {}\n\tpre_trained: {}\n\tafter_coreference: {}'.format(len(not_found_trained), len(not_found_pre_trained), len(not_found_pre_trained_coreferenced)))
+    print('{:15} - Missing'.format(dataset_name))
+
+    for label, s in [('trained', not_found_trained), ('pre_trained', not_found_pre_trained), ('after_coreference', not_found_pre_trained_coreferenced)]:
+        print('\t{:20} {:>6}'.format(label, len(s)))
+
+    with open('{}/{}.npy'.format(args.embeddings_result_folder, dataset_name), 'wb') as f:
+        pickle.dump((embeddings_pre_trained, not_found_pre_trained_coreferenced), f)
 
     print('{:15} - Finish'.format(dataset_name))
 
@@ -73,6 +59,8 @@ def get_args():
     parser = argparse.ArgumentParser(description='tbd')
     parser.add_argument('--n_jobs', type=int, default = 1)
     parser.add_argument('--pre_trained_embedding', type=str, default = 'data/embeddings/glove/glove.6B.50d.w2v.txt')
+    parser.add_argument('--embeddings_result_folder', type=str, default = 'data/embeddings/graph-embeddings')
+    
     args = parser.parse_args()
     return args
 

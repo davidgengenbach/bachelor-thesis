@@ -3,9 +3,23 @@
     - Wie groß darf der Cosine Abstand sein, damit zwei Labels gleich sind? 
     - Mögliche Lösung
         - Clustering
-            - zB. K-Means auf die Word2Vec Embeddings der Labels
-            - mit K Cluster (= Anzahl Bins)
-            - Wörter zusammenfassen, wenn im gleichen Cluster
+            - zB. K-Means auf die Word2Vec Embeddings der Labels mit K Cluster (= Anzahl Bins). Alle Labels in einem Cluster bekommen dasselbe (neue) Label
+            - Contra
+                - hoher Rechenaufwand
+                - Wie Anzahl der gewünschten Cluster bestimmen?
+        - Treshold
+            - Alle Labels miteinander vergleichen. Wenn (cosine) Abstand unter Treshold, werden zwei oder mehr Labels zusammengefasst
+            - Wie Treshold bestimmen?
+                - manuell angeben
+                - pro Datenset berechnen
+                    - zB. Median-Abstand von Embeddings durch festgelegte Zahl?
+            - Implementierung
+            - Contra
+                - da transitiv, gibt es wahrscheinlich große Cluster
+        - Most similar
+            - "Natürliches Clustering"
+            - Contra
+                - da transitiv, gibt es wahrscheinlich große Cluster
 
 
 ## 19.08.2017
