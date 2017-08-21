@@ -1,68 +1,53 @@
-#!/usr/bin/env python3
-
-from joblib import delayed, Parallel
-import dataset_helper
-import graph_helper
+import collections
 import embeddings
-import pickle
+import dataset_helper
 
+def create_label_cliques_by_similarity(labels, lookup_embeddings, treshold = 0.99999, topn = 1):
+    num_labels = len(labels)
+    print('Creating label cliques by similarity for {} labels'.format(num_labels))
+    lookup = {}
+    clique_counter = 0
+    cliques = collections.defaultdict(lambda: [])
+    similarity_counter = {'similar': 0, 'unsimilar': 0}
+    for idx, label in enumerate(labels):
+        if idx % (num_labels / 10) == 0 or idx == num_labels - 1: print('Progress: {:>3}%'.format(int(100 * idx / num_labels)))
+        most_similar_labels = lookup_embeddings.similar_by_word(label, topn=topn)
+        for most_similar_label, similarity in most_similar_labels:
+            if similarity > treshold:
+                # If both labels have already been added to cliques, ...
+                if label in lookup and most_similar_label in lookup:
+                    # ... ignore both labels
+                    continue
+                # If the current label is already in the lookup, ...
+                if label in lookup:
+                    clique_num = lookup[label]
+                    # ... add the similar label to that clique
+                    cliques[clique_num].append(most_similar_label)
+                    # ... and add it to the lookup
+                    lookup[most_similar_label] = clique_num
+                # If the similar label is already in lookup, ...
+                elif most_similar_label in lookup:
+                    clique_num = lookup[most_similar_label]
+                    # ... add the current label to that clique
+                    cliques[clique_num].append(label)
+                    # ... and add it to the lookup
+                    lookup[label] = clique_num
+                # If neither the current label or the similar label are in the lookup, ...
+                else:
+                    # ... create a new clique
+                    clique_num = clique_counter
 
-def process_dataset(dataset_name, pre_trained_embedding, args):
-    if dataset_name != 'ling-spam': return
-    print('{:15} - Start'.format(dataset_name))
+                    # ... and add both to the new clique
+                    cliques[clique_num].append(label)
+                    cliques[clique_num].append(most_similar_label)
 
-    all_words_graphs = [graph_cache_file for graph_cache_file in dataset_helper.get_all_cached_graph_datasets() if '_{}.'.format(dataset_name) in graph_cache_file and 'all' in graph_cache_file]
-    if not len(all_words_graphs):
-        print('{:15} - no all words graph! Aborting'.format(dataset_name))
-        return
+                    # ... add both the current label and the similar label to the lookup
+                    lookup[label] = clique_num
+                    lookup[most_similar_label] = clique_num
 
-    all_words_graph = all_words_graphs[0]
-
-    X, Y = dataset_helper.get_dataset_cached(all_words_graph)
-    all_labels = graph_helper.get_all_node_labels(X)
-    
-    trained_embedding = dataset_helper.get_w2v_embedding_for_dataset(dataset_name)
-
-    embeddings_trained_labels = set(trained_embedding.vocab.keys())
-    not_found_trained = set(all_labels) - embeddings_trained_labels
-
-    embeddings_pre_trained_labels = set(pre_trained_embedding.vocab.keys())
-    not_found_pre_trained = set(all_labels) - embeddings_pre_trained_labels
-
-    in_both = embeddings_trained_labels & embeddings_pre_trained_labels
-
-    embeddings_pre_trained, not_found_pre_trained_coreferenced = embeddings.get_embeddings_for_labels(all_labels, pre_trained_embedding, check_most_similar = True, restrict_vocab = in_both, lookup_embedding = trained_embedding)
-    
-    print('{:15} - Missing'.format(dataset_name))
-
-    for label, s in [('trained', not_found_trained), ('pre_trained', not_found_pre_trained), ('after_coreference', not_found_pre_trained_coreferenced)]:
-        print('\t{:20} {:>6}'.format(label, len(s)))
-
-    with open('{}/{}.npy'.format(args.embeddings_result_folder, dataset_name), 'wb') as f:
-        pickle.dump((embeddings_pre_trained, not_found_pre_trained_coreferenced), f)
-
-    print('{:15} - Finish'.format(dataset_name))
-
-
-def main():
-    args = get_args()
-
-    print('Loading pre-trained embedding')
-    pre_trained_embedding = embeddings.get_embedding_model(args.pre_trained_embedding, binary = False, first_line_header = True, with_gensim = True)
-
-    print('Starting to process datasets')
-    Parallel(n_jobs=args.n_jobs)(delayed(process_dataset)(dataset_name, pre_trained_embedding, args) for dataset_name in dataset_helper.get_all_available_dataset_names())
-    print('Finished')
-
-def get_args():
-    import argparse
-    parser = argparse.ArgumentParser(description='tbd')
-    parser.add_argument('--n_jobs', type=int, default = 1)
-    parser.add_argument('--pre_trained_embedding', type=str, default = 'data/embeddings/glove/glove.6B.50d.w2v.txt')
-    parser.add_argument('--embeddings_result_folder', type=str, default = 'data/embeddings/graph-embeddings')
-    
-    args = parser.parse_args()
-    return args
-
-if __name__ == '__main__':
-    main()
+                    # ... and increment the clique counter
+                    clique_counter += 1
+                similarity_counter['similar'] += 1
+            else:
+                similarity_counter['unsimilar'] += 1
+    return lookup, cliques, similarity_counter

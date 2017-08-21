@@ -45,3 +45,25 @@ def get_embeddings_for_labels(labels, embedding, check_most_similar = False, res
         else:
             not_found.append(label)
     return embeddings, not_found
+
+
+def get_embeddings_for_labels_with_lookup(all_labels, trained_embedding, pre_trained_embedding):
+    embeddings_trained_labels = set(trained_embedding.vocab.keys())
+    not_found_trained = set(all_labels) - embeddings_trained_labels
+
+    embeddings_pre_trained_labels = set(pre_trained_embedding.vocab.keys())
+    not_found_pre_trained = set(all_labels) - embeddings_pre_trained_labels
+
+    in_both = embeddings_trained_labels & embeddings_pre_trained_labels
+
+    embeddings_pre_trained, not_found_pre_trained_coreferenced = get_embeddings_for_labels(all_labels, pre_trained_embedding, check_most_similar = True, restrict_vocab = in_both, lookup_embedding = trained_embedding)
+
+    return embeddings_pre_trained, not_found_pre_trained_coreferenced, not_found_trained, not_found_pre_trained
+
+
+def save_embedding_dict(embedding, filename):
+    num_embeddings = len(embedding.keys())
+    num_dim = len(embedding[list(embedding.keys())[0]])
+    with open(filename, 'w') as f:
+        f.write('{} {}\n'.format(num_embeddings, num_dim))
+        f.write("\n".join(['{} {}'.format(label, ' '.join([str(x) for x in vec])) for label, vec in embedding.items()]))

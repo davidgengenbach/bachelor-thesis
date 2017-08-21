@@ -1,3 +1,19 @@
+## 21.08.2017
+- Problem: Wann sind zwei Labels gleich
+    - Lösung implementiert
+        - Tresholding
+            - Erklärung
+                - Es gibt zwei Embeddings
+                    - ein pre-trained (GloVe, Google News)
+                    - ein selbst auf dem Datenset trainiertes Word2Vec Embedding
+                - Für im pre-trained Embedding fehlende Labels wird im selbst-trainierten Embedding nach ähnlichen Wörtern gesucht...
+                - ... dann wird das Embedding für das ähnliche Wort für das fehlende Wort benutzt
+                - Danach werden Label-Cliquen gebildet
+                    - Für jedes Label wird das ähnlichste Label gesucht
+                    - Wenn die (cosine) Ähnlichkeit über einem Treshold ist, kommen die beiden Labels (ursprünglich + ähnlich) in die selbe Clique
+
+
+
 ## 20.08.2017
 - Problem: Wann sind zwei Labels gleich?
     - Wie groß darf der Cosine Abstand sein, damit zwei Labels gleich sind? 
