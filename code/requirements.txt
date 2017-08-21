@@ -1,3 +1,4 @@
 joblib
 spacy
 networkx
+gensim

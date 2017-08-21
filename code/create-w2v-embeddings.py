@@ -40,8 +40,8 @@ def process_dataset(dataset_name, args):
     X, Y = dataset_helper.get_dataset(dataset_name=dataset_name)
 
     print('{:20} - Preprocessing'.format(dataset_name))
-    X = preprocessing.preprocess_text_spacy(X, min_length=0, concat=False, only_nouns=False)
-    X = [[word.text for word in doc] for doc in X]
+    X = preprocessing.preprocess_text_spacy(X, min_length=-1, concat=False, only_nouns=False)
+    X = [[word.text.lower().strip() for word in doc] for doc in X]
 
     print('{:20} - Training'.format(dataset_name))
     model = w2v_d2v.train_w2v(
