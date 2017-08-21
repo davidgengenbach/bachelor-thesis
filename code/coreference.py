@@ -2,7 +2,7 @@ import collections
 import embeddings
 import dataset_helper
 
-def create_label_cliques_by_similarity(labels, lookup_embeddings, treshold = 0.99999, topn = 1):
+def create_label_cliques_by_similarity(labels, lookup_embeddings, treshold = 1 - 9e-10, topn = 1):
     num_labels = len(labels)
     print('Creating label cliques by similarity for {} labels'.format(num_labels))
     lookup = {}
