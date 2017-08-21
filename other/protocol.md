@@ -11,7 +11,9 @@
             - 2) Label-Cliquen werden gebildet
                 - Für jedes Label wird das ähnlichste Label gesucht
                 - Wenn die (cosine) Ähnlichkeit über einem Treshold ist, kommen die beiden Labels (ursprünglich + ähnlich) in die selbe Clique
-                - siehe https://github.com/davidgengenbach/bachelor-thesis/blob/master/code/coreference.py#L5
+                - siehe https://github.com/davidgengenbach/bachelor-thesis/
+                blob/master/code/coreference.py#L5
+
 
 ## 20.08.2017
 - Problem: Wann sind zwei Labels gleich?
