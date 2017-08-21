@@ -53,9 +53,6 @@ def process_dataset(dataset_name, pre_trained_embedding, args):
     for label, s in [('trained', not_found_trained), ('pre_trained', not_found_pre_trained), ('after_coreference', not_found_pre_trained_coreferenced)]:
         print('\t{:20} {:>6}'.format(label, len(s)))
 
-    with open('{}/{}.npy'.format(args.embeddings_result_folder, dataset_name), 'wb') as f:
-        pickle.dump((embeddings_pre_trained, not_found_pre_trained_coreferenced), f)
-
     embeddings.save_embedding_dict(
         embeddings_pre_trained, '{}/{}.w2v.txt'.format(args.embeddings_result_folder, dataset_name))
 

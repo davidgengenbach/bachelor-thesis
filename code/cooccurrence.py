@@ -12,29 +12,28 @@ def words_to_dict(words, remove_point = True):
     word2id = {word: idx for idx, word in enumerate(words)}
     return word2id, {idx: word for word, idx in word2id.items()}
 
-def get_coocurrence_matrix(text, window_size = 2, ignore_sentence_bounds = True, only_forward_window = False):
+def get_coocurrence_matrix(text, window_size = 2, only_forward_window = False, keep_whitespace = False):
     # TODO
     if isinstance(text, spacy.tokens.doc.Doc):
-        words = [word.text.lower().strip() for word in text if not ignore_sentence_bounds or word.pos != spacy.symbols.PUNCT]
+        words = [word.text.lower().strip() for word in text]
     elif isinstance(text, str):
-        text = text.replace('.', ' ' if ignore_sentence_bounds else ' . ').lower()
-        words = word_tokenize(text)
+        words = word_tokenize(text.lower())
     elif isinstance(text, list):
-        words = [word.lower().strip() if isinstance(word, str) else word.text.lower() for word in text]
+        words = [word.lower().strip() if isinstance(word, str) else word.text.lower().strip() for word in text]
     else:
         assert False,"Not a string, not a doc: '{}', type(text)=={}".format(text, type(text))
+
+    if not keep_whitespace:
+        words = [word for word in words if word.strip() != '']
+
     word2id, id2word = words_to_dict(words)
     num_words = len(word2id.keys())
     mat = lil_matrix((num_words, num_words), dtype=np.int8)
     txt_len = len(words)
     for idx, word_1 in enumerate(words):
-        if word_1 == '.':
-            continue
         window_size_idx = min(idx + window_size + 1, txt_len)
         words_2 = words[idx + 1:window_size_idx]
         for word_2 in words_2:
-            if not ignore_sentence_bounds and word_2 == '.':
-                break
             mat[word2id[word_1], word2id[word_2]] += 1
 
             if not only_forward_window and word_1 != word_2:

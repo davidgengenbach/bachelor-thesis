@@ -5,21 +5,48 @@ from nltk.corpus import stopwords
 import string
 from time import time
 import spacy
+import re
+
+LINEBREAK_REGEX = re.compile(r'((\r\n)|[\n\v])+')
+NONBREAKING_SPACE_REGEX = re.compile(r'(?!\n)\s+')
 
 nlp = None
-
 
 def init_spacy():
     global nlp
     if nlp: return
     nlp = spacy.load('en')
-    nlp.pipeline = [nlp.tagger]
 
 def get_spacy_parse(texts, batch_size = 100, n_threads = 1):
     init_spacy()
     return nlp.pipe(texts, batch_size=batch_size, n_threads=n_threads)
 
-def preprocess_text_spacy(texts, min_length=-1, concat=True, n_jobs=2, batch_size=100, only_nouns = True):
+
+def normalize_whitespace(text):
+    """
+    Given ``text`` str, replace one or more spacings with a single space, and one
+    or more linebreaks with a single newline. Also strip leading/trailing whitespace.
+    Taken from http://textacy.readthedocs.io/en/latest/_modules/textacy/preprocess.html
+    """
+    return NONBREAKING_SPACE_REGEX.sub(' ', LINEBREAK_REGEX.sub(r'\n', text)).strip()
+
+def ana_preprocessing(text):
+    # all lowercase
+    text = text.lower()
+    # replace TAB, NEWLINE and RETURN characters by SPACE
+    replacements = (
+        ('\t', ' '),
+        ('\n', ' '),
+        ('\r', ' '),
+    )
+    for d in replacements:
+        text = text.replace(*d)
+
+    text = normalize_whitespace(text)
+    return text
+
+
+def preprocess_text_spacy(texts, min_length=-1, concat=True, n_jobs=2, batch_size=100, only_nouns = True, remove_whitespace = True, ana_preprocessing_ = True):
     """Preprocesses text by
     - only keeping the NOUNs
     - only keeping the words that are longer than min_length (optional)
@@ -33,17 +60,19 @@ def preprocess_text_spacy(texts, min_length=-1, concat=True, n_jobs=2, batch_siz
     Returns:
         list of str: the pre-processed text
     """
-    res = [[word for word in doc if (not only_nouns or word.pos_ == 'NOUN') and (min_length == -1 or len(word.text) > min_length)] for doc in get_spacy_parse(texts, batch_size=batch_size, n_threads=n_jobs)]
+    if ana_preprocessing_:
+        texts = [ana_preprocessing(text) for text in texts]
+
+    res = [
+        [
+            word for word in doc if (not remove_whitespace or word.text.strip() != '') and (not only_nouns or word.pos_ == 'NOUN') and (min_length == -1 or len(word.text) > min_length)
+        ]
+        for doc in get_spacy_parse(texts, batch_size=batch_size, n_threads=n_jobs)
+    ]
     if concat:
         return [" ".join([word.text for word in doc] for doc in res)]
     else:
         return res
-
-
-def preprocess_text_(text, min_length=-1):
-    init_spacy()
-    doc = nlp(text)
-    return " ".join(word.text for word in doc if word.pos_ == 'NOUN' and (min_length != -1 or len(word.text) > min_length)).lower()
 
 
 def preprocess_text_old(text):

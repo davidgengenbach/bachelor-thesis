@@ -11,9 +11,10 @@ def main():
     Parallel(n_jobs=args.n_jobs)(delayed(process_dataset)(dataset_name, args) for dataset_name in dataset_helper.get_all_available_dataset_names())
 
 def process_dataset(dataset, args):
+    if args.limit_dataset and dataset != args.limit_dataset: return
     print('dataset: {:15}'.format(dataset))
     for window_size in range(args.window_size_start, args.window_size_end):
-        for only_nouns in [True, False]:
+        for only_nouns in [False, True]:
             print('dataset: {:15} - window_size={}, only_nouns={}'.format(dataset, window_size,  only_nouns))
             cache_file = dataset_helper.CACHE_PATH + '/dataset_graph_cooccurrence_{}_{}_{}.npy'.format(window_size, 'only-nouns' if only_nouns else 'all', dataset)
             print('dataset: {:15} - writing to cache file: {}'.format(dataset, cache_file))
@@ -37,6 +38,7 @@ def get_args():
     parser.add_argument('--window_size_end', type=int, default=4)
     parser.add_argument('--min_length', type=int, default=-1)
     parser.add_argument('--force', action = 'store_true')
+    parser.add_argument('--limit_dataset', type=str, default = None)
     args = parser.parse_args()
     return args
 

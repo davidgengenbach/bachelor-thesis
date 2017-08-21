@@ -66,4 +66,4 @@ def save_embedding_dict(embedding, filename):
     num_dim = len(embedding[list(embedding.keys())[0]])
     with open(filename, 'w') as f:
         f.write('{} {}\n'.format(num_embeddings, num_dim))
-        f.write("\n".join(['{} {}'.format(label, ' '.join([str(x) for x in vec])) for label, vec in embedding.items()]))
+        f.write("\n".join(['{} {}'.format(label, ' '.join([str(x) for x in vec])) for label, vec in embedding.items() if label.strip() != '']))

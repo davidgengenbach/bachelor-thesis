@@ -67,6 +67,14 @@ def create_label_cliques_by_similarity(similar_labels, threshold = 1 - 9e-10):
                     clique_counter += 1
     return lookup
 
+
+def get_cliques_from_lookup(lookup):
+    cliques = collections.defaultdict(lambda: [])
+    for label, clique_num in lookup.items():
+        cliques[clique_num].append(label)
+    return cliques
+
+
 def get_non_coreferenced_labels(labels, lookup):
     """Returns all labels that belong to no clique.
     
