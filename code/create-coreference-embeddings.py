@@ -15,6 +15,7 @@ def get_args():
     parser.add_argument('--pre_trained_embedding', type=str, default='data/embeddings/glove/glove.6B.50d.w2v.txt')
     parser.add_argument('--embeddings_result_folder', type=str, default='data/embeddings/graph-embeddings')
     parser.add_argument('--limit_dataset', type=str, default=None)
+    parser.add_argument('--force', action='store_true')
 
     args = parser.parse_args()
     return args
@@ -56,7 +57,7 @@ def process_dataset(dataset_name, pre_trained_embedding, args):
         pickle.dump((embeddings_pre_trained, not_found_pre_trained_coreferenced), f)
 
     embeddings.save_embedding_dict(
-        embeddings_pre_trained, 'data/embeddings/graph-embeddings/{}.w2v.txt'.format(dataset_name))
+        embeddings_pre_trained, '{}/{}.w2v.txt'.format(args.embeddings_result_folder, dataset_name))
 
     print('{:15} - Finish'.format(dataset_name))
 
