@@ -1,3 +1,7 @@
+## 22.08.2017
+- Resultate hinzugefügt
+    - https://github.com/davidgengenbach/bachelor-thesis/blob/master/code/tmp/results/README.md
+
 ## 21.08.2017
 - Problem: Wann sind zwei Labels gleich
     - Lösung implementiert
