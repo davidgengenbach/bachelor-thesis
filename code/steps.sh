@@ -25,3 +25,7 @@ python -u $NAME.py --check_glove --check_google_news --check_own_embeddings  > $
 # phi cache
 NAME=create-phi-graph-cache
 python -u  $NAME.py --n_jobs=6 --force > ~/logs/$NAME.log 2>&1
+
+# Classification
+NAME=run-classification
+python -u  $NAME.py --n_jobs=8 --force > ~/logs/$NAME.log 2>&1
