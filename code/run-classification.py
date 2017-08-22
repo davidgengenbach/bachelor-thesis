@@ -31,6 +31,7 @@ def get_args():
     import argparse
     parser = argparse.ArgumentParser(description='Run classification on the text and graph datasets')
     parser.add_argument('--n_jobs', type=int, default=2)
+    parser.add_argument('--force', action='store_true')
     parser.add_argument('--scoring', type=str, default="f1_macro")
     parser.add_argument('--verbose', type=int, default=11)
     parser.add_argument('--limit_dataset', type=str,
@@ -56,7 +57,7 @@ def main():
             continue
 
         result_file = 'data/results/text_{}.results.npy'.format(dataset_name)
-        if os.path.exists(result_file):
+        if not args.force and os.path.exists(result_file):
             continue
 
         gc.collect()
@@ -99,7 +100,7 @@ def main():
 
         print('{:<10} - {:<15}'.format('Graph', graph_dataset_cache_file))
 
-        if not os.path.exists(cache_file):
+        if not args.force and not os.path.exists(cache_file):
             print('{:<10} - {:<15} - Could not find cachefile: {}'.format('Graph', graph_dataset_cache_file, cache_file))
             continue
         gc.collect()
