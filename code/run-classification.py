@@ -33,7 +33,7 @@ def get_args():
     parser.add_argument('--n_jobs', type=int, default=2)
     parser.add_argument('--scoring', type=str, default="f1_macro")
     parser.add_argument('--verbose', type=int, default=11)
-    parser.add_argument('--filter_dataset', type=str,
+    parser.add_argument('--limit_dataset', type=str,
                         help="Only calculate datasets with this argument in the dataset name", default=None)
     args = parser.parse_args()
     return args
@@ -48,17 +48,20 @@ def main():
         shuffle=True
     )
 
+    print('{:<10} - Starting'.format('Text'))
     for dataset_name in dataset_helper.get_all_available_dataset_names():
-        # TODO
-        break
-        if args.filter_dataset and not args.filter_dataset in dataset_name:
-            continue
-        result_file = 'data/results/text_{}.results.npy'.format(dataset_name)
+        print('{:<10} - {:<15}'.format('Text', dataset_name))
 
+        if args.limit_dataset and not args.limit_dataset in dataset_name:
+            continue
+
+        result_file = 'data/results/text_{}.results.npy'.format(dataset_name)
         if os.path.exists(result_file):
             continue
+
         gc.collect()
 
+        print('{:<10} - {:<15} - Retrieving dataset'.format('Text', dataset_name))
         X, Y = dataset_helper.get_dataset(dataset_name, use_cached=True)
 
         p = Pipeline([
@@ -76,29 +79,36 @@ def main():
         )
 
         gscv = GridSearchCV(estimator=p, param_grid=param_grid, cv=cv,
-                            scoring=args.scoring, n_jobs=args.n_jobs, verbose=11)
+                            scoring=args.scoring, n_jobs=args.n_jobs, verbose=args.verbose)
+
+        print('{:<10} - {:<15} - Starting to fit'.format('Text', dataset_name))
+
         gscv_result = gscv.fit(X, Y)
 
         with open(result_file, 'wb') as f:
             pickle.dump(gscv_result.cv_results_, f)
-        logger.info('Best score:\t{:.5f}\nBest params:\t{}'.format(gscv_result.best_score_, gscv_result.best_params_))
+        print('{:<10} - {:<15} - Finished'.format('Text', dataset_name))
 
+    print('{:<10} - Finished'.format('Text'))
+    print('{:<10} - Starting'.format('Graph'))
     for cache_file in dataset_helper.get_all_cached_graph_phi_datasets():
-        if args.filter_dataset and not args.filter_dataset in cache_file:
+        if args.limit_dataset and not args.limit_dataset in cache_file:
             continue
 
         graph_dataset_cache_file = cache_file.split('/')[-1]
 
-        logger.info('{}\tDataset File: {}'.format('#' * 10, graph_dataset_cache_file))
+        print('{:<10} - {:<15}'.format('Graph', graph_dataset_cache_file))
 
         if not os.path.exists(cache_file):
-            logger.warning('\tCould not find cachefile: "{}". Skipping.'.format(cache_file))
+            print('{:<10} - {:<15} - Could not find cachefile: {}'.format('Graph', graph_dataset_cache_file, cache_file))
             continue
         gc.collect()
 
+        print('{:<10} - {:<15} - Retrieving dataset'.format('Graph', graph_dataset_cache_file))
         X_all, Y = dataset_helper.get_dataset_cached(cache_file, check_validity=False)
 
         for h in range(len(X_all)):
+            print('{:<10} - {:<15} - Classifying for h={}'.format('Graph', graph_dataset_cache_file, h))
             result_file = 'data/results/{}.{}.results.npy'.format(graph_dataset_cache_file, h)
             if os.path.exists(result_file):
                 logger.warning('\tAlready calculated result: {}'.format(result_file))
@@ -128,6 +138,7 @@ def main():
             )
 
             try:
+                print('{:<10} - {:<15} - Classifying for h={}, fitting'.format('Graph', graph_dataset_cache_file, h))
                 gscv_result = gscv.fit(X, Y)
 
                 if hasattr(param_grid['clf'], 'coef_'):
@@ -138,6 +149,8 @@ def main():
             except Exception as e:
                 logger.exception(e)
                 continue
+            print('{:<10} - {:<15} - Finished for h={}'.format('Graph', graph_dataset_cache_file, h))
+    print('Finished!')
 
 if __name__ == '__main__':
     main()
