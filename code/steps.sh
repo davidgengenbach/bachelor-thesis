@@ -2,8 +2,6 @@
 
 LOG_PATH=~/logs
 
-cd bachelor-thesis/code
-
 # Co-occurrence
 NAME=create-coocurrence-graphs
 python -u $NAME.py --n_jobs=8 --force > $LOG_PATH/$NAME.log 2>&1
