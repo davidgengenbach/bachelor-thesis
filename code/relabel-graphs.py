@@ -13,6 +13,7 @@ def get_args():
     import argparse
     parser = argparse.ArgumentParser(description='Relabels graphs with a given lookup')
     parser.add_argument('--limit_dataset', type=str, default=None)
+    parser.add_argument('--force', action = 'store_true')
     parser.add_argument('--lookup_path', type=str, default='data/embeddings/graph-embeddings')
     parser.add_argument('--n_jobs', type=int, default=1)
     args = parser.parse_args()
@@ -40,14 +41,22 @@ def process_dataset(dataset, args):
     relabel_trans = RelabelGraphsTransformer(label_lookup)
     print_dataset('Starting processing')
     for graph_dataset_cache_file in dataset_helper.get_all_cached_graph_datasets(dataset):
+        result_file = graph_dataset_cache_file.replace('.npy', '.relabeled.npy')
+        
+        if not force and not os.path.exists(result_file):
+            print_dataset('\t\tAlready processed, skipping: {}'.format(graph_dataset_cache_file))
+            continue
+
         print_dataset('\tProcessing dataset: {}'.format(graph_dataset_cache_file))
         X, Y = dataset_helper.get_dataset_cached(graph_dataset_cache_file)
 
         X = tuple_trans.transform(X)
         print_dataset('\t\tRelabeling: {}'.format(graph_dataset_cache_file))
         X = relabel_trans.transform(X)
+        print_dataset('\t\tSaving: {}, to {}'.format(graph_dataset_cache_file, result_file))
+        with open(result_file, 'wb') as f:
+            pickle.dump((X, Y), f)
         print_dataset('\t\tDone: {}'.format(graph_dataset_cache_file))
-
 
 if __name__ == '__main__':
     main()
