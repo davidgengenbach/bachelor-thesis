@@ -17,14 +17,21 @@ primes_arguments_required = [2, 3, 7, 19, 53, 131, 311, 719, 1619, 3671, 8161, 1
 
 
 def fast_wl_compute(graphs, h=1, label_lookups=None, label_counters=None, primes_arguments_required=primes_arguments_required, phi_dim = None, labels_dtype = np.uint32):
+
+    assert isinstance(graphs, list)
+    assert len(graphs)
+    assert isinstance(h, int)
+
     # If no previous label counters/lookups are given, create empty ones
     if not label_lookups:
         label_lookups = [{} for x in range(h + 1)]
     if not label_counters:
         label_counters = [0] * (h + 1)
 
+    adjacency_matrices = [adjs for adjs, nodes in graphs]
+
     # Relabel the graphs, mapping the string labels to unique IDs (ints)
-    label_lookup, label_counter, graph_labels, adjacency_matrices = relabel_graphs(graphs, label_counter = label_counters[0], label_lookup = label_lookups[0], labels_dtype = labels_dtype)
+    label_lookup, label_counter, graph_labels = relabel_graphs(graphs, label_counter = label_counters[0], label_lookup = label_lookups[0], labels_dtype = labels_dtype)
 
     num_labels = len(label_lookup.keys())
     num_graphs = len(graphs)
@@ -65,6 +72,7 @@ def fast_wl_compute(graphs, h=1, label_lookups=None, label_counters=None, primes
         for idx, (labels, adjacency_matrix) in enumerate(zip(graph_labels, adjacency_matrices)):
             # ... generate the signatures (see paper) for each graph
             signatures = np.round((labels + adjacency_matrix * log_primes[labels]), decimals=10).astype(np.uint32)
+            print(i, idx, signatures)
             # ... add missing signatures to the label lookup
             for signature in signatures:
                 if signature not in label_lookup:
@@ -89,13 +97,11 @@ def relabel_graphs(graphs, label_counter = 0, label_lookup={}, labels_dtype = np
     assert isinstance(label_lookup, dict)
 
     labels = [[] for i in range(len(graphs))]
-    adjacency_matrices = [[] for i in range(len(graphs))]
-    for idx, graph in enumerate(graphs):
-        nodes = list(graph.nodes())
-        for label in nodes:
+    nodes = [nodes for adjs, nodes in graphs]
+    for idx, nodes_ in enumerate(nodes):
+        for label in nodes_:
             if label not in label_lookup:
                 label_lookup[label] = label_counter
                 label_counter += 1
-        labels[idx] = np.array([label_lookup[x] for x in nodes], dtype=labels_dtype)
-        adjacency_matrices[idx] = nx.adjacency_matrix(graph, nodelist = nodes)
-    return label_lookup, label_counter, labels, adjacency_matrices
+        labels[idx] = np.array([label_lookup[x] for x in nodes_], dtype=labels_dtype)
+    return label_lookup, label_counter, labels

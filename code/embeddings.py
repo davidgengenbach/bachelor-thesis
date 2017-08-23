@@ -26,12 +26,13 @@ def get_embeddings_for_labels(labels, embedding, check_most_similar = False, res
         tuple(dict, list(str)): the dictionary with the labels as keys and the embeddings for that labels as value. And a list of label that could not be found
     """
     assert not check_most_similar or lookup_embedding is not None
-    not_found, embeddings = [], {}
+    not_found, embeddings, lookup = [], {}, {}
 
     for label in labels:
         label = label.lower()
         if label in embedding:
             embeddings[label] = embedding[label]
+            lookup[label] = label
         elif check_most_similar and label in lookup_embedding:
             most_similar = lookup_embedding.similar_by_word(label, topn = topn)
             most_similar_labels = [label for label, similarity in most_similar]
@@ -40,11 +41,13 @@ def get_embeddings_for_labels(labels, embedding, check_most_similar = False, res
             if len(match):
                 most_similar_label_found = [label for label, similarity in most_similar if label in match][0]
                 embeddings[label] = embedding[most_similar_label_found]
+                lookup[label] = most_similar_label_found
             else:
                 not_found.append(label)
+                lookup[label] = label
         else:
             not_found.append(label)
-    return embeddings, not_found
+    return embeddings, not_found, lookup
 
 
 def get_embeddings_for_labels_with_lookup(all_labels, trained_embedding, pre_trained_embedding):
@@ -56,9 +59,9 @@ def get_embeddings_for_labels_with_lookup(all_labels, trained_embedding, pre_tra
 
     in_both = embeddings_trained_labels & embeddings_pre_trained_labels
 
-    embeddings_pre_trained, not_found_pre_trained_coreferenced = get_embeddings_for_labels(all_labels, pre_trained_embedding, check_most_similar = True, restrict_vocab = in_both, lookup_embedding = trained_embedding)
+    embeddings_pre_trained, not_found_pre_trained_coreferenced, lookup = get_embeddings_for_labels(all_labels, pre_trained_embedding, check_most_similar = True, restrict_vocab = in_both, lookup_embedding = trained_embedding)
 
-    return embeddings_pre_trained, not_found_pre_trained_coreferenced, not_found_trained, not_found_pre_trained
+    return embeddings_pre_trained, not_found_pre_trained_coreferenced, not_found_trained, not_found_pre_trained, lookup
 
 
 def save_embedding_dict(embedding, filename):

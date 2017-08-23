@@ -45,13 +45,16 @@ def process_dataset(dataset_name, pre_trained_embedding, args):
     all_labels = graph_helper.get_all_node_labels(X)
 
     print('{:15} - Resolving embeddings'.format(dataset_name))
-    embeddings_pre_trained, not_found_pre_trained_coreferenced, not_found_trained, not_found_pre_trained = embeddings.get_embeddings_for_labels_with_lookup(
+    embeddings_pre_trained, not_found_pre_trained_coreferenced, not_found_trained, not_found_pre_trained, lookup = embeddings.get_embeddings_for_labels_with_lookup(
         all_labels, trained_embedding, pre_trained_embedding)
 
     print('{:15} - Missing'.format(dataset_name))
 
     for label, s in [('trained', not_found_trained), ('pre_trained', not_found_pre_trained), ('after_coreference', not_found_pre_trained_coreferenced)]:
         print('\t{:20} {:>6}'.format(label, len(s)))
+
+    with open('{}/{}.label-lookup.npy'.format(args.embeddings_result_folder, dataset_name), 'wb') as f:
+        pickle.dump(lookup, f)
 
     embeddings.save_embedding_dict(
         embeddings_pre_trained, '{}/{}.w2v.txt'.format(args.embeddings_result_folder, dataset_name))
