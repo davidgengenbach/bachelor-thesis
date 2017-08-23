@@ -18,7 +18,7 @@ def add_bogus_labels_to_empty_graphs(graphs):
     return empty_graph_counter
 
 def convert_graphs_to_adjs_tuples(X):
-    if isinstance(X[0], tuple):
+    if not isinstance(X[0], tuple):
         for idx, graph in enumerate(X):
             nodes = graph.nodes()
             X[idx] = (nx.adjacency_matrix(graph, nodelist = nodes), nodes)

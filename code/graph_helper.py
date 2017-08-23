@@ -11,6 +11,7 @@ import wl
 import dataset_helper
 import pandas as pd
 import numpy as np
+from scipy.sparse import lil_matrix
 
 
 def convert_dataset_to_co_occurence_graph_dataset(X, Y, min_length = 2, n_jobs=4, only_nouns = False, **cooccurrence_kwargs):
@@ -104,6 +105,15 @@ def get_graphs_from_folder(folder, ext='gml', undirected=True, verbose=False):
     assert len(X) == len(Y), 'X has not the same dimensions as Y'
     return X, Y
 
+
+def convert_graphs_to_adjs_tuples(X):
+    if not isinstance(X[0], tuple):
+        for idx, graph in enumerate(X):
+            nodes = graph.nodes()
+            if len(nodes) == 0 or nx.number_of_edges(graph) == 0:
+                X[idx] = (lil_matrix(1, 1), [''])
+            else:
+                X[idx] = (nx.adjacency_matrix(graph, nodelist = nodes), nodes)
 
 
 def get_gml_graph(graph_str, undirected=False, num_tries=5, verbose=False):
