@@ -2,18 +2,7 @@
 
 No co-reference currently.
 
-
-## Mean of all classifiers
-
-![all.png](all.png)
-
-![dataset-ling-spam.png](dataset-ling-spam.png)
-
-![dataset-ng20.png](dataset-ng20.png)
-
-![dataset-reuters-21578.png](dataset-reuters-21578.png)
-
-![dataset-webkb.png](dataset-webkb.png)
+**Classifier:** [`PassiveAggressiveClassifier`](http://scikit-learn.org/stable/modules/generated/sklearn.linear_model.PassiveAggressiveClassifier.html) with `max_iter=1000` and `tol=1e-4`.
 
 ## Only the best classifier
 
@@ -48,3 +37,15 @@ concept-graph       best f1-score: 0.6424   words: concepts      wl iteration: 4
 cooccurrence        best f1-score: 0.7054   words: all           wl iteration: 0       window_size: 1
 text                best f1-score: 0.6576   words: only-nouns    stop words:   english
 ```
+
+## Mean of all classifiers
+
+![all.png](all.png)
+
+![dataset-ling-spam.png](dataset-ling-spam.png)
+
+![dataset-ng20.png](dataset-ng20.png)
+
+![dataset-reuters-21578.png](dataset-reuters-21578.png)
+
+![dataset-webkb.png](dataset-webkb.png)

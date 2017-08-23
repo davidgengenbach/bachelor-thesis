@@ -49,6 +49,12 @@ def main():
         shuffle=True
     )
 
+    clfs = [
+        sklearn.linear_model.Perceptron(max_iter=1000, tol=1e-4),
+        sklearn.linear_model.LogisticRegression(max_iter=1000, tol=1e-4),
+        sklearn.linear_model.SGDClassifier(max_iter=1000, tol=1e-4)
+    ]
+
     print('{:<10} - Starting'.format('Text'))
     for dataset_name in dataset_helper.get_all_available_dataset_names():
         print('{:<10} - {:<15}'.format('Text', dataset_name))
@@ -75,7 +81,7 @@ def main():
         param_grid = dict(
             preprocessing=[None, PreProcessingTransformer(only_nouns=True)],
             count_vectorizer__stop_words=['english'],
-            clf=[sklearn.linear_model.PassiveAggressiveClassifier(max_iter=1000, tol=1e-4)],
+            clf=clfs,
             clf__class_weight=['balanced']
         )
 
@@ -126,7 +132,8 @@ def main():
 
             param_grid = dict(
                 scaler=[None, sklearn.preprocessing.Normalizer(norm="l1", copy=False)],
-                clf=[sklearn.linear_model.PassiveAggressiveClassifier(max_iter=1000, tol=1e-4, class_weight='balanced')]
+                clf=clfs,
+                clf__class_weight = ['balanced']
             )
 
             gscv = GridSearchCV(
