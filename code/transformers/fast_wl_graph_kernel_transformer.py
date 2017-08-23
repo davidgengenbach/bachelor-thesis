@@ -9,11 +9,8 @@ from joblib import Parallel, delayed
 
 def add_bogus_labels_to_empty_graphs(graphs):
     empty_graph_counter = 0
-    for x in graphs:
-        if nx.number_of_nodes(x) < 1:
-            TEST_LABEL = 'ajksdlkajslkj'
-            x.add_node(TEST_LABEL)
-            x.add_edge(TEST_LABEL, TEST_LABEL)
+    for adj, nodes in graphs:
+        if len(nodes) < 1:
             empty_graph_counter += 1
     return empty_graph_counter
 

@@ -41,7 +41,11 @@ def get_all_node_labels(graphs, as_sorted_list = True):
     """
     labels = set()
     for graph in graphs:
-        labels |= set(graph.nodes())
+        if isinstance(graph, tuple):
+            nodes = graph[1]
+        else:
+            nodes = graph.nodes()
+        labels |= set(nodes)
     return sorted(list([str(x) for x in labels])) if as_sorted_list else labels
 
 

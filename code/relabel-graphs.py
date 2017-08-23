@@ -8,7 +8,6 @@ from transformers.relabel_graphs_transformer import RelabelGraphsTransformer
 from joblib import Parallel, delayed
 
 
-
 def get_args():
     import argparse
     parser = argparse.ArgumentParser(description='Relabels graphs with a given lookup')
@@ -41,9 +40,9 @@ def process_dataset(dataset, args):
     relabel_trans = RelabelGraphsTransformer(label_lookup)
     print_dataset('Starting processing')
     for graph_dataset_cache_file in dataset_helper.get_all_cached_graph_datasets(dataset):
-        result_file = graph_dataset_cache_file.replace('.npy', '.relabeled.npy')
-        
-        if not force and not os.path.exists(result_file):
+        result_file = graph_dataset_cache_file.replace(dataset, 'relabeled_{}'.format(dataset))
+
+        if not args.force and os.path.exists(result_file):
             print_dataset('\t\tAlready processed, skipping: {}'.format(graph_dataset_cache_file))
             continue
 

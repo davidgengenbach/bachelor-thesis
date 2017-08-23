@@ -72,7 +72,6 @@ def fast_wl_compute(graphs, h=1, label_lookups=None, label_counters=None, primes
         for idx, (labels, adjacency_matrix) in enumerate(zip(graph_labels, adjacency_matrices)):
             # ... generate the signatures (see paper) for each graph
             signatures = np.round((labels + adjacency_matrix * log_primes[labels]), decimals=10).astype(np.uint32)
-            print(i, idx, signatures)
             # ... add missing signatures to the label lookup
             for signature in signatures:
                 if signature not in label_lookup:
