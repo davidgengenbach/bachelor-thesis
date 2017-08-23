@@ -9,12 +9,12 @@ from transformers.fast_wl_graph_kernel_transformer import FastWLGraphKernelTrans
 from joblib import delayed, Parallel
 from transformers.nx_graph_to_tuple_transformer import NxGraphToTupleTransformer
 from transformers.relabel_graphs_transformer import RelabelGraphsTransformer
+from logger import LOGGER
 
 
 def main():
     args = get_args()
-    Parallel(n_jobs=args.n_jobs)(delayed(process_dataset)(graph_cache_file, args)
-                                 for graph_cache_file in dataset_helper.get_all_cached_graph_datasets())
+    Parallel(n_jobs=args.n_jobs)(delayed(process_dataset)(graph_cache_file, args) for graph_cache_file in dataset_helper.get_all_cached_graph_datasets())
 
 
 def get_args():
@@ -50,7 +50,9 @@ def process_dataset(graph_cache_file, args):
     phi_graph_cache_file = graph_cache_file.replace('.npy', '.phi.npy')
     if '.phi.' in graph_cache_file:
         return
-    print('{:15}'.format(dataset))
+
+
+    LOGGER.info('{:15}'.format(dataset))
 
     gc.collect()
 
@@ -60,27 +62,27 @@ def process_dataset(graph_cache_file, args):
 
         # Without relabeling
         if args.force or not os.path.exists(phi_graph_cache_file):
-            print('{:15} \tProcessing: {}'.format(dataset, phi_graph_cache_file))
+            LOGGER.info('{:15} \tProcessing: {}'.format(dataset, phi_graph_cache_file))
             fast_wl_trans.fit(X)
             with open(phi_graph_cache_file, 'wb') as f:
                 pickle.dump((fast_wl_trans.phi_list, Y), f)
-            print('{:15} \tDone: {}'.format(dataset, phi_graph_cache_file))
+            LOGGER.info('{:15} \tDone: {}'.format(dataset, phi_graph_cache_file))
 
         # With relabeling
         phi_graph_relabeled_cache_file = phi_graph_cache_file.replace(dataset, 'relabeled_{}'.format(dataset))
         if args.force or not os.path.exists(phi_graph_relabeled_cache_file):
-            print('{:15} \tProcessing: {}'.format(dataset, phi_graph_relabeled_cache_file))
+            LOGGER.info('{:15} \tProcessing: {}'.format(dataset, phi_graph_relabeled_cache_file))
             X = relabel_trans.transform(X)
 
             fast_wl_trans.fit(X)
             with open(phi_graph_relabeled_cache_file, 'wb') as f:
                 pickle.dump((fast_wl_trans.phi_list, Y), f)
-            print('{:15} \tDone: {}'.format(dataset, phi_graph_relabeled_cache_file))
+            LOGGER.info('{:15} \tDone: {}'.format(dataset, phi_graph_relabeled_cache_file))
 
         del X, Y, fast_wl_trans
     except Exception as e:
-       print(e)
-    print('{:15} finished'.format(dataset))
+       LOGGER.exception(e)
+    LOGGER.info('{:15} finished'.format(dataset))
 
 
 if __name__ == '__main__':
