@@ -21,7 +21,8 @@ def get_most_similar_labels(labels, lookup_embeddings, topn = 1):
     results = {}
     num_labels = len(labels)
     for idx, label in enumerate(labels):
-        if idx % int(num_labels / 10) == 0 or idx == num_labels - 1: print('Progress: {:>3}%'.format(int(100 * idx / num_labels)))
+        if (num_labels >= 10 and idx % int(num_labels / 10) == 0) or idx == num_labels - 1:
+            print('Progress: {:>3}%'.format(int(100 * idx / num_labels)))
         results[label] = lookup_embeddings.similar_by_word(label)
     return results
 

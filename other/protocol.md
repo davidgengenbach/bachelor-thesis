@@ -1,6 +1,15 @@
+## 23.08.2017
+- Co-reference resolution
+    - Problem: Composite Labels (= Labels mit mehr als einem Wort)
+    - Problem: Nach Co-Reference-Resolution kann es sein, dass Graph zweimal das gleiche Label hat
+        - Lösung: Adjazenzmatrix muss angepasst werden
+    - Problem: Word2Vec Embeddings nur auf Train-Set trainieren. Rechenzeit erhöht sich
+
+
 ## 22.08.2017
 - Resultate hinzugefügt
     - https://github.com/davidgengenbach/bachelor-thesis/blob/master/code/tmp/results/README.md
+
 
 ## 21.08.2017
 - Problem: Wann sind zwei Labels gleich

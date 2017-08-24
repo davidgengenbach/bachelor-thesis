@@ -1,3 +1,6 @@
+import gensim
+import numpy as np
+
 def get_embedding_model(w2v_file, binary = False, first_line_header = True, with_gensim = False):
     import gensim
     if binary or with_gensim:
@@ -11,7 +14,7 @@ def get_embedding_model(w2v_file, binary = False, first_line_header = True, with
             embeddings = {x.split(' ', 1)[0].strip(): x.split(' ', 1)[1].strip() for x in f}
     return embeddings
 
-def get_embeddings_for_labels(labels, embedding, check_most_similar = False, restrict_vocab = None, lookup_embedding = None, topn = 20):
+def get_embeddings_for_labels(labels, embedding, check_most_similar = False, restrict_vocab = None, lookup_embedding = None, topn = 20, solve_composite_labels = True):
     """Returns the embeddings for given labels. Optionally also tries to resolve missing embeddings with another embedding, the lookup_embedding, by looking for the most_similar words that are also in the original embedding.
     
     Args:
@@ -30,14 +33,30 @@ def get_embeddings_for_labels(labels, embedding, check_most_similar = False, res
 
     for label in labels:
         label = label.lower()
+        is_composite = label.count(' ') > 0
         if label in embedding:
             embeddings[label] = embedding[label]
             lookup[label] = label
-        elif check_most_similar and label in lookup_embedding:
-            most_similar = lookup_embedding.similar_by_word(label, topn = topn)
+        elif check_most_similar and (label in lookup_embedding or (solve_composite_labels and is_composite)):
+            if solve_composite_labels and label.count(' ') > 0:
+                label_parts = label.split(' ')
+                composite_vector = None
+                for label_part in label_parts:
+                    if label_part in lookup_embedding:
+                        embedding_ = lookup_embedding[label_part]
+                        if composite_vector is None:
+                            composite_vector = embedding_
+                        else:
+                            composite_vector += embedding_
+                if composite_vector is not None:
+                    most_similar = lookup_embedding.similar_by_vector(composite_vector, topn = topn)
+                else:
+                    most_similar = []
+            else:
+                most_similar = lookup_embedding.similar_by_word(label, topn = topn)
+
             most_similar_labels = [label for label, similarity in most_similar]
             match = set(most_similar_labels) & set(restrict_vocab)
-
             if len(match):
                 most_similar_label_found = [label for label, similarity in most_similar if label in match][0]
                 embeddings[label] = embedding[most_similar_label_found]
@@ -50,7 +69,14 @@ def get_embeddings_for_labels(labels, embedding, check_most_similar = False, res
     return embeddings, not_found, lookup
 
 
-def get_embeddings_for_labels_with_lookup(all_labels, trained_embedding, pre_trained_embedding):
+def get_embeddings_for_labels_with_lookup(all_labels, trained_embedding, pre_trained_embedding, solve_composite_labels = True):
+
+    all_labels = set(all_labels)
+    if solve_composite_labels:
+        composite_labels = set([label for label in all_labels if label.strip().count(' ') > 0])
+        for label in composite_labels:
+            all_labels |= set(label.split(' '))
+
     embeddings_trained_labels = set(trained_embedding.vocab.keys())
     not_found_trained = set(all_labels) - embeddings_trained_labels
 
@@ -69,4 +95,108 @@ def save_embedding_dict(embedding, filename):
     num_dim = len(embedding[list(embedding.keys())[0]])
     with open(filename, 'w') as f:
         f.write('{} {}\n'.format(num_embeddings, num_dim))
-        f.write("\n".join(['{} {}'.format(label, ' '.join([str(x) for x in vec])) for label, vec in embedding.items() if label.strip() != '']))
+        f.write("\n".join(['"{}" {}'.format(label, ' '.join([str(x) for x in vec])) for label, vec in embedding.items() if label.strip() != '']))
+
+
+# Taken and adapted from: https://github.com/RaRe-Technologies/gensim/blob/develop/gensim/models/keyedvectors.py
+from gensim import utils, matutils 
+from gensim.corpora.dictionary import Dictionary
+from six import string_types, iteritems
+from six.moves import xrange
+from scipy import stats
+
+REAL = np.float32
+
+from logger import LOGGER as logger
+
+def load_word2vec_format(cls = gensim.models.KeyedVectors, fname, fvocab=None, binary=False, encoding='utf8', unicode_errors='strict',
+                             limit=None, datatype=REAL):
+        """
+
+
+        Load the input-hidden weight matrix from the original C word2vec-tool format.
+        Note that the information stored in the file is incomplete (the binary tree is missing),
+        so while you can query for word similarity etc., you cannot continue training
+        with a model loaded this way.
+        `binary` is a boolean indicating whether the data is in binary word2vec format.
+        `norm_only` is a boolean indicating whether to only store normalised word2vec vectors in memory.
+        Word counts are read from `fvocab` filename, if set (this is the file generated
+        by `-save-vocab` flag of the original C tool).
+        If you trained the C model using non-utf8 encoding for words, specify that
+        encoding in `encoding`.
+        `unicode_errors`, default 'strict', is a string suitable to be passed as the `errors`
+        argument to the unicode() (Python 2.x) or str() (Python 3.x) function. If your source
+        file may include word tokens truncated in the middle of a multibyte unicode character
+        (as is common from the original word2vec.c tool), 'ignore' or 'replace' may help.
+        `limit` sets a maximum number of word-vectors to read from the file. The default,
+        None, means read all.
+        `datatype` (experimental) can coerce dimensions to a non-default float type (such
+        as np.float16) to save memory. (Such types may result in much slower bulk operations
+        or incompatibility with optimized routines.)
+        """
+        counts = None
+        if fvocab is not None:
+            logger.info("loading word counts from %s", fvocab)
+            counts = {}
+            with utils.smart_open(fvocab) as fin:
+                for line in fin:
+                    word, count = utils.to_unicode(line).strip().split()
+                    counts[word] = int(count)
+
+        logger.info("loading projection weights from %s", fname)
+        with utils.smart_open(fname) as fin:
+            header = utils.to_unicode(fin.readline(), encoding=encoding)
+            vocab_size, vector_size = map(int, header.split())  # throws for invalid file format
+            if limit:
+                vocab_size = min(vocab_size, limit)
+            result = cls()
+            result.vector_size = vector_size
+            result.syn0 = zeros((vocab_size, vector_size), dtype=datatype)
+
+            def add_word(word, weights):
+                word_id = len(result.vocab)
+                if word in result.vocab:
+                    logger.warning("duplicate word '%s' in %s, ignoring all but first", word, fname)
+                    return
+                if counts is None:
+                    # most common scenario: no vocab file given. just make up some bogus counts, in descending order
+                    result.vocab[word] = Vocab(index=word_id, count=vocab_size - word_id)
+                elif word in counts:
+                    # use count from the vocab file
+                    result.vocab[word] = Vocab(index=word_id, count=counts[word])
+                else:
+                    # vocab file given, but word is missing -- set count to None (TODO: or raise?)
+                    logger.warning("vocabulary file is incomplete: '%s' is missing", word)
+                    result.vocab[word] = Vocab(index=word_id, count=None)
+                result.syn0[word_id] = weights
+                result.index2word.append(word)
+
+            if binary:
+                # TODO: delegate
+                pass
+            else:
+                for line_no in xrange(vocab_size):
+                    line = fin.readline()
+                    if line == b'':
+                        raise EOFError("unexpected end of input; is count incorrect or file otherwise damaged?")
+                    if '"' in line:
+                        parts = line.rsplit('"')
+                        parts[0] = parts[0].replace('"', '')
+                        parts = [parts[0]] + parts[1].split(' ')
+                    else:
+                        parts = utils.to_unicode(line.rstrip(), encoding=encoding, errors=unicode_errors).split(" ")
+                    if len(parts) != vector_size + 1:
+                        raise ValueError("invalid vector on line %s (is this really the text format?)" % (line_no))
+                    word, weights = parts[0], list(map(REAL, parts[1:]))
+                    add_word(word, weights)
+
+        if result.syn0.shape[0] != len(result.vocab):
+            logger.info(
+                "duplicate words detected, shrinking matrix size from %i to %i",
+                result.syn0.shape[0], len(result.vocab)
+            )
+            result.syn0 = ascontiguousarray(result.syn0[: len(result.vocab)])
+        assert (len(result.vocab), vector_size) == result.syn0.shape
+
+        logger.info("loaded %s matrix from %s" % (result.syn0.shape, fname))
+        return result
