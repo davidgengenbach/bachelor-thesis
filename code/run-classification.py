@@ -48,9 +48,9 @@ def main():
     )
 
     clfs = [
-        sklearn.linear_model.Perceptron(max_iter=1000, tol=1e-4),
-        sklearn.linear_model.LogisticRegression(max_iter=1000, tol=1e-4),
-        sklearn.linear_model.SGDClassifier(max_iter=1000, tol=1e-4)
+        #sklearn.linear_model.Perceptron(max_iter=1000, tol=1e-4),
+        #sklearn.linear_model.LogisticRegression(max_iter=1000, tol=1e-4),
+        sklearn.linear_model.PassiveAggressiveClassifier(max_iter=1000, tol=1e-4)
     ]
 
     LOGGER.info('{:<10} - Starting'.format('Text'))
@@ -97,7 +97,7 @@ def main():
     LOGGER.info('{:<10} - Finished'.format('Text'))
     LOGGER.info('{:<10} - Starting'.format('Graph'))
     for cache_file in dataset_helper.get_all_cached_graph_phi_datasets():
-        dataset = helper.get_dataset_name_from_graph_cachefile(cache_file)
+        dataset = dataset_helper.get_dataset_name_from_graph_cachefile(cache_file)
         if args.limit_dataset and args.limit_dataset != dataset:
             continue
 
