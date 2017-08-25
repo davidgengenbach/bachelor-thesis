@@ -97,7 +97,8 @@ def main():
     LOGGER.info('{:<10} - Finished'.format('Text'))
     LOGGER.info('{:<10} - Starting'.format('Graph'))
     for cache_file in dataset_helper.get_all_cached_graph_phi_datasets():
-        if args.limit_dataset and args.limit_dataset != cache_file:
+        dataset = helper.get_dataset_name_from_graph_cachefile(cache_file)
+        if args.limit_dataset and args.limit_dataset != dataset:
             continue
 
         graph_dataset_cache_file = cache_file.split('/')[-1]
@@ -146,8 +147,8 @@ def main():
                 LOGGER.info('{:<10} - {:<15} - Classifying for h={}, fitting'.format('Graph', graph_dataset_cache_file, h))
                 gscv_result = gscv.fit(X, Y)
 
-                if hasattr(gscv_result['params']['clf'], 'coef_'):
-                    del gscv_result['params']['clf'].coef_
+                if hasattr(param_grid['clf'], 'coef_'):
+                    del param_grid['clf'].coef_
 
                 with open(result_file, 'wb') as f:
                     pickle.dump(gscv_result.cv_results_, f)

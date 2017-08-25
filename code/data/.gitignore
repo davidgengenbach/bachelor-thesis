@@ -4,3 +4,4 @@ datasets-prepared.bck
 embeddings/**/*.txt
 embeddings/**/*.bin
 embeddings/**/*.npy
+results/*.zip

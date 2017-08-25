@@ -77,7 +77,7 @@ def process_dataset(graph_cache_file, args):
             fast_wl_trans.fit(X)
             
             with open(phi_graph_relabeled_cache_file, 'wb') as f:
-                pickle.dump(([x.T for x in fast_wl_trans.phi_list], Y), f)
+                pickle.dump((fast_wl_trans.phi_list, Y), f)
 
             LOGGER.info('{:15} \tDone: {}'.format(dataset, phi_graph_relabeled_cache_file))
 
