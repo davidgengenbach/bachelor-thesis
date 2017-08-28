@@ -15,6 +15,7 @@ import tempfile
 import gc
 import traceback
 import logging
+from sklearn import dummy
 from sklearn.pipeline import Pipeline
 from sklearn.linear_model import Perceptron
 from sklearn.model_selection import GridSearchCV
@@ -50,9 +51,10 @@ def main():
     )
 
     clfs = [
-        #sklearn.linear_model.Perceptron(max_iter=1000, tol=1e-4),
-        #sklearn.linear_model.LogisticRegression(max_iter=1000, tol=1e-4),
-        sklearn.linear_model.PassiveAggressiveClassifier(max_iter=1000, tol=1e-4)
+        sklearn.dummy.DummyClassifier(strategy = 'most_frequent'),
+        #sklearn.linear_model.Perceptron(class_weight = 'balanced', max_iter=1000, tol=1e-4),
+        #sklearn.linear_model.LogisticRegression(class_weight = 'balanced', max_iter=1000, tol=1e-4),
+        sklearn.linear_model.PassiveAggressiveClassifier(class_weight = 'balanced', max_iter=1000, tol=1e-4)
     ]
 
     LOGGER.info('{:<10} - Starting'.format('Text'))
@@ -63,6 +65,7 @@ def main():
                 continue
 
             result_file = 'data/results/text_{}.results.npy'.format(dataset_name)
+            
             if not args.force and os.path.exists(result_file):
                 continue
 
@@ -81,8 +84,7 @@ def main():
             param_grid = dict(
                 preprocessing=[None, PreProcessingTransformer(only_nouns=True)],
                 count_vectorizer__stop_words=['english'],
-                clf=clfs,
-                clf__class_weight=['balanced']
+                clf=clfs
             )
 
             gscv = GridSearchCV(estimator=p, param_grid=param_grid, cv=cv,
