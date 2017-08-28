@@ -26,12 +26,12 @@ from transformers.preprocessing_transformer import PreProcessingTransformer
 
 from logger import LOGGER
 
+
 def get_args():
     import argparse
     parser = argparse.ArgumentParser(description='Run classification on the text and graph datasets')
     parser.add_argument('--n_jobs', type=int, default=2)
     parser.add_argument('--force', action='store_true')
-    parser.add_argument('--scoring', type=str, default="f1_macro")
     parser.add_argument('--verbose', type=int, default=11)
     parser.add_argument('--check_texts', action="store_true")
     parser.add_argument('--check_graphs', action="store_true")
@@ -44,6 +44,9 @@ def get_args():
 def main():
     args = get_args()
 
+    scoring = ['precision_macro', 'recall_macro', 'accuracy', 'f1_macro']
+    refit = 'f1_macro'
+
     cv = sklearn.model_selection.StratifiedKFold(
         n_splits=3,
         random_state=42,
@@ -51,10 +54,10 @@ def main():
     )
 
     clfs = [
-        sklearn.dummy.DummyClassifier(strategy = 'most_frequent'),
-        #sklearn.linear_model.Perceptron(class_weight = 'balanced', max_iter=1000, tol=1e-4),
+        sklearn.dummy.DummyClassifier(strategy='most_frequent'),
+        sklearn.linear_model.Perceptron(class_weight='balanced', max_iter=1000, tol=1e-4),
         #sklearn.linear_model.LogisticRegression(class_weight = 'balanced', max_iter=1000, tol=1e-4),
-        sklearn.linear_model.PassiveAggressiveClassifier(class_weight = 'balanced', max_iter=1000, tol=1e-4)
+        #sklearn.linear_model.PassiveAggressiveClassifier(class_weight='balanced', max_iter=1000, tol=1e-4)
     ]
 
     LOGGER.info('{:<10} - Starting'.format('Text'))
@@ -65,7 +68,7 @@ def main():
                 continue
 
             result_file = 'data/results/text_{}.results.npy'.format(dataset_name)
-            
+
             if not args.force and os.path.exists(result_file):
                 continue
 
@@ -88,7 +91,7 @@ def main():
             )
 
             gscv = GridSearchCV(estimator=p, param_grid=param_grid, cv=cv,
-                                scoring=args.scoring, n_jobs=args.n_jobs, verbose=args.verbose)
+                                scoring=scoring, n_jobs=args.n_jobs, verbose=args.verbose, refit=refit)
 
             LOGGER.info('{:<10} - {:<15} - Starting to fit'.format('Text', dataset_name))
 
@@ -136,14 +139,15 @@ def main():
                 param_grid = dict(
                     scaler=[None, sklearn.preprocessing.Normalizer(norm="l1", copy=False)],
                     clf=clfs,
-                    clf__class_weight = ['balanced']
+                    clf__class_weight=['balanced']
                 )
 
                 gscv = GridSearchCV(
                     estimator=p,
                     param_grid=param_grid,
                     cv=cv,
-                    scoring=args.scoring,
+                    scoring=scoring,
+                    refit=refit,
                     n_jobs=args.n_jobs,
                     verbose=args.verbose
                 )

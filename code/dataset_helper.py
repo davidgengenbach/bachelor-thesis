@@ -276,12 +276,12 @@ def get_dataset_dict(X, Y=None):
     return topics
 
 
-def plot_dataset_class_distribution(X, Y, title='Docs per topic', figsize=(14, 8), ax = None):
+def plot_dataset_class_distribution(X, Y, title='Docs per topic', figsize=(14, 8), ax = None, log = True):
     x_per_topic = get_dataset_dict(X, Y)
     df_graphs_per_topic = pd.DataFrame([
         (topic, len(docs)) for topic, docs in x_per_topic.items()],
         columns=['topic', 'num_docs']
     ).set_index(['topic']).sort_values(by='num_docs')
-    ax = df_graphs_per_topic.plot.barh(title='Docs per topic', legend=False, figsize=figsize, ax = ax)
+    ax = df_graphs_per_topic.plot.barh(title='Docs per topic', legend=False, figsize=figsize, ax = ax, log = log)
     ax.set_xlabel('# docs')
     return ax
