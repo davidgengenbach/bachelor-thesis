@@ -3,7 +3,6 @@
 import pandas as pd
 import helper
 import dataset_helper
-import classifier_baseline
 import numpy as np
 import sklearn
 import graph_helper

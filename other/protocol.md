@@ -1,3 +1,10 @@
+## 28.08.2017
+- Problem: SVMs learn better with zero mean and unit variance data
+    - Sparse feature vectors (like phi or tfidf vectors) will become dense after subtracting mean (= zero mean)
+    - Solution: use SVM kernel without the need of input centering
+        - linear, poly, ...
+
+
 ## 23.08.2017
 - Co-reference resolution
     - Problem: Composite Labels (= Labels mit mehr als einem Wort)
