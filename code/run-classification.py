@@ -35,8 +35,11 @@ def get_args():
     parser.add_argument('--verbose', type=int, default=11)
     parser.add_argument('--check_texts', action="store_true")
     parser.add_argument('--check_graphs', action="store_true")
-    parser.add_argument('--limit_dataset', type=str,
-                        help="Only calculate datasets with this argument in the dataset name", default=None)
+    parser.add_argument('--max_iter', type=int, default = 1000)
+    parser.add_argument('--tol', type=int, default = 1e-3)
+    parser.add_argument('--n_splits', type=int, default = 3)
+    parser.add_argument('--random_state', type=int, default = 42)
+    parser.add_argument('--limit_dataset', type=str, default=None)
     args = parser.parse_args()
     return args
 
@@ -48,17 +51,17 @@ def main():
     refit = 'f1_macro'
 
     cv = sklearn.model_selection.StratifiedKFold(
-        n_splits=3,
-        random_state=42,
+        n_splits=args.n_splits,
+        random_state=args.random_state,
         shuffle=True
     )
 
     clfs = [
         sklearn.dummy.DummyClassifier(strategy='most_frequent'),
-        sklearn.svm.SVC(max_iter = 1000, tol=1e-2),
-        #sklearn.linear_model.Perceptron(class_weight='balanced', max_iter=1000, tol=1e-2),
-        #sklearn.linear_model.LogisticRegression(class_weight = 'balanced', max_iter=1000, tol=1e-2),
-        #sklearn.linear_model.PassiveAggressiveClassifier(class_weight='balanced', max_iter=1000, tol=1e-2)
+        sklearn.svm.SVC(max_iter = args.max_iter, tol=args.tol),
+        #sklearn.linear_model.Perceptron(class_weight='balanced', max_iter=args.max_iter, tol=args.tol),
+        #sklearn.linear_model.LogisticRegression(class_weight = 'balanced', max_iter=args.max_iter, tol=args.tol),
+        #sklearn.linear_model.PassiveAggressiveClassifier(class_weight='balanced', max_iter=args.max_iter, tol=args.tol)
     ]
 
     LOGGER.info('{:<10} - Starting'.format('Text'))
@@ -82,11 +85,12 @@ def main():
                 ('preprocessing', None),
                 ('count_vectorizer', sklearn.feature_extraction.text.CountVectorizer()),
                 ('TfidfTransformer', sklearn.feature_extraction.text.TfidfTransformer()),
+                ('scaler', sklearn.preprocessing.StandardScaler(with_mean = False)),
                 ('clf', None)
             ])
 
             param_grid = dict(
-                preprocessing=[None, PreProcessingTransformer(only_nouns=True)],
+                preprocessing= [None, PreProcessingTransformer(only_nouns=True)],
                 count_vectorizer__stop_words=['english'],
                 clf=clfs
             )
