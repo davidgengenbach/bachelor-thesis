@@ -55,9 +55,10 @@ def main():
 
     clfs = [
         sklearn.dummy.DummyClassifier(strategy='most_frequent'),
-        sklearn.linear_model.Perceptron(class_weight='balanced', max_iter=1000, tol=1e-4),
-        #sklearn.linear_model.LogisticRegression(class_weight = 'balanced', max_iter=1000, tol=1e-4),
-        #sklearn.linear_model.PassiveAggressiveClassifier(class_weight='balanced', max_iter=1000, tol=1e-4)
+        sklearn.svm.SVC(max_iter = 1000, tol=1e-2),
+        #sklearn.linear_model.Perceptron(class_weight='balanced', max_iter=1000, tol=1e-2),
+        #sklearn.linear_model.LogisticRegression(class_weight = 'balanced', max_iter=1000, tol=1e-2),
+        #sklearn.linear_model.PassiveAggressiveClassifier(class_weight='balanced', max_iter=1000, tol=1e-2)
     ]
 
     LOGGER.info('{:<10} - Starting'.format('Text'))
