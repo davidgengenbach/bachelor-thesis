@@ -54,7 +54,7 @@ def process_dataset(dataset_name, pre_trained_embedding, args):
         all_labels |= graph_helper.get_all_node_labels(X, as_sorted_list = False)
 
     LOGGER.info('{:15} - Resolving embeddings'.format(dataset_name))
-    embeddings_pre_trained, not_found_pre_trained_coreferenced, not_found_trained, not_found_pre_trained, lookup = embeddings.get_embeddings_for_labels_with_lookup(
+    embeddings_pre_trained, not_found_pre_trained_coreferenced, not_found_trained, not_found_pre_trained, lookup, similar_els = embeddings.get_embeddings_for_labels_with_lookup(
         all_labels, trained_embedding, pre_trained_embedding)
 
     LOGGER.info('{:15} - Missing'.format(dataset_name))
@@ -64,6 +64,9 @@ def process_dataset(dataset_name, pre_trained_embedding, args):
 
     with open('{}/{}.label-lookup.npy'.format(args.embeddings_result_folder, dataset_name), 'wb') as f:
         pickle.dump(lookup, f)
+
+    with open('{}/{}.similar-els.npy'.format(args.embeddings_result_folder, dataset_name), 'wb') as f:
+        pickle.dump(similar_els, f)
 
     embeddings.save_embedding_dict(
         embeddings_pre_trained, '{}/{}.w2v.txt'.format(args.embeddings_result_folder, dataset_name))

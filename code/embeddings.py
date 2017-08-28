@@ -29,7 +29,7 @@ def get_embeddings_for_labels(labels, embedding, check_most_similar = False, res
         tuple(dict, list(str)): the dictionary with the labels as keys and the embeddings for that labels as value. And a list of label that could not be found
     """
     assert not check_most_similar or lookup_embedding is not None
-    not_found, embeddings, lookup = [], {}, {}
+    not_found, embeddings, lookup, similar_els = [], {}, {}, {}
 
     for label in labels:
         label = label.lower()
@@ -55,6 +55,9 @@ def get_embeddings_for_labels(labels, embedding, check_most_similar = False, res
             else:
                 most_similar = lookup_embedding.similar_by_word(label, topn = topn)
 
+            if len(most_similar):
+                similar_els[label] = most_similar
+
             most_similar_labels = [label for label, similarity in most_similar]
             match = set(most_similar_labels) & set(restrict_vocab)
             if len(match):
@@ -66,7 +69,7 @@ def get_embeddings_for_labels(labels, embedding, check_most_similar = False, res
                 lookup[label] = label
         else:
             not_found.append(label)
-    return embeddings, not_found, lookup
+    return embeddings, not_found, lookup, similar_els
 
 
 def get_embeddings_for_labels_with_lookup(all_labels, trained_embedding, pre_trained_embedding, solve_composite_labels = True):
@@ -85,9 +88,9 @@ def get_embeddings_for_labels_with_lookup(all_labels, trained_embedding, pre_tra
 
     in_both = embeddings_trained_labels & embeddings_pre_trained_labels
 
-    embeddings_pre_trained, not_found_pre_trained_coreferenced, lookup = get_embeddings_for_labels(all_labels, pre_trained_embedding, check_most_similar = True, restrict_vocab = in_both, lookup_embedding = trained_embedding)
+    embeddings_pre_trained, not_found_pre_trained_coreferenced, lookup, similar_els = get_embeddings_for_labels(all_labels, pre_trained_embedding, check_most_similar = True, restrict_vocab = in_both, lookup_embedding = trained_embedding)
 
-    return embeddings_pre_trained, not_found_pre_trained_coreferenced, not_found_trained, not_found_pre_trained, lookup
+    return embeddings_pre_trained, not_found_pre_trained_coreferenced, not_found_trained, not_found_pre_trained, lookup, similar_els
 
 
 def save_embedding_dict(embedding, filename):
@@ -104,12 +107,14 @@ from gensim.corpora.dictionary import Dictionary
 from six import string_types, iteritems
 from six.moves import xrange
 from scipy import stats
+from numpy import zeros, ascontiguousarray
 
 REAL = np.float32
 
 from logger import LOGGER as logger
+from gensim.models.word2vec import Vocab
 
-def load_word2vec_format(cls = gensim.models.KeyedVectors, fname, fvocab=None, binary=False, encoding='utf8', unicode_errors='strict',
+def load_word2vec_format(cls = gensim.models.KeyedVectors, fname='', fvocab=None, binary=False, encoding='utf8', unicode_errors='strict',
                              limit=None, datatype=REAL):
         """
 
@@ -179,14 +184,16 @@ def load_word2vec_format(cls = gensim.models.KeyedVectors, fname, fvocab=None, b
                     line = fin.readline()
                     if line == b'':
                         raise EOFError("unexpected end of input; is count incorrect or file otherwise damaged?")
-                    if '"' in line:
-                        parts = line.rsplit('"')
-                        parts[0] = parts[0].replace('"', '')
-                        parts = [parts[0]] + parts[1].split(' ')
+                    if '"' in utils.to_unicode(line, encoding=encoding, errors=unicode_errors):
+                        line = utils.to_unicode(line, encoding=encoding, errors=unicode_errors)
+                        label = line.split('"', 1)[1].rsplit('"')[0].strip()
+                        other = line.rsplit('"', 1)[1].strip().split(' ')
+                        parts = [label] + other
                     else:
                         parts = utils.to_unicode(line.rstrip(), encoding=encoding, errors=unicode_errors).split(" ")
                     if len(parts) != vector_size + 1:
                         raise ValueError("invalid vector on line %s (is this really the text format?)" % (line_no))
+
                     word, weights = parts[0], list(map(REAL, parts[1:]))
                     add_word(word, weights)
 

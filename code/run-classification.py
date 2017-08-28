@@ -117,7 +117,7 @@ def main():
                 LOGGER.info('{:<10} - {:<15} - Classifying for h={}'.format('Graph', graph_dataset_cache_file, h))
                 result_file = 'data/results/{}.{}.results.npy'.format(graph_dataset_cache_file, h)
                 if not args.force and os.path.exists(result_file):
-                    logger.warning('\tAlready calculated result: {}'.format(result_file))
+                    LOGGER.warning('\tAlready calculated result: {}'.format(result_file))
                     continue
 
                 with open(result_file, 'w') as f:

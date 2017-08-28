@@ -26,7 +26,7 @@ def get_most_similar_labels(labels, lookup_embeddings, topn = 1):
         results[label] = lookup_embeddings.similar_by_word(label)
     return results
 
-def create_label_cliques_by_similarity(similar_labels, threshold = 1 - 9e-10):
+def create_label_cliques_by_similarity(similar_labels, threshold = 1 - 9e-10, lookup = None):
     """Returns a clustering/binning of the given labels. All labels where the similarity is greater than a given threshold are in the same clique/bin/cluster.
     
     Args:
@@ -36,7 +36,8 @@ def create_label_cliques_by_similarity(similar_labels, threshold = 1 - 9e-10):
     Returns:
         dict:a dict where the keys are labels and the values the cliques-id (= a number) the labels belong to
     """
-    lookup = {}
+    if lookup is None:
+        lookup = {}
     clique_counter = 0
     for label, most_similar_labels in similar_labels.items():
         for most_similar_label, similarity in most_similar_labels:
