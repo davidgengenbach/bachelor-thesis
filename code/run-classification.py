@@ -37,7 +37,7 @@ def get_args():
     parser.add_argument('--check_graphs', action="store_true")
     parser.add_argument('--remove_coefs', action="store_true")
     parser.add_argument('--max_iter', type=int, default = 1000)
-    parser.add_argument('--tol', type=int, default = 1e-3)
+    parser.add_argument('--tol', type=int, default = 1e-4)
     parser.add_argument('--n_splits', type=int, default = 3)
     parser.add_argument('--random_state', type=int, default = 42)
     parser.add_argument('--limit_dataset', nargs='+', type=str, default=['ng20', 'ling-spam', 'reuters-21578', 'webkb'], dest='limit_dataset')
@@ -58,7 +58,7 @@ def main():
     )
 
     clfs = [
-        sklearn.dummy.DummyClassifier(strategy='most_frequent'),
+        #sklearn.dummy.DummyClassifier(strategy='most_frequent'),
         #sklearn.svm.SVC(max_iter = args.max_iter, tol=args.tol),
         #sklearn.linear_model.Perceptron(class_weight='balanced', max_iter=args.max_iter, tol=args.tol),
         #sklearn.linear_model.LogisticRegression(class_weight = 'balanced', max_iter=args.max_iter, tol=args.tol),
@@ -86,7 +86,7 @@ def main():
                 ('preprocessing', None),
                 ('count_vectorizer', sklearn.feature_extraction.text.CountVectorizer()),
                 ('TfidfTransformer', sklearn.feature_extraction.text.TfidfTransformer()),
-                ('scaler', sklearn.preprocessing.StandardScaler(with_mean = False)),
+                #('scaler', sklearn.preprocessing.StandardScaler(with_mean = False)),
                 ('clf', None)
             ])
 
