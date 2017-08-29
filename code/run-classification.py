@@ -38,7 +38,7 @@ def get_args():
     parser.add_argument('--tol', type=int, default = 1e-3)
     parser.add_argument('--n_splits', type=int, default = 3)
     parser.add_argument('--random_state', type=int, default = 42)
-    parser.add_argument('--limit_dataset', type=str, default=None)
+    parser.add_argument('--limit_dataset', nargs='+', type=str, default=['ng20', 'ling-spam', 'reuters-21578', 'webkb'], dest='limit_dataset')
     args = parser.parse_args()
     return args
 
@@ -67,7 +67,7 @@ def main():
     if args.check_texts:
         for dataset_name in dataset_helper.get_all_available_dataset_names():
             LOGGER.info('{:<10} - {:<15}'.format('Text', dataset_name))
-            if args.limit_dataset and not args.limit_dataset == dataset_name:
+            if args.limit_dataset and dataset_name not in args.limit_dataset:
                 continue
 
             result_file = 'data/results/text_{}.results.npy'.format(dataset_name)
@@ -110,7 +110,7 @@ def main():
         LOGGER.info('{:<10} - Starting'.format('Graph'))
         for cache_file in dataset_helper.get_all_cached_graph_phi_datasets():
             dataset = dataset_helper.get_dataset_name_from_graph_cachefile(cache_file)
-            if args.limit_dataset and args.limit_dataset != dataset:
+            if args.limit_dataset and dataset not in args.limit_dataset:
                 continue
 
             graph_dataset_cache_file = cache_file.split('/')[-1]
