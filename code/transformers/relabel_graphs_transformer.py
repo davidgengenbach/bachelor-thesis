@@ -11,7 +11,7 @@ class RelabelGraphsTransformer(sklearn.base.BaseEstimator, sklearn.base.Transfor
 
     def transform(self, X, y=None, **fit_params):
         for idx, (adj, nodes) in enumerate(X):
-            relabeled_nodes = [self.lookup.get(label, label) for label in nodes]
+            relabeled_nodes = [self.lookup.get(label, label).strip() for label in nodes]
             X[idx] = (adj, relabeled_nodes)
         return X
 
