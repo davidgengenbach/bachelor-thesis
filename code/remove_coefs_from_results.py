@@ -28,6 +28,9 @@ def remove_coefs_from_results(results):
 def main():
     for result_file in glob('data/results/*.npy'):
         if 'model_removed' in result_file: continue
+        statinfo = os.stat(result_file)
+        if statinfo.st_size < 20000:
+            continue
         #if 'text_' not in result_file: continue
         print(result_file)
         try:
