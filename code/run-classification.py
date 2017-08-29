@@ -129,10 +129,6 @@ def main():
                     LOGGER.warning('\tAlready calculated result: {}'.format(result_file))
                     continue
 
-                with open(result_file, 'w') as f:
-                    f.write('NOT DONE')
-
-                #X = X_all[h].T
                 X = X_all[h]
 
                 p = Pipeline([
