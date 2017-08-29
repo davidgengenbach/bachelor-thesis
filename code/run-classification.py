@@ -114,7 +114,7 @@ def main():
     if args.check_graphs:
         LOGGER.info('{:<10} - Starting'.format('Graph'))
         for cache_file in dataset_helper.get_all_cached_graph_phi_datasets():
-            dataset = dataset_helper.get_dataset_name_from_graph_cachefile(cache_file).replace('-single', '')
+            dataset = dataset_helper.get_dataset_name_from_graph_cachefile(cache_file)
             if args.limit_dataset and dataset not in args.limit_dataset:
                 continue
 

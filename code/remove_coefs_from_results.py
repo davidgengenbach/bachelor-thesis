@@ -28,7 +28,7 @@ def remove_coefs_from_results(results):
 def main():
     for result_file in glob('data/results/*.npy'):
         if 'model_removed' in result_file: continue
-        if 'text_' not in result_file: continue
+        #if 'text_' not in result_file: continue
         print(result_file)
         try:
             with open(result_file, 'rb') as f:
