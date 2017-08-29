@@ -3,14 +3,15 @@ import embeddings
 import dataset_helper
 import numpy as np
 
-def get_most_similar_labels(labels, lookup_embeddings, topn = 1):
+
+def get_most_similar_labels(labels, lookup_embeddings, topn=1):
     """Retrieves the most similar labels for a given list of labels.
-    
+
     Args:
         labels (list(str)): the labels
         lookup_embeddings (models.keyedvectors.KeyedVectors): the embeddings that should be 
         topn (int, optional): determines how many similar labels should be returned for a given label
-    
+
     Returns:
         dict: a dict, where the keys are the given labels and the values are a list of the most similar labels for them:
         {
@@ -23,16 +24,18 @@ def get_most_similar_labels(labels, lookup_embeddings, topn = 1):
     for idx, label in enumerate(labels):
         if (num_labels >= 10 and idx % int(num_labels / 10) == 0) or idx == num_labels - 1:
             print('Progress: {:>3}%'.format(int(100 * idx / num_labels)))
-        results[label] = lookup_embeddings.similar_by_word(label)
+        if label in lookup_embeddings:
+            results[label] = lookup_embeddings.similar_by_word(label, topn = topn)
     return results
 
-def create_label_cliques_by_similarity(similar_labels, threshold = 1 - 9e-10, lookup = None):
+
+def create_label_cliques_by_similarity(similar_labels, threshold=1 - 9e-10, lookup=None, topn=-1):
     """Returns a clustering/binning of the given labels. All labels where the similarity is greater than a given threshold are in the same clique/bin/cluster.
-    
+
     Args:
         similar_labels (list): A list as returned by the "get_most_similar_labels" function
         threshold (float, optional): 
-    
+
     Returns:
         dict:a dict where the keys are labels and the values the cliques-id (= a number) the labels belong to
     """
@@ -40,6 +43,11 @@ def create_label_cliques_by_similarity(similar_labels, threshold = 1 - 9e-10, lo
         lookup = {}
     clique_counter = 0
     for label, most_similar_labels in similar_labels.items():
+        most_similar_labels = sorted(most_similar_labels, key=lambda x: x[1], reverse=True)
+
+        if topn != -1:
+            most_similar_labels = most_similar_labels[:topn]
+
         for most_similar_label, similarity in most_similar_labels:
             if similarity > threshold:
                 # If both labels have already been added to cliques, ...
@@ -79,11 +87,11 @@ def get_cliques_from_lookup(lookup):
 
 def get_non_coreferenced_labels(labels, lookup):
     """Returns all labels that belong to no clique.
-    
+
     Args:
         labels (list(str)): all labels
         lookup (dict): the clique lookup (keys are labels, values are the clique-numbers)
-    
+
     Returns:
         list(str): the labels which belong to no clique
     """

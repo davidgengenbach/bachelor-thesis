@@ -15,7 +15,7 @@ def get_args():
     parser.add_argument('--n_jobs', type=int, default=1)
     parser.add_argument('--pre_trained_embedding', type=str, default='data/embeddings/glove/glove.6B.50d.w2v.txt')
     parser.add_argument('--embeddings_result_folder', type=str, default='data/embeddings/graph-embeddings')
-    parser.add_argument('--limit_dataset', type=str, default=None)
+    parser.add_argument('--limit_dataset', nargs='+', type=str, default=['ng20', 'ling-spam', 'reuters-21578', 'webkb'], dest='limit_dataset')
     parser.add_argument('--force', action='store_true')
 
     args = parser.parse_args()
@@ -23,7 +23,7 @@ def get_args():
 
 
 def process_dataset(dataset_name, pre_trained_embedding, args):
-    if args.limit_dataset and dataset_name != args.limit_dataset:
+    if args.limit_dataset and dataset_name not in args.limit_dataset:
         return
 
     LOGGER.info('{:15} - Start'.format(dataset_name))
@@ -45,10 +45,8 @@ def process_dataset(dataset_name, pre_trained_embedding, args):
         LOGGER.info('{:15} - no graphs found. Aborting'.format(dataset_name))
         return
 
-    all_words_graph = all_words_graphs[0]
-    all_labels = set()
     LOGGER.info('{:15} - Retrieving dataset'.format(dataset_name))
-    
+    all_labels = set()
     for graph_cache_file in used_graphs:
         X, _ = dataset_helper.get_dataset_cached(graph_cache_file)
         all_labels |= graph_helper.get_all_node_labels(X, as_sorted_list = False)
@@ -62,14 +60,22 @@ def process_dataset(dataset_name, pre_trained_embedding, args):
     for label, s in [('trained', not_found_trained), ('pre_trained', not_found_pre_trained), ('after_coreference', not_found_pre_trained_coreferenced)]:
         LOGGER.info('\t{:20} {:>6}'.format(label, len(s)))
 
+    embedding_file = '{}/{}.w2v.txt'.format(args.embeddings_result_folder, dataset_name)
+    embeddings.save_embedding_dict(embeddings_pre_trained, embedding_file)
+    embeddings_pre_trained = embeddings.load_word2vec_format(fname = embedding_file, binary = False)
+    
+    LOGGER.info('{:15} - Co-reference resolution'.format(dataset_name))
+    similar_labels = coreference.get_most_similar_labels(all_labels, embeddings_pre_trained)
+
+    clique_lookup = coreference.create_label_cliques_by_similarity(similar_labels)
+
+    new_lookup = embeddings.merge_lookups(clique_lookup, lookup)
+
     with open('{}/{}.label-lookup.npy'.format(args.embeddings_result_folder, dataset_name), 'wb') as f:
-        pickle.dump(lookup, f)
+        pickle.dump(new_lookup, f)
 
     with open('{}/{}.similar-els.npy'.format(args.embeddings_result_folder, dataset_name), 'wb') as f:
         pickle.dump(similar_els, f)
-
-    embeddings.save_embedding_dict(
-        embeddings_pre_trained, '{}/{}.w2v.txt'.format(args.embeddings_result_folder, dataset_name))
 
     LOGGER.info('{:15} - Finish'.format(dataset_name))
 

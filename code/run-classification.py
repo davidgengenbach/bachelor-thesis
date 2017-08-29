@@ -24,6 +24,7 @@ from transformers.wl_graph_kernel_transformer import WLGraphKernelTransformer
 from transformers.preprocessing_transformer import PreProcessingTransformer
 
 from logger import LOGGER
+from remove_coefs_from_results import remove_coefs_from_results 
 
 
 def get_args():
@@ -34,6 +35,7 @@ def get_args():
     parser.add_argument('--verbose', type=int, default=11)
     parser.add_argument('--check_texts', action="store_true")
     parser.add_argument('--check_graphs', action="store_true")
+    parser.add_argument('--remove_coefs', action="store_true")
     parser.add_argument('--max_iter', type=int, default = 1000)
     parser.add_argument('--tol', type=int, default = 1e-3)
     parser.add_argument('--n_splits', type=int, default = 3)
@@ -101,6 +103,9 @@ def main():
 
             gscv_result = gscv.fit(X, Y)
 
+            if args.remove_coefs:
+                remove_coefs_from_results(gscv_result.cv_results_)
+
             with open(result_file, 'wb') as f:
                 pickle.dump(gscv_result.cv_results_, f)
             LOGGER.info('{:<10} - {:<15} - Finished'.format('Text', dataset_name))
@@ -155,8 +160,9 @@ def main():
                     LOGGER.info('{:<10} - {:<15} - Classifying for h={}, fitting'.format('Graph', graph_dataset_cache_file, h))
                     gscv_result = gscv.fit(X, Y)
 
-                    if hasattr(param_grid['clf'], 'coef_'):
-                        del param_grid['clf'].coef_
+
+                    if args.remove_coefs:
+                        remove_coefs_from_results(gscv_result.cv_results_)
 
                     with open(result_file, 'wb') as f:
                         pickle.dump(gscv_result.cv_results_, f)

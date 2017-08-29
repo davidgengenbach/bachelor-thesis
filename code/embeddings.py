@@ -1,6 +1,22 @@
 import gensim
 import numpy as np
 
+
+def merge_lookups(*lookups):
+    """Merges two dicts. Order is important: first one can not be overwritten (?)
+    
+    Args:
+        *lookups: dicts
+    
+    Returns:
+        dict: the merged lookup
+    """
+    root_lookup = {}
+    for lookup in reversed(lookups):
+        root_lookup.update(lookup)
+    return root_lookup
+
+
 def get_embedding_model(w2v_file, binary = False, first_line_header = True, with_gensim = False):
     import gensim
     if binary or with_gensim:
