@@ -92,7 +92,7 @@ def get_embeddings_for_labels_with_lookup(all_labels, trained_embedding, pre_tra
 
     all_labels = set(all_labels)
     if solve_composite_labels:
-        composite_labels = set([label for label in all_labels if label.strip().count(' ') > 0])
+        composite_labels = set([str(label) for label in all_labels if str(label).strip().count(' ') > 0])
         for label in composite_labels:
             all_labels |= set(label.split(' '))
 
