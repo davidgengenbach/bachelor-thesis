@@ -3,6 +3,7 @@ from glob import glob
 import pickle
 from pprint import pprint
 import os
+import numpy as np
 
 def remove_coefs(clf):
     if hasattr(clf, 'coef_'):
@@ -18,12 +19,17 @@ for result_file in glob('data/results/*.npy'):
         with open(result_file, 'rb') as f:
             results = pickle.load(f)
         param_clf = results['param_clf']
-        if not isinstance(param_clf, list):
+        if np.ma.isMaskedArray(param_clf):
+            param_clf = np.ma.asarray(param_clf)
+        
+        if not isinstance(param_clf, list) and not isinstance(param_clf, (np.ndarray, np.generic)) and not np.ma.isMaskedArray(param_clf):
             param_clf = [param_clf]
+
         found = False
+
         for clf in param_clf:
             found |= remove_coefs(clf)
-            
+
         if found:
             with open(result_file, 'wb') as f:
                 pickle.dump(results, f)
