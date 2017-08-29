@@ -24,7 +24,7 @@ def get_args():
     parser.add_argument('--h', type=int, default=1)
     parser.add_argument('--remove_missing_labels', type=bool, default=True)
     parser.add_argument('--force', action='store_true')
-    parser.add_argument('--limit_dataset', type=str, default=None)
+    parser.add_argument('--limit_dataset', nargs='+', type=str, default=['ng20', 'ling-spam', 'reuters-21578', 'webkb'], dest='limit_dataset')
     parser.add_argument('--lookup_path', type=str, default='data/embeddings/graph-embeddings')
     args = parser.parse_args()
     return args
@@ -32,13 +32,12 @@ def get_args():
 
 def process_dataset(graph_cache_file, args):
     graph_cache_filename = graph_cache_file.split('/')[-1].rsplit('.')[0]
-    if args.limit_dataset and args.limit_dataset not in graph_cache_file:
-        return
-
     dataset = dataset_helper.get_dataset_name_from_graph_cachefile(graph_cache_file)
 
-    clean_dataset_name = dataset.replace('-single', '')
-    label_lookup_file = '{}/{}.label-lookup.npy'.format(args.lookup_path, clean_dataset_name)
+    if args.limit_dataset and dataset not in args.limit_dataset:
+        return
+
+    label_lookup_file = '{}/{}.label-lookup.npy'.format(args.lookup_path, dataset)
 
     with open(label_lookup_file, 'rb') as f:
         label_lookup = pickle.load(f)
@@ -50,7 +49,6 @@ def process_dataset(graph_cache_file, args):
     phi_graph_cache_file = graph_cache_file.replace('.npy', '.phi.npy')
     if '.phi.' in graph_cache_file:
         return
-
 
     LOGGER.info('{:15}'.format(dataset))
 
