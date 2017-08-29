@@ -139,7 +139,6 @@ def main():
                 param_grid = dict(
                     scaler=[None, sklearn.preprocessing.Normalizer(norm="l1", copy=False)],
                     clf=clfs,
-                    clf__class_weight=['balanced']
                 )
 
                 gscv = GridSearchCV(
