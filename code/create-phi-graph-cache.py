@@ -21,7 +21,7 @@ def get_args():
     import argparse
     parser = argparse.ArgumentParser(description='Create phi cache')
     parser.add_argument('--n_jobs', type=int, default=1)
-    parser.add_argument('--h', type=int, default=1)
+    parser.add_argument('--h', type=int, default=4)
     parser.add_argument('--remove_missing_labels', type=bool, default=True)
     parser.add_argument('--force', action='store_true')
     parser.add_argument('--limit_dataset', nargs='+', type=str, default=['ng20', 'ling-spam', 'reuters-21578', 'webkb'], dest='limit_dataset')
