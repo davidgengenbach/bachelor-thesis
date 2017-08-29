@@ -229,9 +229,12 @@ def get_all_cached_graph_datasets(dataset_name = None, cache_path = CACHE_PATH):
 def get_all_cached_graph_phi_datasets(cache_path = CACHE_PATH):
     return [x for x in get_all_cached_datasets(cache_path) if 'phi' in x]
 
-def get_dataset_name_from_graph_cachefile(graph_cache_file):
+def get_dataset_name_from_graph_cachefile(graph_cache_file, replace_single = True):
     dataset = graph_cache_file.rsplit('.npy')[0].split('/')[-1]
-    return dataset.rsplit('_', 1)[1].replace('.phi', '')
+    dataset = dataset.rsplit('_', 1)[1].replace('.phi', '')
+    if replace_single:
+        dataset = dataset.replace('-single', '')
+    return dataset
 
 def get_all_datasets(dataset_folder=DATASET_FOLDER, **kwargs):
     """Returns a dict with the available datasets as key and the documents as values
