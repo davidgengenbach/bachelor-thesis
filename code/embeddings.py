@@ -48,7 +48,7 @@ def get_embeddings_for_labels(labels, embedding, check_most_similar = False, res
     not_found, embeddings, lookup, similar_els = [], {}, {}, {}
 
     for label in labels:
-        label = label.lower()
+        label = str(label).lower()
         is_composite = label.count(' ') > 0
         if label in embedding:
             embeddings[label] = embedding[label]
