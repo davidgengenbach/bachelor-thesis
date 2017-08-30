@@ -58,7 +58,7 @@ def main():
     )
 
     clfs = [
-        #sklearn.dummy.DummyClassifier(strategy='most_frequent'),
+        sklearn.dummy.DummyClassifier(strategy='most_frequent'),
         #sklearn.svm.SVC(max_iter = args.max_iter, tol=args.tol),
         #sklearn.linear_model.Perceptron(class_weight='balanced', max_iter=args.max_iter, tol=args.tol),
         #sklearn.linear_model.LogisticRegression(class_weight = 'balanced', max_iter=args.max_iter, tol=args.tol),

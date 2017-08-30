@@ -17,6 +17,8 @@ def get_args():
     parser.add_argument('--embeddings_result_folder', type=str, default='data/embeddings/graph-embeddings')
     parser.add_argument('--limit_dataset', nargs='+', type=str, default=['ng20', 'ling-spam', 'reuters-21578', 'webkb'], dest='limit_dataset')
     parser.add_argument('--force', action='store_true')
+    parser.add_argument('--merge_threshold', type=float, default=0.999)
+    parser.add_argument('--topn', type=int, default=4)
 
     args = parser.parse_args()
     return args
@@ -65,17 +67,17 @@ def process_dataset(dataset_name, pre_trained_embedding, args):
     embeddings_pre_trained = embeddings.load_word2vec_format(fname = embedding_file, binary = False)
     
     LOGGER.info('{:15} - Co-reference resolution'.format(dataset_name))
-    similar_labels = coreference.get_most_similar_labels(all_labels, embeddings_pre_trained)
+    similar_labels = coreference.get_most_similar_labels(all_labels, embeddings_pre_trained, args.topn)
 
-    clique_lookup = coreference.create_label_cliques_by_similarity(similar_labels)
+    clique_lookup = coreference.create_label_cliques_by_similarity(similar_labels, threshold=args.merge_threshold, topn=args.topn)
 
     new_lookup = embeddings.merge_lookups(clique_lookup, lookup)
 
     with open('{}/{}.label-lookup.npy'.format(args.embeddings_result_folder, dataset_name), 'wb') as f:
         pickle.dump(new_lookup, f)
 
-    with open('{}/{}.similar-els.npy'.format(args.embeddings_result_folder, dataset_name), 'wb') as f:
-        pickle.dump(similar_els, f)
+    with open('{}/{}.similar-labels.npy'.format(args.embeddings_result_folder, dataset_name), 'wb') as f:
+        pickle.dump(similar_labels, f)
 
     LOGGER.info('{:15} - Finish'.format(dataset_name))
 
