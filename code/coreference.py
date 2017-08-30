@@ -3,7 +3,7 @@ import embeddings
 import dataset_helper
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
+
 
 
 def get_most_similar_labels(labels, lookup_embeddings, topn=1):
@@ -101,6 +101,7 @@ def get_non_coreferenced_labels(labels, lookup):
 
 
 def plot_lookup_histogram(lookup, num_labels, title = None, figsize = (14, 6), dpi = 120):
+    import matplotlib.pyplot as plt
     cliques = get_cliques_from_lookup(lookup)
     similarity_counter = {'merged': len(lookup.keys()), 'unmerged': num_labels - len(lookup.keys())}
     clique_lenghts = [len(x) for x in list(cliques.values())]
