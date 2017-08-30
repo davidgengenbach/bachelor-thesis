@@ -143,7 +143,7 @@ def main():
                 ])
 
                 param_grid = dict(
-                    scaler=[None, sklearn.preprocessing.Normalizer(norm="l1", copy=False)],
+                    scaler=[None, sklearn.preprocessing.Normalizer(norm="l1")],
                     clf=clfs,
                 )
 

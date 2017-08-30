@@ -201,7 +201,7 @@
 - Results
     - alle Parameter mit Ergebnissen in Tabelle
 - Co-reference
-    - Glove Embeddings
+    - GloVe Embeddings
 
 
 ## 06.08.2017

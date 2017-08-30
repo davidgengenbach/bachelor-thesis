@@ -100,14 +100,16 @@ def get_non_coreferenced_labels(labels, lookup):
     return list(set(labels) - set(lookup.keys()))
 
 
-def plot_lookup_histogram(lookup, num_labels, title = None, figsize = (14, 6), dpi = 120):
+def plot_lookup_histogram(lookup, num_labels = None, title = None, figsize = (14, 6), dpi = 120):
     import matplotlib.pyplot as plt
     cliques = get_cliques_from_lookup(lookup)
+    if num_labels is None:
+        num_labels = len(lookup.keys())
     similarity_counter = {'merged': len(lookup.keys()), 'unmerged': num_labels - len(lookup.keys())}
     clique_lenghts = [len(x) for x in list(cliques.values())]
     fig, axes = plt.subplots(1, 2, figsize = figsize, dpi = dpi)
 
-    pd.DataFrame(clique_lenghts).plot(ax = axes[0], kind = 'hist', logy = True, bins = 100, cumulative=True, normed=1, legend = False, title = "Histogram of clique lengths (cumulative)")
+    pd.DataFrame(clique_lenghts).plot(ax = axes[0], kind = 'hist', logy = True, bins = 40, cumulative=False, legend = False, title = "Histogram of clique lengths")
     pd.DataFrame(list(similarity_counter.items()), columns = ['name', 'count']).set_index('name').plot(ax = axes[1], kind = 'bar', legend = False, title = '# of labels that have been merged vs. not merged')
 
     if title:
