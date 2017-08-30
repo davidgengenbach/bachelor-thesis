@@ -11,6 +11,8 @@ import pandas as pd
 import graph_helper
 import scipy.sparse
 
+DATASETS_LIMITED = ['ng20', 'reuters-21578', 'webkb', 'ling-spam']
+
 PATH_TO_HERE = os.path.dirname(os.path.abspath(__file__))
 DATASET_FOLDER = 'data/datasets'
 GRAPHS_FOLDER = 'data/graphs'

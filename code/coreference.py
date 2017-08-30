@@ -2,6 +2,8 @@ import collections
 import embeddings
 import dataset_helper
 import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
 
 
 def get_most_similar_labels(labels, lookup_embeddings, topn=1):
@@ -96,3 +98,23 @@ def get_non_coreferenced_labels(labels, lookup):
         list(str): the labels which belong to no clique
     """
     return list(set(labels) - set(lookup.keys()))
+
+
+def plot_lookup_histogram(lookup, num_labels, title = None, figsize = (14, 6), dpi = 120):
+    cliques = get_cliques_from_lookup(lookup)
+    similarity_counter = {'merged': len(lookup.keys()), 'unmerged': num_labels - len(lookup.keys())}
+    clique_lenghts = [len(x) for x in list(cliques.values())]
+    fig, axes = plt.subplots(1, 2, figsize = figsize, dpi = dpi)
+
+    pd.DataFrame(clique_lenghts).plot(ax = axes[0], kind = 'hist', logy = True, bins = 100, cumulative=True, normed=1, legend = False, title = "Histogram of clique lengths (cumulative)")
+    pd.DataFrame(list(similarity_counter.items()), columns = ['name', 'count']).set_index('name').plot(ax = axes[1], kind = 'bar', legend = False, title = '# of labels that have been merged vs. not merged')
+
+    if title:
+        fig.suptitle(title, fontsize = 16)
+    
+    fig.tight_layout()
+
+    if title:
+        fig.subplots_adjust(top=0.85)
+
+    return fig, axes

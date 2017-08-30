@@ -15,10 +15,10 @@ def get_args():
     parser.add_argument('--n_jobs', type=int, default=1)
     parser.add_argument('--pre_trained_embedding', type=str, default='data/embeddings/glove/glove.6B.50d.w2v.txt')
     parser.add_argument('--embeddings_result_folder', type=str, default='data/embeddings/graph-embeddings')
-    parser.add_argument('--limit_dataset', nargs='+', type=str, default=['ng20', 'ling-spam', 'reuters-21578', 'webkb'], dest='limit_dataset')
+    parser.add_argument('--limit_dataset', nargs='+', type=str, default=['ng20', 'ling-spam', 'reuters-21578', 'webkb'])
+    parser.add_argument('--merge_threshold', nargs='+', type=float, default=[0.5, 0.7, 0.9])
+    parser.add_argument('--topn', nargs='+', type=int, default=[1])
     parser.add_argument('--force', action='store_true')
-    parser.add_argument('--merge_threshold', type=float, default=0.999)
-    parser.add_argument('--topn', type=int, default=4)
 
     args = parser.parse_args()
     return args
@@ -65,22 +65,22 @@ def process_dataset(dataset_name, pre_trained_embedding, args):
     embedding_file = '{}/{}.w2v.txt'.format(args.embeddings_result_folder, dataset_name)
     embeddings.save_embedding_dict(embeddings_pre_trained, embedding_file)
     embeddings_pre_trained = embeddings.load_word2vec_format(fname = embedding_file, binary = False)
-    
+
     LOGGER.info('{:15} - Co-reference resolution'.format(dataset_name))
-    similar_labels = coreference.get_most_similar_labels(all_labels, embeddings_pre_trained, args.topn)
+    max_topn = max(args.topn)
+    
+    similar_labels = coreference.get_most_similar_labels(all_labels, embeddings_pre_trained, max_topn)
 
-    clique_lookup = coreference.create_label_cliques_by_similarity(similar_labels, threshold=args.merge_threshold, topn=args.topn)
+    for topn in args.topn:
+        for threshold in args.merge_threshold:
+            LOGGER.info('{:15} - Co-reference resolution: topn: {}, threshold: {}'.format(dataset_name, topn, threshold))
+            clique_lookup = coreference.create_label_cliques_by_similarity(similar_labels, threshold=threshold, topn=topn)
 
-    new_lookup = embeddings.merge_lookups(clique_lookup, lookup)
+            new_lookup = embeddings.merge_lookups(clique_lookup, lookup)
 
-    with open('{}/{}.label-lookup.npy'.format(args.embeddings_result_folder, dataset_name), 'wb') as f:
-        pickle.dump(new_lookup, f)
-
-    with open('{}/{}.similar-labels.npy'.format(args.embeddings_result_folder, dataset_name), 'wb') as f:
-        pickle.dump(similar_labels, f)
-
-    LOGGER.info('{:15} - Finish'.format(dataset_name))
-
+            with open('{}/{}.threshold-{}.topn-{}.label-lookup.npy'.format(args.embeddings_result_folder, dataset_name, threshold, topn), 'wb') as f:
+                pickle.dump(new_lookup, f)
+    LOGGER.info('{:15} - Finished'.format(dataset_name))
 
 def main():
     args = get_args()
