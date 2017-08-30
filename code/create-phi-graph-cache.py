@@ -69,7 +69,7 @@ def process_dataset(graph_cache_file, args):
 
         # With relabeling
         for label_lookup_file in label_lookup_files:
-            threshold = label_lookup_file.split('threshold-')[1].split('.')[0]
+            threshold = '.'.join(label_lookup_file.split('threshold-')[1].split('.')[:2])
             topn = label_lookup_file.split('topn-')[1].split('.')[0]
             
             phi_graph_relabeled_cache_file = phi_graph_cache_file.replace(dataset, 'relabeled_threshold_topn-{}_threshold-{}_{}'.format(topn, threshold, dataset))
