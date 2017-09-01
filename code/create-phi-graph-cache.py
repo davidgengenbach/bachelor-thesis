@@ -3,6 +3,7 @@
 import os
 import dataset_helper
 import graph_helper
+import coreference
 import gc
 import pickle
 from transformers.fast_wl_graph_kernel_transformer import FastWLGraphKernelTransformer
@@ -79,11 +80,15 @@ def process_dataset(graph_cache_file, args):
                     label_lookup = pickle.load(f)
 
                 LOGGER.info('{:15} \tProcessing: {}, threshold: {}, topn: {}'.format(dataset, phi_graph_relabeled_cache_file, threshold, topn))
-
+                LOGGER.info('{:15} \tProcessing: {}, relabeling'.format(dataset, phi_graph_relabeled_cache_file))
                 relabel_trans = RelabelGraphsTransformer(label_lookup)
 
                 X = relabel_trans.transform(X)
 
+                LOGGER.info('{:15} \tProcessing: {}, fixing duplicate labels'.format(dataset, phi_graph_relabeled_cache_file))
+                X = [coreference.fix_duplicate_label_graph(*x) for x in X]
+
+                LOGGER.info('{:15} \tProcessing: {}, fast_wl'.format(dataset, phi_graph_relabeled_cache_file))
                 fast_wl_trans.fit(X)
                 
                 with open(phi_graph_relabeled_cache_file, 'wb') as f:

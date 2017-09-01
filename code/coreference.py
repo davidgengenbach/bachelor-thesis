@@ -5,7 +5,6 @@ import numpy as np
 import pandas as pd
 
 
-
 def get_most_similar_labels(labels, lookup_embeddings, topn=1):
     """Retrieves the most similar labels for a given list of labels.
 
@@ -27,7 +26,7 @@ def get_most_similar_labels(labels, lookup_embeddings, topn=1):
         if (num_labels >= 10 and idx % int(num_labels / 10) == 0) or idx == num_labels - 1:
             print('Progress: {:>3}%'.format(int(100 * idx / num_labels)))
         if label in lookup_embeddings:
-            results[label] = lookup_embeddings.similar_by_word(label, topn = topn)
+            results[label] = lookup_embeddings.similar_by_word(label, topn=topn)
     return results
 
 
@@ -100,21 +99,46 @@ def get_non_coreferenced_labels(labels, lookup):
     return list(set(labels) - set(lookup.keys()))
 
 
-def plot_lookup_histogram(lookup, num_labels = None, title = None, figsize = (14, 6), dpi = 120):
+def fix_duplicate_label_graph(adj, labels):
+    adj = adj.tolil()
+    has_duplicate_labels = len(set(labels)) != len(labels)
+    if not has_duplicate_labels:
+        return (adj, labels)
+    already_seen = collections.defaultdict(lambda: [])
+    idx_to_remove = []
+    new_labels = []
+    for idx, label in enumerate(labels):
+        if label in already_seen:
+            first = already_seen[label][0]
+            adj[first, adj[idx].nonzero()] = 1
+            adj[adj[idx].nonzero(), first] = 1
+            idx_to_remove.append(idx)
+        else:
+            new_labels.append(label)
+        already_seen[label].append(idx)
+    all_cols = adj.shape[0]
+    cols_to_keep = sorted([indices[0] for label, indices in already_seen.items()])
+    adj = adj[cols_to_keep]
+    adj = adj[:, cols_to_keep]
+    return (adj, new_labels)
+
+
+def plot_lookup_histogram(lookup, num_labels=None, title=None, figsize=(14, 6), dpi=120):
     import matplotlib.pyplot as plt
     cliques = get_cliques_from_lookup(lookup)
     if num_labels is None:
         num_labels = len(lookup.keys())
     similarity_counter = {'merged': len(lookup.keys()), 'unmerged': num_labels - len(lookup.keys())}
     clique_lenghts = [len(x) for x in list(cliques.values())]
-    fig, axes = plt.subplots(1, 2, figsize = figsize, dpi = dpi)
+    fig, axes = plt.subplots(1, 2, figsize=figsize, dpi=dpi)
 
-    pd.DataFrame(clique_lenghts).plot(ax = axes[0], kind = 'hist', logy = True, bins = 40, cumulative=False, legend = False, title = "Histogram of clique lengths")
-    pd.DataFrame(list(similarity_counter.items()), columns = ['name', 'count']).set_index('name').plot(ax = axes[1], kind = 'bar', legend = False, title = '# of labels that have been merged vs. not merged')
+    pd.DataFrame(clique_lenghts).plot(ax=axes[0], kind='hist', logy=True, bins=40, cumulative=False, legend=False, title="Histogram of clique lengths")
+    pd.DataFrame(list(similarity_counter.items()), columns=['name', 'count']).set_index('name').plot(
+        ax=axes[1], kind='bar', legend=False, title='# of labels that have been merged vs. not merged')
 
     if title:
-        fig.suptitle(title, fontsize = 16)
-    
+        fig.suptitle(title, fontsize=16)
+
     fig.tight_layout()
 
     if title:
