@@ -14,6 +14,8 @@ import tempfile
 import gc
 import traceback
 import logging
+import scipy
+from scipy import sparse
 from sklearn import dummy
 from sklearn.pipeline import Pipeline
 from sklearn.linear_model import Perceptron
@@ -84,7 +86,10 @@ def main():
         # Get predictions of best classifier in the grid search for a test set
         train_index, test_index = next(cv.split(X, Y))
 
-        X_test, Y_test = np.array(X, dtype = object)[test_index], np.array(Y, dtype = object)[test_index]
+        if scipy.sparse.issparse(X):
+            X_test, Y_test = X[test_index], np.array(Y, dtype = object)[test_index]
+        else:
+            X_test, Y_test = np.array(X, dtype = object)[test_index], np.array(Y, dtype = object)[test_index]
 
         best_classifer = gscv_result.best_estimator_
         Y_test_pred = best_classifer.predict(X_test)
