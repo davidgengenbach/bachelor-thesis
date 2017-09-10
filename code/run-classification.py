@@ -21,6 +21,7 @@ from sklearn import naive_bayes
 from sklearn.pipeline import Pipeline
 from sklearn.linear_model import Perceptron
 from sklearn.model_selection import GridSearchCV
+from sklearn.base import clone
 from transformers.fast_wl_graph_kernel_transformer import FastWLGraphKernelTransformer
 from transformers.phi_picker_transformer import PhiPickerTransformer
 from transformers.wl_graph_kernel_transformer import WLGraphKernelTransformer
@@ -82,19 +83,17 @@ def main():
 
     def cross_validate(X, Y, estimator, param_grid, result_file, predictions_file):
         gc.collect()
-        gscv = GridSearchCV(estimator=estimator, param_grid=param_grid, cv=cv, scoring=scoring,
-                                n_jobs=args.n_jobs, verbose=args.verbose, refit=refit)
-        gscv_result = gscv.fit(X, Y)
 
-        # Get predictions of best classifier in the grid search for a test set
-        train_index, test_index = list(cv.split(X, Y))[-1]
+        # Hold out validation set (10%)
+        X_train, X_test, Y_train, Y_test = sklearn.model_selection.train_test_split(X, Y, stratify = Y, test_size = 0.1)
 
-        if scipy.sparse.issparse(X):
-            X_test, Y_test = X[test_index], np.array(Y, dtype = object)[test_index]
-        else:
-            X_test, Y_test = np.array(X, dtype = object)[test_index], np.array(Y, dtype = object)[test_index]
+        gscv = GridSearchCV(estimator=estimator, param_grid=param_grid, cv=cv, scoring=scoring, n_jobs=args.n_jobs, verbose=args.verbose, refit=refit)
 
-        best_classifer = gscv_result.best_estimator_
+        gscv_result = gscv.fit(X_train, Y_train)
+
+        # Retrain the best classifier and get prediction on validation set
+        best_classifer = sklearn.base.clone(gscv_result.best_estimator_)
+        best_classifer.fit(X_train, Y_train)
         Y_test_pred = best_classifer.predict(X_test)
 
         if args.remove_coefs:
