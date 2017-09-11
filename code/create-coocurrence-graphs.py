@@ -25,7 +25,7 @@ def process_dataset(dataset, args):
                 f.write('NOT_DONE')
 
             def process(X, Y):
-                return graph_helper.convert_dataset_to_co_occurence_graph_dataset(X, Y, only_nouns = only_nouns, min_length = args.min_length, window_size = window_size, n_jobs = args.n_jobs_coo)
+                return graph_helper.convert_dataset_to_co_occurence_graph_dataset(X, Y, only_nouns = only_nouns, min_length = args.min_length, window_size = window_size, n_jobs = args.n_jobs_coo, lemma_ = True)
 
             dataset_helper.get_dataset(dataset, preprocessed = False, use_cached=False, transform_fn=process, cache_file=cache_file)
 
