@@ -21,8 +21,6 @@ def process_dataset(dataset, args):
             if not args.force and os.path.exists(cache_file):
                 print('dataset: {:15} - cache file exists'.format(dataset, cache_file))
                 continue
-            with open(cache_file, 'w') as f:
-                f.write('NOT_DONE')
 
             def process(X, Y):
                 return graph_helper.convert_dataset_to_co_occurence_graph_dataset(X, Y, only_nouns = only_nouns, min_length = args.min_length, window_size = window_size, n_jobs = args.n_jobs_coo, lemma_ = True)
