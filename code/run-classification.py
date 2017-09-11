@@ -85,7 +85,7 @@ def main():
         gc.collect()
 
         # Hold out validation set (10%)
-        X_train, X_test, Y_train, Y_test = sklearn.model_selection.train_test_split(X, Y, stratify = Y, test_size = 0.1)
+        X_train, X_test, Y_train, Y_test = sklearn.model_selection.train_test_split(X, Y, stratify = Y, test_size = 0.15)
 
         gscv = GridSearchCV(estimator=estimator, param_grid=param_grid, cv=cv, scoring=scoring, n_jobs=args.n_jobs, verbose=args.verbose, refit=refit)
 
@@ -176,7 +176,7 @@ def main():
                 ])
 
                 param_grid = dict(
-                    scaler=[None, sklearn.preprocessing.Normalizer(norm="l1")],
+                    scaler=[None, sklearn.preprocessing.Normalizer(norm="l2")],
                     clf=clfs,
                 )
 

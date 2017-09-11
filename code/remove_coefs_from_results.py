@@ -6,10 +6,15 @@ import os
 import numpy as np
 
 def remove_coefs(clf):
-    if hasattr(clf, 'coef_'):
-        del clf.coef_
-        return True
-    return False
+    found = False
+    for x in ['coef_', 'class_log_prior_', 'intercept_', 'feature_log_prob_', 'class_count_', 'feature_count_']:
+        try:
+            delattr(clf, x)
+            found = True
+        except:
+            pass
+
+    return found
 
 def remove_coefs_from_results(results):
     param_clf = results['param_clf']
@@ -23,6 +28,7 @@ def remove_coefs_from_results(results):
 
     for clf in param_clf:
         found |= remove_coefs(clf)
+
     return found
 
 def main():
