@@ -12,14 +12,17 @@ import dataset_helper
 import pandas as pd
 import numpy as np
 from scipy.sparse import lil_matrix
+import spacy
 
 
-def convert_dataset_to_co_occurence_graph_dataset(X, Y, min_length = 2, n_jobs=4, only_nouns = False, lemma_ = False, **cooccurrence_kwargs):
-    print('Pre-processing')
-    X = preprocessing.preprocess_text_spacy(X, min_length=min_length, concat = False, only_nouns = only_nouns, lemma_ = lemma_)
-    print('Creating adjadency mats')
+def convert_dataset_to_co_occurence_graph_dataset(X, Y, min_length = 2, n_jobs=4, only_nouns = False, lemma_ = False, preprocess = True, **cooccurrence_kwargs):
+    if preprocess:
+        X = preprocessing.preprocess_text_spacy(X, min_length=min_length, concat = False, only_nouns = only_nouns)
+    if lemma_:
+        X = [[word.lemma_ for word in doc] for doc in X]
+
     mats = Parallel(n_jobs=n_jobs)(delayed(cooccurrence.get_coocurrence_matrix)(text, **cooccurrence_kwargs) for text in X)
-    print('Converting to networkx graphs')
+
     graphs = Parallel(n_jobs=n_jobs)(delayed(convert_from_numpy_to_nx)(*mat) for mat in mats)
     return graphs, Y
 

@@ -74,7 +74,8 @@ def plot_confusion_matrix(cm,
                           normalize=False,
                           title='Confusion matrix',
                           round_confusion=2,
-                          x_rotation=90):
+                          x_rotation=90,
+                          show_non_horizontal_percent = True):
     """
     Plots the confusion matrix.
     Taken from: http://scikit-learn.org/stable/auto_examples/model_selection/plot_confusion_matrix.html#sphx-glr-auto-examples-model-selection-plot-confusion-matrix-py
@@ -91,6 +92,8 @@ def plot_confusion_matrix(cm,
 
     thresh = cm.max() / 2.
     for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
+        if not show_non_horizontal_percent and i != j:
+            continue
         val = int(round(cm[i, j], round_confusion) * 100) if round_confusion else cm[i, j]
         val = '{}%'.format(val)
         plt.text(j, i, val,
