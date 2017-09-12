@@ -84,8 +84,11 @@ def main():
     def cross_validate(X, Y, estimator, param_grid, result_file, predictions_file):
         gc.collect()
 
-        # Hold out validation set (10%)
-        X_train, X_test, Y_train, Y_test = sklearn.model_selection.train_test_split(X, Y, stratify = Y, test_size = 0.15)
+        try:
+            # Hold out validation set (10%)
+            X_train, X_test, Y_train, Y_test = sklearn.model_selection.train_test_split(X, Y, stratify = Y, test_size = 0.15)
+        except:
+            X_train, Y_train, X_test, Y_test = X, Y, [], []
 
         gscv = GridSearchCV(estimator=estimator, param_grid=param_grid, cv=cv, scoring=scoring, n_jobs=args.n_jobs, verbose=args.verbose, refit=refit)
 
