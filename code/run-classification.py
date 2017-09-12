@@ -91,19 +91,23 @@ def main():
 
         gscv_result = gscv.fit(X_train, Y_train)
 
-        # Retrain the best classifier and get prediction on validation set
-        best_classifer = sklearn.base.clone(gscv_result.best_estimator_)
-        best_classifer.fit(X_train, Y_train)
-        Y_test_pred = best_classifer.predict(X_test)
+        try:
+            # Retrain the best classifier and get prediction on validation set
+            best_classifer = sklearn.base.clone(gscv_result.best_estimator_)
+            best_classifer.fit(X_train, Y_train)
+            Y_test_pred = best_classifer.predict(X_test)
+
+            with open(predictions_file, 'wb') as f:
+                pickle.dump({
+                    'Y_real': Y_test,
+                    'Y_pred': Y_test_pred
+                }, f)
+        except Exception as e:
+            LOGGER.warning('Error while trying to retrain best classifier')
+            LOGGER.exception(e)
 
         if args.remove_coefs:
             remove_coefs_from_results(gscv_result.cv_results_)
-
-        with open(predictions_file, 'wb') as f:
-            pickle.dump({
-                'Y_real': Y_test,
-                'Y_pred': Y_test_pred
-            }, f)
 
         with open(result_file, 'wb') as f:
             pickle.dump(gscv_result.cv_results_, f)
