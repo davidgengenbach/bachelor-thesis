@@ -43,7 +43,7 @@ def fast_wl_compute(graphs, h=1, label_lookups=None, label_counters=None, primes
     new_label_counters = [label_counter]
 
     # The upper bound up to which the prime numbers have to be retrieved
-    primes_needed = primes_arguments_required[int(np.ceil(np.log2(num_labels)) + 3)]
+    primes_needed = primes_arguments_required[int(np.ceil(np.log2(num_labels)) + 3) + 6]
 
     log_primes = primes.get_log_primes(1, primes_needed)
 

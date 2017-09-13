@@ -12,6 +12,7 @@ from transformers.nx_graph_to_tuple_transformer import NxGraphToTupleTransformer
 from transformers.relabel_graphs_transformer import RelabelGraphsTransformer
 from logger import LOGGER
 from glob import glob
+import sys
 
 import re
 
@@ -48,7 +49,7 @@ def process_dataset(graph_cache_file, args):
     tuple_trans = NxGraphToTupleTransformer()
     fast_wl_trans = FastWLGraphKernelTransformer(h=args.h, remove_missing_labels=args.remove_missing_labels)
 
-    phi_graph_cache_file = graph_cache_file.replace('.npy', '.phi.npy')
+    
     if '.phi.' in graph_cache_file:
         return
 
@@ -59,6 +60,8 @@ def process_dataset(graph_cache_file, args):
     try:
         X, Y = dataset_helper.get_dataset_cached(graph_cache_file)
         X = tuple_trans.transform(X)
+        phi_graph_cache_file = graph_cache_file.replace('.npy', '.phi.npy')
+        phi_same_label_graph_cache_file = phi_graph_cache_file.replace(dataset, 'same-label_{}'.format(dataset))
 
         # Without relabeling
         if args.force or not os.path.exists(phi_graph_cache_file):
@@ -67,6 +70,15 @@ def process_dataset(graph_cache_file, args):
             with open(phi_graph_cache_file, 'wb') as f:
                 pickle.dump((fast_wl_trans.phi_list, Y), f)
             LOGGER.info('{:15} \tDone: {}'.format(dataset, phi_graph_cache_file))
+
+        # All nodes get same label
+        if args.force or not os.path.exists(phi_same_label_graph_cache_file):
+            LOGGER.info('{:15} \tProcessing: {}'.format(dataset, phi_same_label_graph_cache_file))
+            X_same_label = [(x, [0] * len(y)) for x, y in X]
+            fast_wl_trans.fit(X_same_label)
+            with open(phi_same_label_graph_cache_file, 'wb') as f:
+                pickle.dump((fast_wl_trans.phi_list, Y), f)
+            LOGGER.info('{:15} \tDone: {}'.format(dataset, phi_same_label_graph_cache_file))
 
         # With relabeling
         for label_lookup_file in label_lookup_files:
