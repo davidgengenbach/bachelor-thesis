@@ -1,19 +1,10 @@
 #!/usr/bin/env python
 
-import pandas as pd
-import helper
 import dataset_helper
-import numpy as np
 import sklearn
-import graph_helper
-import wl
 import os
 import pickle
-import json
-import tempfile
 import gc
-import traceback
-import logging
 import scipy
 from scipy import sparse
 from sklearn import dummy
@@ -26,12 +17,9 @@ from transformers.fast_wl_graph_kernel_transformer import FastWLGraphKernelTrans
 from transformers.phi_picker_transformer import PhiPickerTransformer
 from transformers.wl_graph_kernel_transformer import WLGraphKernelTransformer
 from transformers.preprocessing_transformer import PreProcessingTransformer
-
 from transformers.naive_preprocessing_transformer import NaivePreprocessingTransformer
-
-from logger import LOGGER
 from remove_coefs_from_results import remove_coefs_from_results
-
+from logger import LOGGER
 
 def get_args():
     import argparse
@@ -86,7 +74,7 @@ def main():
         gc.collect()
 
         try:
-            # Hold out validation set (10%)
+            # Hold out validation set (15%)
             X_train, X_test, Y_train, Y_test = sklearn.model_selection.train_test_split(X, Y, stratify = Y, test_size = 0.15)
         except:
             X_train, Y_train, X_test, Y_test = X, Y, [], []

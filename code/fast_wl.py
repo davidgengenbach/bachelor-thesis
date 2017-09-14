@@ -70,6 +70,9 @@ def fast_wl_compute(graphs, h=1, label_lookups=None, label_counters=None, primes
         phi = lil_matrix(phi_shape, dtype=np.uint8)
         # ... go over all graphs
         for idx, (labels, adjacency_matrix) in enumerate(zip(graph_labels, adjacency_matrices)):
+            # ... remove weight information (not needed for WL)
+            adjacency_matrix[adjacency_matrix.nonzero()] = 1
+
             # ... generate the signatures (see paper) for each graph
             signatures = np.round((labels + adjacency_matrix * log_primes[labels]), decimals=10).astype(np.uint32)
             # ... add missing signatures to the label lookup

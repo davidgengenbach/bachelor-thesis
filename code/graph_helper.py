@@ -112,15 +112,26 @@ def get_graphs_from_folder(folder, ext='gml', undirected=True, verbose=False):
     assert len(X) == len(Y), 'X has not the same dimensions as Y'
     return X, Y
 
+def convert_adjs_tuples_to_graphs(X):
+    if not isinstance(X[0], tuple):
+        return
+
+    for idx, (adj, labels) in enumerate(X):
+        g = nx.from_scipy_sparse_matrix(adj)
+        nx.relabel_nodes(g, {idx: label for idx, label in enumerate(labels)}, copy=False)
+        X[idx] = g
+
 
 def convert_graphs_to_adjs_tuples(X):
-    if not isinstance(X[0], tuple):
-        for idx, graph in enumerate(X):
-            nodes = graph.nodes()
-            if len(nodes) == 0 or nx.number_of_edges(graph) == 0:
-                X[idx] = (lil_matrix(1, 1), [''])
-            else:
-                X[idx] = (nx.adjacency_matrix(graph, nodelist = nodes), nodes)
+    if isinstance(X[0], tuple):
+        return
+
+    for idx, graph in enumerate(X):
+        nodes = graph.nodes()
+        if len(nodes) == 0 or nx.number_of_edges(graph) == 0:
+            X[idx] = (lil_matrix(1, 1), [''])
+        else:
+            X[idx] = (nx.adjacency_matrix(graph, nodelist = nodes), nodes)
 
 
 def get_gml_graph(graph_str, undirected=False, num_tries=5, verbose=False):

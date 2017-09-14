@@ -16,20 +16,10 @@ scp ba:results.zip .
 echo "- Starting to unzip results"
 unzip -q results.zip
 rm -f ../*.npy
-#cp *.npy ..
-echo "- Copying results"
-find . -name '*.npy' -depth 1 -type f | cut -c 3- | xargs -I "{}" cp "{}" "../"
 
 echo "Predictions"
 scp ba:predictions.zip .
 echo "- Starting to unzip predictions"
 unzip -q predictions.zip
-cd predictions
 
-echo "- Copying predictions"
-# "Argument list too long" error on "mv *.npy"
-cd predictions
-find . -type f | cut -c 3- | xargs -I "{}" cp "{}" "../../predictions/{}"
-cd ..
-#mv predictions/* ../predictions
-#rm -rf predictions
+./copy "$folder_name"

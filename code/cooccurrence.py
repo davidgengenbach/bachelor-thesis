@@ -28,7 +28,7 @@ def get_coocurrence_matrix(text, window_size = 2, only_forward_window = False, k
 
     word2id, id2word = words_to_dict(words)
     num_words = len(word2id.keys())
-    mat = lil_matrix((num_words, num_words), dtype=np.int8)
+    mat = lil_matrix((num_words, num_words), dtype=np.uint8)
     txt_len = len(words)
     for idx, word_1 in enumerate(words):
         window_size_idx = min(idx + window_size + 1, txt_len)
