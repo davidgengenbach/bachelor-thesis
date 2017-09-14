@@ -135,13 +135,14 @@ def main():
                 ('preprocessing', None),
                 ('TfidfTransformer', sklearn.feature_extraction.text.TfidfVectorizer(
                     stop_words='english')),
-                #('scaler', sklearn.preprocessing.StandardScaler(with_mean = False)),
+                ('scaler', None),
                 ('clf', None)
             ])
 
             param_grid = dict(
-                preprocessing= [None, PreProcessingTransformer(only_nouns=True, return_lemma = True)],
+                #preprocessing= [None, PreProcessingTransformer(only_nouns=True, return_lemma = True)],
                 #preprocessing=[NaivePreprocessingTransformer()],
+                #scaler = [None, sklearn.preprocessing.StandardScaler(with_mean = False)]
                 clf=clfs
             )
 
