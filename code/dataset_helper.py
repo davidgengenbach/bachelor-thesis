@@ -228,8 +228,10 @@ def get_all_cached_datasets(cache_path = CACHE_PATH):
 def get_all_cached_graph_datasets(dataset_name = None, cache_path = CACHE_PATH):
     return [x for x in get_all_cached_datasets(cache_path) if x.split('/')[-1].startswith('dataset_graph') and '_relabeled' not in x and 'phi' not in x and (not dataset_name or get_dataset_name_from_graph_cachefile(x) == dataset_name or get_dataset_name_from_graph_cachefile(x) == dataset_name + '-single')]
 
-def get_all_cached_graph_phi_datasets(cache_path = CACHE_PATH):
-    return [x for x in get_all_cached_datasets(cache_path) if 'phi' in x]
+def get_all_cached_graph_phi_datasets(dataset_name = None, cache_path = CACHE_PATH):
+    if dataset_name:
+        dataset_name = dataset_name.replace('-single', '')
+    return [x for x in get_all_cached_datasets(cache_path) if 'phi' in x and (not dataset_name or get_dataset_name_from_graph_cachefile(x) == dataset_name)]
 
 def get_dataset_name_from_graph_cachefile(graph_cache_file, replace_single = True):
     dataset = graph_cache_file.rsplit('.npy')[0].split('/')[-1]

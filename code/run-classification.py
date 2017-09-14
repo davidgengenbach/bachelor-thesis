@@ -43,7 +43,7 @@ def get_args():
     parser.add_argument('--check_graphs', action="store_true")
     parser.add_argument('--remove_coefs', action="store_true")
     parser.add_argument('--max_iter', type=int, default=1000)
-    parser.add_argument('--tol', type=int, default=1e-4)
+    parser.add_argument('--tol', type=int, default=1e-3)
     parser.add_argument('--n_splits', type=int, default=3)
     parser.add_argument('--random_state', type=int, default=42)
     parser.add_argument('--limit_dataset', nargs='+', type=str, default=[
@@ -77,8 +77,8 @@ def main():
         #sklearn.svm.SVC(max_iter = args.max_iter, tol=args.tol),
         #sklearn.linear_model.Perceptron(class_weight='balanced', max_iter=args.max_iter, tol=args.tol),
         #sklearn.linear_model.LogisticRegression(class_weight = 'balanced', max_iter=args.max_iter, tol=args.tol),
-        sklearn.svm.LinearSVC(class_weight='balanced', max_iter=args.max_iter, tol=args.tol)
-        #sklearn.linear_model.PassiveAggressiveClassifier(class_weight='balanced', max_iter=args.max_iter, tol=args.tol)
+        sklearn.svm.LinearSVC(class_weight='balanced', max_iter=args.max_iter, tol=args.tol),
+        sklearn.linear_model.PassiveAggressiveClassifier(class_weight='balanced', max_iter=args.max_iter, tol=args.tol)
     ]
 
     def cross_validate(X, Y, estimator, param_grid, result_file, predictions_file):
@@ -167,7 +167,11 @@ def main():
                 '{:<10} - {:<15} - Retrieving dataset'.format('Graph', graph_dataset_cache_file))
             X_all, Y = dataset_helper.get_dataset_cached(cache_file, check_validity=False)
 
+            X_all.append(scipy.sparse.hstack(X_all))
+
             for h, X in enumerate(X_all):
+                if h == len(X_all) - 1:
+                    h = 'stacked'
                 result_file = '{}/{}.{}.results.npy'.format(RESULTS_FOLDER, graph_dataset_cache_file, h)
                 predictions_file = '{}/{}.{}.npy'.format(PREDICTIONS_FOLDER, graph_dataset_cache_file, h)
 
@@ -183,7 +187,7 @@ def main():
                 ])
 
                 param_grid = dict(
-                    scaler=[None, sklearn.preprocessing.Normalizer(norm="l2")],
+                    scaler=[None, sklearn.preprocessing.Normalizer(norm="l1")],
                     clf=clfs,
                 )
 
