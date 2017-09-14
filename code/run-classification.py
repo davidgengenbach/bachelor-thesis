@@ -41,6 +41,7 @@ def get_args():
     parser.add_argument('--verbose', type=int, default=11)
     parser.add_argument('--check_texts', action="store_true")
     parser.add_argument('--check_graphs', action="store_true")
+    parser.add_argument('--create_predictions', action="store_true")
     parser.add_argument('--remove_coefs', action="store_true")
     parser.add_argument('--max_iter', type=int, default=1000)
     parser.add_argument('--tol', type=int, default=1e-3)
@@ -81,7 +82,7 @@ def main():
         sklearn.linear_model.PassiveAggressiveClassifier(class_weight='balanced', max_iter=args.max_iter, tol=args.tol)
     ]
 
-    def cross_validate(X, Y, estimator, param_grid, result_file, predictions_file):
+    def cross_validate(X, Y, estimator, param_grid, result_file, predictions_file, create_predictions):
         gc.collect()
 
         try:
@@ -94,20 +95,21 @@ def main():
 
         gscv_result = gscv.fit(X_train, Y_train)
 
-        try:
-            # Retrain the best classifier and get prediction on validation set
-            best_classifer = sklearn.base.clone(gscv_result.best_estimator_)
-            best_classifer.fit(X_train, Y_train)
-            Y_test_pred = best_classifer.predict(X_test)
+        if create_predictions:
+            try:
+                # Retrain the best classifier and get prediction on validation set
+                best_classifer = sklearn.base.clone(gscv_result.best_estimator_)
+                best_classifer.fit(X_train, Y_train)
+                Y_test_pred = best_classifer.predict(X_test)
 
-            with open(predictions_file, 'wb') as f:
-                pickle.dump({
-                    'Y_real': Y_test,
-                    'Y_pred': Y_test_pred
-                }, f)
-        except Exception as e:
-            LOGGER.warning('Error while trying to retrain best classifier')
-            LOGGER.exception(e)
+                with open(predictions_file, 'wb') as f:
+                    pickle.dump({
+                        'Y_real': Y_test,
+                        'Y_pred': Y_test_pred
+                    }, f)
+            except Exception as e:
+                LOGGER.warning('Error while trying to retrain best classifier')
+                LOGGER.exception(e)
 
         if args.remove_coefs:
             remove_coefs_from_results(gscv_result.cv_results_)
@@ -147,7 +149,7 @@ def main():
             )
 
             LOGGER.info('{:<10} - {:<15} - Starting to fit'.format('Text', dataset_name))
-            cross_validate(X, Y, estimator, param_grid, result_file, predictions_file)
+            cross_validate(X, Y, estimator, param_grid, result_file, predictions_file, args.create_predictions)
 
             LOGGER.info('{:<10} - {:<15} - Finished'.format('Text', dataset_name))
         LOGGER.info('{:<10} - Finished'.format('Text'))
@@ -194,7 +196,7 @@ def main():
 
                 try:
                     LOGGER.info('{:<10} - {:<15} - Classifying for h={}, fitting'.format('Graph', graph_dataset_cache_file, h))
-                    cross_validate(X, Y, estimator, param_grid, result_file, predictions_file)
+                    cross_validate(X, Y, estimator, param_grid, result_file, predictions_file, args.create_predictions)
                 except Exception as e:
                     LOGGER.warning(
                         '{:<10} - {:<15} - Error h={}'.format('Graph', graph_dataset_cache_file, h))
