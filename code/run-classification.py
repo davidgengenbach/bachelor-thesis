@@ -29,6 +29,7 @@ def get_args():
     parser.add_argument('--verbose', type=int, default=11)
     parser.add_argument('--check_texts', action="store_true")
     parser.add_argument('--check_graphs', action="store_true")
+    parser.add_argument('--check_combined', action="store_true")
     parser.add_argument('--create_predictions', action="store_true")
     parser.add_argument('--remove_coefs', action="store_true")
     parser.add_argument('--max_iter', type=int, default=1000)
@@ -143,6 +144,9 @@ def main():
         LOGGER.info('{:<10} - Finished'.format('Text'))
 
     if args.check_graphs:
+        if args.check_combined:
+            dataset_cache = dataset_helper.get_all_datasets()
+
         for cache_file in dataset_helper.get_all_cached_graph_phi_datasets():
             dataset = dataset_helper.get_dataset_name_from_graph_cachefile(cache_file)
             if args.limit_dataset and dataset not in args.limit_dataset:
@@ -189,7 +193,11 @@ def main():
                     LOGGER.warning(
                         '{:<10} - {:<15} - Error h={}'.format('Graph', graph_dataset_cache_file, h))
                     LOGGER.exception(e)
-                    continue
+
+                if args.check_combined:
+                    if dataset in dataset_cache:
+                        pass
+
                 LOGGER.info(
                     '{:<10} - {:<15} - Finished for h={}'.format('Graph', graph_dataset_cache_file, h))
     LOGGER.info('Finished!')

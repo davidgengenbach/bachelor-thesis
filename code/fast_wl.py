@@ -43,8 +43,7 @@ def fast_wl_compute(graphs, h=1, label_lookups=None, label_counters=None, primes
     new_label_counters = [label_counter]
 
     # The upper bound up to which the prime numbers have to be retrieved
-    primes_needed = primes_arguments_required[int(np.ceil(np.log2(num_labels)) + 3) + 6]
-
+    primes_needed = primes_arguments_required[int(np.ceil(np.log2(num_labels)) + 3) + 3]
     log_primes = primes.get_log_primes(1, primes_needed)
 
     # The number of unique labels (= the total number of nodes in graphs)
@@ -94,7 +93,7 @@ def fast_wl_compute(graphs, h=1, label_lookups=None, label_counters=None, primes
     return phi_lists, new_label_lookups, new_label_counters
 
 
-def relabel_graphs(graphs, label_counter = 0, label_lookup={}, labels_dtype = np.uint32):
+def relabel_graphs(graphs, label_counter = 0, label_lookup={}, labels_dtype = np.uint32, append = True):
     assert isinstance(label_counter, int)
     assert isinstance(label_lookup, dict)
 
@@ -102,7 +101,7 @@ def relabel_graphs(graphs, label_counter = 0, label_lookup={}, labels_dtype = np
     nodes = [nodes for adjs, nodes in graphs]
     for idx, nodes_ in enumerate(nodes):
         for label in nodes_:
-            if label not in label_lookup:
+            if append and label not in label_lookup:
                 label_lookup[label] = label_counter
                 label_counter += 1
         labels[idx] = np.array([label_lookup[x] for x in nodes_], dtype=labels_dtype)

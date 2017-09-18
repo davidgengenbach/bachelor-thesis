@@ -22,4 +22,4 @@ scp ba:predictions.zip .
 echo "- Starting to unzip predictions"
 unzip -q predictions.zip
 
-./copy "$folder_name"
+#./copy "$folder_name"

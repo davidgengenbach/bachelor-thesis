@@ -107,7 +107,6 @@ def get_graphs_from_folder(folder, ext='gml', undirected=True, verbose=False):
             if verbose:
                 print("Empty graph: {}".format(topic_and_id))
             empty_graphs.append(topic_and_id)
-
     assert len(X) and len(Y), 'X or Y empty'
     assert len(X) == len(Y), 'X has not the same dimensions as Y'
     return X, Y
@@ -123,6 +122,15 @@ def convert_adjs_tuples_to_graphs(X):
 
 
 def convert_graphs_to_adjs_tuples(X):
+    """Converts the graphs from the nx.Graph format to a tuple.
+    Note: this function changes the input!
+    
+    Args:
+        X (list(nx.graph)): the graphs
+    
+    Returns:
+        list(tuple): a list of tuples where the first tuple element is an adjacency matrix and the second a list of labels
+    """
     if isinstance(X[0], tuple):
         return
 
@@ -134,7 +142,7 @@ def convert_graphs_to_adjs_tuples(X):
             X[idx] = (nx.adjacency_matrix(graph, nodelist = nodes), nodes)
 
 
-def get_gml_graph(graph_str, undirected=False, num_tries=5, verbose=False):
+def get_gml_graph(graph_str, undirected=False, num_tries=20, verbose=False):
     """Given a gml string, this function returns a networkx graph.
     Mostly tries to resolve "duplicate node label" exceptions by replacing node labels with the first occurrence of that label.
 
@@ -153,7 +161,6 @@ def get_gml_graph(graph_str, undirected=False, num_tries=5, verbose=False):
             next_line = graph_str_lines[idx + 1]
             label = next_line.replace('name', 'label')
             graph_str_lines[idx] = label
-
     def convert_to_nx(graph_):
         try:
             graph = nx.parse_gml('\n'.join(graph_str_lines))

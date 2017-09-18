@@ -58,8 +58,8 @@ def process_dataset(graph_cache_file, args):
     gc.collect()
 
     try:
-        X, Y = dataset_helper.get_dataset_cached(graph_cache_file)
-        X = tuple_trans.transform(X)
+        X_graphs, Y = dataset_helper.get_dataset_cached(graph_cache_file)
+        X = tuple_trans.transform(X_graphs)
         phi_graph_cache_file = graph_cache_file.replace('.npy', '.phi.npy')
         phi_same_label_graph_cache_file = phi_graph_cache_file.replace(dataset, 'same-label_{}'.format(dataset))
 

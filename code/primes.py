@@ -3,21 +3,51 @@
 Attributes:
     CACHE (dict): keys are the ranges (start, end) for the primes, values are the primes in that range
 """
-
+import os
 import sympy
 import numpy as np
+import pickle
+
+
+_initialized = False
+CACHE_FILE = 'data/primes.npy'
+CACHE = None
+
 
 def get_prime_range(start, end):
     return list(sympy.primerange(start, end + 1))
 
-CACHE = {}
+
+def load_cache(cache_file=CACHE_FILE):
+    global CACHE, _initialized
+    
+    if _initialized:
+        return
+    if not os.path.exists(cache_file):
+        CACHE = {}
+        with open(cache_file, 'wb') as f:
+            pickle.dump(CACHE, f)
+    with open(cache_file, 'rb') as f:
+        CACHE = pickle.load(f)
+    _initialized = True
+
+
+def save_to_cache(cache_file=CACHE_FILE):
+    with open(cache_file, 'wb') as f:
+        pickle.dump(CACHE, f)
+
 
 def get_log_primes(range_start, range_end):
-    range_ = (range_start, range_end)
-    if range_ in CACHE:
-        return CACHE[range_]
+    load_cache()
+
+    cached_prime_range = [range_end_cached for range_end_cached in sorted(list(CACHE.keys())) if range_end_cached >= range_end]
+
+    if len(cached_prime_range):
+        return CACHE[cached_prime_range[0]]
 
     p = get_prime_range(range_start, range_end)
     log_primes = np.log(p)
-    CACHE[range_] = log_primes
+    CACHE[range_end] = log_primes
+
+    save_to_cache()
     return log_primes

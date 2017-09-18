@@ -169,7 +169,6 @@ def get_gml_graph_dataset(dataset_name, use_cached=True, graphs_folder=GRAPHS_FO
             X, Y = pickle.load(f)
     else:
         X, Y = graph_helper.get_graphs_from_folder(graph_folder, undirected=True)
-
         # Test dataset validity before saving it
         test_dataset_validity(X, Y)
 
