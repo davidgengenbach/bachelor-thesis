@@ -132,10 +132,9 @@ def process_dataset(graph_cache_file, args):
                         pickle.dump((K, Y), f)
                     LOGGER.info('{:15} \tDone: {}'.format(dataset, spgk_graph_cache_file))
 
-        del X, Y, fast_wl_trans
     except Exception as e:
        LOGGER.exception(e)
-    LOGGER.info('{:15} finished'.format(dataset))
+    LOGGER.info('{:15} finished ({})'.format(dataset, graph_cache_filename))
 
 
 if __name__ == '__main__':
