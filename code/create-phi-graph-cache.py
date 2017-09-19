@@ -13,6 +13,8 @@ from transformers.relabel_graphs_transformer import RelabelGraphsTransformer
 from logger import LOGGER
 from glob import glob
 import sys
+from kernels import spgk
+import numpy as np
 
 import re
 
@@ -29,6 +31,7 @@ def get_args():
     parser.add_argument('--remove_missing_labels', type=bool, default=True)
     parser.add_argument('--force', action='store_true')
     parser.add_argument('--limit_dataset', nargs='+', type=str, default=['ng20', 'ling-spam', 'reuters-21578', 'webkb'], dest='limit_dataset')
+    parser.add_argument('--spgk_depth', nargs='+', type=int, default=[1])
     parser.add_argument('--lookup_path', type=str, default='data/embeddings/graph-embeddings')
     args = parser.parse_args()
     return args
@@ -59,7 +62,7 @@ def process_dataset(graph_cache_file, args):
 
     try:
         X_graphs, Y = dataset_helper.get_dataset_cached(graph_cache_file)
-        X = tuple_trans.transform(X_graphs)
+        X = tuple_trans.transform(np.copy(X_graphs))
         phi_graph_cache_file = graph_cache_file.replace('.npy', '.phi.npy')
         phi_same_label_graph_cache_file = phi_graph_cache_file.replace(dataset, 'same-label_{}'.format(dataset))
 
@@ -70,6 +73,28 @@ def process_dataset(graph_cache_file, args):
             with open(phi_graph_cache_file, 'wb') as f:
                 pickle.dump((fast_wl_trans.phi_list, Y), f)
             LOGGER.info('{:15} \tDone: {}'.format(dataset, phi_graph_cache_file))
+
+        # SPGK kernel matrix
+        for depth in args.spgk_depth:
+            spgk_graph_cache_file =graph_cache_file.replace('.npy', '.spgk-{}.gram.npy'.format(depth))
+
+            if args.force or not os.path.exists(spgk_graph_cache_file):
+                LOGGER.info('{:15} \tProcessing: {}'.format(dataset, spgk_graph_cache_file))
+
+                X_new = np.copy(X_graphs)
+                # "Repair" graph (remove self-loops and set weight of all edges to 1)
+                for x in X_new:
+                    for u,v,edata in x.edges(data = True):
+                        if 'weight' not in edata: continue
+                        edata['weight'] = 1
+                    self_loop_edges = x.selfloop_edges()
+                    if len(self_loop_edges):
+                        x.remove_edges_from(self_loop_edges)
+
+                K = spgk.build_kernel_matrix(X_new, depth = depth)
+                with open(spgk_graph_cache_file, 'wb') as f:
+                    pickle.dump((K, Y), f)
+                LOGGER.info('{:15} \tDone: {}'.format(dataset, spgk_graph_cache_file))
 
         # All nodes get same label
         if args.force or not os.path.exists(phi_same_label_graph_cache_file):
