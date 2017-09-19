@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+SERVER='ba'
+
 folder_name="$(date "+%Y-%m-%d_%H:%M")"
 
 find . -name '*.npy' -depth 1 -exec rm {} \;
@@ -11,15 +13,18 @@ mkdir -p "$folder_name"
 cd "$folder_name"
 
 echo "Results"
-ssh ba sh get_results.sh > /dev/null 2>&1
-scp ba:results.zip .
+ssh $SERVER sh get_results.sh > /dev/null 2>&1
+scp $SERVER:results.zip .
 echo "- Starting to unzip results"
 unzip -q results.zip
 rm -f ../*.npy
 
 echo "Predictions"
-scp ba:predictions.zip .
-echo "- Starting to unzip predictions"
-unzip -q predictions.zip
-
+scp $SERVER:predictions.zip . 2> /dev/null
+if [ -f 'predictions.zip' ]; then
+    echo "- Starting to unzip predictions"
+    unzip -q predictions.zip
+else
+    echo "- No predictions downloaded"
+fi
 #./copy "$folder_name"
