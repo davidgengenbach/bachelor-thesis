@@ -6,6 +6,7 @@ import os
 import pickle
 import gc
 import scipy
+from glob import glob
 from scipy import sparse
 from sklearn import dummy
 from sklearn import naive_bayes
@@ -30,6 +31,7 @@ def get_args():
     parser.add_argument('--check_texts', action="store_true")
     parser.add_argument('--check_graphs', action="store_true")
     parser.add_argument('--check_combined', action="store_true")
+    parser.add_argument('--check_spgk', action="store_true")
     parser.add_argument('--create_predictions', action="store_true")
     parser.add_argument('--remove_coefs', action="store_true")
     parser.add_argument('--max_iter', type=int, default=1000)
@@ -74,10 +76,15 @@ def main():
     def cross_validate(X, Y, estimator, param_grid, result_file, predictions_file, create_predictions):
         gc.collect()
 
+
         try:
             # Hold out validation set (15%)
-            X_train, X_test, Y_train, Y_test = sklearn.model_selection.train_test_split(X, Y, stratify = Y, test_size = 0.15)
+            if create_predictions:
+                X_train, X_test, Y_train, Y_test = sklearn.model_selection.train_test_split(X, Y, stratify = Y, test_size = 0.15)
+            else:
+                X_train, Y_train, X_test, Y_test = X, Y, [], []
         except:
+            print("???")
             X_train, Y_train, X_test, Y_test = X, Y, [], []
 
         gscv = GridSearchCV(estimator=estimator, param_grid=param_grid, cv=cv, scoring=scoring, n_jobs=args.n_jobs, verbose=args.verbose, refit=refit)
@@ -200,6 +207,31 @@ def main():
 
                 LOGGER.info(
                     '{:<10} - {:<15} - Finished for h={}'.format('Graph', graph_dataset_cache_file, h))
+    
+    if args.check_spgk:
+        for gram_cache_file in glob('data/CACHE/*gram*.npy'):
+            gram_cache_filename = gram_cache_file.split('/')[-1]
+            result_file = '{}/{}.results.npy'.format(RESULTS_FOLDER, gram_cache_filename)
+            predictions_file = '{}/{}.npy'.format(PREDICTIONS_FOLDER, gram_cache_filename)
+
+            with open(gram_cache_file, 'rb') as f:
+                K, Y = pickle.load(f)
+
+            estimator = Pipeline([
+                ('clf', None)
+            ])
+
+            param_grid = dict(
+                clf=[sklearn.svm.SVC(kernel = 'precomputed', class_weight='balanced')]
+            )
+
+            try:
+                LOGGER.info('{:<10} - {:<15} - Classifying spgk, fitting'.format('Graph', gram_cache_filename))
+                cross_validate(K, Y, estimator, param_grid, result_file, predictions_file, args.create_predictions)
+            except Exception as e:
+                LOGGER.warning(
+                    '{:<10} - {:<15} - Error spgk'.format('Graph', gram_cache_filename))
+                LOGGER.exception(e)
     LOGGER.info('Finished!')
 
 if __name__ == '__main__':

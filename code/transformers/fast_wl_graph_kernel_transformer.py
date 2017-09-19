@@ -19,8 +19,11 @@ def add_bogus_labels_to_empty_graphs(graphs):
 def convert_graphs_to_adjs_tuples(X):
     if not isinstance(X[0], tuple):
         for idx, graph in enumerate(X):
-            nodes = graph.nodes()
-            X[idx] = (nx.adjacency_matrix(graph, nodelist=nodes), nodes)
+            if len(graph.nodes()):
+                nodes = graph.nodes()
+                X[idx] = (nx.adjacency_matrix(graph, nodelist=nodes), nodes)
+            else:
+                X[idx] = None
 
 
 class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.TransformerMixin):
@@ -55,6 +58,9 @@ class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Tran
 
         assert len(X)
         convert_graphs_to_adjs_tuples(X)
+
+        # Remove empty graphs
+        X = [x for x in X if x]
 
         if self.debug:
             print('FastWLGraphKernelTransformer.fit: len(X)={}, H={}'.format(len(X), self.h))
