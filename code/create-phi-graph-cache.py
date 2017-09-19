@@ -60,11 +60,11 @@ def process_dataset(graph_cache_file, args):
 
     try:
         X_graphs, Y = dataset_helper.get_dataset_cached(graph_cache_file)
-        X = tuple_trans.transform(np.copy(X_graphs))
         phi_graph_cache_file = graph_cache_file.replace('.npy', '.phi.npy')
         phi_same_label_graph_cache_file = phi_graph_cache_file.replace(dataset, 'same-label_{}'.format(dataset))
 
         if not args.disable_wl:
+            X = tuple_trans.transform(np.copy(X_graphs))
             # Without relabeling
             if args.force or not os.path.exists(phi_graph_cache_file):
                 LOGGER.info('{:15} \tProcessing: {}'.format(dataset, phi_graph_cache_file))
