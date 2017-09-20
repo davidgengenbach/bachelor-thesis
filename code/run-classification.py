@@ -10,6 +10,7 @@ from glob import glob
 from scipy import sparse
 from sklearn import dummy
 from sklearn import naive_bayes
+from sklearn import base
 from sklearn.pipeline import Pipeline
 from sklearn.linear_model import Perceptron
 from sklearn.model_selection import GridSearchCV
@@ -44,6 +45,16 @@ def get_args():
     return args
 
 
+class TupleSelector(sklearn.base.BaseEstimator, sklearn.base.TransformerMixin):
+    def __init__(self, tuple_index):
+        self.tuple_index = tuple_index
+
+    def fit(self, x, y=None):
+        return self
+
+    def transform(self, X):
+        return [x[self.tuple_index] for x in X]
+
 def main():
     args = get_args()
 
@@ -76,7 +87,6 @@ def main():
     def cross_validate(X, Y, estimator, param_grid, result_file, predictions_file, create_predictions):
         gc.collect()
 
-
         try:
             # Hold out validation set (15%)
             if create_predictions:
@@ -84,7 +94,6 @@ def main():
             else:
                 X_train, Y_train, X_test, Y_test = X, Y, [], []
         except:
-            print("???")
             X_train, Y_train, X_test, Y_test = X, Y, [], []
 
         gscv = GridSearchCV(estimator=estimator, param_grid=param_grid, cv=cv, scoring=scoring, n_jobs=args.n_jobs, verbose=args.verbose, refit=refit)
@@ -151,9 +160,6 @@ def main():
         LOGGER.info('{:<10} - Finished'.format('Text'))
 
     if args.check_graphs:
-        if args.check_combined:
-            dataset_cache = dataset_helper.get_all_datasets()
-
         for cache_file in dataset_helper.get_all_cached_graph_phi_datasets():
             dataset = dataset_helper.get_dataset_name_from_graph_cachefile(cache_file)
             if args.limit_dataset and dataset not in args.limit_dataset:
@@ -201,10 +207,6 @@ def main():
                         '{:<10} - {:<15} - Error h={}'.format('Graph', graph_dataset_cache_file, h))
                     LOGGER.exception(e)
 
-                if args.check_combined:
-                    if dataset in dataset_cache:
-                        pass
-
                 LOGGER.info(
                     '{:<10} - {:<15} - Finished for h={}'.format('Graph', graph_dataset_cache_file, h))
     
@@ -232,6 +234,49 @@ def main():
                 LOGGER.warning(
                     '{:<10} - {:<15} - Error spgk'.format('Graph', gram_cache_filename))
                 LOGGER.exception(e)
+
+    if args.check_combined:
+        for dataset_name in dataset_helper.get_all_available_dataset_names():
+            if dataset_name not in args.limit_dataset: continue
+
+            X_text, Y_text = dataset_helper.get_dataset(dataset_name)
+
+            for graph_dataset_cache_file in dataset_helper.get_all_cached_graph_phi_datasets(dataset_name):
+                X_phi, Y_phi = dataset_helper.get_dataset_cached(graph_dataset_cache_file, check_validity=False)
+                for h, phi in enumerate(X_phi):
+                    result_file = '{}/{}.combined.{}.results.npy'.format(RESULTS_FOLDER, graph_dataset_cache_file, h)
+                    predictions_file = '{}/combined.{}.{}.results.npy'.format(PREDICTIONS_FOLDER, graph_dataset_cache_file, h)
+
+                    combined_features = sklearn.pipeline.FeatureUnion([
+                        ('tfidf', sklearn.pipeline.Pipeline([
+                            ('selector', TupleSelector(tuple_index=0)),
+                            ('tfidf', sklearn.feature_extraction.text.TfidfVectorizer(stop_words = 'english')),
+                        ])),
+                        ('phi', sklearn.pipeline.Pipeline([
+                            ('selector', TupleSelector(tuple_index=1))
+                        ]))
+                    ])
+
+                    try:
+                        assert len(X_text) == phi.shape[0]
+
+                        param_grid = dict(
+                            clf=clfs
+                        )
+
+                        X_combined = list(zip(X_text, phi))
+
+                        estimator = sklearn.pipeline.Pipeline([
+                            ("features", combined_features),
+                            ("clf", sklearn.svm.SVC(class_weight = 'balanced'))
+                        ])
+                        
+                        cross_validate(X_combined, Y_text, estimator, param_grid, result_file, predictions_file, args.create_predictions)
+                    except Exception as e:
+                        LOGGER.warning(
+                        '{:<10} - {:<15} - Error h={}'.format('Combined', graph_dataset_cache_file, h))
+                        LOGGER.exception(e)
+
     LOGGER.info('Finished!')
 
 if __name__ == '__main__':

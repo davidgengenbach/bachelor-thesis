@@ -32,7 +32,7 @@ def build_kernel_matrix(graphs, depth):
     norm = []
 
     for g in graphs:
-        current_sp = nx.all_pairs_dijkstra_path_length(g, cutoff=depth)
+        current_sp = nx.all_pairs_dijkstra_path_length(g, cutoff=depth, weight = 'NO_WEIGHT_USED')
         sp.append(current_sp)
 
         sp_g = nx.Graph()
