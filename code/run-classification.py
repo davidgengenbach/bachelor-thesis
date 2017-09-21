@@ -245,15 +245,16 @@ def main():
             X_text, Y_text = dataset_helper.get_dataset(dataset_name)
 
             for graph_dataset_cache_file in dataset_helper.get_all_cached_graph_phi_datasets(dataset_name):
+                graph_dataset_cache_filename = graph_dataset_cache_file.split('/')[-1]
                 X_phi, Y_phi = dataset_helper.get_dataset_cached(graph_dataset_cache_file, check_validity=False)
                 for h, phi in enumerate(X_phi):
-                    result_file = '{}/{}.combined.{}.results.npy'.format(RESULTS_FOLDER, graph_dataset_cache_file, h)
-                    predictions_file = '{}/combined.{}.{}.results.npy'.format(PREDICTIONS_FOLDER, graph_dataset_cache_file, h)
+                    result_file = '{}/{}.combined.{}.results.npy'.format(RESULTS_FOLDER, graph_dataset_cache_filename, h)
+                    predictions_file = '{}/combined.{}.{}.results.npy'.format(PREDICTIONS_FOLDER, graph_dataset_cache_filename, h)
 
                     if not args.force and os.path.exists(result_file):
                         continue
 
-                    LOGGER.info('{:<10} - {:<15} ({}) h={}'.format('Graph combined', dataset_name, graph_dataset_cache_file, h))
+                    LOGGER.info('{:<10} - {:<15} ({}) h={}'.format('Graph combined', dataset_name, graph_dataset_cache_filename, h))
 
                     combined_features = sklearn.pipeline.FeatureUnion([
                         ('tfidf', sklearn.pipeline.Pipeline([
@@ -275,7 +276,7 @@ def main():
                     ])
 
                     if len(X_text) != phi.shape[0]:
-                        LOGGER.warning('{:<10} - {:<15} - Error h={}, wrong dimensions, phi.shape[0]={}, len(X_text)={}'.format('Combined', graph_dataset_cache_file, h, phi.shape[0], len(X_text)))
+                        LOGGER.warning('{:<10} - {:<15} - Error h={}, wrong dimensions, phi.shape[0]={}, len(X_text)={}'.format('Combined', graph_dataset_cache_filename, h, phi.shape[0], len(X_text)))
                         continue
 
                     try:
@@ -283,7 +284,7 @@ def main():
                         cross_validate(X_combined, Y_text, estimator, param_grid, result_file, predictions_file, args.create_predictions)
                     except Exception as e:
                         LOGGER.warning(
-                        '{:<10} - {:<15} - Error h={}'.format('Combined', graph_dataset_cache_file, h))
+                        '{:<10} - {:<15} - Error h={}'.format('Combined', graph_dataset_cache_filename, h))
                         LOGGER.exception(e)
 
     LOGGER.info('Finished!')
