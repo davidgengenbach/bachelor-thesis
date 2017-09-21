@@ -32,7 +32,7 @@ def get_args():
     parser.add_argument('--check_texts', action="store_true")
     parser.add_argument('--check_graphs', action="store_true")
     parser.add_argument('--check_combined', action="store_true")
-    parser.add_argument('--check_spgk', action="store_true")
+    parser.add_argument('--check_gram', action="store_true")
     parser.add_argument('--create_predictions', action="store_true")
     parser.add_argument('--remove_coefs', action="store_true")
     parser.add_argument('--max_iter', type=int, default=1000)
@@ -212,7 +212,7 @@ def main():
                 LOGGER.info(
                     '{:<10} - {:<15} - Finished for h={}'.format('Graph', graph_dataset_cache_file, h))
     
-    if args.check_spgk:
+    if args.check_gram:
         for gram_cache_file in glob('data/CACHE/*gram*.npy'):
             gram_cache_filename = gram_cache_file.split('/')[-1]
             result_file = '{}/{}.results.npy'.format(RESULTS_FOLDER, gram_cache_filename)

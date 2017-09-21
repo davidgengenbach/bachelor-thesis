@@ -8,4 +8,4 @@ logging.basicConfig(
 def get_logger(name = ''):
     return logging.getLogger(name)
 
-LOGGER = get_logger('default')
+LOGGER = get_logger()

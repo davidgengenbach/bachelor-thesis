@@ -14,8 +14,8 @@ from logger import LOGGER
 from glob import glob
 import sys
 from kernels import spgk
+from kernels import simple_set_matching
 import numpy as np
-
 import re
 
 def main():
@@ -32,6 +32,7 @@ def get_args():
     parser.add_argument('--force', action='store_true')
     parser.add_argument('--disable_wl', action='store_true')
     parser.add_argument('--disable_spgk', action='store_true')
+    parser.add_argument('--disable_simple_set_matching_kernel', action='store_true')
     parser.add_argument('--limit_dataset', nargs='+', type=str, default=['ng20', 'ling-spam', 'reuters-21578', 'webkb'], dest='limit_dataset')
     parser.add_argument('--spgk_depth', nargs='+', type=int, default=[1])
     parser.add_argument('--lookup_path', type=str, default='data/embeddings/graph-embeddings')
@@ -110,9 +111,16 @@ def process_dataset(graph_cache_file, args):
 
                     LOGGER.info('{:15} \tDone: {}'.format(dataset, phi_graph_relabeled_cache_file))
 
+        if not args.disable_simple_set_matching_kernel:
+            simple_kernel_cache_file = graph_cache_file.replace('.npy', '.simple.gram.npy')
+            if args.force or not os.path.exists(simple_kernel_cache_file):
+                K = simple_set_matching.calculate_simple_set_matching_gram_matrix(X_graphs)
+                with open(simple_kernel_cache_file, 'wb') as f:
+                        pickle.dump((K, Y), f)
+
         if not args.disable_spgk:
             for depth in args.spgk_depth:
-                spgk_graph_cache_file =graph_cache_file.replace('.npy', '.spgk-{}.gram.npy'.format(depth))
+                spgk_graph_cache_file = graph_cache_file.replace('.npy', '.spgk-{}.gram.npy'.format(depth))
 
                 if args.force or not os.path.exists(spgk_graph_cache_file):
                     LOGGER.info('{:15} \tProcessing: {}'.format(dataset, spgk_graph_cache_file))
