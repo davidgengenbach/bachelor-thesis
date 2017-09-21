@@ -46,14 +46,16 @@ def get_args():
 
 
 class TupleSelector(sklearn.base.BaseEstimator, sklearn.base.TransformerMixin):
-    def __init__(self, tuple_index):
+    def __init__(self, tuple_index = 0, v_stack = False):
         self.tuple_index = tuple_index
+        self.v_stack = v_stack
 
     def fit(self, x, y=None):
         return self
 
     def transform(self, X):
-        return [x[self.tuple_index] for x in X]
+        data = [x[self.tuple_index] for x in X]
+        return scipy.sparse.vstack(data) if self.v_stack else data
 
 def main():
     args = get_args()
@@ -122,8 +124,8 @@ def main():
         with open(result_file, 'wb') as f:
             pickle.dump(gscv_result.cv_results_, f)
 
-    LOGGER.info('{:<10} - Starting'.format('Text'))
     if args.check_texts:
+        LOGGER.info('{:<10} - Starting'.format('Text'))
         for dataset_name in dataset_helper.get_all_available_dataset_names():
             result_file = '{}/text_{}.results.npy'.format(RESULTS_FOLDER, dataset_name)
             predictions_file = '{}/text_{}.npy'.format(PREDICTIONS_FOLDER, dataset_name)
@@ -239,6 +241,7 @@ def main():
         for dataset_name in dataset_helper.get_all_available_dataset_names():
             if dataset_name not in args.limit_dataset: continue
 
+
             X_text, Y_text = dataset_helper.get_dataset(dataset_name)
 
             for graph_dataset_cache_file in dataset_helper.get_all_cached_graph_phi_datasets(dataset_name):
@@ -247,30 +250,36 @@ def main():
                     result_file = '{}/{}.combined.{}.results.npy'.format(RESULTS_FOLDER, graph_dataset_cache_file, h)
                     predictions_file = '{}/combined.{}.{}.results.npy'.format(PREDICTIONS_FOLDER, graph_dataset_cache_file, h)
 
+                    if not args.force and os.path.exists(result_file):
+                        continue
+
+                    LOGGER.info('{:<10} - {:<15} ({}) h={}'.format('Graph combined', dataset_name, graph_dataset_cache_file, h))
+
                     combined_features = sklearn.pipeline.FeatureUnion([
                         ('tfidf', sklearn.pipeline.Pipeline([
                             ('selector', TupleSelector(tuple_index=0)),
                             ('tfidf', sklearn.feature_extraction.text.TfidfVectorizer(stop_words = 'english')),
                         ])),
                         ('phi', sklearn.pipeline.Pipeline([
-                            ('selector', TupleSelector(tuple_index=1))
+                            ('selector', TupleSelector(tuple_index=1, v_stack = True))
                         ]))
                     ])
 
+                    param_grid = dict(
+                        clf=clfs
+                    )
+
+                    estimator = sklearn.pipeline.Pipeline([
+                        ("features", combined_features),
+                        ("clf", None)
+                    ])
+
+                    if len(X_text) != phi.shape[0]:
+                        LOGGER.warning('{:<10} - {:<15} - Error h={}, wrong dimensions, phi.shape[0]={}, len(X_text)={}'.format('Combined', graph_dataset_cache_file, h, phi.shape[0], len(X_text)))
+                        continue
+
                     try:
-                        assert len(X_text) == phi.shape[0]
-
-                        param_grid = dict(
-                            clf=clfs
-                        )
-
                         X_combined = list(zip(X_text, phi))
-
-                        estimator = sklearn.pipeline.Pipeline([
-                            ("features", combined_features),
-                            ("clf", sklearn.svm.SVC(class_weight = 'balanced'))
-                        ])
-                        
                         cross_validate(X_combined, Y_text, estimator, param_grid, result_file, predictions_file, args.create_predictions)
                     except Exception as e:
                         LOGGER.warning(
