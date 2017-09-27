@@ -225,7 +225,7 @@ def get_all_cached_datasets(cache_path = CACHE_PATH):
     return sorted(glob(cache_path + '/*.npy'))
 
 def get_all_cached_graph_datasets(dataset_name = None, cache_path = CACHE_PATH):
-    return [x for x in get_all_cached_datasets(cache_path) if x.split('/')[-1].startswith('dataset_graph') and '_relabeled' not in x and 'phi' not in x and (not dataset_name or get_dataset_name_from_graph_cachefile(x) == dataset_name or get_dataset_name_from_graph_cachefile(x) == dataset_name + '-single')]
+    return [x for x in get_all_cached_datasets(cache_path) if x.split('/')[-1].startswith('dataset_graph') and '_relabeled' not in x and 'gram' not in x and 'phi' not in x and (not dataset_name or get_dataset_name_from_graph_cachefile(x) == dataset_name or get_dataset_name_from_graph_cachefile(x) == dataset_name + '-single')]
 
 def get_all_cached_graph_phi_datasets(dataset_name = None, cache_path = CACHE_PATH):
     if dataset_name:
