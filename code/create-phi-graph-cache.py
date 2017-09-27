@@ -17,6 +17,9 @@ from kernels import spgk
 from kernels import simple_set_matching
 import numpy as np
 import re
+import networkx as nx
+import copy
+
 
 def main():
     args = get_args()
@@ -28,6 +31,7 @@ def get_args():
     parser = argparse.ArgumentParser(description='Create phi cache')
     parser.add_argument('--n_jobs', type=int, default=1)
     parser.add_argument('--h', type=int, default=4)
+    parser.add_argument('--max_path_distance_to_add', type=int, default=2)
     parser.add_argument('--remove_missing_labels', type=bool, default=True)
     parser.add_argument('--force', action='store_true')
     parser.add_argument('--disable_wl', action='store_true')
@@ -60,15 +64,20 @@ def process_dataset(graph_cache_file, args):
     gc.collect()
 
     try:
-        X_graphs, Y = dataset_helper.get_dataset_cached(graph_cache_file)
         phi_graph_cache_file = graph_cache_file.replace('.npy', '.phi.npy')
         phi_same_label_graph_cache_file = phi_graph_cache_file.replace(dataset, 'same-label_{}'.format(dataset))
 
+        X_graphs, Y = dataset_helper.get_dataset_cached(graph_cache_file)
+
+        #X_graphs_walk_added = copy.deepcopy(X_graphs)
+
+        #for graph in X_graphs_walk_added:
+        #    graph_helper.add_shortest_path_edges(graph, cutoff = args.max_path_distance_to_add)
+        
         if not args.disable_wl:
             X = tuple_trans.transform(np.copy(X_graphs))
             # Without relabeling
             if args.force or not os.path.exists(phi_graph_cache_file):
-                LOGGER.info('{:15} \tProcessing: {}'.format(dataset, phi_graph_cache_file))
                 fast_wl_trans.fit(X)
                 with open(phi_graph_cache_file, 'wb') as f:
                     pickle.dump((fast_wl_trans.phi_list, Y), f)
@@ -76,12 +85,10 @@ def process_dataset(graph_cache_file, args):
 
             # All nodes get same label
             if args.force or not os.path.exists(phi_same_label_graph_cache_file):
-                LOGGER.info('{:15} \tProcessing: {}'.format(dataset, phi_same_label_graph_cache_file))
                 X_same_label = [(x, [0] * len(y)) for x, y in X]
                 fast_wl_trans.fit(X_same_label)
                 with open(phi_same_label_graph_cache_file, 'wb') as f:
                     pickle.dump((fast_wl_trans.phi_list, Y), f)
-                LOGGER.info('{:15} \tDone: {}'.format(dataset, phi_same_label_graph_cache_file))
 
             # With relabeling
             for label_lookup_file in label_lookup_files:
@@ -94,22 +101,15 @@ def process_dataset(graph_cache_file, args):
                     with open(label_lookup_file, 'rb') as f:
                         label_lookup = pickle.load(f)
 
-                    LOGGER.info('{:15} \tProcessing: {}, threshold: {}, topn: {}'.format(dataset, phi_graph_relabeled_cache_file, threshold, topn))
-                    LOGGER.info('{:15} \tProcessing: {}, relabeling'.format(dataset, phi_graph_relabeled_cache_file))
                     relabel_trans = RelabelGraphsTransformer(label_lookup)
 
                     X = relabel_trans.transform(X)
-
-                    LOGGER.info('{:15} \tProcessing: {}, fixing duplicate labels'.format(dataset, phi_graph_relabeled_cache_file))
                     X = [coreference.fix_duplicate_label_graph(*x) for x in X]
 
-                    LOGGER.info('{:15} \tProcessing: {}, fast_wl'.format(dataset, phi_graph_relabeled_cache_file))
                     fast_wl_trans.fit(X)
                     
                     with open(phi_graph_relabeled_cache_file, 'wb') as f:
                         pickle.dump((fast_wl_trans.phi_list, Y), f)
-
-                    LOGGER.info('{:15} \tDone: {}'.format(dataset, phi_graph_relabeled_cache_file))
 
         if not args.disable_simple_set_matching_kernel:
             simple_kernel_cache_file = graph_cache_file.replace('.npy', '.simple.gram.npy')
@@ -123,8 +123,6 @@ def process_dataset(graph_cache_file, args):
                 spgk_graph_cache_file = graph_cache_file.replace('.npy', '.spgk-{}.gram.npy'.format(depth))
 
                 if args.force or not os.path.exists(spgk_graph_cache_file):
-                    LOGGER.info('{:15} \tProcessing: {}'.format(dataset, spgk_graph_cache_file))
-
                     X_new = np.copy(X_graphs)
                     # "Repair" graph (remove self-loops and set weight of all edges to 1)
                     for x in X_new:
@@ -138,8 +136,6 @@ def process_dataset(graph_cache_file, args):
                     K = spgk.build_kernel_matrix(X_new, depth = depth)
                     with open(spgk_graph_cache_file, 'wb') as f:
                         pickle.dump((K, Y), f)
-                    LOGGER.info('{:15} \tDone: {}'.format(dataset, spgk_graph_cache_file))
-
     except Exception as e:
        LOGGER.exception(e)
     LOGGER.info('{:15} finished ({})'.format(dataset, graph_cache_filename))

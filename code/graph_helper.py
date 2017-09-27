@@ -15,6 +15,14 @@ from scipy.sparse import lil_matrix
 import spacy
 
 
+def add_shortest_path_edges(graph, cutoff = 2):
+    if graph.number_of_edges() == 0 or graph.number_of_nodes() == 0: return
+    shortest_paths = nx.all_pairs_shortest_path(graph, cutoff = cutoff)
+    for source, target_dict in shortest_paths.items():
+        for target, path in target_dict.items():
+            graph.add_edge(source, target, attr_dict = {'weight': 1 / len(path)})
+
+
 def convert_dataset_to_co_occurence_graph_dataset(X, Y, min_length = 2, n_jobs=4, only_nouns = False, lemma_ = False, preprocess = True, **cooccurrence_kwargs):
     if preprocess:
         X = preprocessing.preprocess_text_spacy(X, min_length=min_length, concat = False, only_nouns = only_nouns)

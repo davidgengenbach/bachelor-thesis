@@ -48,7 +48,7 @@ def ana_preprocessing(text):
     return text
 
 
-def preprocess_text_spacy(texts, min_length=-1, concat=True, n_jobs=2, batch_size=100, only_nouns = True, remove_whitespace = True, ana_preprocessing_ = True, lemma_ = False, only_alpha_num = True):
+def preprocess_text_spacy(texts, min_length=-1, concat=True, n_jobs=2, batch_size=100, only_nouns = True, remove_whitespace = True, ana_preprocessing_ = True, lemma_ = False, only_alpha_num = False):
     """Preprocesses text by
     - only keeping the NOUNs
     - only keeping the words that are longer than min_length (optional)

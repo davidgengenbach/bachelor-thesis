@@ -3,7 +3,7 @@ from sklearn import base
 import logging
 import networkx as nx
 import graph_helper
-from wl import wl
+from kernels import wl
 from joblib import Parallel, delayed
 
 class WLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.TransformerMixin):
