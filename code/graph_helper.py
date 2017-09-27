@@ -7,7 +7,7 @@ from joblib import Parallel, delayed
 import sklearn
 from sklearn.base import TransformerMixin
 import logging
-import wl
+from kernels import wl
 import dataset_helper
 import pandas as pd
 import numpy as np

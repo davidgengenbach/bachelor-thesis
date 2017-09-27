@@ -5,7 +5,6 @@ class NxGraphToTupleTransformer(sklearn.base.BaseEstimator, sklearn.base.Transfo
 
     def __init__(self, from_nx_to_tuple = True):
         self.from_nx_to_tuple = from_nx_to_tuple
-        pass
 
     def fit(self, X, y=None, **fit_params):
         return self

@@ -3,8 +3,8 @@ from sklearn import base
 import logging
 import networkx as nx
 import graph_helper
-import wl
-import fast_wl
+from kernels import wl
+from kernels import fast_wl
 from joblib import Parallel, delayed
 
 

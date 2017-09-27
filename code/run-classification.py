@@ -89,14 +89,15 @@ def main():
     def cross_validate(X, Y, estimator, param_grid, result_file, predictions_file, create_predictions):
         gc.collect()
 
-        try:
-            # Hold out validation set (15%)
-            if create_predictions:
+        X_train, Y_train, X_test, Y_test = X, Y, [], []
+
+        # Hold out validation set (15%)
+        if create_predictions:
+            try:
                 X_train, X_test, Y_train, Y_test = sklearn.model_selection.train_test_split(X, Y, stratify = Y, test_size = 0.15)
-            else:
-                X_train, Y_train, X_test, Y_test = X, Y, [], []
-        except:
-            X_train, Y_train, X_test, Y_test = X, Y, [], []
+            except Exception as e:
+                LOGGER.warning('Could not split dataset for predictions')
+                LOGGER.exception(e)
 
         gscv = GridSearchCV(estimator=estimator, param_grid=param_grid, cv=cv, scoring=scoring, n_jobs=args.n_jobs, verbose=args.verbose, refit=refit)
 
@@ -177,7 +178,8 @@ def main():
                 '{:<10} - {:<15} - Retrieving dataset'.format('Graph', graph_dataset_cache_file))
             X_all, Y = dataset_helper.get_dataset_cached(cache_file, check_validity=False)
 
-            X_all.append(scipy.sparse.hstack(X_all))
+            # Ignore 0th iteration of WL when combining all WL iterations
+            X_all.append(scipy.sparse.hstack(X_all[1:]))
 
             for h, X in enumerate(X_all):
                 if h == len(X_all) - 1:
@@ -221,12 +223,10 @@ def main():
             with open(gram_cache_file, 'rb') as f:
                 K, Y = pickle.load(f)
 
-            estimator = Pipeline([
-                ('clf', None)
-            ])
+            estimator = Pipeline([('clf', None)])
 
             param_grid = dict(
-                clf=[sklearn.svm.SVC(kernel = 'precomputed', class_weight='balanced')]
+                clf=[sklearn.svm.SVC(kernel = 'precomputed', class_weight='balanced', max_iter=args.max_iter, tol=args.tol)]
             )
 
             try:
@@ -266,9 +266,7 @@ def main():
                         ]))
                     ])
 
-                    param_grid = dict(
-                        clf=clfs
-                    )
+                    param_grid = dict(clf=clfs)
 
                     estimator = sklearn.pipeline.Pipeline([
                         ("features", combined_features),

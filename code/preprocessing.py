@@ -7,6 +7,8 @@ from time import time
 import spacy
 import re
 
+ALPHA_NUM_REGEX = re.compile(r'[^a-zA-Z0-9 \.]')
+
 LINEBREAK_REGEX = re.compile(r'((\r\n)|[\n\v])+')
 NONBREAKING_SPACE_REGEX = re.compile(r'(?!\n)\s+')
 
@@ -46,7 +48,7 @@ def ana_preprocessing(text):
     return text
 
 
-def preprocess_text_spacy(texts, min_length=-1, concat=True, n_jobs=2, batch_size=100, only_nouns = True, remove_whitespace = True, ana_preprocessing_ = True, lemma_ = False):
+def preprocess_text_spacy(texts, min_length=-1, concat=True, n_jobs=2, batch_size=100, only_nouns = True, remove_whitespace = True, ana_preprocessing_ = True, lemma_ = False, only_alpha_num = True):
     """Preprocesses text by
     - only keeping the NOUNs
     - only keeping the words that are longer than min_length (optional)
@@ -60,6 +62,10 @@ def preprocess_text_spacy(texts, min_length=-1, concat=True, n_jobs=2, batch_siz
     Returns:
         list of str: the pre-processed text
     """
+
+    if only_alpha_num:
+        texts = [ALPHA_NUM_REGEX.sub(' ', text) for text in text]
+
     if ana_preprocessing_:
         texts = [ana_preprocessing(text) for text in texts]
 
