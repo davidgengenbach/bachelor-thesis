@@ -20,7 +20,7 @@ def get_prime_range(start, end):
 
 def load_cache(cache_file=CACHE_FILE):
     global CACHE, _initialized
-    
+
     if _initialized:
         return
     if not os.path.exists(cache_file):
@@ -37,13 +37,19 @@ def save_to_cache(cache_file=CACHE_FILE):
         pickle.dump(CACHE, f)
 
 
+def get_highest_prime_range():
+    load_cache()
+    highest_prime_end = max(list(CACHE.keys()))
+    return CACHE[highest_prime_end]
+
+
 def get_log_primes(range_start, range_end):
     load_cache()
 
     cached_prime_range = [range_end_cached for range_end_cached in sorted(list(CACHE.keys())) if range_end_cached >= range_end]
 
     if len(cached_prime_range):
-        return CACHE[cached_prime_range[0]]
+        return CACHE[cached_prime_range[-1]]
 
     p = get_prime_range(range_start, range_end)
     log_primes = np.log(p)
