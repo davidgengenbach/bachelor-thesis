@@ -83,11 +83,12 @@ def fast_wl_compute(graphs, h=1, label_lookups=None, label_counters=None, primes
             # ... relabel the graphs with the new (compressed) labels
             new_labels = np.array([label_lookup[signature] for signature in signatures], dtype = labels_dtype)
             graph_labels[idx] = new_labels
-            # ... set the entries in phi to one, where a label is given
+            # ... increment the entries in phi by one, where a label is given
             if has_same_labels:
-                phi[new_labels, idx] += 1
+                # Increment by one
+                phi[new_labels, idx] += np.ones((len(new_labels), 1), dtype = phi.dtype)
             else:
-                # This is wayyy faster than incrementing the entries by one
+                # Set to one. This is way faster!
                 phi[new_labels, idx] = 1
         # ... save phi
         phi_lists.append(phi)
