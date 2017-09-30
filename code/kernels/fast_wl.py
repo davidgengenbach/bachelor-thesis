@@ -69,6 +69,7 @@ def fast_wl_compute(graphs, h=1, label_lookups=None, label_counters=None, primes
         phi = lil_matrix(phi_shape, dtype=np.uint8)
         # ... go over all graphs
         for idx, (labels, adjacency_matrix) in enumerate(zip(graph_labels, adjacency_matrices)):
+            has_same_labels = len(set(labels)) != len(labels)
             # ... remove weight information (not needed for WL)
             adjacency_matrix[adjacency_matrix.nonzero()] = 1
 
@@ -83,7 +84,11 @@ def fast_wl_compute(graphs, h=1, label_lookups=None, label_counters=None, primes
             new_labels = np.array([label_lookup[signature] for signature in signatures], dtype = labels_dtype)
             graph_labels[idx] = new_labels
             # ... set the entries in phi to one, where a label is given
-            phi[new_labels, idx] = 1
+            if has_same_labels:
+                phi[new_labels, idx] += 1
+            else:
+                # This is wayyy faster than incrementing the entries by one
+                phi[new_labels, idx] = 1
         # ... save phi
         phi_lists.append(phi)
         # ... save label counters/lookups for later use
