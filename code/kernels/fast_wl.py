@@ -10,6 +10,7 @@ import numpy as np
 from scipy.sparse import bsr_matrix, coo_matrix, csc_matrix, csr_matrix, dia_matrix, dok_matrix, lil_matrix
 from collections import defaultdict
 import primes
+import collections
 
 
 # https://oeis.org/A033844
@@ -86,7 +87,9 @@ def fast_wl_compute(graphs, h=1, label_lookups=None, label_counters=None, primes
             # ... increment the entries in phi by one, where a label is given
             if has_same_labels:
                 # Increment by one
-                phi[new_labels, idx] += np.ones((len(new_labels), 1), dtype = phi.dtype)
+                c = collections.Counter(new_labels)
+                new_label_indices, vals = zip(*c.items())
+                phi[list(new_label_indices), 1] += np.matrix(list(vals), dtype = phi.dtype).T
             else:
                 # Set to one. This is way faster!
                 phi[new_labels, idx] = 1
