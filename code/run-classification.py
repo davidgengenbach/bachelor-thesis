@@ -39,6 +39,7 @@ def get_args():
     parser.add_argument('--tol', type=int, default=1e-3)
     parser.add_argument('--n_splits', type=int, default=3)
     parser.add_argument('--random_state', type=int, default=42)
+    parser.add_argument('--limit_graphs', type=str, default=None)
     parser.add_argument('--limit_dataset', nargs='+', type=str, default=[
                         'ng20', 'ling-spam', 'reuters-21578', 'webkb', 'webkb-ana', 'ng20-ana'], dest='limit_dataset')
     args = parser.parse_args()
@@ -168,6 +169,9 @@ def main():
             if args.limit_dataset and dataset not in args.limit_dataset:
                 continue
 
+            if args.limit_graphs and args.limit_graphs not in cache_file:
+                continue
+
             LOGGER.info('{:<10} - Starting'.format('Graph'))
 
             graph_dataset_cache_file = cache_file.split('/')[-1]
@@ -245,6 +249,10 @@ def main():
             X_text, Y_text = dataset_helper.get_dataset(dataset_name)
 
             for graph_dataset_cache_file in dataset_helper.get_all_cached_graph_phi_datasets(dataset_name):
+
+                if args.limit_graphs and args.limit_graphs not in graph_dataset_cache_file:
+                    continue
+
                 graph_dataset_cache_filename = graph_dataset_cache_file.split('/')[-1]
                 X_phi, Y_phi = dataset_helper.get_dataset_cached(graph_dataset_cache_file, check_validity=False)
                 for h, phi in enumerate(X_phi):
