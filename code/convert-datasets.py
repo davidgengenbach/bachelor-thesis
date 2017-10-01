@@ -29,6 +29,8 @@ from collections import defaultdict
 from sklearn.model_selection import train_test_split
 from sklearn.utils import shuffle
 
+from utils import git_utils, time_utils
+
 
 def get_args():
     import argparse
@@ -59,6 +61,10 @@ def get_args():
     parser.add_argument('--dataset_folder',
                         type=str,
                         default='data/datasets')
+    parser.add_argument('--shuffle',
+                        action='store_true')
+    parser.add_argument('--preprocess',
+                        action='store_true')
     parser.add_argument('--force',
                         action='store_true')
     args = parser.parse_args()
@@ -71,7 +77,7 @@ def main():
     process(**args, args=args)
 
 
-def process(dataset_name, out_folder, train_size, random_state_for_shuffle, one_document_per_folder, rename, max_elements, dataset_folder, force, args, concat_train_instances):
+def process(dataset_name, out_folder, train_size, random_state_for_shuffle, one_document_per_folder, rename, max_elements, dataset_folder, force, args, concat_train_instances, shuffle, preprocess):
 
     out_folder = os.path.join(out_folder, dataset_name)
 
@@ -80,11 +86,17 @@ def process(dataset_name, out_folder, train_size, random_state_for_shuffle, one_
         sys.exit(1)
 
     X, Y = dataset_helper.get_dataset(dataset_name, dataset_folder)
-    X = [preprocessing.preprocess_text_old(text) for text in X]
-    print(len(X))
-    #topics = dataset_helper.get_dataset_dict(X, Y)
-    #topics_count = {topic: len(docs) for topic, docs in topics.items()}
-    data_train_X, data_test_X, data_train_Y, data_test_Y = dataset_helper.split_dataset(X, Y, random_state_for_shuffle = random_state_for_shuffle, train_size = train_size)
+    
+    print('#Docs: {}'.format(len(X)))
+    
+    if preprocess:
+        X = preprocessing.concept_map_preprocessing(X)
+    
+    if shuffle:
+        data_train_X, data_test_X, data_train_Y, data_test_Y = dataset_helper.split_dataset(X, Y, random_state_for_shuffle = random_state_for_shuffle, train_size = train_size)
+    else:
+        data_train_X, data_test_X, data_train_Y, data_test_Y = X, [], Y, []
+
     if train_size == 1.0:
         sets = [
             ('all', data_train_X, data_train_Y)
@@ -130,7 +142,10 @@ def process(dataset_name, out_folder, train_size, random_state_for_shuffle, one_
             'categories': list(set(Y)),
             'topic_counts': all_topic_counts,
             'set_counts': {name: len(X) for name, X, Y in sets},
-            'params': args
+            'params': args,
+            'timestamp': time_utils.get_time_formatted(),
+            'unix_timestamp': time_utils.get_timestamp(),
+            'git_commit': str(git_utils.get_current_commit())
         }, f, indent=4)
 
 

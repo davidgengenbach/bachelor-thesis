@@ -32,7 +32,7 @@ def normalize_whitespace(text):
     """
     return NONBREAKING_SPACE_REGEX.sub(' ', LINEBREAK_REGEX.sub(r'\n', text)).strip()
 
-def ana_preprocessing(text):
+def ana_preprocessing(text, keep_newlines = False):
     # all lowercase
     text = text.lower()
     # replace TAB, NEWLINE and RETURN characters by SPACE
@@ -41,14 +41,19 @@ def ana_preprocessing(text):
         ('\n', ' '),
         ('\r', ' '),
     )
+
     for d in replacements:
+        if keep_newlines and d[0] == '\n': continue
         text = text.replace(*d)
 
     text = normalize_whitespace(text)
     return text
 
+def concept_map_preprocessing(X):
+    return [ana_preprocessing(x, keep_newlines = False) for x in X]
 
-def preprocess_text_spacy(texts, min_length=-1, concat=True, n_jobs=2, batch_size=100, only_nouns = True, remove_whitespace = True, ana_preprocessing_ = True, lemma_ = False, only_alpha_num = False):
+
+def preprocess_text_spacy(texts, min_length=-1, concat=True, n_jobs=2, batch_size=100, only_nouns = True, remove_whitespace = True, ana_preprocessing_ = True, lemma_ = False, only_alpha_num = False, normalize_whitespace_ = True):
     """Preprocesses text by
     - only keeping the NOUNs
     - only keeping the words that are longer than min_length (optional)
@@ -69,6 +74,9 @@ def preprocess_text_spacy(texts, min_length=-1, concat=True, n_jobs=2, batch_siz
     if ana_preprocessing_:
         texts = [ana_preprocessing(text) for text in texts]
 
+    if normalize_whitespace_:
+        texts = [normalize_whitespace(text) for text in texts]
+
     res = [
         [
             word for word in doc if (not remove_whitespace or word.text.strip() != '') and (not only_nouns or word.pos_ == 'NOUN') and (min_length == -1 or len(word.text) > min_length)
@@ -86,6 +94,10 @@ def preprocess_text_old(text):
     text = '\n'.join(x.strip() for x in text.split('\n') if x.strip() != '')
     text = re.sub('\n', ' ', re.sub(reg, '//', text)).replace('//', '\n')
     return text
+
+
+def preprocess_matching_tmp(text):
+    return ana_preprocessing(text)
 
 
 def preprocess_text(text, lower=True, remove_stopwords_=False, remove_interpunction_=False):

@@ -6,14 +6,14 @@ SPAM_LABEL = 'spam'
 NOT_SPAM_LABEL = 'no_spam'
 
 
-def fetch(remove_subject=True):
+def fetch(remove_subject=True, used_state = 'bare'):
     X, Y = [], []
     current_folder = os.path.dirname(os.path.abspath(__file__))
     for directory in os.listdir(os.path.join(current_folder, 'src')):
         directory = os.path.join(current_folder, 'src', directory)
         if not os.path.isdir(directory):
             continue
-        for file in glob(directory + '/bare/*/*.txt'):
+        for file in glob(directory + '/{}/*/*.txt'.format(used_state)):
             filename = file.split('/')[-1]
             is_spam = filename.startswith('spmsg')
             label = SPAM_LABEL if is_spam else NOT_SPAM_LABEL

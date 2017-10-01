@@ -1,30 +1,28 @@
 #!/usr/bin/env bash
 
+KEEP_OLD="$1"
+
+
 SERVER='ba'
 
-folder_name="$(date "+%Y-%m-%d_%H:%M")"
+LAST_FOLDER=$(find . -type d -depth 1 -name '2017*' | sort -r | head -n1 | cut -c3-)
 
-find . -name '*.npy' -depth 1 -exec rm {} \;
-find predictions -name '*.npy' -depth 1 -exec rm {} \;
+FOLDER_NAME="$(date "+%Y-%m-%d_%H-%M")"
 
-rm -rf $folder_name
-
-mkdir -p "$folder_name"
-cd "$folder_name"
-
-echo "Results"
-ssh $SERVER sh get_results.sh > /dev/null 2>&1
-scp $SERVER:results.zip .
-echo "- Starting to unzip results"
-unzip -q results.zip
-rm -f ../*.npy
-
-echo "Predictions"
-scp $SERVER:predictions.zip . 2> /dev/null
-if [ -f 'predictions.zip' ]; then
-    echo "- Starting to unzip predictions"
-    unzip -q predictions.zip
+# If not KEEP_OLD, rename old folder and sync
+if [ -z "$KEEP_OLD" ]; then
+    echo "INFO: using old folder, renaming ($LAST_FOLDER -> $FOLDER_NAME)"
+    if [ ! "$LAST_FOLDER" = "$FOLDER_NAME" ]; then
+        mv "$LAST_FOLDER" "$FOLDER_NAME" || true
+    fi
+# If KEEP_OLD, keep the old folder and create a new one
 else
-    echo "- No predictions downloaded"
+    echo "INFO: using new folder, copying ($FOLDER_NAME)"
+    cp -R $LAST_FOLDER $FOLDER_NAME
 fi
-#./copy "$folder_name"
+
+echo "rsyncing remote server"
+ssh $SERVER sh get_results.sh > /dev/null 2>&1
+
+rsync -avz $SERVER:results/ $FOLDER_NAME/
+

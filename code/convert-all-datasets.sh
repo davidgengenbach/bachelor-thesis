@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
 
-set -x
+#set -x
 
-for i in $(python -c "for i in __import__('dataset_helper').get_all_available_dataset_names(): print(i)"); do
+for i in $(python -c "for i in [i for i in __import__('dataset_helper').get_all_available_dataset_names() if 'ana' not in i and i != 'small']: print(i)"); do
     echo "############### Preparing dataset: $i"
-    ./convert-datasets.py --dataset_name $i --force --concat_train_instances --one_document_per_folder
-    exit
+    ./convert-datasets.py --train_size 1 --dataset_name $i --one_document_per_folder --force --preprocess
 done
