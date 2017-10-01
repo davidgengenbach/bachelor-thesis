@@ -146,7 +146,7 @@ def process(dataset_name, out_folder, train_size, random_state_for_shuffle, one_
             'timestamp': time_utils.get_time_formatted(),
             'unix_timestamp': time_utils.get_timestamp(),
             'git_commit': str(git_utils.get_current_commit())
-        }, f, indent=4)
+        }, f, indent=4, sort_keys = True)
 
 
 if __name__ == '__main__':
