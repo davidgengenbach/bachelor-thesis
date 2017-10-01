@@ -1,3 +1,14 @@
+"""Ling-Spam dataset
+
+Link
+    http://csmining.org/index.php/ling-spam-datasets.html
+
+Download
+    http://csmining.org/index.php/ling-spam-datasets.html?file=tl_files/Project_Datasets/Ling-Spam%20data%20set/lingspam_public.tar.tar
+    http://csmining.org/index.php/ling-spam-datasets.html?file=tl_files/Project_Datasets/Ling-Spam%20data%20set/lingspam_public01.tar.tar
+    http://csmining.org/index.php/ling-spam-datasets.html?file=tl_files/Project_Datasets/Ling-Spam%20data%20set/lingspam_public02.tar.tar
+"""
+
 import os
 from glob import glob
 import codecs

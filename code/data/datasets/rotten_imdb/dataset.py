@@ -7,7 +7,7 @@ Link
     http://www.cs.cornell.edu/people/pabo/movie-review-data/
 
 Download
-    http://www.cs.cornell.edu/people/pabo/movie-review-data/review_polarity.tar.gz
+    http://www.cs.cornell.edu/people/pabo/movie-review-data/rotten_imdb.tar.gz
 """
 
 
@@ -15,7 +15,7 @@ import codecs
 import os
 
 current_folder = os.path.dirname(os.path.abspath(__file__))
-SRC_FOLDER = os.path.join(current_folder, 'src', 'rotten_imdb')
+SRC_FOLDER = os.path.join(current_folder, 'src')
 
 def fetch(src_folder=SRC_FOLDER, file_quote = 'quote.tok.gt9.5000', file_plot = 'plot.tok.gt9.5000'):
     X, Y = [], []

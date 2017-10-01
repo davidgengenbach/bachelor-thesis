@@ -3,7 +3,7 @@ from glob import glob
 import codecs
 
 PATH_TO_HERE = os.path.dirname(os.path.abspath(__file__))
-DATASET_FOLDER = os.path.join(PATH_TO_HERE, 'src')
+DATASET_FOLDER = os.path.join(PATH_TO_HERE, 'src', 'datasets')
 
 def get_ana_set(dataset_name, preprocessing_type = 'all-terms', sets = ('train', 'test'), dataset_folder = DATASET_FOLDER):
     if preprocessing_type:

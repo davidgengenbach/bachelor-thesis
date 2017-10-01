@@ -2,3 +2,4 @@ joblib
 spacy
 networkx
 gensim
+gitpython

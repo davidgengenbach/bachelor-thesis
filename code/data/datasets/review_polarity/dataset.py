@@ -7,7 +7,7 @@ Link
     http://www.cs.cornell.edu/people/pabo/movie-review-data/
 
 Download
-    http://www.cs.cornell.edu/people/pabo/movie-review-data/rotten_imdb.tar.gz
+    http://www.cs.cornell.edu/people/pabo/movie-review-data/review_polarity.tar.gz
 """
 
 
