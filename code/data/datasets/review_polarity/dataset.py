@@ -16,7 +16,7 @@ import os
 from glob import glob
 
 current_folder = os.path.dirname(os.path.abspath(__file__))
-SRC_FOLDER = os.path.join(current_folder, 'src', 'review_polarity', 'txt_sentoken')
+SRC_FOLDER = os.path.join(current_folder, 'src', 'txt_sentoken')
 
 def fetch(src_folder=SRC_FOLDER):
     X, Y = [], []
