@@ -1,3 +1,5 @@
+scipy
+sklearn
 joblib
 spacy
 networkx

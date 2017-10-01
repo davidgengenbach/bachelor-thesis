@@ -1,4 +1,4 @@
-import preprocessing
+from preprocessing import preprocessing
 import spacy
 import sklearn
 

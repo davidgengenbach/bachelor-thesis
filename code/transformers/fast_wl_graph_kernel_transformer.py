@@ -1,11 +1,13 @@
-import sklearn
-from sklearn import base
 import logging
+
 import networkx as nx
-import graph_helper
-from kernels import wl
-from kernels import fast_wl
+import sklearn
 from joblib import Parallel, delayed
+from sklearn import base
+
+from kernels import fast_wl
+from kernels import wl
+from utils import graph_helper
 
 
 def add_bogus_labels_to_empty_graphs(graphs):

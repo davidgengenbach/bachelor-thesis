@@ -9,7 +9,7 @@ import sympy
 import numpy as np
 from scipy.sparse import bsr_matrix, coo_matrix, csc_matrix, csr_matrix, dia_matrix, dok_matrix, lil_matrix
 from collections import defaultdict
-import primes
+from utils import primes
 import collections
 
 

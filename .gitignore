@@ -5,3 +5,5 @@ __pycache__
 *.pyc
 code/code.sublime-*
 code/data/*.bin
+code/tmp/
+other/unused

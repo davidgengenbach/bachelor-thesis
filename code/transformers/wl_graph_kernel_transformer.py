@@ -1,10 +1,13 @@
-import sklearn
-from sklearn import base
 import logging
+
 import networkx as nx
-import graph_helper
-from kernels import wl
+import sklearn
 from joblib import Parallel, delayed
+from sklearn import base
+
+from kernels import wl
+from utils import graph_helper
+
 
 class WLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.TransformerMixin):
     """Weisfeiler-Lehman transformer. Fits the training set by calculating the phi for each instance

@@ -1,6 +1,8 @@
-import sklearn
-import dataset_helper
 import numpy as np
+import sklearn
+
+from utils import dataset_helper
+
 
 def fetch(dataset = 'ng20'):
     X, Y = dataset_helper.get_dataset(dataset)

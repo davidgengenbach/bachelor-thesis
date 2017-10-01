@@ -1,5 +1,7 @@
-import graph_helper
 import sklearn
+
+from utils import graph_helper
+
 
 class NxGraphToTupleTransformer(sklearn.base.BaseEstimator, sklearn.base.TransformerMixin):
 
