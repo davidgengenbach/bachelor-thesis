@@ -103,13 +103,13 @@ def main():
 
     clfs = [
         sklearn.dummy.DummyClassifier(strategy='most_frequent'),
-        sklearn.naive_bayes.MultinomialNB(),
+        sklearn.svm.LinearSVC(class_weight='balanced', max_iter=args.max_iter, tol=args.tol),
+        sklearn.linear_model.PassiveAggressiveClassifier(class_weight='balanced', max_iter=args.max_iter, tol=args.tol)
+        #sklearn.naive_bayes.MultinomialNB(),
         # sklearn.naive_bayes.GaussianNB(),
         #sklearn.svm.SVC(max_iter = args.max_iter, tol=args.tol),
         #sklearn.linear_model.Perceptron(class_weight='balanced', max_iter=args.max_iter, tol=args.tol),
         #sklearn.linear_model.LogisticRegression(class_weight = 'balanced', max_iter=args.max_iter, tol=args.tol),
-        sklearn.svm.LinearSVC(class_weight='balanced', max_iter=args.max_iter, tol=args.tol),
-        sklearn.linear_model.PassiveAggressiveClassifier(class_weight='balanced', max_iter=args.max_iter, tol=args.tol)
     ]
 
     def cross_validate(X, Y, estimator, param_grid, result_file, predictions_file, create_predictions):
@@ -163,8 +163,7 @@ def main():
             if not args.force and os.path.exists(result_file):
                 continue
 
-            LOGGER.info('{:<10} - {:<15}'.format('Text', dataset_name))
-            LOGGER.info('{:<10} - {:<15} - Retrieving dataset'.format('Text', dataset_name))
+            LOGGER.info('{:<10} - {:<15} - Starting'.format('Text', dataset_name))
             X, Y = dataset_helper.get_dataset(dataset_name, use_cached=True)
 
             estimator = Pipeline([
@@ -182,11 +181,9 @@ def main():
                 clf=clfs
             )
 
-            LOGGER.info('{:<10} - {:<15} - Starting to fit'.format('Text', dataset_name))
             cross_validate(X, Y, estimator, param_grid, result_file, predictions_file, args.create_predictions)
 
             LOGGER.info('{:<10} - {:<15} - Finished'.format('Text', dataset_name))
-        LOGGER.info('{:<10} - Finished'.format('Text'))
 
     if args.check_graphs:
         LOGGER.info('{:<10} - Starting'.format('Graph'))
@@ -236,6 +233,7 @@ def main():
                     '{:<10} - {:<15} - Finished for h={}'.format('Graph', graph_dataset_cache_file, h))
 
     if args.check_gram:
+        LOGGER.info('{:<10} - Starting'.format('Graph gram'))
         for gram_cache_file in glob('data/CACHE/*gram*.npy'):
             # TODO: add filter
             gram_cache_filename = gram_cache_file.split('/')[-1]
@@ -260,6 +258,7 @@ def main():
                 LOGGER.exception(e)
 
     if args.check_combined:
+        LOGGER.info('{:<10} - Starting'.format('Graph combined'))
         for dataset_name in dataset_helper.get_all_available_dataset_names():
             X_text, Y_text = dataset_helper.get_dataset(dataset_name)
 
@@ -304,10 +303,8 @@ def main():
                         X_combined = list(zip(X_text, phi))
                         cross_validate(X_combined, Y_text, estimator, param_grid, result_file, predictions_file, args.create_predictions)
                     except Exception as e:
-                        LOGGER.warning(
-                            '{:<10} - {:<15} - Error h={}'.format('Combined', graph_dataset_cache_filename, h))
+                        LOGGER.warning('{:<10} - {:<15} - Error h={}'.format('Combined', graph_dataset_cache_filename, h))
                         LOGGER.exception(e)
-
     LOGGER.info('Finished!')
 
 if __name__ == '__main__':
