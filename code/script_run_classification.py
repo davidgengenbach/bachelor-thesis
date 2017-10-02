@@ -189,20 +189,15 @@ def main():
         LOGGER.info('{:<10} - Finished'.format('Text'))
 
     if args.check_graphs:
+        LOGGER.info('{:<10} - Starting'.format('Graph'))
         for cache_file in dataset_helper.get_all_cached_graph_phi_datasets():
             dataset = dataset_helper.get_dataset_name_from_graph_cachefile(cache_file)
 
             if not file_should_be_processed(cache_file, dataset, args.include_graphs, args.exclude_graphs, args.limit_dataset):
                 continue
 
-            LOGGER.info('{:<10} - Starting'.format('Graph'))
-
             graph_dataset_cache_file = cache_file.split('/')[-1]
 
-            LOGGER.info('{:<10} - {:<15}'.format('Graph', graph_dataset_cache_file))
-
-            LOGGER.info(
-                '{:<10} - {:<15} - Retrieving dataset'.format('Graph', graph_dataset_cache_file))
             X_all, Y = dataset_helper.get_dataset_cached(cache_file, check_validity=False)
 
             # Ignore 0th iteration of WL when combining all WL iterations
