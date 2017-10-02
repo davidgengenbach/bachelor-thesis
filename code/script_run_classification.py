@@ -210,7 +210,6 @@ def main():
                 predictions_file = '{}/{}.{}.npy'.format(PREDICTIONS_FOLDER, graph_dataset_cache_file, h)
 
                 if not args.force and os.path.exists(result_file):
-                    LOGGER.warning('\tAlready calculated result: {}'.format(result_file))
                     continue
 
                 LOGGER.info('{:<10} - {:<15} - Classifying for h={}'.format('Graph', graph_dataset_cache_file, h))
