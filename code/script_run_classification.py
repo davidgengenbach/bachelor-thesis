@@ -42,15 +42,36 @@ def get_args():
     parser.add_argument('--tol', type=int, default=1e-3)
     parser.add_argument('--n_splits', type=int, default=3)
     parser.add_argument('--random_state', type=int, default=42)
-    parser.add_argument('--limit_graphs', type=str, default=None)
+    parser.add_argument('--include_graphs', type=str, default=None)
+    parser.add_argument('--exclude_graphs', type=str, default=None)
     parser.add_argument('--limit_dataset', nargs='+', type=str, default=[
                         'ng20', 'ling-spam', 'reuters-21578', 'webkb', 'webkb-ana', 'ng20-ana'])
     args = parser.parse_args()
     return args
 
 
+def file_should_be_processed(file, dataset, include_filter, exclude_filter, limit_dataset):
+    """Returns true, if file is included AND not excluded AND in the limited datasets.
+    
+    Args:
+        file (str): the file to be processed
+        dataset (str): the dataset of the file
+        include_filter (str): string that has to be in `file` (can be None)
+        exclude_filter (str): string that must not be in `file` (can be None)
+        limit_dataset (list(str)): the datasets that have been limited (= are allowed)
+    
+    Returns:
+        bool: Whether the file should be processed
+    """
+    is_in_limited_datasets = (not limit_dataset or dataset in limit_dataset)
+    is_included = (not include_filter or include_filter in file)
+    is_excluded = (exclude_filter and exclude_filter in file)
+    return is_in_limited_datasets and is_included and not is_excluded
+
+
 class TupleSelector(sklearn.base.BaseEstimator, sklearn.base.TransformerMixin):
-    def __init__(self, tuple_index = 0, v_stack = False):
+
+    def __init__(self, tuple_index=0, v_stack=False):
         self.tuple_index = tuple_index
         self.v_stack = v_stack
 
@@ -61,17 +82,18 @@ class TupleSelector(sklearn.base.BaseEstimator, sklearn.base.TransformerMixin):
         data = [x[self.tuple_index] for x in X]
         return scipy.sparse.vstack(data) if self.v_stack else data
 
+
 def main():
     args = get_args()
 
     scoring = ['precision_macro', 'recall_macro', 'accuracy', 'f1_macro']
     refit = 'f1_macro'
 
-    RESULTS_FOLDER ='data/results'
+    RESULTS_FOLDER = 'data/results'
     PREDICTIONS_FOLDER = '{}/predictions'.format(RESULTS_FOLDER)
 
-    os.makedirs(RESULTS_FOLDER, exist_ok = True)
-    os.makedirs(PREDICTIONS_FOLDER, exist_ok = True)
+    os.makedirs(RESULTS_FOLDER, exist_ok=True)
+    os.makedirs(PREDICTIONS_FOLDER, exist_ok=True)
 
     cv = sklearn.model_selection.StratifiedKFold(
         n_splits=args.n_splits,
@@ -82,7 +104,7 @@ def main():
     clfs = [
         sklearn.dummy.DummyClassifier(strategy='most_frequent'),
         sklearn.naive_bayes.MultinomialNB(),
-        #sklearn.naive_bayes.GaussianNB(),
+        # sklearn.naive_bayes.GaussianNB(),
         #sklearn.svm.SVC(max_iter = args.max_iter, tol=args.tol),
         #sklearn.linear_model.Perceptron(class_weight='balanced', max_iter=args.max_iter, tol=args.tol),
         #sklearn.linear_model.LogisticRegression(class_weight = 'balanced', max_iter=args.max_iter, tol=args.tol),
@@ -98,7 +120,7 @@ def main():
         # Hold out validation set (15%)
         if create_predictions:
             try:
-                X_train, X_test, Y_train, Y_test = sklearn.model_selection.train_test_split(X, Y, stratify = Y, test_size = 0.15)
+                X_train, X_test, Y_train, Y_test = sklearn.model_selection.train_test_split(X, Y, stratify=Y, test_size=0.15)
             except Exception as e:
                 LOGGER.warning('Could not split dataset for predictions')
                 LOGGER.exception(e)
@@ -132,11 +154,11 @@ def main():
     if args.check_texts:
         LOGGER.info('{:<10} - Starting'.format('Text'))
         for dataset_name in dataset_helper.get_all_available_dataset_names():
+            if not file_should_be_processed(None, dataset_name, None, None, args.limit_dataset):
+                continue
+
             result_file = '{}/text_{}.results.npy'.format(RESULTS_FOLDER, dataset_name)
             predictions_file = '{}/text_{}.npy'.format(PREDICTIONS_FOLDER, dataset_name)
-
-            if args.limit_dataset and dataset_name not in args.limit_dataset:
-                continue
 
             if not args.force and os.path.exists(result_file):
                 continue
@@ -155,7 +177,7 @@ def main():
 
             param_grid = dict(
                 #preprocessing= [None, PreProcessingTransformer(only_nouns=True, return_lemma = True)],
-                #preprocessing=[NaivePreprocessingTransformer()],
+                # preprocessing=[NaivePreprocessingTransformer()],
                 #scaler = [None, sklearn.preprocessing.StandardScaler(with_mean = False)]
                 clf=clfs
             )
@@ -169,10 +191,8 @@ def main():
     if args.check_graphs:
         for cache_file in dataset_helper.get_all_cached_graph_phi_datasets():
             dataset = dataset_helper.get_dataset_name_from_graph_cachefile(cache_file)
-            if args.limit_dataset and dataset not in args.limit_dataset:
-                continue
 
-            if args.limit_graphs and args.limit_graphs not in cache_file:
+            if not file_should_be_processed(cache_file, dataset, args.include_graphs, args.exclude_graphs, args.limit_dataset):
                 continue
 
             LOGGER.info('{:<10} - Starting'.format('Graph'))
@@ -220,9 +240,10 @@ def main():
 
                 LOGGER.info(
                     '{:<10} - {:<15} - Finished for h={}'.format('Graph', graph_dataset_cache_file, h))
-    
+
     if args.check_gram:
         for gram_cache_file in glob('data/CACHE/*gram*.npy'):
+            # TODO: add filter
             gram_cache_filename = gram_cache_file.split('/')[-1]
             result_file = '{}/{}.results.npy'.format(RESULTS_FOLDER, gram_cache_filename)
             predictions_file = '{}/{}.npy'.format(PREDICTIONS_FOLDER, gram_cache_filename)
@@ -233,7 +254,7 @@ def main():
             estimator = Pipeline([('clf', None)])
 
             param_grid = dict(
-                clf=[sklearn.svm.SVC(kernel = 'precomputed', class_weight='balanced', max_iter=args.max_iter, tol=args.tol)]
+                clf=[sklearn.svm.SVC(kernel='precomputed', class_weight='balanced', max_iter=args.max_iter, tol=args.tol)]
             )
 
             try:
@@ -246,14 +267,11 @@ def main():
 
     if args.check_combined:
         for dataset_name in dataset_helper.get_all_available_dataset_names():
-            if dataset_name not in args.limit_dataset: continue
-
-
             X_text, Y_text = dataset_helper.get_dataset(dataset_name)
 
             for graph_dataset_cache_file in dataset_helper.get_all_cached_graph_phi_datasets(dataset_name):
 
-                if args.limit_graphs and args.limit_graphs not in graph_dataset_cache_file:
+                if not file_should_be_processed(graph_dataset_cache_file, dataset_name, args.include_graphs, args.exclude_graphs, args.limit_dataset):
                     continue
 
                 graph_dataset_cache_filename = graph_dataset_cache_file.split('/')[-1]
@@ -270,10 +288,10 @@ def main():
                     combined_features = sklearn.pipeline.FeatureUnion([
                         ('tfidf', sklearn.pipeline.Pipeline([
                             ('selector', TupleSelector(tuple_index=0)),
-                            ('tfidf', sklearn.feature_extraction.text.TfidfVectorizer(stop_words = 'english')),
+                            ('tfidf', sklearn.feature_extraction.text.TfidfVectorizer(stop_words='english')),
                         ])),
                         ('phi', sklearn.pipeline.Pipeline([
-                            ('selector', TupleSelector(tuple_index=1, v_stack = True))
+                            ('selector', TupleSelector(tuple_index=1, v_stack=True))
                         ]))
                     ])
 
@@ -293,7 +311,7 @@ def main():
                         cross_validate(X_combined, Y_text, estimator, param_grid, result_file, predictions_file, args.create_predictions)
                     except Exception as e:
                         LOGGER.warning(
-                        '{:<10} - {:<15} - Error h={}'.format('Combined', graph_dataset_cache_filename, h))
+                            '{:<10} - {:<15} - Error h={}'.format('Combined', graph_dataset_cache_filename, h))
                         LOGGER.exception(e)
 
     LOGGER.info('Finished!')
