@@ -1,38 +1,14 @@
-import logging
-
-import networkx as nx
 import sklearn
-from joblib import Parallel, delayed
 from sklearn import base
-
 from kernels import fast_wl
-from kernels import wl
 from utils import graph_helper
-
-
-def add_bogus_labels_to_empty_graphs(graphs):
-    empty_graph_counter = 0
-    for adj, nodes in graphs:
-        if len(nodes) < 1:
-            empty_graph_counter += 1
-    return empty_graph_counter
-
-
-def convert_graphs_to_adjs_tuples(X):
-    if not isinstance(X[0], tuple):
-        for idx, graph in enumerate(X):
-            if len(graph.nodes()):
-                nodes = graph.nodes()
-                X[idx] = (nx.adjacency_matrix(graph, nodelist=nodes), nodes)
-            else:
-                X[idx] = None
-
 
 class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.TransformerMixin):
     """Fast Weisfeiler-Lehman transformer.
-
+    
     Attributes:
         all_nodes (frozenset): all node labels in the training set
+        debug (bool): whether do log more
         h (int): the iterations for WL
         label_counters (list(int)): the label counters for each iteration 
         label_lookups (list(dict)): the dictionaries per iteration that are used to lookup labels
@@ -59,7 +35,7 @@ class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Tran
         """
 
         assert len(X)
-        convert_graphs_to_adjs_tuples(X)
+        graph_helper.convert_graphs_to_adjs_tuples(X)
 
         # Remove empty graphs
         X = [x for x in X if x]
@@ -67,7 +43,7 @@ class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Tran
         if self.debug:
             print('FastWLGraphKernelTransformer.fit: len(X)={}, H={}'.format(len(X), self.h))
 
-        empty_graph_counter = add_bogus_labels_to_empty_graphs(X)
+        empty_graph_counter = graph_helper.get_empty_graphs_count(X)
 
         if self.debug:
             print("FastWLGraphKernelTransformer.fit: Found empty graphs in training set: {}".format(empty_graph_counter))
@@ -85,7 +61,7 @@ class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Tran
     def transform(self, X, y=None, **fit_params):
         if self.debug:
             print('FastWLGraphKernelTransformer.transform: len(X)={}, H={}'.format(len(X), self.h))
-        convert_graphs_to_adjs_tuples(X)
+        graph_helper.convert_graphs_to_adjs_tuples(X)
 
         # remove missing nodes
         if self.remove_missing_labels:
@@ -93,7 +69,6 @@ class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Tran
                 missing_nodes = frozenset(graph.nodes()) - self.all_nodes
                 if len(missing_nodes):
                     graph.remove_nodes_from(missing_nodes)
-        empty_graph_counter = add_bogus_labels_to_empty_graphs(X)
 
         phi_list, label_lookups, label_counters = fast_wl.fast_wl_compute(
             X, h=self.h, label_lookups=self.label_lookups, label_counters=self.label_counters, phi_dim=self.phi_shape[0])

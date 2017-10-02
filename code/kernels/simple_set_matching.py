@@ -1,4 +1,4 @@
-"""Calculates the jaccard coefficient: jaccard_index = num_matching / num_all_labels
+"""Calculates the jaccard coefficient of the node labels: jaccard_index = num_matching / num_all_labels
 
 Similar to the "zero" iteration of WL? The phi feature maps per dot product and then normed by the total number of non-zero entries in phi?
 """

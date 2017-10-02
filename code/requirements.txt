@@ -1,7 +1,16 @@
-scipy
-sklearn
-joblib
-spacy
-networkx
-gensim
-gitpython
+# for i in $(cat requirements.txt | grep -v -e '^#$' | grep -v -e '^#' | cut -d '=' -f1); pip freeze | grep $i; done
+
+bokeh==0.12.6
+bs4==0.0.1
+gensim==2.3.0
+joblib==0.11
+matplotlib==2.0.2
+networkx==1.11
+nltk==3.2.4
+numpy==1.13.1
+pandas==0.20.3
+scipy==0.19.1
+spacy==1.9.0
+sympy==1.1
+
+sklearn 

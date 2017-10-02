@@ -16,17 +16,18 @@ from preprocessing import preprocessing
 from utils import dataset_helper, cooccurrence
 
 
-def add_shortest_path_edges(graph, cutoff = 2):
-    if graph.number_of_edges() == 0 or graph.number_of_nodes() == 0: return
-    shortest_paths = nx.all_pairs_shortest_path(graph, cutoff = cutoff)
+def add_shortest_path_edges(graph, cutoff=2):
+    if graph.number_of_edges() == 0 or graph.number_of_nodes() == 0:
+        return
+    shortest_paths = nx.all_pairs_shortest_path(graph, cutoff=cutoff)
     for source, target_dict in shortest_paths.items():
         for target, path in target_dict.items():
-            graph.add_edge(source, target, attr_dict = {'weight': 1 / len(path)})
+            graph.add_edge(source, target, attr_dict={'weight': 1 / len(path)})
 
 
-def convert_dataset_to_co_occurence_graph_dataset(X, Y, min_length = 2, n_jobs=4, only_nouns = False, lemma_ = False, preprocess = True, **cooccurrence_kwargs):
+def convert_dataset_to_co_occurence_graph_dataset(X, Y, min_length=2, n_jobs=4, only_nouns=False, lemma_=False, preprocess=True, **cooccurrence_kwargs):
     if preprocess:
-        X = preprocessing.preprocess_text_spacy(X, min_length=min_length, concat = False, only_nouns = only_nouns)
+        X = preprocessing.preprocess_text_spacy(X, min_length=min_length, concat=False, only_nouns=only_nouns)
     if lemma_:
         X = [[word.lemma_ for word in doc] for doc in X]
 
@@ -38,16 +39,16 @@ def convert_dataset_to_co_occurence_graph_dataset(X, Y, min_length = 2, n_jobs=4
 
 def get_wl_args(graphs):
     nodes = [sorted(g.nodes()) for g in graphs]
-    adjs = [nx.adjacency_matrix(g, nodelist = labels).toarray() for g, labels in zip(graphs, nodes)]
+    adjs = [nx.adjacency_matrix(g, nodelist=labels).toarray() for g, labels in zip(graphs, nodes)]
     return adjs, nodes
 
 
-def get_all_node_labels(graphs, as_sorted_list = True):
+def get_all_node_labels(graphs, as_sorted_list=True):
     """Returns all unique labels in a list of graphs.
-    
+
     Args:
         graphs (list(nx.Graph)): list of graphs
-    
+
     Returns:
         list(str): the unique labels
     """
@@ -76,9 +77,10 @@ def convert_from_numpy_to_nx(word2id, id2word, mat):
     nx.relabel_nodes(graph, mapping=id2word, copy=False)
     return graph
 
+
 def get_graph_stats(X, Y):
     graphs_per_topic = dataset_helper.get_dataset_dict(X, Y)
-    df_graphs_per_topic = pd.DataFrame([(topic, len(graphs), [len(x.nodes()) for x in graphs], [len(x.edges()) for x in graphs]) for topic, graphs in graphs_per_topic.items()], columns = ['topic', 'num_graphs', 'num_nodes', 'num_edges']).set_index(['topic']).sort_values(by = 'num_graphs')
+    df_graphs_per_topic = pd.DataFrame([(topic, len(graphs), [len(x.nodes()) for x in graphs], [len(x.edges()) for x in graphs]) for topic, graphs in graphs_per_topic.items()], columns=['topic', 'num_graphs', 'num_nodes', 'num_edges']).set_index(['topic']).sort_values(by='num_graphs')
     df_graphs_per_topic['avg_nodes'] = df_graphs_per_topic.num_nodes.apply(lambda x: np.mean(x))
     df_graphs_per_topic['avg_edges'] = df_graphs_per_topic.num_edges.apply(lambda x: np.mean(x))
     return df_graphs_per_topic
@@ -120,6 +122,7 @@ def get_graphs_from_folder(folder, ext='gml', undirected=True, verbose=False):
     assert len(X) == len(Y), 'X has not the same dimensions as Y'
     return X, Y
 
+
 def convert_adjs_tuples_to_graphs(X):
     if not isinstance(X[0], tuple):
         return
@@ -133,10 +136,10 @@ def convert_adjs_tuples_to_graphs(X):
 def convert_graphs_to_adjs_tuples(X):
     """Converts the graphs from the nx.Graph format to a tuple.
     Note: this function changes the input!
-    
+
     Args:
         X (list(nx.graph)): the graphs
-    
+
     Returns:
         list(tuple): a list of tuples where the first tuple element is an adjacency matrix and the second a list of labels
     """
@@ -148,7 +151,15 @@ def convert_graphs_to_adjs_tuples(X):
         if len(nodes) == 0 or nx.number_of_edges(graph) == 0:
             X[idx] = (lil_matrix(1, 1), [''])
         else:
-            X[idx] = (nx.adjacency_matrix(graph, nodelist = nodes), nodes)
+            X[idx] = (nx.adjacency_matrix(graph, nodelist=nodes), nodes)
+
+
+def get_empty_graphs_count(graphs):
+    empty_graph_counter = 0
+    for adj, nodes in graphs:
+        if len(nodes) < 1:
+            empty_graph_counter += 1
+    return empty_graph_counter
 
 
 def get_gml_graph(graph_str, undirected=False, num_tries=20, verbose=False):

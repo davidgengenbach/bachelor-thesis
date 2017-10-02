@@ -17,10 +17,10 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import Pipeline
 
 from transformers.fast_wl_graph_kernel_transformer import FastWLGraphKernelTransformer
-from transformers.naive_preprocessing_transformer import NaivePreprocessingTransformer
 from transformers.phi_picker_transformer import PhiPickerTransformer
 from transformers.preprocessing_transformer import PreProcessingTransformer
 from transformers.wl_graph_kernel_transformer import WLGraphKernelTransformer
+from transformers.tuple_selector import TupleSelector
 from utils import dataset_helper
 from utils.logger import LOGGER
 from utils.remove_coefs_from_results import remove_coefs_from_results
@@ -67,20 +67,6 @@ def file_should_be_processed(file, dataset, include_filter, exclude_filter, limi
     is_included = (not include_filter or include_filter in file)
     is_excluded = (exclude_filter and exclude_filter in file)
     return is_in_limited_datasets and is_included and not is_excluded
-
-
-class TupleSelector(sklearn.base.BaseEstimator, sklearn.base.TransformerMixin):
-
-    def __init__(self, tuple_index=0, v_stack=False):
-        self.tuple_index = tuple_index
-        self.v_stack = v_stack
-
-    def fit(self, x, y=None):
-        return self
-
-    def transform(self, X):
-        data = [x[self.tuple_index] for x in X]
-        return scipy.sparse.vstack(data) if self.v_stack else data
 
 
 def main():
@@ -176,7 +162,6 @@ def main():
 
             param_grid = dict(
                 #preprocessing= [None, PreProcessingTransformer(only_nouns=True, return_lemma = True)],
-                # preprocessing=[NaivePreprocessingTransformer()],
                 #scaler = [None, sklearn.preprocessing.StandardScaler(with_mean = False)]
                 clf=clfs
             )

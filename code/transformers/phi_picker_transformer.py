@@ -9,6 +9,7 @@ class PhiPickerTransformer(sklearn.base.BaseEstimator, sklearn.base.TransformerM
         self.transpose = False
 
     def fit(self, X, y=None, **fit_params):
+        assert len(X)
         return self
 
     def transform(self, X, y=None, **fit_params):
