@@ -90,7 +90,7 @@ def transform(
 
 
             # ... generate the signatures (see paper) for each graph
-            signatures = np.round((labels + adjacency_matrix * log_primes[labels]), decimals= round_signatures_to_decimals)#.astype(labels_dtype)
+            signatures = np.round((labels + adjacency_matrix * log_primes[labels]), decimals= round_signatures_to_decimals).astype(labels_dtype)
 
             # ... add missing signatures to the label lookup
             for signature in signatures:
