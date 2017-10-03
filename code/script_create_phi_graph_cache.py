@@ -46,7 +46,7 @@ def process_graph_cache_file(graph_cache_file, args):
     graph_cache_filename = graph_cache_file.split('/')[-1].rsplit('.')[0]
     dataset = dataset_helper.get_dataset_name_from_graph_cachefile(graph_cache_file)
 
-    if '.phi.' in graph_cache_filename or not filter_utils.file_should_be_processed(graph_cache_filename, args.include_filter, args.exclude_filter, dataset, args.limit_dataset):
+    if '.phi.' in graph_cache_filename or not filter_utils.file_should_be_processed(graph_cache_filename, args.include_filter, args.exclude_filter, args.limit_dataset):
         return
 
     LOGGER.info('{:15} starting ({})'.format(dataset, graph_cache_filename))
