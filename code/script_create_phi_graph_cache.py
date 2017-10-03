@@ -77,10 +77,14 @@ def process_graph_cache_file(graph_cache_file, args):
                 if should_cast:
                     used_phi_graph_cache_file = phi_graph_cache_file.replace('.phi.', '.casted.phi.')
 
-                if args.force or not os.path.exists(used_phi_graph_cache_file ):
+                if args.force or not os.path.exists(used_phi_graph_cache_file):
+                    fast_wl_trans.set_params(should_cast=should_cast)
+
                     fast_wl_trans.fit(X)
                     with open(used_phi_graph_cache_file , 'wb') as f:
                         pickle.dump((fast_wl_trans.phi_list, Y), f)
+
+            fast_wl_trans.set_params(should_cast=False)
 
             # All nodes get same label
             if args.force or not os.path.exists(phi_same_label_graph_cache_file):

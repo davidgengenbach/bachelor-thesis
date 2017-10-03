@@ -1,5 +1,5 @@
 import collections
-from utils import helper
+from utils import helper, filename_utils
 import pandas as pd
 from glob import glob
 import os
@@ -39,22 +39,26 @@ def get_results(folder=None, use_already_loaded=True, results_directory=RESULTS_
         with open(result_file, 'rb') as f:
             result = pickle.load(f)
 
-        dataset = result_file.split('/')[-1].rsplit('.', 2)[0]
-        is_graph_dataset = 'graph' in dataset
-        is_cooccurrence_dataset = 'cooccurrence' in dataset
-        dataset_name = dataset
-
+        dataset_name = filename_utils.get_dataset_from_filename(result_file)
+        is_graph_dataset = 'gml' in result_file or 'phi' in result_file or 'coo' in result_file
+        
         result['combined'] = 'combined' in result_file
+        
         if is_graph_dataset:
-            is_lemmatized = '_lemmatized_' in result_file
-            result['lemmatized'] = is_lemmatized
+            is_cooccurrence_dataset = 'cooccurrence' in result_file
 
+            result['type'] = 'cooccurrence' if is_cooccurrence_dataset else 'concept-graph'
+            result['lemmatized'] = '_lemmatized_' in result_file
             result['same_label'] = 'same-label' in result_file
+            result['wl_casted'] = '.casted.' in result_file
+
             is_simple_kernel = '.simple.' in result_file
             if is_simple_kernel:
                 result['kernel'] = 'simple_set_matching'
             else:
                 result['kernel'] = 'spgk' if 'spgk' in result_file else 'wl'
+
+
             is_relabeled = 'relabeled' in result_file
             result['relabeled'] = is_relabeled
             if is_relabeled:
@@ -62,22 +66,22 @@ def get_results(folder=None, use_already_loaded=True, results_directory=RESULTS_
                 threshold = result_file.split('threshold-')[1].split('_')[0]
                 result['topn'] = int(topn)
                 result['threshold'] = float(threshold)
-            if result['kernel'] == 'wl':
-                result['wl_iteration'] = dataset.split('.')[-1]
-            parts = dataset.split('_')
 
+            if result['kernel'] == 'wl':
+                result['wl_iteration'] = result_file.rsplit('.results.')[0].split('.')[-1]
+
+            parts = result_file.split('_')
+
+
+            # Co-Cccurrence
             if is_cooccurrence_dataset:
-                dataset_name = parts[-1].split('_')[0].split('.')[0]
                 result['words'] = parts[4]
                 result['window_size'] = parts[3]
-            # GML
+            # Concept Maps
             else:
-                dataset_name = parts[-1].split('.')[0]
                 result['words'] = 'concepts'
-            result['type'] = 'cooccurrence' if is_cooccurrence_dataset else 'concept-graph'
         else:
             result['type'] = 'text'
-            dataset_name = dataset.split('_')[1]
             result['words'] = ['all' for x in result['params']]
 
         result['classifier'] = [None] * len(result['params'])
@@ -85,8 +89,6 @@ def get_results(folder=None, use_already_loaded=True, results_directory=RESULTS_
             result['classifier'][idx] = type(param['clf']).__name__
             del param['clf']
         del result['param_clf']
-
-        dataset_name = dataset_name.replace('-single', '').replace('-ana', '').strip()
 
         if '-ana' in result_file:
             result['is_ana'] = True
@@ -99,6 +101,7 @@ def get_results(folder=None, use_already_loaded=True, results_directory=RESULTS_
 
         result_df = pd.DataFrame(result)
         _DF_ALL = result_df if _DF_ALL is None else _DF_ALL.append(result_df)
+        _DF_ALL = _DF_ALL.reset_index(drop = True)
 
     assert _DF_ALL is not None
     assert len(_DF_ALL)
