@@ -17,8 +17,12 @@ import collections
 primes_arguments_required = [2, 3, 7, 19, 53, 131, 311, 719, 1619, 3671, 8161, 17863, 38873, 84017, 180503, 386093, 821641, 1742537, 3681131, 7754077, 16290047, 34136029, 71378569, 148948139, 310248241, 645155197, 1339484197, 2777105129, 5750079047, 11891268401, 24563311309, 50685770167, 104484802057, 215187847711]
 
 
-def fast_wl_compute(graphs, h=1, label_lookups=None, label_counters=None, primes_arguments_required=primes_arguments_required, phi_dim = None, labels_dtype = np.uint32, used_matrix_type = lil_matrix):
+def transform(graphs, h=1, label_lookups=None, label_counters=None, primes_arguments_required=primes_arguments_required, phi_dim = None, labels_dtype = np.uint32, used_matrix_type = lil_matrix, round_signitures_to_decimals = 5):
 
+    """
+
+    :rtype:
+    """
     assert isinstance(graphs, list)
     assert len(graphs)
     assert isinstance(h, int)
@@ -65,8 +69,10 @@ def fast_wl_compute(graphs, h=1, label_lookups=None, label_counters=None, primes
         # ... use previous label counters/lookups, if given
         label_lookup = label_lookups[i + 1]
         label_counter = label_counters[i + 1]
+
         assert isinstance(label_counter, int)
         assert isinstance(label_lookup, dict)
+
         phi = used_matrix_type(phi_shape, dtype=np.uint8)
         # ... go over all graphs
         for idx, (labels, adjacency_matrix) in enumerate(zip(graph_labels, adjacency_matrices)):
@@ -75,15 +81,19 @@ def fast_wl_compute(graphs, h=1, label_lookups=None, label_counters=None, primes
             adjacency_matrix[adjacency_matrix.nonzero()] = 1
 
             # ... generate the signatures (see paper) for each graph
-            signatures = np.round((labels + adjacency_matrix * log_primes[labels]), decimals=10).astype(np.uint32)
+            signatures = np.round((labels + adjacency_matrix * log_primes[labels]), decimals= round_signitures_to_decimals)
+
             # ... add missing signatures to the label lookup
             for signature in signatures:
                 if signature not in label_lookup:
                     label_lookup[signature] = label_counter
                     label_counter += 1
+
             # ... relabel the graphs with the new (compressed) labels
             new_labels = np.array([label_lookup[signature] for signature in signatures], dtype = labels_dtype)
             graph_labels[idx] = new_labels
+
+
             # ... increment the entries in phi by one, where a label is given
             if has_same_labels:
                 # Increment by one. Unfortunately you can not just use np.add.at(...) for duplicate indices to be accumulated
@@ -91,7 +101,7 @@ def fast_wl_compute(graphs, h=1, label_lookups=None, label_counters=None, primes
                 # new_label_indices: are the unique (!) indices in new_labels
                 # vals: are the number of occurrences of a index in new_labels
                 new_label_indices, vals = zip(*label_counter_.items())
-                phi[list(new_label_indices), 1] += np.matrix(list(vals), dtype = phi.dtype).T
+                phi[list(new_label_indices), idx] += np.matrix(list(vals), dtype = phi.dtype).T
             else:
                 # Set to one. This is way faster!
                 phi[new_labels, idx] = 1

@@ -27,7 +27,7 @@ def spgk(sp_g1, sp_g2, norm1, norm2):
         return kernel_value
 
 
-def build_kernel_matrix(graphs, depth):
+def transform(graphs, depth):
     sp = []
     norm = []
 

@@ -48,7 +48,7 @@ class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Tran
         if self.debug:
             print("FastWLGraphKernelTransformer.fit: Found empty graphs in training set: {}".format(empty_graph_counter))
 
-        phi_list, label_lookups, label_counters = fast_wl.fast_wl_compute(X, h=self.h)
+        phi_list, label_lookups, label_counters = fast_wl.transform(X, h=self.h)
 
         self.train_graph_count = len(X)
         self.all_nodes = graph_helper.get_all_node_labels(X, as_sorted_list=False)
@@ -70,7 +70,7 @@ class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Tran
                 if len(missing_nodes):
                     graph.remove_nodes_from(missing_nodes)
 
-        phi_list, label_lookups, label_counters = fast_wl.fast_wl_compute(
+        phi_list, label_lookups, label_counters = fast_wl.transform(
             X, h=self.h, label_lookups=self.label_lookups, label_counters=self.label_counters, phi_dim=self.phi_shape[0])
 
         self.label_lookups = label_lookups

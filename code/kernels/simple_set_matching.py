@@ -5,7 +5,7 @@ Similar to the "zero" iteration of WL? The phi feature maps per dot product and 
 import numpy as np
 
 
-def calculate_simple_set_matching_gram_matrix(graphs):
+def transform(graphs):
     K = np.eye(len(graphs))
 
     for i, graph_1 in enumerate(graphs):

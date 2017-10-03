@@ -111,7 +111,7 @@ def process_graph_cache_file(graph_cache_file, args):
         if not args.disable_simple_set_matching_kernel:
             simple_kernel_cache_file = graph_cache_file.replace('.npy', '.simple.gram.npy')
             if args.force or not os.path.exists(simple_kernel_cache_file):
-                K = simple_set_matching.calculate_simple_set_matching_gram_matrix(X_graphs)
+                K = simple_set_matching.transform(X_graphs)
                 with open(simple_kernel_cache_file, 'wb') as f:
                     pickle.dump((K, Y), f)
 
@@ -131,7 +131,7 @@ def process_graph_cache_file(graph_cache_file, args):
                         if len(self_loop_edges):
                             x.remove_edges_from(self_loop_edges)
 
-                    K = spgk.build_kernel_matrix(X_new, depth=depth)
+                    K = spgk.transform(X_new, depth=depth)
                     with open(spgk_graph_cache_file, 'wb') as f:
                         pickle.dump((K, Y), f)
     except Exception as e:

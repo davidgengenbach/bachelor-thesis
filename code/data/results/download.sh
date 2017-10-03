@@ -2,10 +2,9 @@
 
 KEEP_OLD="$1"
 
-
 SERVER='ba'
 
-LAST_FOLDER=$(find . -type d -depth 1 -name '2017*' | sort -r | head -n1 | cut -c3-)
+LAST_FOLDER=$(find . -depth 1 -type d -name '2017*' | sort -r | head -n1 | cut -c3-)
 
 FOLDER_NAME="$(date "+%Y-%m-%d_%H-%M")"
 
@@ -24,5 +23,14 @@ fi
 echo "rsyncing remote server"
 ssh $SERVER sh get_results.sh > /dev/null 2>&1
 
-rsync -avz $SERVER:results/ $FOLDER_NAME/
+if [ -z "$KEEP_OLD" ]; then
+    DELETE_OPTIONS=''
+else
+    DELETE_OPTIONS='--delete'
+fi
+
+set -x
+
+
+rsync -avz $SERVER:results/ $FOLDER_NAME/ $DELETE_OPTIONS
 

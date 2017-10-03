@@ -7,3 +7,5 @@ code/code.sublime-*
 code/data/*.bin
 code/tmp/
 other/unused
+.idea/
+.cache/
