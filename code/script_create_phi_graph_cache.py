@@ -28,6 +28,7 @@ def get_args():
     parser.add_argument('--disable_wl', action='store_true')
     parser.add_argument('--disable_spgk', action='store_true')
     parser.add_argument('--disable_simple_set_matching_kernel', action='store_true')
+    parser.add_argument('--disable_relabeling', action='store_true')
     parser.add_argument('--limit_dataset', nargs='+', type=str, default=['ng20', 'ling-spam', 'reuters-21578', 'webkb'], dest='limit_dataset')
     parser.add_argument('--spgk_depth', nargs='+', type=int, default=[1])
     parser.add_argument('--lookup_path', type=str, default='data/embeddings/graph-embeddings')
@@ -83,25 +84,26 @@ def process_graph_cache_file(graph_cache_file, args):
                     pickle.dump((fast_wl_trans.phi_list, Y), f)
 
             # With relabeling
-            for label_lookup_file in label_lookup_files:
-                threshold = '.'.join(label_lookup_file.split('threshold-')[1].split('.')[:2])
-                topn = label_lookup_file.split('topn-')[1].split('.')[0]
+            if not args.disable_relabeling:
+                for label_lookup_file in label_lookup_files:
+                    threshold = '.'.join(label_lookup_file.split('threshold-')[1].split('.')[:2])
+                    topn = label_lookup_file.split('topn-')[1].split('.')[0]
 
-                phi_graph_relabeled_cache_file = phi_graph_cache_file.replace(dataset, 'relabeled_threshold_topn-{}_threshold-{}_{}'.format(topn, threshold, dataset))
+                    phi_graph_relabeled_cache_file = phi_graph_cache_file.replace(dataset, 'relabeled_threshold_topn-{}_threshold-{}_{}'.format(topn, threshold, dataset))
 
-                if args.force or not os.path.exists(phi_graph_relabeled_cache_file):
-                    with open(label_lookup_file, 'rb') as f:
-                        label_lookup = pickle.load(f)
+                    if args.force or not os.path.exists(phi_graph_relabeled_cache_file):
+                        with open(label_lookup_file, 'rb') as f:
+                            label_lookup = pickle.load(f)
 
-                    relabel_trans = RelabelGraphsTransformer(label_lookup)
+                        relabel_trans = RelabelGraphsTransformer(label_lookup)
 
-                    X = relabel_trans.transform(X)
-                    X = [coreference.fix_duplicate_label_graph(*x) for x in X]
+                        X = relabel_trans.transform(X)
+                        X = [coreference.fix_duplicate_label_graph(*x) for x in X]
 
-                    fast_wl_trans.fit(X)
+                        fast_wl_trans.fit(X)
 
-                    with open(phi_graph_relabeled_cache_file, 'wb') as f:
-                        pickle.dump((fast_wl_trans.phi_list, Y), f)
+                        with open(phi_graph_relabeled_cache_file, 'wb') as f:
+                            pickle.dump((fast_wl_trans.phi_list, Y), f)
 
         if not args.disable_simple_set_matching_kernel:
             simple_kernel_cache_file = graph_cache_file.replace('.npy', '.simple.gram.npy')

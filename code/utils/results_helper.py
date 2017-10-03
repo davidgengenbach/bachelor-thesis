@@ -10,7 +10,7 @@ _DF_ALL = None
 
 RESULTS_DIR = 'data/results'
 
-def get_results(folder=None, use_already_loaded=True, results_directory=RESULTS_DIR, log_progress=True, exclude_filter = None):
+def get_results(folder=None, use_already_loaded=True, results_directory=RESULTS_DIR, log_progress=True, exclude_filter = None, filter_out_non_complete_datasets = False):
     global _DF_ALL, _RESULT_CACHE
 
     if not use_already_loaded:
@@ -103,7 +103,12 @@ def get_results(folder=None, use_already_loaded=True, results_directory=RESULTS_
     assert len(_DF_ALL)
 
     # Only keep datasets where there are all three types (text, co-occurence and concept-graph) of results
-    df_all = _DF_ALL.groupby('dataset').filter(lambda x: len(x.type.value_counts()) == 3).reset_index(drop=True)
+
+    if filter_out_non_complete_datasets:
+        df_all = _DF_ALL.groupby('dataset').filter(lambda x: len(x.type.value_counts()) == 3).reset_index(drop=True)
+    else:
+        df_all = _DF_ALL
+
     return df_all
 
 
