@@ -26,6 +26,7 @@ def transform(
         phi_dtype: np.dtype = np.uint32,
         used_matrix_type: scipy.sparse.spmatrix = dok_matrix,
         round_signatures_to_decimals: int = 10,
+        cast_after_rounding: bool = False
     ) -> tuple:
 
     assert len(graphs)
@@ -90,7 +91,10 @@ def transform(
 
 
             # ... generate the signatures (see paper) for each graph
-            signatures = np.round((labels + adjacency_matrix * log_primes[labels]), decimals= round_signatures_to_decimals).astype(labels_dtype)
+            signatures = np.round((labels + adjacency_matrix * log_primes[labels]), decimals= round_signatures_to_decimals)
+
+            if cast_after_rounding:
+                signatures = signatures.astype(labels_dtype)
 
             # ... add missing signatures to the label lookup
             for signature in signatures:

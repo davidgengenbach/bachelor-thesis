@@ -18,10 +18,11 @@ class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Tran
         train_graph_count (int): how many graphs have been seen in the fit stage
     """
 
-    def __init__(self, h=1, remove_missing_labels=True, debug=False):
+    def __init__(self, h=1, remove_missing_labels=True, debug=False, should_cast = False):
         self.remove_missing_labels = remove_missing_labels
         self.h = h
         self.debug = debug
+        self.should_cast = should_cast
 
     def fit(self, X, y=None, **fit_params):
         """Initializes the list of node labels.
@@ -48,7 +49,7 @@ class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Tran
         if self.debug:
             print("FastWLGraphKernelTransformer.fit: Found empty graphs in training set: {}".format(empty_graph_counter))
 
-        phi_list, label_lookups, label_counters = fast_wl.transform(X, h=self.h)
+        phi_list, label_lookups, label_counters = fast_wl.transform(X, h=self.h, cast_after_rounding=self.should_cast)
 
         self.train_graph_count = len(X)
         self.all_nodes = graph_helper.get_all_node_labels(X, as_sorted_list=False)
@@ -71,7 +72,7 @@ class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Tran
                     graph.remove_nodes_from(missing_nodes)
 
         phi_list, label_lookups, label_counters = fast_wl.transform(
-            X, h=self.h, label_lookups=self.label_lookups, label_counters=self.label_counters, phi_dim=self.phi_shape[0])
+            X, h=self.h, label_lookups=self.label_lookups, label_counters=self.label_counters, phi_dim=self.phi_shape[0], cast_after_rounding=self.should_cast)
 
         self.label_lookups = label_lookups
         self.label_counters = label_counters

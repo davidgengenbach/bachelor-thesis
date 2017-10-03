@@ -71,10 +71,16 @@ def process_graph_cache_file(graph_cache_file, args):
         if not args.disable_wl:
             X = tuple_trans.transform(np.copy(X_graphs))
             # Without relabeling
-            if args.force or not os.path.exists(phi_graph_cache_file):
-                fast_wl_trans.fit(X)
-                with open(phi_graph_cache_file, 'wb') as f:
-                    pickle.dump((fast_wl_trans.phi_list, Y), f)
+            for should_cast in [True, False]:
+                used_phi_graph_cache_file = phi_graph_cache_file
+
+                if should_cast:
+                    used_phi_graph_cache_file = phi_graph_cache_file.replace('.phi.', '.casted.phi.')
+
+                if args.force or not os.path.exists(used_phi_graph_cache_file ):
+                    fast_wl_trans.fit(X)
+                    with open(used_phi_graph_cache_file , 'wb') as f:
+                        pickle.dump((fast_wl_trans.phi_list, Y), f)
 
             # All nodes get same label
             if args.force or not os.path.exists(phi_same_label_graph_cache_file):

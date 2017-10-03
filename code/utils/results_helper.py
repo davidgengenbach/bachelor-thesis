@@ -10,7 +10,7 @@ _DF_ALL = None
 
 RESULTS_DIR = 'data/results'
 
-def get_results(folder=None, use_already_loaded=True, results_directory=RESULTS_DIR, log_progress=True, exclude_filter = None, filter_out_non_complete_datasets = False):
+def get_results(folder=None, use_already_loaded=True, results_directory=RESULTS_DIR, log_progress=True, exclude_filter = None, filter_out_non_complete_datasets = True):
     global _DF_ALL, _RESULT_CACHE
 
     if not use_already_loaded:
@@ -65,6 +65,7 @@ def get_results(folder=None, use_already_loaded=True, results_directory=RESULTS_
             if result['kernel'] == 'wl':
                 result['wl_iteration'] = dataset.split('.')[-1]
             parts = dataset.split('_')
+
             if is_cooccurrence_dataset:
                 dataset_name = parts[-1].split('_')[0].split('.')[0]
                 result['words'] = parts[4]
