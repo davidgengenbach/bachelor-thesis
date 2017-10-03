@@ -24,7 +24,7 @@ from transformers.tuple_selector import TupleSelector
 from utils import dataset_helper
 from utils.logger import LOGGER
 from utils.remove_coefs_from_results import remove_coefs_from_results
-
+from utils import filter_utils
 
 def get_args():
     import argparse
@@ -140,7 +140,7 @@ def main():
     if args.check_texts:
         LOGGER.info('{:<10} - Starting'.format('Text'))
         for dataset_name in dataset_helper.get_all_available_dataset_names():
-            if not file_should_be_processed(None, dataset_name, None, None, args.limit_dataset):
+            if not filter_utils.file_should_be_processed(None, None, None, dataset_name, args.limit_dataset):
                 continue
 
             result_file = '{}/text_{}.results.npy'.format(RESULTS_FOLDER, dataset_name)
@@ -175,7 +175,7 @@ def main():
         for cache_file in dataset_helper.get_all_cached_graph_phi_datasets():
             dataset = dataset_helper.get_dataset_name_from_graph_cachefile(cache_file)
 
-            if not file_should_be_processed(cache_file, dataset, args.include_graphs, args.exclude_graphs, args.limit_dataset):
+            if not filter_utils.file_should_be_processed(cache_file, args.include_graphs, args.exclude_graphs, dataset, args.limit_dataset):
                 continue
 
             graph_dataset_cache_file = cache_file.split('/')[-1]
@@ -249,7 +249,7 @@ def main():
 
             for graph_dataset_cache_file in dataset_helper.get_all_cached_graph_phi_datasets(dataset_name):
 
-                if not file_should_be_processed(graph_dataset_cache_file, dataset_name, args.include_graphs, args.exclude_graphs, args.limit_dataset):
+                if not filter_utils.file_should_be_processed(graph_dataset_cache_file, args.include_graphs, args.exclude_graphs, dataset_name, args.limit_dataset):
                     continue
 
                 graph_dataset_cache_filename = graph_dataset_cache_file.split('/')[-1]

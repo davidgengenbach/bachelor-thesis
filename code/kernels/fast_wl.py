@@ -87,10 +87,10 @@ def fast_wl_compute(graphs, h=1, label_lookups=None, label_counters=None, primes
             # ... increment the entries in phi by one, where a label is given
             if has_same_labels:
                 # Increment by one. Unfortunately you can not just use np.add.at(...) for duplicate indices to be accumulated
-                label_counter = collections.Counter(new_labels)
+                label_counter_ = collections.Counter(new_labels)
                 # new_label_indices: are the unique (!) indices in new_labels
                 # vals: are the number of occurrences of a index in new_labels
-                new_label_indices, vals = zip(*label_counter.items())
+                new_label_indices, vals = zip(*label_counter_.items())
                 phi[list(new_label_indices), 1] += np.matrix(list(vals), dtype = phi.dtype).T
             else:
                 # Set to one. This is way faster!

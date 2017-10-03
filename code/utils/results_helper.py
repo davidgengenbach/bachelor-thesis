@@ -10,7 +10,7 @@ _DF_ALL = None
 
 RESULTS_DIR = 'data/results'
 
-def get_results(folder=None, use_already_loaded=True, results_directory=RESULTS_DIR, log_progress=True):
+def get_results(folder=None, use_already_loaded=True, results_directory=RESULTS_DIR, log_progress=True, exclude_filter = None):
     global _DF_ALL, _RESULT_CACHE
 
     if not use_already_loaded:
@@ -27,6 +27,7 @@ def get_results(folder=None, use_already_loaded=True, results_directory=RESULTS_
     result_files = get_result_filenames_from_folder(folder)
 
     for result_file in helper.log_progress(result_files) if log_progress else result_files:
+        if exclude_filter and exclude_filter in result_file: continue
         filename = result_file.split('/')[-1]
         if filename in _RESULT_CACHE:
             cache_counter['cached'] += 1
