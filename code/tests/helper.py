@@ -1,7 +1,6 @@
 import networkx as nx
 from transformers.nx_graph_to_tuple_transformer import NxGraphToTupleTransformer
 
-
 tuple_trans = NxGraphToTupleTransformer()
 
 def get_random_test_graph(num_nodes=5, seed=42):

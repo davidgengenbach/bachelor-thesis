@@ -4,7 +4,6 @@ from spacy.tokens.doc import Doc
 from scipy.sparse import lil_matrix
 from nltk.tokenize import word_tokenize
 import networkx as nx
-import collections
 
 
 def words_to_dict(words, remove_point=True):

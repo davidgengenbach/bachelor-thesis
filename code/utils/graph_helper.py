@@ -1,19 +1,10 @@
-import logging
-import os
 from glob import glob
-
 import networkx as nx
-import numpy as np
-import pandas as pd
-import sklearn
-import spacy
 from joblib import Parallel, delayed
 from scipy.sparse import lil_matrix
-from sklearn.base import TransformerMixin
 
-from kernels import wl
 from preprocessing import preprocessing
-from utils import dataset_helper, cooccurrence
+from utils import cooccurrence
 
 
 def add_shortest_path_edges(graph, cutoff=2):
@@ -76,14 +67,6 @@ def convert_from_numpy_to_nx(word2id, id2word, mat):
     graph = nx.from_numpy_matrix(mat.toarray())
     nx.relabel_nodes(graph, mapping=id2word, copy=False)
     return graph
-
-
-def get_graph_stats(X, Y):
-    graphs_per_topic = dataset_helper.get_dataset_dict(X, Y)
-    df_graphs_per_topic = pd.DataFrame([(topic, len(graphs), [len(x.nodes()) for x in graphs], [len(x.edges()) for x in graphs]) for topic, graphs in graphs_per_topic.items()], columns=['topic', 'num_graphs', 'num_nodes', 'num_edges']).set_index(['topic']).sort_values(by='num_graphs')
-    df_graphs_per_topic['avg_nodes'] = df_graphs_per_topic.num_nodes.apply(lambda x: np.mean(x))
-    df_graphs_per_topic['avg_edges'] = df_graphs_per_topic.num_edges.apply(lambda x: np.mean(x))
-    return df_graphs_per_topic
 
 
 def get_graphs_from_folder(folder, ext='gml', undirected=True, verbose=False):

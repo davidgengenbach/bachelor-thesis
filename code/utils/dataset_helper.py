@@ -11,7 +11,7 @@ from joblib import Parallel, delayed
 from sklearn.model_selection import train_test_split
 from sklearn.utils import shuffle
 
-from utils import graph_helper
+
 
 DATASETS_LIMITED = ['ng20', 'reuters-21578', 'webkb', 'ling-spam']
 
@@ -163,6 +163,8 @@ def get_gml_graph_dataset(dataset_name, use_cached=True, graphs_folder=GRAPHS_FO
     Returns:
         tuple(list, list): X and Y
     """
+    from utils import graph_helper
+
     graph_folder = os.path.join(graphs_folder, dataset_name)
     cache_npy = os.path.join(CACHE_PATH, 'dataset_graph_gml_{}.npy'.format(dataset_name))
 

@@ -1,5 +1,4 @@
 import unittest
-import helper
 from utils import filter_utils
 from utils import dataset_helper
 
@@ -23,8 +22,6 @@ class FilterUtilsTest(unittest.TestCase):
 
     def test(self):
         for filename, tests in TEST_FILENAMES:
-            dataset = dataset_helper.get_dataset_name_from_graph_cachefile(filename)
-
             for (include_filter, exclude_filter, limit_dataset), expected in tests:
-                result = filter_utils.file_should_be_processed(filename, include_filter, exclude_filter, dataset, limit_dataset)
+                result = filter_utils.file_should_be_processed(filename, include_filter, exclude_filter, limit_dataset)
                 assert result == expected

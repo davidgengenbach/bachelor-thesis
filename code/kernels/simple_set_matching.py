@@ -3,6 +3,8 @@
 Similar to the "zero" iteration of WL? The phi feature maps per dot product and then normed by the total number of non-zero entries in phi?
 """
 import numpy as np
+import networkx as nx
+import collections
 
 
 def transform(graphs):
@@ -18,11 +20,11 @@ def transform(graphs):
     return K
 
 
-def simple_set_matching_kernel_for_nx_graphs(g1, g2):
+def simple_set_matching_kernel_for_nx_graphs(g1: nx.Graph, g2: nx.Graph):
     return simple_set_matching_kernel(g1.nodes(), g2.nodes())
 
 
-def simple_set_matching_kernel(labels_1, labels_2):
+def simple_set_matching_kernel(labels_1: collections.abc.Iterable, labels_2: collections.abc.Iterable):
     labels_1, labels_2 = set(labels_1), set(labels_2)
     num_labels = len(labels_1 | labels_2)
     

@@ -1,10 +1,6 @@
-import re
-import nltk
 from nltk import word_tokenize
 from nltk.corpus import stopwords
-import string
-from time import time
-import spacy
+
 import re
 
 ALPHA_NUM_REGEX = re.compile(r'[^a-zA-Z0-9 \.]')
@@ -15,6 +11,7 @@ NONBREAKING_SPACE_REGEX = re.compile(r'(?!\n)\s+')
 nlp = None
 
 def init_spacy():
+    import spacy
     global nlp
     if nlp: return
     nlp = spacy.load('en')

@@ -16,10 +16,6 @@ from sklearn.linear_model import Perceptron
 from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import Pipeline
 
-from transformers.fast_wl_graph_kernel_transformer import FastWLGraphKernelTransformer
-from transformers.phi_picker_transformer import PhiPickerTransformer
-from transformers.preprocessing_transformer import PreProcessingTransformer
-from transformers.wl_graph_kernel_transformer import WLGraphKernelTransformer
 from transformers.tuple_selector import TupleSelector
 from utils import dataset_helper
 from utils.logger import LOGGER
@@ -89,10 +85,10 @@ def main():
 
     clfs = [
         sklearn.dummy.DummyClassifier(strategy='most_frequent'),
+        sklearn.naive_bayes.MultinomialNB(),
         sklearn.svm.LinearSVC(class_weight='balanced', max_iter=args.max_iter, tol=args.tol),
         sklearn.linear_model.PassiveAggressiveClassifier(class_weight='balanced', max_iter=args.max_iter, tol=args.tol)
-        #sklearn.naive_bayes.MultinomialNB(),
-        # sklearn.naive_bayes.GaussianNB(),
+        #sklearn.naive_bayes.GaussianNB(),
         #sklearn.svm.SVC(max_iter = args.max_iter, tol=args.tol),
         #sklearn.linear_model.Perceptron(class_weight='balanced', max_iter=args.max_iter, tol=args.tol),
         #sklearn.linear_model.LogisticRegression(class_weight = 'balanced', max_iter=args.max_iter, tol=args.tol),
@@ -140,7 +136,7 @@ def main():
     if args.check_texts:
         LOGGER.info('{:<10} - Starting'.format('Text'))
         for dataset_name in dataset_helper.get_all_available_dataset_names():
-            if not filter_utils.file_should_be_processed(None, None, None, dataset_name, args.limit_dataset):
+            if not filter_utils.file_should_be_processed(dataset_name, None, None, args.limit_dataset):
                 continue
 
             result_file = '{}/text_{}.results.npy'.format(RESULTS_FOLDER, dataset_name)
@@ -175,10 +171,12 @@ def main():
         for cache_file in dataset_helper.get_all_cached_graph_phi_datasets():
             dataset = dataset_helper.get_dataset_name_from_graph_cachefile(cache_file)
 
-            if not filter_utils.file_should_be_processed(cache_file, args.include_graphs, args.exclude_graphs, dataset, args.limit_dataset):
+            if not filter_utils.file_should_be_processed(cache_file, args.include_graphs, args.exclude_graphs,  args.limit_dataset):
                 continue
 
             graph_dataset_cache_file = cache_file.split('/')[-1]
+
+            LOGGER.info('{:<10} - {:<15}'.format('Graph', graph_dataset_cache_file))
 
             X_all, Y = dataset_helper.get_dataset_cached(cache_file, check_validity=False)
 
@@ -207,15 +205,11 @@ def main():
                 )
 
                 try:
-                    LOGGER.info('{:<10} - {:<15} - Classifying for h={}, fitting'.format('Graph', graph_dataset_cache_file, h))
+
                     cross_validate(X, Y, estimator, param_grid, result_file, predictions_file, args.create_predictions)
                 except Exception as e:
-                    LOGGER.warning(
-                        '{:<10} - {:<15} - Error h={}'.format('Graph', graph_dataset_cache_file, h))
+                    LOGGER.warning('{:<10} - {:<15} - Error h={}'.format('Graph', graph_dataset_cache_file, h))
                     LOGGER.exception(e)
-
-                LOGGER.info(
-                    '{:<10} - {:<15} - Finished for h={}'.format('Graph', graph_dataset_cache_file, h))
 
     if args.check_gram:
         LOGGER.info('{:<10} - Starting'.format('Graph gram'))
@@ -224,6 +218,11 @@ def main():
             gram_cache_filename = gram_cache_file.split('/')[-1]
             result_file = '{}/{}.results.npy'.format(RESULTS_FOLDER, gram_cache_filename)
             predictions_file = '{}/{}.npy'.format(PREDICTIONS_FOLDER, gram_cache_filename)
+
+            if not filter_utils.file_should_be_processed(gram_cache_filename, args.include_graphs, args.exclude_graphs, args.limit_dataset):
+                continue
+
+            # LOGGER.info('{:<10} - {:<15} - Classifying spgk, fitting'.format('Graph', gram_cache_filename))
 
             with open(gram_cache_file, 'rb') as f:
                 K, Y = pickle.load(f)
@@ -235,7 +234,6 @@ def main():
             )
 
             try:
-                LOGGER.info('{:<10} - {:<15} - Classifying spgk, fitting'.format('Graph', gram_cache_filename))
                 cross_validate(K, Y, estimator, param_grid, result_file, predictions_file, args.create_predictions)
             except Exception as e:
                 LOGGER.warning(

@@ -4,28 +4,31 @@ Ported from the MATLAB version: https://github.com/rmgarnett/fast_wl
 Attributes:
     primes_arguments_required (list):
 """
-import networkx as nx
-import sympy
 import numpy as np
-from scipy.sparse import bsr_matrix, coo_matrix, csc_matrix, csr_matrix, dia_matrix, dok_matrix, lil_matrix
-from collections import defaultdict
+import scipy
+from scipy.sparse import lil_matrix, dok_matrix
 from utils import primes
 import collections
-
+import typing
 
 # https://oeis.org/A033844
-primes_arguments_required = [2, 3, 7, 19, 53, 131, 311, 719, 1619, 3671, 8161, 17863, 38873, 84017, 180503, 386093, 821641, 1742537, 3681131, 7754077, 16290047, 34136029, 71378569, 148948139, 310248241, 645155197, 1339484197, 2777105129, 5750079047, 11891268401, 24563311309, 50685770167, 104484802057, 215187847711]
+primes_arguments_required_ = [2, 3, 7, 19, 53, 131, 311, 719, 1619, 3671, 8161, 17863, 38873, 84017, 180503, 386093, 821641, 1742537, 3681131, 7754077, 16290047, 34136029, 71378569, 148948139, 310248241, 645155197, 1339484197, 2777105129, 5750079047, 11891268401, 24563311309, 50685770167, 104484802057, 215187847711]
 
 
-def transform(graphs, h=1, label_lookups=None, label_counters=None, primes_arguments_required=primes_arguments_required, phi_dim = None, labels_dtype = np.uint32, used_matrix_type = lil_matrix, round_signitures_to_decimals = 5):
+def transform(
+        graphs: typing.List[typing.Tuple[scipy.sparse.spmatrix, typing.Iterable]],
+        h: int = 1,
+        label_lookups: typing.List[typing.Dict] = None,
+        label_counters: typing.List[int] = None,
+        primes_arguments_required: typing.List[int] = primes_arguments_required_,
+        phi_dim: typing.Tuple = None,
+        labels_dtype: np.dtype = np.uint32,
+        phi_dtype: np.dtype = np.uint32,
+        used_matrix_type: scipy.sparse.spmatrix = dok_matrix,
+        round_signatures_to_decimals: int = 10,
+    ) -> tuple:
 
-    """
-
-    :rtype:
-    """
-    assert isinstance(graphs, list)
     assert len(graphs)
-    assert isinstance(h, int)
 
     # If no previous label counters/lookups are given, create empty ones
     if not label_lookups:
@@ -34,6 +37,13 @@ def transform(graphs, h=1, label_lookups=None, label_counters=None, primes_argum
         label_counters = [0] * (h + 1)
 
     adjacency_matrices = [adjs for adjs, nodes in graphs]
+
+    # Remove weight information (not needed for this WL kernel)
+    for idx, adj in enumerate(adjacency_matrices):
+        adj = adj.tocsr()
+        adj.data = np.where(adj.data > 1, 0, 1)
+        adjacency_matrices[idx] = adj
+        #adj[adj.nonzero()] = 1
 
     # Relabel the graphs, mapping the string labels to unique IDs (ints)
     label_lookup, label_counter, graph_labels = relabel_graphs(graphs, label_counter = label_counters[0], label_lookup = label_lookups[0], labels_dtype = labels_dtype)
@@ -58,11 +68,11 @@ def transform(graphs, h=1, label_lookups=None, label_counters=None, primes_argum
     phi_shape = (phi_dim, num_graphs)
 
     # Just count the labels in the 0-th iteration. This corresponds to the graph_labels, but indexed correctly into phi
-    phi = used_matrix_type(phi_shape, dtype=np.uint8)
+    phi = used_matrix_type(phi_shape, dtype=phi_dtype)
     for idx, labels in enumerate(graph_labels):
         phi[labels, idx] = 1
 
-    phi_lists = [phi]
+    phi_lists = [phi.tolil()]
 
     # For the number of iterations h...
     for i in range(h):
@@ -73,15 +83,14 @@ def transform(graphs, h=1, label_lookups=None, label_counters=None, primes_argum
         assert isinstance(label_counter, int)
         assert isinstance(label_lookup, dict)
 
-        phi = used_matrix_type(phi_shape, dtype=np.uint8)
+        phi = used_matrix_type(phi_shape, dtype=phi_dtype)
         # ... go over all graphs
         for idx, (labels, adjacency_matrix) in enumerate(zip(graph_labels, adjacency_matrices)):
             has_same_labels = len(set(labels)) != len(labels)
-            # ... remove weight information (not needed for WL)
-            adjacency_matrix[adjacency_matrix.nonzero()] = 1
+
 
             # ... generate the signatures (see paper) for each graph
-            signatures = np.round((labels + adjacency_matrix * log_primes[labels]), decimals= round_signitures_to_decimals)
+            signatures = np.round((labels + adjacency_matrix * log_primes[labels]), decimals= round_signatures_to_decimals)#.astype(labels_dtype)
 
             # ... add missing signatures to the label lookup
             for signature in signatures:
@@ -92,7 +101,6 @@ def transform(graphs, h=1, label_lookups=None, label_counters=None, primes_argum
             # ... relabel the graphs with the new (compressed) labels
             new_labels = np.array([label_lookup[signature] for signature in signatures], dtype = labels_dtype)
             graph_labels[idx] = new_labels
-
 
             # ... increment the entries in phi by one, where a label is given
             if has_same_labels:
@@ -106,7 +114,7 @@ def transform(graphs, h=1, label_lookups=None, label_counters=None, primes_argum
                 # Set to one. This is way faster!
                 phi[new_labels, idx] = 1
         # ... save phi
-        phi_lists.append(phi)
+        phi_lists.append(phi.tolil())
         # ... save label counters/lookups for later use
         new_label_counters.append(label_counter)
         new_label_lookups.append(label_lookup)
@@ -114,7 +122,7 @@ def transform(graphs, h=1, label_lookups=None, label_counters=None, primes_argum
     return phi_lists, new_label_lookups, new_label_counters
 
 
-def relabel_graphs(graphs, label_counter = 0, label_lookup={}, labels_dtype = np.uint32, append = True):
+def relabel_graphs(graphs: collections.abc.Iterable, label_counter: int = 0, label_lookup: dict = {}, labels_dtype: np.dtype = np.uint32, append: bool = True):
     assert isinstance(label_counter, int)
     assert isinstance(label_lookup, dict)
 

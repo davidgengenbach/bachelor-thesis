@@ -17,6 +17,7 @@ class FastWLTest(unittest.TestCase):
             for (adj, labels), row in zip(self.graphs, phi):
                 self.assertEqual(len(row.nonzero()[0]), len(labels))
 
+
     def test_same_label_per_graph(self):
         graphs = helper.get_complete_graphs(num_graphs=NUM_GRAPHS, as_tuples=True)
 

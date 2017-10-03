@@ -1,4 +1,6 @@
-def file_should_be_processed(file, include_filter, exclude_filter, dataset,limit_dataset):
+from utils import filename_utils
+
+def file_should_be_processed(file : str, include_filter : str, exclude_filter : str, limit_dataset : list):
     """Returns true, if file is included AND not excluded AND in the limited datasets.
     
     Args:
@@ -11,6 +13,8 @@ def file_should_be_processed(file, include_filter, exclude_filter, dataset,limit
     Returns:
         bool: Whether the file should be processed
     """
+    dataset = filename_utils.get_dataset_from_filename(file)
+
     is_in_limited_datasets = (not limit_dataset or dataset in limit_dataset)
     is_included = (not include_filter or include_filter in file)
     is_excluded = (exclude_filter and exclude_filter in file)
