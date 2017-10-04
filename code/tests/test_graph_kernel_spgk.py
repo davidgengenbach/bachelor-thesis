@@ -29,9 +29,12 @@ class SPGKTest(unittest.TestCase):
         gram_matrix = spgk.transform(graphs, depth=DEPTH)
 
         for graph_idx, row in enumerate(gram_matrix):
+            row_max = max(row)
             for other_graph_ix, similarity in enumerate(row):
                 # If the compared graphs are the same, the score should be above 0
+                # and should be the highest for that graph (because no graph should be more similar than the same graph)
                 if graph_idx == other_graph_ix:
                     self.assertGreater(similarity, 0)
+                    self.assertEqual(similarity, row_max)
                 else:
                     self.assertEqual(similarity, 0)

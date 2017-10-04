@@ -14,3 +14,4 @@ spacy==1.9.0
 sympy==1.1
 pytest
 sklearn
+gitpython

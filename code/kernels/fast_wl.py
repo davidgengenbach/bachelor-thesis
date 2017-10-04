@@ -78,10 +78,11 @@ def transform(
         Returns:
 
         '''
+        # The labels are all unique, so just set the entry for the labels to 1
         if len(set(labels)) == len(labels):
             phi[labels, graph_idx] = 1
         else:
-            # Increment by one. Unfortunately you can not just use np.add.at(...) for duplicate indices to be accumulated
+            # There are duplicates in labels. Do a histogram of the labels. Unfortunately you can not just use np.add.at(...) for duplicate indices to be accumulated, since it does not work with sparse matrices
             label_counter_ = collections.Counter(labels)
             # new_label_indices: are the unique (!) indices in new_labels
             # vals: are the number of occurrences of a index in new_labels

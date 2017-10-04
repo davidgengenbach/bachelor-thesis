@@ -7,8 +7,21 @@ except:
 import numpy as np
 import itertools
 from glob import glob
+from utils import time_utils, git_utils
 
 DATASET_FOLDER = 'data/datasets'
+
+def print_script_args_and_info(args):
+    print('Starting:\n\t{}'.format(time_utils.get_time_formatted()))
+    print()
+
+    print('Git commit:\n\t{}'.format(git_utils.get_current_commit()))
+    print()
+
+    print('Arguments:\t')
+    for key, val in vars(args).items():
+        print('\t{:26} {}'.format(key, val))
+    print()
 
 
 def plot_confusion_matrix(cm,

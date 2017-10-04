@@ -5,3 +5,6 @@ def get_time_formatted():
 
 def get_timestamp():
     return datetime.datetime.now().timestamp()
+
+def seconds_to_human_readable(s):
+    return str(datetime.timedelta(seconds=s))
