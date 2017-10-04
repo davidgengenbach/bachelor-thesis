@@ -7,7 +7,11 @@ import pickle
 from glob import glob
 import tempfile
 import shutil
+import collections
+from time import time
 
+import numpy as np
+import pandas as pd
 import scipy
 import sklearn
 from scipy import sparse
@@ -20,6 +24,8 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import Pipeline
 
 
+
+from transformers import text_pipeline
 from transformers import fast_wl_pipeline
 from transformers.phi_picker_transformer import PhiPickerTransformer
 from transformers.fast_wl_graph_kernel_transformer import FastWLGraphKernelTransformer
@@ -52,6 +58,7 @@ def get_args():
     parser.add_argument('--tol', type=int, default=6e-4)
     parser.add_argument('--n_splits', type=int, default=3)
     parser.add_argument('--random_state', type=int, default=42)
+    parser.add_argument('--task_type_filter', type=str, nargs='+', default=None)
     parser.add_argument('--include_graphs', type=str, default=None)
     parser.add_argument('--exclude_graphs', type=str, default=None)
     parser.add_argument('--wl_round_to_decimal', nargs='+', type=int, default=[-1, 0, 1, 10])
@@ -86,6 +93,9 @@ def main():
     scoring = ['precision_macro', 'recall_macro', 'accuracy', 'f1_macro']
     refit = 'f1_macro'
 
+    tasks = []
+    Task = collections.namedtuple('Task', ['type', 'name', 'creates_file', 'process_fn'])
+
     RESULTS_FOLDER = 'data/results'
     PREDICTIONS_FOLDER = '{}/predictions'.format(RESULTS_FOLDER)
 
@@ -109,16 +119,14 @@ def main():
         #sklearn.linear_model.LogisticRegression(class_weight = 'balanced', max_iter=args.max_iter, tol=args.tol),
     ]
 
-    def cross_validate(X, Y, estimator, param_grid, result_file, predictions_file, create_predictions):
-        gc.collect()
-
+    def cross_validate(X, Y, estimator, param_grid, result_file, predictions_file):
         if not args.force and os.path.exists(result_file):
             return
 
         X_train, Y_train, X_test, Y_test = X, Y, [], []
 
         # Hold out validation set (15%)
-        if create_predictions:
+        if args.create_predictions:
             try:
                 X_train, X_test, Y_train, Y_test = sklearn.model_selection.train_test_split(X, Y, stratify=Y, test_size=0.15)
             except Exception as e:
@@ -129,21 +137,24 @@ def main():
 
         gscv_result = gscv.fit(X_train, Y_train)
 
-        if create_predictions:
-            try:
-                # Retrain the best classifier and get prediction on validation set
-                best_classifer = sklearn.base.clone(gscv_result.best_estimator_)
-                best_classifer.fit(X_train, Y_train)
-                Y_test_pred = best_classifer.predict(X_test)
+        if args.create_predictions:
+            if not len(X_test) or len(Y_test):
+                LOGGER.warning('Validation set for prediction has no length: len(X_test)={}'.format(len(X_test)))
+            else:
+                try:
+                    # Retrain the best classifier and get prediction on validation set
+                    best_classifer = sklearn.base.clone(gscv_result.best_estimator_)
+                    best_classifer.fit(X_train, Y_train)
+                    Y_test_pred = best_classifer.predict(X_test)
 
-                with open(predictions_file, 'wb') as f:
-                    pickle.dump({
-                        'Y_real': Y_test,
-                        'Y_pred': Y_test_pred
-                    }, f)
-            except Exception as e:
-                LOGGER.warning('Error while trying to retrain best classifier')
-                LOGGER.exception(e)
+                    with open(predictions_file, 'wb') as f:
+                        pickle.dump({
+                            'Y_real': Y_test,
+                            'Y_pred': Y_test_pred
+                        }, f)
+                except Exception as e:
+                    LOGGER.warning('Error while trying to retrain best classifier')
+                    LOGGER.exception(e)
 
         if args.remove_coefs:
             remove_coefs_from_results(gscv_result.cv_results_)
@@ -152,7 +163,6 @@ def main():
             pickle.dump(gscv_result.cv_results_, f)
 
     if args.check_texts:
-        LOGGER.info('{:<10} - Starting'.format('Text'))
         for dataset_name in dataset_helper.get_all_available_dataset_names():
             if not filter_utils.file_should_be_processed(dataset_name, None, None, args.limit_dataset):
                 continue
@@ -160,71 +170,92 @@ def main():
             result_file = '{}/text_{}.results.npy'.format(RESULTS_FOLDER, dataset_name)
             predictions_file = '{}/text_{}.npy'.format(PREDICTIONS_FOLDER, dataset_name)
 
-            if not args.force and os.path.exists(result_file):
-                continue
+            def process():
+                X, Y = dataset_helper.get_dataset(dataset_name)
+                param_grid = dict(text_pipeline.get_param_grid(), **dict(clf=clfs))
+                cross_validate(X, Y, text_pipeline.get_pipeline(), param_grid, result_file, predictions_file)
 
-            LOGGER.info('{:<10} - {:<15} - Starting'.format('Text', dataset_name))
-            X, Y = dataset_helper.get_dataset(dataset_name, use_cached=True)
+            tasks.append(Task(type = 'text', name = dataset_name, creates_file = [result_file], process_fn = process))
 
-            estimator = Pipeline([
-                ('preprocessing', None),
-                ('TfidfTransformer', sklearn.feature_extraction.text.TfidfVectorizer(
-                    stop_words='english')),
-                ('scaler', None),
-                ('clf', None)
-            ])
+    graph_fast_wl_classification_pipeline = sklearn.pipeline.Pipeline([
+        ('feature_extraction', fast_wl_pipeline.get_pipeline()),
+        ('classifier', None)
+    ])
 
-            param_grid = dict(
-                #preprocessing= [None, PreProcessingTransformer(only_nouns=True, return_lemma = True)],
-                #scaler = [None, sklearn.preprocessing.StandardScaler(with_mean = False)]
-                clf=clfs
-            )
+    graph_fast_wl_grid_params = {
+        'fast_wl__h': args.wl_iterations,
+        'fast_wl__phi_dim': [None],
+        'fast_wl__round_to_decimals': args.wl_round_to_decimal,
+        'phi_picker__return_iteration': [0, 1, 2, 3]
+    }
 
-            cross_validate(X, Y, estimator, param_grid, result_file, predictions_file, args.create_predictions)
-
-            LOGGER.info('{:<10} - {:<15} - Finished'.format('Text', dataset_name))
-
-    if args.check_graphs_scratch:
-
-        fast_wl_classification_pipeline = sklearn.pipeline.Pipeline([
-            ('feature_extraction', fast_wl_pipeline.get_pipeline()),
-            ('classifier', None)
-        ])
-
-        graph_fast_wl_grid_params = {
-            'classifier': clfs,
-            'feature_extraction__fast_wl__h': args.wl_iterations,
-            'feature_extraction__fast_wl__phi_dim': [None],
-            'feature_extraction__fast_wl__round_to_decimals': args.wl_round_to_decimal,
-            'feature_extraction__phi_picker__return_iteration': [0, 1, 2, 3]
-        }
-
+    if args.check_graphs_scratch or args.check_combined:
         for graph_cache_file in dataset_helper.get_all_cached_graph_datasets():
             dataset = filename_utils.get_dataset_from_filename(graph_cache_file)
-            if not filter_utils.file_should_be_processed(graph_cache_file, args.include_graphs, args.exclude_graphs,  args.limit_dataset):
-                continue
 
             filename = graph_cache_file.split('/')[-1]
             result_file = '{}/{}.fast_wl.results.npy'.format(RESULTS_FOLDER, filename)
             predictions_file = '{}/{}.fast_wl.predictions.npy'.format(PREDICTIONS_FOLDER, filename)
 
-            X, Y = dataset_helper.get_dataset_cached(graph_cache_file)
+            result_file_combined = '{}/{}.fast_wl.combined.results.npy'.format(RESULTS_FOLDER, filename)
+            predictions_file_combined = '{}/{}.fast_wl.combined.predictions.npy'.format(PREDICTIONS_FOLDER, filename)
 
-            empty_graphs = [1 for g in X if nx.number_of_nodes(g) == 0 or nx.number_of_edges(g) == 0]
-            num_vertices = sum([nx.number_of_nodes(g) for g in X]) + len(empty_graphs)
+            def process():
+                X, Y = dataset_helper.get_dataset_cached(graph_cache_file)
 
-            fast_wl_pipeline.convert_graphs_to_tuples(X)
+                empty_graphs = [1 for g in X if nx.number_of_nodes(g) == 0 or nx.number_of_edges(g) == 0]
+                num_vertices = sum([nx.number_of_nodes(g) for g in X]) + len(empty_graphs)
 
-            param_grid = dict(graph_fast_wl_grid_params, **{
-                'feature_extraction__fast_wl__phi_dim': [num_vertices]
-            })
+                fast_wl_pipeline.convert_graphs_to_tuples(X)
 
-            try:
-                LOGGER.info('{:<10} - {:<15} - Classifying'.format('Graph scratch', filename))
-                cross_validate(X, Y, fast_wl_classification_pipeline, param_grid, result_file, predictions_file, args.create_predictions)
-            except Exception as e:
-                LOGGER.warning('{:<10} - {:<15} - Error'.format('Graph', filename))
-                LOGGER.exception(e)
+                grid_params = {
+                    'classifier': clfs,
+                    'feature_extraction': dict(graph_fast_wl_grid_params, **{
+                        'fast_wl__phi_dim': [num_vertices]
+                    })
+                }
+
+                cross_validate(X, Y, graph_fast_wl_classification_pipeline, grid_params, result_file, predictions_file)
+
+            def process_combined():
+                X, Y = dataset_helper.get_dataset_cached(graph_cache_file)
+                X_text, Y_text = dataset_helper.get_dataset(dataset)
+
+                empty_graphs = [1 for g in X if nx.number_of_nodes(g) == 0 or nx.number_of_edges(g) == 0]
+                num_vertices = sum([nx.number_of_nodes(g) for g in X]) + len(empty_graphs)
+
+                fast_wl_pipeline.convert_graphs_to_tuples(X)
+
+                features_params = dict({'features__fast_wl_pipeline__feature_extraction__' + k: val for k, val in graph_fast_wl_grid_params.items()}, **dict(
+                    features__fast_wl_pipeline__feature_extraction__fast_wl__phi_dim = [num_vertices]
+                ))
+
+                grid_params = dict({
+                    'classifier': clfs
+                }, **features_params)
+
+                combined_features = sklearn.pipeline.FeatureUnion([
+                    ('tfidf', sklearn.pipeline.Pipeline([
+                        ('selector', TupleSelector(tuple_index=0)),
+                        ('tfidf', text_pipeline.get_pipeline()),
+                    ])),
+                    ('fast_wl_pipeline', sklearn.pipeline.Pipeline([
+                        ('selector', TupleSelector(tuple_index=1, v_stack=False)),
+                        ('feature_extraction', fast_wl_pipeline.get_pipeline())
+                    ]))
+                ])
+
+                pipeline = sklearn.pipeline.Pipeline([
+                    ('features', combined_features),
+                    ('classifier', None)
+                ])
+
+                X_combined = list(zip(X_text, X))
+                cross_validate(X_combined, Y, pipeline, grid_params, result_file_combined, predictions_file_combined)
+
+            tasks.append(Task(type = 'graph-fast_wl', name = filename, creates_file = [result_file], process_fn = process))
+            tasks.append(Task(type='graph_combined-fast_wl', name= filename, creates_file=[result_file_combined], process_fn=process_combined))
+
 
     if args.check_graphs:
         LOGGER.info('{:<10} - Starting'.format('Graph'))
@@ -264,8 +295,7 @@ def main():
                 )
 
                 try:
-
-                    cross_validate(X, Y, estimator, param_grid, result_file, predictions_file, args.create_predictions)
+                    cross_validate(X, Y, estimator, param_grid, result_file, predictions_file)
                 except Exception as e:
                     LOGGER.warning('{:<10} - {:<15} - Error h={}'.format('Graph', graph_dataset_cache_file, h))
                     LOGGER.exception(e)
@@ -277,6 +307,7 @@ def main():
             gram_cache_filename = gram_cache_file.split('/')[-1]
             result_file = '{}/{}.results.npy'.format(RESULTS_FOLDER, gram_cache_filename)
             predictions_file = '{}/{}.npy'.format(PREDICTIONS_FOLDER, gram_cache_filename)
+
 
             if not filter_utils.file_should_be_processed(gram_cache_filename, args.include_graphs, args.exclude_graphs, args.limit_dataset):
                 continue
@@ -299,14 +330,14 @@ def main():
                     '{:<10} - {:<15} - Error spgk'.format('Graph', gram_cache_filename))
                 LOGGER.exception(e)
 
-    if args.check_combined:
+    if args.check_combined and False:
         LOGGER.info('{:<10} - Starting'.format('Graph combined'))
         for dataset_name in dataset_helper.get_all_available_dataset_names():
             X_text, Y_text = dataset_helper.get_dataset(dataset_name)
 
             for graph_dataset_cache_file in dataset_helper.get_all_cached_graph_phi_datasets(dataset_name):
 
-                if not filter_utils.file_should_be_processed(graph_dataset_cache_file, args.include_graphs, args.exclude_graphs, dataset_name, args.limit_dataset):
+                if not filter_utils.file_should_be_processed(graph_dataset_cache_file, args.include_graphs, args.exclude_graphs, args.limit_dataset):
                     continue
 
                 graph_dataset_cache_filename = graph_dataset_cache_file.split('/')[-1]
@@ -347,6 +378,38 @@ def main():
                     except Exception as e:
                         LOGGER.warning('{:<10} - {:<15} - Error h={}'.format('Combined', graph_dataset_cache_filename, h))
                         LOGGER.exception(e)
+
+    def should_process_task(task):
+        # Do not process tasks that are not in whitelisted tasks
+        is_filtered_by_type_filter = (args.task_type_filter and task.type not in args.task_type_filter)
+        # Do not process tasks that have already been calculated (unless args.force == True)
+        is_filtered_by_file_exists = (args.force and np.any([os.path.exists(file) for file in task.creates_file]))
+
+        return not is_filtered_by_type_filter and not is_filtered_by_file_exists
+
+    # Filter out tasks
+    tasks = sorted([task for task in tasks if should_process_task(task)], key = lambda x: x[0])
+
+    print('Tasks:')
+    for task in tasks:
+        print('\t{t.type:20} - {t.name}'.format(t = task))
+
+    num_tasks = len(tasks)
+    for task_idx, t in enumerate(tasks):
+
+        def print_task(msg = ''):
+            LOGGER.info('Task {idx:>2}/{num_tasks}: {t.type:20} - {t.name:70} - {msg}'.format(idx = task_idx + 1, num_tasks = num_tasks, t = task, msg = msg))
+
+        start_time = time()
+        print_task('Started')
+        try:
+            t.process_fn()
+        except Exception as e:
+            print_task('Error: {}'.format(e))
+            LOGGER.exception(e)
+        elapsed_seconds = time() - start_time
+        print_task('Finished (time={:.1f}s)'.format(elapsed_seconds))
+
     LOGGER.info('Finished!')
 
 if __name__ == '__main__':
