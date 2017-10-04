@@ -196,7 +196,7 @@ def main():
             'feature_extraction__fast_wl__h': args.wl_iterations,
             'feature_extraction__fast_wl__phi_dim': [None],
             'feature_extraction__fast_wl__round_to_decimals': args.wl_round_to_decimal,
-            'feature_extraction__phi_picker__return_iteration': [1, 'stacked']
+            'feature_extraction__phi_picker__return_iteration': [0, 1, 2, 3]
         }
 
         for graph_cache_file in dataset_helper.get_all_cached_graph_datasets():

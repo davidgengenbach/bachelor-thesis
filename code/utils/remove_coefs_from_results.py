@@ -17,16 +17,18 @@ def remove_coefs(clf):
     return found
 
 def remove_coefs_from_results(results):
-    param_clf = results['param_clf']
-    if np.ma.isMaskedArray(param_clf):
-        param_clf = np.ma.asarray(param_clf)
-    
-    if not isinstance(param_clf, list) and not isinstance(param_clf, (np.ndarray, np.generic)) and not np.ma.isMaskedArray(param_clf):
-        param_clf = [param_clf]
+    for attr in ['param_clf', 'param_classifier']:
+        if attr not in results: continue
+        param_clf = results[attr]
+        if np.ma.isMaskedArray(param_clf):
+            param_clf = np.ma.asarray(param_clf)
 
-    found = False
+        if not isinstance(param_clf, list) and not isinstance(param_clf, (np.ndarray, np.generic)) and not np.ma.isMaskedArray(param_clf):
+            param_clf = [param_clf]
 
-    for clf in param_clf:
-        found |= remove_coefs(clf)
+        found = False
+
+        for clf in param_clf:
+            found |= remove_coefs(clf)
 
     return found
