@@ -182,9 +182,10 @@ def main():
             dataset = filename_utils.get_dataset_from_filename(graph_cache_file)
             if not filter_utils.file_should_be_processed(graph_cache_file, args.include_graphs, args.exclude_graphs,  args.limit_dataset):
                 continue
+            filename = graph_cache_file.split('/')[-1]
 
-            result_file = '{}/{}.scratch.results.npy'.format(RESULTS_FOLDER, graph_cache_file)
-            predictions_file = '{}/{}.scratch.npy'.format(PREDICTIONS_FOLDER, graph_cache_file)
+            result_file = '{}/{}.scratch.results.npy'.format(RESULTS_FOLDER, filename)
+            predictions_file = '{}/{}.scratch.npy'.format(PREDICTIONS_FOLDER, filename)
 
             X, Y = dataset_helper.get_dataset_cached(graph_cache_file)
             num_vertices = sum([nx.number_of_nodes(g) for g in X])
@@ -201,10 +202,10 @@ def main():
             }
 
             try:
-                LOGGER.info('{:<10} - {:<15} - Classifying'.format('Graph scratch', graph_cache_file))
+                LOGGER.info('{:<10} - {:<15} - Classifying'.format('Graph scratch', filename))
                 cross_validate(X, Y, estimator, param_grid, result_file, predictions_file, args.create_predictions)
             except Exception as e:
-                LOGGER.warning('{:<10} - {:<15} - Error'.format('Graph', graph_cache_file))
+                LOGGER.warning('{:<10} - {:<15} - Error'.format('Graph', filename))
                 LOGGER.exception(e)
 
 
