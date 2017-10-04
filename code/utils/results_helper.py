@@ -4,13 +4,14 @@ import pandas as pd
 from glob import glob
 import os
 import pickle
+import re
 
 _RESULT_CACHE = []
 _DF_ALL = None
 
 RESULTS_DIR = 'data/results'
 
-def get_results(folder=None, use_already_loaded=True, results_directory=RESULTS_DIR, log_progress=True, exclude_filter = None, filter_out_non_complete_datasets = True):
+def get_results(folder=None, use_already_loaded=True, results_directory=RESULTS_DIR, log_progress=True, exclude_filter = None, filter_out_non_complete_datasets = True, remove_split_cols = True, remove_rank_cols = True, remove_fit_time_cols = True):
     global _DF_ALL, _RESULT_CACHE
 
     if not use_already_loaded:
@@ -38,7 +39,7 @@ def get_results(folder=None, use_already_loaded=True, results_directory=RESULTS_
 
         with open(result_file, 'rb') as f:
             result = pickle.load(f)
-
+        result_file = result_file.split('/')[-1]
         dataset_name = filename_utils.get_dataset_from_filename(result_file)
         is_graph_dataset = 'gml' in result_file or 'phi' in result_file or 'coo' in result_file
         
@@ -50,9 +51,9 @@ def get_results(folder=None, use_already_loaded=True, results_directory=RESULTS_
             result['type'] = 'cooccurrence' if is_cooccurrence_dataset else 'concept-graph'
             result['lemmatized'] = '_lemmatized_' in result_file
             result['same_label'] = 'same-label' in result_file
-            result['wl_casted'] = '.casted.' in result_file
 
             is_simple_kernel = '.simple.' in result_file
+
             if is_simple_kernel:
                 result['kernel'] = 'simple_set_matching'
             else:
@@ -72,11 +73,10 @@ def get_results(folder=None, use_already_loaded=True, results_directory=RESULTS_
 
             parts = result_file.split('_')
 
-
             # Co-Cccurrence
             if is_cooccurrence_dataset:
-                result['words'] = parts[4]
-                result['window_size'] = parts[3]
+                parts = re.findall(r'cooccurrence_(.+?)_(.+?)_', result_file)[0]
+                result['window_size'], result['words'] = parts
             # Concept Maps
             else:
                 result['words'] = 'concepts'
@@ -112,6 +112,13 @@ def get_results(folder=None, use_already_loaded=True, results_directory=RESULTS_
         df_all = _DF_ALL.groupby('dataset').filter(lambda x: len(x.type.value_counts()) == 3).reset_index(drop=True)
     else:
         df_all = _DF_ALL
+
+    # Remove cols
+    df_all = df_all[[x for x in df_all.columns.tolist() if
+                    (not remove_split_cols or not re.match(r'^split\d', x)) and
+                    (not remove_fit_time_cols or not re.match(r'_time$', x)) and
+                    (not remove_rank_cols or not re.match(r'rank_', x))]
+    ]
 
     return df_all
 

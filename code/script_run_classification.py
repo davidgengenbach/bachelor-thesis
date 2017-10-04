@@ -5,6 +5,8 @@ import os
 import sys
 import pickle
 from glob import glob
+import tempfile
+import shutil
 
 import scipy
 import sklearn
@@ -18,6 +20,7 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import Pipeline
 
 
+from transformers import fast_wl_pipeline
 from transformers.phi_picker_transformer import PhiPickerTransformer
 from transformers.fast_wl_graph_kernel_transformer import FastWLGraphKernelTransformer
 from transformers.nx_graph_to_tuple_transformer import NxGraphToTupleTransformer
@@ -44,14 +47,14 @@ def get_args():
     parser.add_argument('--check_graphs_scratch', action="store_true")
     parser.add_argument('--create_predictions', action="store_true")
     parser.add_argument('--remove_coefs', action="store_true")
-    parser.add_argument('--wl_iterations', type=int, default=4)
+    parser.add_argument('--wl_iterations', nargs='+', type=int, default=[4])
     parser.add_argument('--max_iter', type=int, default=1000)
-    parser.add_argument('--tol', type=int, default=1e-3)
+    parser.add_argument('--tol', type=int, default=6e-4)
     parser.add_argument('--n_splits', type=int, default=3)
     parser.add_argument('--random_state', type=int, default=42)
     parser.add_argument('--include_graphs', type=str, default=None)
     parser.add_argument('--exclude_graphs', type=str, default=None)
-    parser.add_argument('--wl_round_to_decimal', nargs='+', type=int, default=[1, 5, 10])
+    parser.add_argument('--wl_round_to_decimal', nargs='+', type=int, default=[-1, 0, 1, 10])
     parser.add_argument('--limit_dataset', nargs='+', type=str, default=[
                         'ng20', 'ling-spam', 'reuters-21578', 'webkb', 'webkb-ana', 'ng20-ana'])
     args = parser.parse_args()
@@ -99,7 +102,7 @@ def main():
         #sklearn.dummy.DummyClassifier(strategy='most_frequent'),
         sklearn.naive_bayes.MultinomialNB(),
         sklearn.svm.LinearSVC(class_weight='balanced', max_iter=args.max_iter, tol=args.tol),
-        #sklearn.linear_model.PassiveAggressiveClassifier(class_weight='balanced', max_iter=args.max_iter, tol=args.tol)
+        sklearn.linear_model.PassiveAggressiveClassifier(class_weight='balanced', max_iter=args.max_iter, tol=args.tol)
         #sklearn.naive_bayes.GaussianNB(),
         #sklearn.svm.SVC(max_iter = args.max_iter, tol=args.tol),
         #sklearn.linear_model.Perceptron(class_weight='balanced', max_iter=args.max_iter, tol=args.tol),
@@ -181,43 +184,47 @@ def main():
 
             LOGGER.info('{:<10} - {:<15} - Finished'.format('Text', dataset_name))
 
-
     if args.check_graphs_scratch:
+
+        fast_wl_classification_pipeline = sklearn.pipeline.Pipeline([
+            ('feature_extraction', fast_wl_pipeline.get_pipeline()),
+            ('classifier', None)
+        ])
+
+        graph_fast_wl_grid_params = {
+            'classifier': clfs,
+            'feature_extraction__fast_wl__h': args.wl_iterations,
+            'feature_extraction__fast_wl__phi_dim': [None],
+            'feature_extraction__fast_wl__round_to_decimals': args.wl_round_to_decimal,
+            'feature_extraction__phi_picker__return_iteration': [1, 'stacked']
+        }
+
         for graph_cache_file in dataset_helper.get_all_cached_graph_datasets():
             dataset = filename_utils.get_dataset_from_filename(graph_cache_file)
             if not filter_utils.file_should_be_processed(graph_cache_file, args.include_graphs, args.exclude_graphs,  args.limit_dataset):
                 continue
+
             filename = graph_cache_file.split('/')[-1]
+            result_file = '{}/{}.fast_wl.results.npy'.format(RESULTS_FOLDER, filename)
+            predictions_file = '{}/{}.fast_wl.predictions.npy'.format(PREDICTIONS_FOLDER, filename)
 
             X, Y = dataset_helper.get_dataset_cached(graph_cache_file)
 
-            #X, Y = X[:20], Y[:20]
-
             empty_graphs = [1 for g in X if nx.number_of_nodes(g) == 0 or nx.number_of_edges(g) == 0]
             num_vertices = sum([nx.number_of_nodes(g) for g in X]) + len(empty_graphs)
-            print('#vertices', num_vertices)
-            result_file = '{}/{}.scratch.results.npy'.format(RESULTS_FOLDER, filename)
-            predictions_file = '{}/{}.scratch.predictions.npy'.format(PREDICTIONS_FOLDER, filename)
 
-            estimator = sklearn.pipeline.Pipeline([
-                ('tuple_transformer', NxGraphToTupleTransformer()),
-                ('fast_wl', FastWLGraphKernelTransformer(h=args.wl_iterations, should_cast=False, remove_missing_labels=True, phi_dim = num_vertices, round_to_decimals = -1, debug = False)),
-                ('phi_picker', PhiPickerTransformer(return_iteration='stacked')),
-                ('clf', None)
-            ])
+            fast_wl_pipeline.convert_graphs_to_tuples(X)
 
-            param_grid = {
-                'clf': clfs,
-                'fast_wl__round_to_decimals': args.wl_round_to_decimal
-            }
+            param_grid = dict(graph_fast_wl_grid_params, **{
+                'feature_extraction__fast_wl__phi_dim': [num_vertices]
+            })
 
             try:
                 LOGGER.info('{:<10} - {:<15} - Classifying'.format('Graph scratch', filename))
-                cross_validate(X, Y, estimator, param_grid, result_file, predictions_file, args.create_predictions)
+                cross_validate(X, Y, fast_wl_classification_pipeline, param_grid, result_file, predictions_file, args.create_predictions)
             except Exception as e:
                 LOGGER.warning('{:<10} - {:<15} - Error'.format('Graph', filename))
                 LOGGER.exception(e)
-                sys.exit()
 
     if args.check_graphs:
         LOGGER.info('{:<10} - Starting'.format('Graph'))
