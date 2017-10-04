@@ -51,6 +51,7 @@ def get_args():
     parser.add_argument('--random_state', type=int, default=42)
     parser.add_argument('--include_graphs', type=str, default=None)
     parser.add_argument('--exclude_graphs', type=str, default=None)
+    parser.add_argument('--wl_round_to_decimal', nargs='+', type=int, default=[1, 5, 10])
     parser.add_argument('--limit_dataset', nargs='+', type=str, default=[
                         'ng20', 'ling-spam', 'reuters-21578', 'webkb', 'webkb-ana', 'ng20-ana'])
     args = parser.parse_args()
@@ -107,6 +108,9 @@ def main():
 
     def cross_validate(X, Y, estimator, param_grid, result_file, predictions_file, create_predictions):
         gc.collect()
+
+        if not args.force and os.path.exists(result_file):
+            return
 
         X_train, Y_train, X_test, Y_test = X, Y, [], []
 
@@ -185,36 +189,34 @@ def main():
                 continue
             filename = graph_cache_file.split('/')[-1]
 
-            result_file = '{}/{}.scratch.results.npy'.format(RESULTS_FOLDER, filename)
-            predictions_file = '{}/{}.scratch.npy'.format(PREDICTIONS_FOLDER, filename)
-
             X, Y = dataset_helper.get_dataset_cached(graph_cache_file)
 
             #X, Y = X[:20], Y[:20]
+
             empty_graphs = [1 for g in X if nx.number_of_nodes(g) == 0 or nx.number_of_edges(g) == 0]
             num_vertices = sum([nx.number_of_nodes(g) for g in X]) + len(empty_graphs)
 
-            estimator = sklearn.pipeline.Pipeline([
-                ('tuple_transformer', NxGraphToTupleTransformer()),
-                ('fast_wl', FastWLGraphKernelTransformer(h=args.wl_iterations, should_cast=False, remove_missing_labels=True, phi_dim = num_vertices)),
-                ('phi_picker', PhiPickerTransformer(return_iteration='stacked')),
-                # ('gram_matrix', GramMatrixTransformer()),
-                ('clf', None)
-            ])
+            for round_to_decimals in args.wl_round_to_decimal:
+                result_file = '{}/{}.scratch_{}.results.npy'.format(RESULTS_FOLDER, filename, round_to_decimals)
+                predictions_file = '{}/{}.scratch_{}.predictions.npy'.format(PREDICTIONS_FOLDER, filename, round_to_decimals)
 
-            param_grid = {
-                'clf': clfs
-            }
+                estimator = sklearn.pipeline.Pipeline([
+                    ('tuple_transformer', NxGraphToTupleTransformer()),
+                    ('fast_wl', FastWLGraphKernelTransformer(h=args.wl_iterations, should_cast=False, remove_missing_labels=True, phi_dim = num_vertices, round_to_decimals = 7)),
+                    ('phi_picker', PhiPickerTransformer(return_iteration='stacked')),
+                    ('clf', None)
+                ])
 
-            try:
-                LOGGER.info('{:<10} - {:<15} - Classifying'.format('Graph scratch', filename))
-                cross_validate(X, Y, estimator, param_grid, result_file, predictions_file, args.create_predictions)
-            except Exception as e:
-                LOGGER.warning('{:<10} - {:<15} - Error'.format('Graph', filename))
-                LOGGER.exception(e)
+                param_grid = {
+                    'clf': clfs
+                }
 
-
-
+                try:
+                    LOGGER.info('{:<10} - {:<15} - Classifying'.format('Graph scratch', filename))
+                    cross_validate(X, Y, estimator, param_grid, result_file, predictions_file, args.create_predictions)
+                except Exception as e:
+                    LOGGER.warning('{:<10} - {:<15} - Error'.format('Graph', filename))
+                    LOGGER.exception(e)
 
     if args.check_graphs:
         LOGGER.info('{:<10} - Starting'.format('Graph'))

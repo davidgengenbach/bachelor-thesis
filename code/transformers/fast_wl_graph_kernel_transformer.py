@@ -4,6 +4,10 @@ from kernels import fast_wl
 from utils import graph_helper
 import numpy as np
 
+
+def hash_dataset(X):
+    return ''.join([str(hash(''.join([str(a) for a in labels]))) for adj, labels in X])
+
 class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.TransformerMixin):
     """Fast Weisfeiler-Lehman transformer.
     
@@ -19,12 +23,13 @@ class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Tran
         train_graph_count (int): how many graphs have been seen in the fit stage
     """
 
-    def __init__(self, h=1, remove_missing_labels=True, debug=False, should_cast = False, phi_dim = None):
+    def __init__(self, h=1, remove_missing_labels=True, debug=False, should_cast = False, phi_dim = None, round_to_decimals = 10):
         self.remove_missing_labels = remove_missing_labels
         self.h = h
         self.debug = debug
         self.should_cast = should_cast
         self.phi_dim = phi_dim
+        self.round_to_decimals = round_to_decimals
 
     def fit(self, X, y=None, **fit_params):
         """Initializes the list of node labels.
@@ -41,6 +46,7 @@ class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Tran
 
         # Remove empty graphs
         X = [x for x in X if x]
+        self.hashed_x = hash_dataset(X)
 
         if self.debug:
             print('FastWLGraphKernelTransformer.fit: len(X)={}, H={}'.format(len(X), self.h))
@@ -50,7 +56,7 @@ class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Tran
         if self.debug:
             print("FastWLGraphKernelTransformer.fit: Found empty graphs in training set: {}".format(empty_graph_counter))
 
-        phi_list, label_lookups, label_counters = fast_wl.transform(X, h=self.h, cast_after_rounding=self.should_cast, phi_dim=self.phi_dim)
+        phi_list, label_lookups, label_counters = fast_wl.transform(X, h=self.h, cast_after_rounding=self.should_cast, phi_dim=self.phi_dim, round_signatures_to_decimals=self.round_to_decimals)
 
         self.train_graph_count = len(X)
         self.all_nodes = graph_helper.get_all_node_labels(X, as_sorted_list=False)
@@ -58,14 +64,18 @@ class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Tran
         self.phi_shape = self.phi_list[-1].shape
         self.label_lookups = label_lookups
         self.label_counters = label_counters
+
         return self
 
     def transform(self, X, y=None, **fit_params):
         if self.debug:
             print('FastWLGraphKernelTransformer.transform: len(X)={}, H={}'.format(len(X), self.h))
-        num_vertices = sum([len(labels) for _, labels in X])
 
         graph_helper.convert_graphs_to_adjs_tuples(X)
+
+        if self.hashed_x == hash_dataset(X):
+            return self.phi_list
+
         # remove missing nodes
         if self.remove_missing_labels:
             for adj, labels in X:
@@ -76,7 +86,7 @@ class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Tran
                     pass
 
         phi_list, label_lookups, label_counters = fast_wl.transform(
-            X, h=self.h, label_lookups=np.copy(self.label_lookups), label_counters=np.copy(self.label_counters), phi_dim=self.phi_shape[1], cast_after_rounding=self.should_cast, append_to_labels = True)
+            X, h=self.h, label_lookups=np.copy(self.label_lookups), label_counters=np.copy(self.label_counters), phi_dim=self.phi_shape[1], cast_after_rounding=self.should_cast, append_to_labels = True,round_signatures_to_decimals=self.round_to_decimals)
 
         self.label_lookups = label_lookups
         self.label_counters = label_counters

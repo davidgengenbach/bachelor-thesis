@@ -29,7 +29,6 @@ def transform(
         cast_after_rounding: bool = False,
         append_to_labels: bool = True
     ) -> tuple:
-
     assert len(graphs)
 
     # If no previous label counters/lookups are given, create empty ones
@@ -77,6 +76,8 @@ def transform(
     for idx, labels in enumerate(graph_labels):
         phi[labels, idx] = 1
 
+
+    rounding_factor = np.power(10, round_signatures_to_decimals)
     phi_lists = [phi.tolil()]
 
     # For the number of iterations h...
@@ -92,10 +93,7 @@ def transform(
 
             # ... generate the signatures (see paper) for each graph
             #signatures = np.round((labels + adjacency_matrix * log_primes[labels] * round_signatures_to_decimals)).astype(labels_dtype)
-            signatures = (labels + adjacency_matrix * log_primes[labels] * round_signatures_to_decimals).astype(labels_dtype)
-
-            if cast_after_rounding:
-                signatures = signatures.astype(labels_dtype)
+            signatures = (labels + adjacency_matrix * log_primes[labels] * rounding_factor).astype(labels_dtype)
 
             # ... add missing signatures to the label lookup
             for signature in signatures:
