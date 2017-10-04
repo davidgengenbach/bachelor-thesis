@@ -6,7 +6,7 @@ def get_pipeline():
         ('preprocessing', None),
         ('TfidfTransformer', sklearn.feature_extraction.text.TfidfVectorizer()),
         ('scaler', None),
-        ('clf', None)
+        ('classifier', None)
     ])
 
 def get_param_grid():

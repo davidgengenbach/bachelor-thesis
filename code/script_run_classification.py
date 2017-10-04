@@ -53,6 +53,7 @@ def get_args():
     parser.add_argument('--check_graphs_scratch', action="store_true")
     parser.add_argument('--create_predictions', action="store_true")
     parser.add_argument('--remove_coefs', action="store_true")
+    parser.add_argument('--dry_run', action="store_true")
     parser.add_argument('--wl_iterations', nargs='+', type=int, default=[4])
     parser.add_argument('--max_iter', type=int, default=1000)
     parser.add_argument('--tol', type=int, default=6e-4)
@@ -172,7 +173,7 @@ def main():
 
             def process():
                 X, Y = dataset_helper.get_dataset(dataset_name)
-                param_grid = dict(text_pipeline.get_param_grid(), **dict(clf=clfs))
+                param_grid = dict(text_pipeline.get_param_grid(), **dict(classifier=clfs))
                 cross_validate(X, Y, text_pipeline.get_pipeline(), param_grid, result_file, predictions_file)
 
             tasks.append(Task(type = 'text', name = dataset_name, creates_file = [result_file], process_fn = process))
@@ -374,7 +375,7 @@ def main():
 
                     try:
                         X_combined = list(zip(X_text, phi))
-                        cross_validate(X_combined, Y_text, estimator, param_grid, result_file, predictions_file, args.create_predictions)
+                        cross_validate(X_combined, Y_text, estimator, param_grid, result_file, predictions_file)
                     except Exception as e:
                         LOGGER.warning('{:<10} - {:<15} - Error h={}'.format('Combined', graph_dataset_cache_filename, h))
                         LOGGER.exception(e)
@@ -393,6 +394,9 @@ def main():
     print('Tasks:')
     for task in tasks:
         print('\t{t.type:20} - {t.name}'.format(t = task))
+
+    if args.dry_run:
+        return
 
     num_tasks = len(tasks)
     for task_idx, t in enumerate(tasks):
