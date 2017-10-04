@@ -94,7 +94,12 @@ def transform(
     for idx, labels in enumerate(graph_labels):
         add_labels_to_phi(phi, idx, labels)
 
-    rounding_factor = np.power(10, round_signatures_to_decimals)
+    if round_signatures_to_decimals == -1:
+        # 10^-1 = 1
+        rounding_factor = 1
+    else:
+        rounding_factor = np.power(10, round_signatures_to_decimals)
+
     phi_lists = [phi.tolil()]
 
     # For the number of iterations h...
