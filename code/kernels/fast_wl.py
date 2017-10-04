@@ -21,12 +21,13 @@ def transform(
         label_lookups: typing.List[typing.Dict] = None,
         label_counters: typing.List[int] = None,
         primes_arguments_required: typing.List[int] = primes_arguments_required_,
-        phi_dim: typing.Tuple = None,
+        phi_dim: int = None,
         labels_dtype: np.dtype = np.uint32,
         phi_dtype: np.dtype = np.uint32,
         used_matrix_type: scipy.sparse.spmatrix = dok_matrix,
         round_signatures_to_decimals: int = 10,
-        cast_after_rounding: bool = False
+        cast_after_rounding: bool = False,
+        append_to_labels: bool = True
     ) -> tuple:
 
     assert len(graphs)
@@ -47,7 +48,7 @@ def transform(
         #adj[adj.nonzero()] = 1
 
     # Relabel the graphs, mapping the string labels to unique IDs (ints)
-    label_lookup, label_counter, graph_labels = relabel_graphs(graphs, label_counter = label_counters[0], label_lookup = label_lookups[0], labels_dtype = labels_dtype)
+    label_lookup, label_counter, graph_labels = relabel_graphs(graphs, label_counter = label_counters[0], label_lookup = label_lookups[0], labels_dtype = labels_dtype, append = append_to_labels)
 
     num_labels = len(label_lookup.keys())
     num_graphs = len(graphs)
@@ -88,7 +89,6 @@ def transform(
         # ... go over all graphs
         for idx, (labels, adjacency_matrix) in enumerate(zip(graph_labels, adjacency_matrices)):
             has_same_labels = len(set(labels)) != len(labels)
-
 
             # ... generate the signatures (see paper) for each graph
             signatures = np.round((labels + adjacency_matrix * log_primes[labels]), decimals= round_signatures_to_decimals)

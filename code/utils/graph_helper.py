@@ -5,6 +5,7 @@ from scipy.sparse import lil_matrix
 
 from preprocessing import preprocessing
 from utils import cooccurrence
+import numpy as np
 
 
 def add_shortest_path_edges(graph, cutoff=2):
@@ -206,3 +207,38 @@ def get_gml_graph(graph_str, undirected=False, num_tries=20, verbose=False):
         else:
             return result
     return None
+
+
+def _parse_graph(graph_definition: str):
+    modes = [[], [], []]
+    mode = -1
+    for line in graph_definition.splitlines():
+        line = line.strip()
+        if line == '':
+            continue
+        if line.startswith('#'):
+            mode += 1
+            continue
+        modes[mode].append(line)
+    vertices, adj_rows, clazz = modes
+
+    num_vertices = len(vertices)
+    adj_matrix = lil_matrix((num_vertices, num_vertices), dtype=np.uint16)
+
+    for row_idx, adj_row in enumerate(adj_rows):
+        parts = [int(x) - 1 for x in adj_row.split(',')]
+        adj_matrix[row_idx, parts] = 1
+
+    return adj_matrix, vertices, clazz[0]
+
+
+def get_graphs_with_mutag_enzyme_format(folder):
+    graphs = glob('{}/*.graph'.format(folder))
+    X, Y = [], []
+    for graph_file in graphs:
+        with open(graph_file) as f:
+            adj_matrix, vertices, clazz = _parse_graph(f.read())
+
+        X.append((adj_matrix, vertices))
+        Y.append(clazz)
+    return X, Y

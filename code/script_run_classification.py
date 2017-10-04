@@ -16,11 +16,19 @@ from sklearn.linear_model import Perceptron
 from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import Pipeline
 
+
+from transformers.phi_picker_transformer import PhiPickerTransformer
+from transformers.fast_wl_graph_kernel_transformer import FastWLGraphKernelTransformer
+from transformers.nx_graph_to_tuple_transformer import NxGraphToTupleTransformer
 from transformers.tuple_selector import TupleSelector
 from utils import dataset_helper
 from utils.logger import LOGGER
 from utils.remove_coefs_from_results import remove_coefs_from_results
 from utils import filter_utils
+from utils import filename_utils
+
+import networkx as nx
+
 
 def get_args():
     import argparse
@@ -32,8 +40,10 @@ def get_args():
     parser.add_argument('--check_graphs', action="store_true")
     parser.add_argument('--check_combined', action="store_true")
     parser.add_argument('--check_gram', action="store_true")
+    parser.add_argument('--check_graphs_scratch', action="store_true")
     parser.add_argument('--create_predictions', action="store_true")
     parser.add_argument('--remove_coefs', action="store_true")
+    parser.add_argument('--wl_iterations', type=int, default=4)
     parser.add_argument('--max_iter', type=int, default=1000)
     parser.add_argument('--tol', type=int, default=1e-3)
     parser.add_argument('--n_splits', type=int, default=3)
@@ -84,10 +94,10 @@ def main():
     )
 
     clfs = [
-        sklearn.dummy.DummyClassifier(strategy='most_frequent'),
+        #sklearn.dummy.DummyClassifier(strategy='most_frequent'),
         sklearn.naive_bayes.MultinomialNB(),
         sklearn.svm.LinearSVC(class_weight='balanced', max_iter=args.max_iter, tol=args.tol),
-        sklearn.linear_model.PassiveAggressiveClassifier(class_weight='balanced', max_iter=args.max_iter, tol=args.tol)
+        #sklearn.linear_model.PassiveAggressiveClassifier(class_weight='balanced', max_iter=args.max_iter, tol=args.tol)
         #sklearn.naive_bayes.GaussianNB(),
         #sklearn.svm.SVC(max_iter = args.max_iter, tol=args.tol),
         #sklearn.linear_model.Perceptron(class_weight='balanced', max_iter=args.max_iter, tol=args.tol),
@@ -166,11 +176,43 @@ def main():
 
             LOGGER.info('{:<10} - {:<15} - Finished'.format('Text', dataset_name))
 
+
+    if args.check_graphs_scratch:
+        for graph_cache_file in dataset_helper.get_all_cached_graph_datasets():
+            dataset = filename_utils.get_dataset_from_filename(graph_cache_file)
+            if not filter_utils.file_should_be_processed(graph_cache_file, args.include_graphs, args.exclude_graphs,  args.limit_dataset):
+                continue
+
+            result_file = '{}/{}.scratch.results.npy'.format(RESULTS_FOLDER, graph_cache_file)
+            predictions_file = '{}/{}.scratch.npy'.format(PREDICTIONS_FOLDER, graph_cache_file)
+
+            X, Y = dataset_helper.get_dataset_cached(graph_cache_file)
+            num_vertices = sum([nx.number_of_nodes(g) for g in X])
+            estimator = sklearn.pipeline.Pipeline([
+                ('tuple_transformer', NxGraphToTupleTransformer()),
+                ('fast_wl', FastWLGraphKernelTransformer(h=args.wl_iterations, should_cast=False, remove_missing_labels=True, phi_dim = num_vertices)),
+                ('phi_picker', PhiPickerTransformer(return_iteration='stacked')),
+                # ('gram_matrix', GramMatrixTransformer()),
+                ('clf', None)
+            ])
+
+            param_grid = {
+                'clf': clfs
+            }
+
+            try:
+                LOGGER.info('{:<10} - {:<15} - Classifying'.format('Graph scratch', graph_cache_file))
+                cross_validate(X, Y, estimator, param_grid, result_file, predictions_file, args.create_predictions)
+            except Exception as e:
+                LOGGER.warning('{:<10} - {:<15} - Error'.format('Graph', graph_cache_file))
+                LOGGER.exception(e)
+
+
+
     if args.check_graphs:
         LOGGER.info('{:<10} - Starting'.format('Graph'))
         for cache_file in dataset_helper.get_all_cached_graph_phi_datasets():
             dataset = dataset_helper.get_dataset_name_from_graph_cachefile(cache_file)
-
             if not filter_utils.file_should_be_processed(cache_file, args.include_graphs, args.exclude_graphs,  args.limit_dataset):
                 continue
 
