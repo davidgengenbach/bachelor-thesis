@@ -2,6 +2,7 @@ import sklearn
 from sklearn import base
 from kernels import fast_wl
 from utils import graph_helper
+import numpy as np
 
 class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.TransformerMixin):
     """Fast Weisfeiler-Lehman transformer.
@@ -75,7 +76,7 @@ class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Tran
                     pass
 
         phi_list, label_lookups, label_counters = fast_wl.transform(
-            X, h=self.h, label_lookups=self.label_lookups, label_counters=self.label_counters, phi_dim=self.phi_shape[1], cast_after_rounding=self.should_cast, append_to_labels = True)
+            X, h=self.h, label_lookups=np.copy(self.label_lookups), label_counters=np.copy(self.label_counters), phi_dim=self.phi_shape[1], cast_after_rounding=self.should_cast, append_to_labels = True)
 
         self.label_lookups = label_lookups
         self.label_counters = label_counters

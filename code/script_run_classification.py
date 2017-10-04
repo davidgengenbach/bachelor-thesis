@@ -189,6 +189,7 @@ def main():
 
             X, Y = dataset_helper.get_dataset_cached(graph_cache_file)
             num_vertices = sum([nx.number_of_nodes(g) for g in X])
+            
             estimator = sklearn.pipeline.Pipeline([
                 ('tuple_transformer', NxGraphToTupleTransformer()),
                 ('fast_wl', FastWLGraphKernelTransformer(h=args.wl_iterations, should_cast=False, remove_missing_labels=True, phi_dim = num_vertices)),

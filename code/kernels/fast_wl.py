@@ -101,6 +101,7 @@ def transform(
                 if signature not in label_lookup:
                     label_lookup[signature] = label_counter
                     label_counter += 1
+                    assert label_counter <= phi_shape[0]
 
             # ... relabel the graphs with the new (compressed) labels
             new_labels = np.array([label_lookup[signature] for signature in signatures], dtype = labels_dtype)
