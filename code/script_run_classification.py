@@ -195,28 +195,29 @@ def main():
 
             empty_graphs = [1 for g in X if nx.number_of_nodes(g) == 0 or nx.number_of_edges(g) == 0]
             num_vertices = sum([nx.number_of_nodes(g) for g in X]) + len(empty_graphs)
+            print('#vertices', num_vertices)
+            result_file = '{}/{}.scratch.results.npy'.format(RESULTS_FOLDER, filename)
+            predictions_file = '{}/{}.scratch.predictions.npy'.format(PREDICTIONS_FOLDER, filename)
 
-            for round_to_decimals in args.wl_round_to_decimal:
-                result_file = '{}/{}.scratch_{}.results.npy'.format(RESULTS_FOLDER, filename, round_to_decimals)
-                predictions_file = '{}/{}.scratch_{}.predictions.npy'.format(PREDICTIONS_FOLDER, filename, round_to_decimals)
+            estimator = sklearn.pipeline.Pipeline([
+                ('tuple_transformer', NxGraphToTupleTransformer()),
+                ('fast_wl', FastWLGraphKernelTransformer(h=args.wl_iterations, should_cast=False, remove_missing_labels=True, phi_dim = num_vertices, round_to_decimals = -1, debug = False)),
+                ('phi_picker', PhiPickerTransformer(return_iteration='stacked')),
+                ('clf', None)
+            ])
 
-                estimator = sklearn.pipeline.Pipeline([
-                    ('tuple_transformer', NxGraphToTupleTransformer()),
-                    ('fast_wl', FastWLGraphKernelTransformer(h=args.wl_iterations, should_cast=False, remove_missing_labels=True, phi_dim = num_vertices, round_to_decimals = 7)),
-                    ('phi_picker', PhiPickerTransformer(return_iteration='stacked')),
-                    ('clf', None)
-                ])
+            param_grid = {
+                'clf': clfs,
+                'fast_wl__round_to_decimals': args.wl_round_to_decimal
+            }
 
-                param_grid = {
-                    'clf': clfs
-                }
-
-                try:
-                    LOGGER.info('{:<10} - {:<15} - Classifying'.format('Graph scratch', filename))
-                    cross_validate(X, Y, estimator, param_grid, result_file, predictions_file, args.create_predictions)
-                except Exception as e:
-                    LOGGER.warning('{:<10} - {:<15} - Error'.format('Graph', filename))
-                    LOGGER.exception(e)
+            try:
+                LOGGER.info('{:<10} - {:<15} - Classifying'.format('Graph scratch', filename))
+                cross_validate(X, Y, estimator, param_grid, result_file, predictions_file, args.create_predictions)
+            except Exception as e:
+                LOGGER.warning('{:<10} - {:<15} - Error'.format('Graph', filename))
+                LOGGER.exception(e)
+                sys.exit()
 
     if args.check_graphs:
         LOGGER.info('{:<10} - Starting'.format('Graph'))

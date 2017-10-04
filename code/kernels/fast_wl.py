@@ -50,32 +50,49 @@ def transform(
     # Relabel the graphs, mapping the string labels to unique IDs (ints)
     label_lookup, label_counter, graph_labels = relabel_graphs(graphs, label_counter = label_counters[0], label_lookup = label_lookups[0], labels_dtype = labels_dtype, append = append_to_labels)
 
-    num_labels = len(label_lookup.keys())
-    num_graphs = len(graphs)
-
-    assert len(graph_labels) == len(graphs)
-
     # Save the label_lookups/label_counters for later use
     new_label_lookups = [label_lookup]
     new_label_counters = [label_counter]
 
 
+    num_graphs = len(graphs)
+    num_vertices = sum(len(x) for x in graph_labels)
 
-    # The number of unique labels (= the total number of nodes in graphs)
-    if not phi_dim:
-        phi_dim = sum(len(x) for x in graph_labels)
+    assert len(graph_labels) == len(graphs)
+
+    # The number of unique labels (= the total number of nodes in the graphs)
+    phi_shape = (phi_dim if phi_dim is not None else num_vertices, num_graphs)
 
     # The upper bound up to which the prime numbers have to be retrieved
     primes_needed = primes_arguments_required[int(np.ceil(np.log2(phi_dim))) + 1]
     log_primes = primes.get_log_primes(1, primes_needed)
 
-    phi_shape = (phi_dim, num_graphs)
+    def add_labels_to_phi(phi: scipy.sparse.spmatrix, graph_idx: int, labels: typing.Iterable):
+        '''
+        Histogram
+        Args:
+            phi:
+            graph_idx:
+            labels:
+
+        Returns:
+
+        '''
+        if len(set(labels)) == len(labels):
+            phi[labels, graph_idx] = 1
+        else:
+            # Increment by one. Unfortunately you can not just use np.add.at(...) for duplicate indices to be accumulated
+            label_counter_ = collections.Counter(labels)
+            # new_label_indices: are the unique (!) indices in new_labels
+            # vals: are the number of occurrences of a index in new_labels
+            new_label_indices, vals = zip(*label_counter_.items())
+            phi[list(new_label_indices), graph_idx] += np.matrix(list(vals), dtype=phi.dtype).T
 
     # Just count the labels in the 0-th iteration. This corresponds to the graph_labels, but indexed correctly into phi
     phi = used_matrix_type(phi_shape, dtype=phi_dtype)
-    for idx, labels in enumerate(graph_labels):
-        phi[labels, idx] = 1
 
+    for idx, labels in enumerate(graph_labels):
+        add_labels_to_phi(phi, idx, labels)
 
     rounding_factor = np.power(10, round_signatures_to_decimals)
     phi_lists = [phi.tolil()]
@@ -92,7 +109,6 @@ def transform(
             has_same_labels = len(set(labels)) != len(labels)
 
             # ... generate the signatures (see paper) for each graph
-            #signatures = np.round((labels + adjacency_matrix * log_primes[labels] * round_signatures_to_decimals)).astype(labels_dtype)
             signatures = (labels + adjacency_matrix * log_primes[labels] * rounding_factor).astype(labels_dtype)
 
             # ... add missing signatures to the label lookup
@@ -100,23 +116,14 @@ def transform(
                 if signature not in label_lookup:
                     label_lookup[signature] = label_counter
                     label_counter += 1
+                    # label_counter should NEVER be greater than the dimension of phi!
                     assert label_counter <= phi_shape[0]
 
             # ... relabel the graphs with the new (compressed) labels
             new_labels = np.array([label_lookup[signature] for signature in signatures], dtype = labels_dtype)
             graph_labels[idx] = new_labels
 
-            # ... increment the entries in phi by one, where a label is given
-            if has_same_labels:
-                # Increment by one. Unfortunately you can not just use np.add.at(...) for duplicate indices to be accumulated
-                label_counter_ = collections.Counter(new_labels)
-                # new_label_indices: are the unique (!) indices in new_labels
-                # vals: are the number of occurrences of a index in new_labels
-                new_label_indices, vals = zip(*label_counter_.items())
-                phi[list(new_label_indices), idx] += np.matrix(list(vals), dtype = phi.dtype).T
-            else:
-                # Set to one. This is way faster!
-                phi[new_labels, idx] = 1
+            add_labels_to_phi(phi, idx, new_labels)
         # ... save phi
         phi_lists.append(phi.tolil())
         # ... save label counters/lookups for later use

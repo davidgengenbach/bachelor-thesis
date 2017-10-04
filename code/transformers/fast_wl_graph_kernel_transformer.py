@@ -73,6 +73,7 @@ class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Tran
 
         graph_helper.convert_graphs_to_adjs_tuples(X)
 
+        # Use already computed phi_list if the given X is the same as in fit()
         if self.hashed_x == hash_dataset(X):
             return self.phi_list
 
@@ -82,12 +83,12 @@ class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Tran
                 missing_labels = set(labels)- self.all_nodes
                 # TODO
                 if len(missing_labels):
-                    #assert False
                     pass
 
         phi_list, label_lookups, label_counters = fast_wl.transform(
             X, h=self.h, label_lookups=np.copy(self.label_lookups), label_counters=np.copy(self.label_counters), phi_dim=self.phi_shape[1], cast_after_rounding=self.should_cast, append_to_labels = True,round_signatures_to_decimals=self.round_to_decimals)
 
-        self.label_lookups = label_lookups
-        self.label_counters = label_counters
+        # Do NOT save label lookups and counters! This would effectively be fitting!
+        #self.label_lookups = label_lookups
+        #self.label_counters = label_counters
         return [x.T for x in phi_list]
