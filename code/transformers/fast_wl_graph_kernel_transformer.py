@@ -36,7 +36,6 @@ class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Tran
         Returns:
             FastWLGraphKernelTransformer: returns self
         """
-
         assert len(X)
         graph_helper.convert_graphs_to_adjs_tuples(X)
 
@@ -64,8 +63,9 @@ class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Tran
     def transform(self, X, y=None, **fit_params):
         if self.debug:
             print('FastWLGraphKernelTransformer.transform: len(X)={}, H={}'.format(len(X), self.h))
-        graph_helper.convert_graphs_to_adjs_tuples(X)
+        num_vertices = sum([len(labels) for _, labels in X])
 
+        graph_helper.convert_graphs_to_adjs_tuples(X)
         # remove missing nodes
         if self.remove_missing_labels:
             for adj, labels in X:

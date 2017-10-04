@@ -2,6 +2,7 @@
 
 import gc
 import os
+import sys
 import pickle
 from glob import glob
 
@@ -188,12 +189,15 @@ def main():
             predictions_file = '{}/{}.scratch.npy'.format(PREDICTIONS_FOLDER, filename)
 
             X, Y = dataset_helper.get_dataset_cached(graph_cache_file)
-            num_vertices = sum([nx.number_of_nodes(g) for g in X])
-            
+
+            #X, Y = X[:20], Y[:20]
+            empty_graphs = [1 for g in X if nx.number_of_nodes(g) == 0 or nx.number_of_edges(g) == 0]
+            num_vertices = sum([nx.number_of_nodes(g) for g in X]) + len(empty_graphs)
+
             estimator = sklearn.pipeline.Pipeline([
                 ('tuple_transformer', NxGraphToTupleTransformer()),
                 ('fast_wl', FastWLGraphKernelTransformer(h=args.wl_iterations, should_cast=False, remove_missing_labels=True, phi_dim = num_vertices)),
-                ('phi_picker', PhiPickerTransformer(return_iteration='stacked')),
+                ('phi_picker', PhiPickerTransformer(return_iteration=-1)),
                 # ('gram_matrix', GramMatrixTransformer()),
                 ('clf', None)
             ])
@@ -208,6 +212,7 @@ def main():
             except Exception as e:
                 LOGGER.warning('{:<10} - {:<15} - Error'.format('Graph', filename))
                 LOGGER.exception(e)
+
 
 
 

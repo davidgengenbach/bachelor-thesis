@@ -25,7 +25,7 @@ def transform(
         labels_dtype: np.dtype = np.uint32,
         phi_dtype: np.dtype = np.uint32,
         used_matrix_type: scipy.sparse.spmatrix = dok_matrix,
-        round_signatures_to_decimals: int = 10,
+        round_signatures_to_decimals: int = 1,
         cast_after_rounding: bool = False,
         append_to_labels: bool = True
     ) -> tuple:
@@ -33,9 +33,10 @@ def transform(
     assert len(graphs)
 
     # If no previous label counters/lookups are given, create empty ones
-    if not label_lookups:
+    if label_lookups is None:
         label_lookups = [{} for x in range(h + 1)]
-    if not label_counters:
+
+    if label_counters is None:
         label_counters = [0] * (h + 1)
 
     adjacency_matrices = [adjs for adjs, nodes in graphs]
@@ -59,13 +60,15 @@ def transform(
     new_label_lookups = [label_lookup]
     new_label_counters = [label_counter]
 
-    # The upper bound up to which the prime numbers have to be retrieved
-    primes_needed = primes_arguments_required[int(np.ceil(np.log2(num_labels)) + 3) + 3]
-    log_primes = primes.get_log_primes(1, primes_needed)
+
 
     # The number of unique labels (= the total number of nodes in graphs)
     if not phi_dim:
         phi_dim = sum(len(x) for x in graph_labels)
+
+    # The upper bound up to which the prime numbers have to be retrieved
+    primes_needed = primes_arguments_required[int(np.ceil(np.log2(phi_dim))) + 1]
+    log_primes = primes.get_log_primes(1, primes_needed)
 
     phi_shape = (phi_dim, num_graphs)
 
@@ -82,16 +85,14 @@ def transform(
         label_lookup = label_lookups[i + 1]
         label_counter = label_counters[i + 1]
 
-        assert isinstance(label_counter, int)
-        assert isinstance(label_lookup, dict)
-
         phi = used_matrix_type(phi_shape, dtype=phi_dtype)
         # ... go over all graphs
         for idx, (labels, adjacency_matrix) in enumerate(zip(graph_labels, adjacency_matrices)):
             has_same_labels = len(set(labels)) != len(labels)
 
             # ... generate the signatures (see paper) for each graph
-            signatures = np.round((labels + adjacency_matrix * log_primes[labels]), decimals= round_signatures_to_decimals)
+            #signatures = np.round((labels + adjacency_matrix * log_primes[labels] * round_signatures_to_decimals)).astype(labels_dtype)
+            signatures = (labels + adjacency_matrix * log_primes[labels] * round_signatures_to_decimals).astype(labels_dtype)
 
             if cast_after_rounding:
                 signatures = signatures.astype(labels_dtype)
@@ -128,8 +129,8 @@ def transform(
 
 
 def relabel_graphs(graphs: collections.abc.Iterable, label_counter: int = 0, label_lookup: dict = {}, labels_dtype: np.dtype = np.uint32, append: bool = True):
-    assert isinstance(label_counter, int)
-    assert isinstance(label_lookup, dict)
+    #assert isinstance(label_counter, int)
+    #assert isinstance(label_lookup, dict)
 
     labels = [[] for i in range(len(graphs))]
     nodes = [nodes for adjs, nodes in graphs]

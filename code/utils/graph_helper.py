@@ -133,7 +133,7 @@ def convert_graphs_to_adjs_tuples(X):
     for idx, graph in enumerate(X):
         nodes = graph.nodes()
         if len(nodes) == 0 or nx.number_of_edges(graph) == 0:
-            X[idx] = (lil_matrix(1, 1), [''])
+            X[idx] = (lil_matrix(1, 1), ['no_label'])
         else:
             X[idx] = (nx.adjacency_matrix(graph, nodelist=nodes), nodes)
 
