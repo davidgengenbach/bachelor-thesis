@@ -197,7 +197,7 @@ def main():
             estimator = sklearn.pipeline.Pipeline([
                 ('tuple_transformer', NxGraphToTupleTransformer()),
                 ('fast_wl', FastWLGraphKernelTransformer(h=args.wl_iterations, should_cast=False, remove_missing_labels=True, phi_dim = num_vertices)),
-                ('phi_picker', PhiPickerTransformer(return_iteration=-1)),
+                ('phi_picker', PhiPickerTransformer(return_iteration='stacked')),
                 # ('gram_matrix', GramMatrixTransformer()),
                 ('clf', None)
             ])
