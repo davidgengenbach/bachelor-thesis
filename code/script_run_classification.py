@@ -102,12 +102,12 @@ def start_tasks(args, all_tasks: typing.List[Task]):
         return should_process
 
     def print_tasks(tasks: typing.List[Task]):
-        for task in sorted(tasks, key = lambda x: x.type):
+        for task in tasks:
             print('\t{t.type:26} {dataset:18} {t.name}'.format(t=task, dataset = filename_utils.get_dataset_from_filename(task.name)))
         print('\n')
 
     # Filter out tasks
-    tasks = sorted([task for task in all_tasks if should_process_task(task)], key = lambda x: x.type)
+    tasks = sorted([task for task in all_tasks if should_process_task(task)], key = lambda x: filename_utils.get_dataset_from_filename(x.name))
 
     if args.dry_run:
         print('All tasks:')

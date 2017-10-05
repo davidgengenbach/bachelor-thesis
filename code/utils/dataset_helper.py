@@ -10,7 +10,7 @@ import scipy.sparse
 from joblib import Parallel, delayed
 from sklearn.model_selection import train_test_split
 from sklearn.utils import shuffle
-
+from utils import filename_utils
 
 
 DATASETS_LIMITED = ['ng20', 'reuters-21578', 'webkb', 'ling-spam']
@@ -231,8 +231,20 @@ def get_all_available_dataset_names(dataset_folder=DATASET_FOLDER):
 def get_all_cached_datasets(cache_path = CACHE_PATH):
     return sorted(glob(cache_path + '/*.npy'))
 
+
 def get_all_cached_graph_datasets(dataset_name = None, cache_path = CACHE_PATH):
-    return [x for x in get_all_cached_datasets(cache_path) if x.split('/')[-1].startswith('dataset_graph') and '_relabeled' not in x and 'gram' not in x and 'phi' not in x and (not dataset_name or get_dataset_name_from_graph_cachefile(x) == dataset_name or get_dataset_name_from_graph_cachefile(x) == dataset_name + '-single')]
+    def graph_dataset_filter(cache_file):
+        filename = filename_utils.get_filename_only(cache_file)
+        is_graph_dataset = filename.startswith('dataset_graph')
+        is_not_relabeled = '_relabeled' not in filename
+        is_not_gram_or_phi = 'gram' not in filename and 'phi' not in filename
+        is_in_dataset = not dataset_name or dataset_name == filename_utils.get_dataset_from_filename(filename)
+
+        return np.all([is_graph_dataset, is_not_relabeled, is_not_gram_or_phi, is_in_dataset])
+
+    return [x for x in get_all_cached_datasets(cache_path) if graph_dataset_filter(x)]
+
+
 
 def get_all_cached_graph_phi_datasets(dataset_name = None, cache_path = CACHE_PATH):
     if dataset_name:

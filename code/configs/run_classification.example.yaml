@@ -1,0 +1,27 @@
+# General
+n_jobs: 2
+verbose: 11
+dry_run: false
+results_folder: data/results
+predictions_folder: data/results/predictions
+force: false
+
+scoring: [precision_macro, recall_macro, accuracy, f1_macro]
+refit: f1_macro
+max_iter: 1000
+tol: 6e-4
+n_splits: 3
+random_state: 42
+create_predictions: false
+keep_coefs: false
+
+# FastWL options
+wl_round_to_decimal: [-1, 0, 5, 10]
+wl_iterations: [4]
+wl_phi_picker_iterations: [0, 3, stacked]
+
+# Task filters
+task_name_filter: None
+task_type_include_filter: None
+task_type_exclude_filter: None
+limit_dataset: [ ng20, ling-spam, reuters-21578, webkb, webkb-ana, ng20-ana]

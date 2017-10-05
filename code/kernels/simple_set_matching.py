@@ -5,9 +5,10 @@ Similar to the "zero" iteration of WL? The phi feature maps per dot product and 
 import numpy as np
 import networkx as nx
 import collections
+import typing
 
 
-def transform(graphs):
+def transform(graphs: typing.List[nx.Graph]):
     K = np.eye(len(graphs))
 
     for i, graph_1 in enumerate(graphs):

@@ -29,7 +29,7 @@ def get_gram_classification_tasks(args: argparse.Namespace, clfs):
     def process(args: argparse.Namespace, task: Task, gram_cache_file: str):
         K, Y = dataset_helper.get_dataset_cached(gram_cache_file, check_validity=False)
         estimator = sklearn.pipeline.Pipeline([('classifier', sklearn.svm.SVC(kernel='precomputed', class_weight='balanced', max_iter=args.max_iter, tol=args.tol))])
-        cross_validate(args, task, K, Y, estimator, {})
+        cross_validate(args, task, K, Y, estimator, {}, skip_predictions=True)
 
     # Gram classification
     for gram_cache_file in glob('data/CACHE/*gram*.npy'):
@@ -129,7 +129,7 @@ def get_text_classification_tasks(args: argparse.Namespace, clfs):
     return tasks
 
 
-def cross_validate(args: argparse.Namespace, task: Task, X, Y, estimator, param_grid: dict):
+def cross_validate(args: argparse.Namespace, task: Task, X, Y, estimator, param_grid: dict, skip_predictions = False):
     cv = sklearn.model_selection.StratifiedKFold(
         n_splits=args.n_splits,
         random_state=args.random_state,
@@ -144,18 +144,20 @@ def cross_validate(args: argparse.Namespace, task: Task, X, Y, estimator, param_
     X_train, Y_train, X_test, Y_test = X, Y, [], []
 
     # Hold out validation set (15%)
-    if args.create_predictions:
+    if not skip_predictions and args.create_predictions:
         try:
             X_train, X_test, Y_train, Y_test = sklearn.model_selection.train_test_split(X, Y, stratify=Y, test_size=0.15, random_state = args.random_state)
         except Exception as e:
             LOGGER.warning('Could not split dataset for predictions')
             LOGGER.exception(e)
+    print(X_train.shape)
+    #print(X_train.shape, X_test.shape, Y_train.shape, Y_test.shape)
 
     gscv = GridSearchCV(estimator=estimator, param_grid=param_grid, cv=cv, scoring=args.scoring, n_jobs=args.n_jobs, verbose=args.verbose, refit=args.refit)
 
     gscv_result = gscv.fit(X_train, Y_train)
 
-    if args.create_predictions:
+    if not skip_predictions and args.create_predictions:
         if not len(X_test):
             LOGGER.warning('Validation set for prediction has no length: len(X_test)={}'.format(len(X_test)))
         else:

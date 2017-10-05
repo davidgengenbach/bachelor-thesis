@@ -205,7 +205,7 @@ def get_gml_graph(graph_str, undirected=False, num_tries=20, verbose=False):
             delim = "'" if str(result).count('\'') == 2 else '"'
             duplicate_label = "'".join(str(result).split(delim)[1:-1])
             if verbose:
-                print('\tFound duplicate node label: "{}", trying to replace with first occurence'.format(duplicate_label))
+                print('\tFound duplicate node label: "{}", trying to replace with first occurrence'.format(duplicate_label))
             # Try to recover
             occurences = []
             for idx, line in enumerate(graph_str_lines):
