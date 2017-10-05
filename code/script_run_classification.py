@@ -2,7 +2,7 @@
 
 import os
 import collections
-import argparse
+import configargparse as argparse
 import typing
 from time import time
 import numpy as np
@@ -14,7 +14,12 @@ from classification.classification_tasks import Task
 
 
 def get_args():
-    parser = argparse.ArgumentParser(description='Run classification on the text and graph datasets')
+    parser = argparse.ArgumentParser(
+        description='Run classification on the text and graph datasets',
+        default_config_files=['configs/run_classification.yaml']
+    )
+
+    parser.add_argument('--config', is_config_file=True)
 
     # Options
     parser.add_argument('--n_jobs', type=int, default=2)

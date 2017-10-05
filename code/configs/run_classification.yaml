@@ -1,0 +1,5 @@
+# Overwrites the defaults that are specified in script_run_classification.py
+# For more information, see https://pypi.python.org/pypi/ConfigArgParse
+# Also, see script_run_classification.py for the possible options
+
+n_jobs: 1

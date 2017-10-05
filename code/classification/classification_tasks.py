@@ -169,9 +169,12 @@ def cross_validate(args: argparse.Namespace, task: Task, X, Y, estimator, param_
 
                 with open(predictions_file, 'wb') as f:
                     pickle.dump({
-                        'Y_real': Y_test,
-                        'Y_pred': Y_test_pred,
-                        'X_test': X_test
+                        'args': vars(args),
+                        'results': {
+                            'Y_real': Y_test,
+                            'Y_pred': Y_test_pred,
+                            'X_test': X_test
+                        }
                     }, f)
             except Exception as e:
                 LOGGER.warning('Error while trying to retrain best classifier')
@@ -181,4 +184,7 @@ def cross_validate(args: argparse.Namespace, task: Task, X, Y, estimator, param_
         remove_coefs_from_results(gscv_result.cv_results_)
 
     with open(result_file, 'wb') as f:
-        pickle.dump(gscv_result.cv_results_, f)
+        pickle.dump({
+            'args': vars(args),
+            'results': gscv_result.cv_results_
+        }, f)
