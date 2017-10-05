@@ -84,24 +84,44 @@ def get_graphs_from_folder(folder, ext='gml', undirected=True, verbose=False):
     """
     X, Y = [], []
     empty_graphs = []
-    files = sorted(glob(folder + '/*' + ext))
-    file_list = list(enumerate(files))
-    for idx, graph_file in sorted(file_list):
-        topic_and_id = graph_file.split('/')[-1].replace('.gml', '')
-        topic = '_'.join(topic_and_id.split('_')[:-1])
+
+    def get_all_files(folder):
+        files = glob('{}/**/*.gml'.format(folder), recursive=True) + glob('{}/**/*.graph'.format(folder), recursive=True)
+        return sorted(files)
+
+    def extract_y_and_id(file_path):
+        filename = file_path.rsplit('/', 1)[1]
+
+        if 'fullgraph' in filename:
+            # Like: data/graphs/ling-spam-single_v2/all/no_spam_0000/fullgraph.graph
+            t = file_path.rsplit('/', 2)[1]
+        else:
+            # Like: data/graphs/ling-spam-single_v1/no_spam_0000.gml
+            t = filename.rsplit('.', 1)[0]
+
+        return t.rsplit('_', 1)
+
+    files = get_all_files(folder)
+
+    for idx, graph_file in enumerate(files):
+        topic, graph_id = extract_y_and_id(graph_file)
+
+        topic_and_id = '{:20} - {:5}'.format(topic, graph_id)
+
         with open(graph_file) as f:
             graph_str = f.read()
         graph = get_gml_graph(graph_str, undirected)
         # Ignore empty graphs and graphs that could not be parsed
         if graph and graph.number_of_nodes() > 0 and graph.number_of_edges() > 0:
-            X.append(graph)
+            X.append((graph, graph_id))
             Y.append(topic)
         else:
             if graph is None:
                 break
             if verbose:
                 print("Empty graph: {}".format(topic_and_id))
-            empty_graphs.append(topic_and_id)
+            empty_graphs.append((topic_and_id, graph_file))
+
     assert len(X) and len(Y), 'X or Y empty'
     assert len(X) == len(Y), 'X has not the same dimensions as Y'
     return X, Y

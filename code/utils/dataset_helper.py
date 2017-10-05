@@ -150,7 +150,7 @@ def get_dataset(dataset_name, use_cached=True, preprocessed=False, dataset_folde
     return X, Y
 
 
-def get_gml_graph_dataset(dataset_name, use_cached=True, graphs_folder=GRAPHS_FOLDER, cache_folder=CACHE_PATH):
+def get_gml_graph_dataset(dataset_name, use_cached=True, graphs_folder=GRAPHS_FOLDER, graph_type = 'concept-map', cache_folder=CACHE_PATH):
     """Retrieves the gml dataset.
     TODO: The caching could be done with a decorator.
 
@@ -165,8 +165,11 @@ def get_gml_graph_dataset(dataset_name, use_cached=True, graphs_folder=GRAPHS_FO
     """
     from utils import graph_helper
 
+    if graphs_folder in dataset_name:
+        dataset_name = dataset_name.replace(graphs_folder + '/', '')
+
     graph_folder = os.path.join(graphs_folder, dataset_name)
-    cache_npy = os.path.join(CACHE_PATH, 'dataset_graph_gml_{}.npy'.format(dataset_name))
+    cache_npy = os.path.join(CACHE_PATH, 'dataset_graph_{}_{}.npy'.format(graph_type, dataset_name))
 
     if use_cached and os.path.exists(cache_npy):
         with open(cache_npy, 'rb') as f:
