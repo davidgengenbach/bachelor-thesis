@@ -215,7 +215,7 @@ def main():
             ])
 
             X_combined = list(zip(X_text, X))
-            cross_validate(X_combined, Y, pipeline, grid_params_combined, result_file_combined, predictions_file_combined)
+            cross_validate(task, X_combined, Y, pipeline, grid_params_combined)
 
         tasks.append(Task(type='graph_fast_wl', name = filename, process_fn = process, process_fn_args=[graph_cache_file]))
         tasks.append(Task(type='graph_combined-fast_wl', name= filename, process_fn=process_combined, process_fn_args=[graph_cache_file]))
@@ -225,7 +225,7 @@ def main():
         def process(task, gram_cache_file):
             K, Y = dataset_helper.get_dataset_cached(gram_cache_file, check_validity=False)
             estimator = Pipeline([('clf', sklearn.svm.SVC(kernel='precomputed', class_weight='balanced', max_iter=args.max_iter, tol=args.tol))])
-            cross_validate(K, Y, estimator, {})
+            cross_validate(task, K, Y, estimator, {})
 
         filename = filename_utils.get_filename_only(gram_cache_file)
         tasks.append(Task(type='graph-gram', name=filename, process_fn=process, process_fn_args=[graph_cache_file]))
