@@ -5,7 +5,7 @@ logging.basicConfig(
     format="%(asctime)s // %(levelname)s - %(name)s: %(message)s"
 )
 
-DEFAULT_IGNORES = ["git"]
+DEFAULT_IGNORES = ["git", "pip"]
 
 def get_logger(name = ''):
     return logging.getLogger(name)
