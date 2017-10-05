@@ -18,7 +18,7 @@ CURRENT_DIR = os.path.abspath(__file__).rsplit('/', 1)[0]
 ENZYME_DIR = '{}/data/enzymes'.format(CURRENT_DIR)
 
 H = 2
-class MyTestCase(unittest.TestCase):
+class GraphHelperTestCase(unittest.TestCase):
 
     def test(self):
         X, Y = graph_helper.get_graphs_with_mutag_enzyme_format(ENZYME_DIR)
