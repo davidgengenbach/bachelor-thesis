@@ -12,7 +12,7 @@ from transformers import fast_wl_pipeline
 from transformers.tuple_selector import TupleSelector
 from utils.logger import LOGGER
 from utils.remove_coefs_from_results import remove_coefs_from_results
-from utils import dataset_helper, filename_utils
+from utils import dataset_helper, filename_utils, time_utils, git_utils
 
 Task = collections.namedtuple('Task', ['type', 'name', 'process_fn', 'process_fn_args'])
 
@@ -50,7 +50,7 @@ def get_graph_classification_tasks(args: argparse.Namespace, clfs):
         'fast_wl__h': args.wl_iterations,
         'fast_wl__phi_dim': [None],
         'fast_wl__round_to_decimals': args.wl_round_to_decimal,
-        'phi_picker__return_iteration': [0, 1, 2, 3]
+        'phi_picker__return_iteration': args.wl_phi_picker_iterations
     }
 
     def process(args: argparse.Namespace, task: Task, graph_cache_file: str):
@@ -106,8 +106,6 @@ def get_graph_classification_tasks(args: argparse.Namespace, clfs):
         X_combined = list(zip(X_text, X))
         cross_validate(args, task, X_combined, Y, pipeline, grid_params_combined)
 
-
-    # fast_wl graph and combined with text classification
     for graph_cache_file in dataset_helper.get_all_cached_graph_datasets():
         filename = filename_utils.get_filename_only(graph_cache_file)
 
@@ -163,19 +161,18 @@ def cross_validate(args: argparse.Namespace, task: Task, X, Y, estimator, param_
         else:
             try:
                 # Retrain the best classifier and get prediction on validation set
-                best_classifer = sklearn.base.clone(gscv_result.best_estimator_)
-                best_classifer.fit(X_train, Y_train)
-                Y_test_pred = best_classifer.predict(X_test)
+                best_classifier = sklearn.base.clone(gscv_result.best_estimator_)
+                best_classifier.fit(X_train, Y_train)
+                Y_test_pred = best_classifier.predict(X_test)
 
-                with open(predictions_file, 'wb') as f:
-                    pickle.dump({
-                        'args': vars(args),
-                        'results': {
-                            'Y_real': Y_test,
-                            'Y_pred': Y_test_pred,
-                            'X_test': X_test
-                        }
-                    }, f)
+                dump_pickle_file(args, predictions_file, {
+                    'results': {
+                        'Y_real': Y_test,
+                        'Y_pred': Y_test_pred,
+                        'X_test': X_test
+                    }
+                })
+
             except Exception as e:
                 LOGGER.warning('Error while trying to retrain best classifier')
                 LOGGER.exception(e)
@@ -183,8 +180,26 @@ def cross_validate(args: argparse.Namespace, task: Task, X, Y, estimator, param_
     if not args.keep_coefs:
         remove_coefs_from_results(gscv_result.cv_results_)
 
-    with open(result_file, 'wb') as f:
-        pickle.dump({
-            'args': vars(args),
-            'results': gscv_result.cv_results_
-        }, f)
+    dump_pickle_file(args, result_file, dict(
+        results=gscv_result.cv_results_
+    ))
+
+
+def dump_pickle_file(args, filename: str, data: dict, add_meta: bool=True):
+    if add_meta:
+        meta = dict(meta_data=get_metadata(args))
+    else:
+        meta = dict()
+
+    with open(filename, 'wb') as f:
+        pickle.dump(dict(meta, **data), f)
+
+
+def get_metadata(args, other = None) -> dict:
+    return dict(
+        git_commit=str(git_utils.get_current_commit()),
+        timestamp=time_utils.get_timestamp(),
+        timestamp_readable=time_utils.get_time_formatted(),
+        args=vars(args),
+        other=other
+    )

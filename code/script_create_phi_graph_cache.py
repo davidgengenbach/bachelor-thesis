@@ -139,6 +139,7 @@ def process_graph_cache_file(graph_cache_file, args):
                             x.remove_edges_from(self_loop_edges)
 
                     K = spgk.transform(X_new, depth=depth)
+
                     with open(spgk_graph_cache_file, 'wb') as f:
                         pickle.dump((K, Y), f)
     except Exception as e:

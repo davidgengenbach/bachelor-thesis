@@ -4,7 +4,7 @@ from sklearn import naive_bayes
 def get_classifiers(args):
     return [
         # sklearn.dummy.DummyClassifier(strategy='most_frequent'),
-        sklearn.naive_bayes.MultinomialNB(),
+        #sklearn.naive_bayes.MultinomialNB(),
         sklearn.svm.LinearSVC(class_weight='balanced', max_iter=args.max_iter, tol=args.tol),
         sklearn.linear_model.PassiveAggressiveClassifier(class_weight='balanced', max_iter=args.max_iter, tol=args.tol)
         # sklearn.naive_bayes.GaussianNB(),
