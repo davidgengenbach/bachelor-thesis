@@ -149,10 +149,13 @@ def convert_graphs_to_adjs_tuples(X):
     Returns:
         list(tuple): a list of tuples where the first tuple element is an adjacency matrix and the second a list of labels
     """
-    if isinstance(X[0], tuple):
+    if isinstance(X[0], tuple) and not isinstance(X[0][0], nx.Graph):
         return
 
     for idx, graph in enumerate(X):
+        if isinstance(graph, tuple) and isinstance(graph[0], nx.Graph):
+            graph = graph[0]
+
         nodes = graph.nodes()
         if len(nodes) == 0 or nx.number_of_edges(graph) == 0:
             X[idx] = (lil_matrix(1, 1), ['no_label'])
