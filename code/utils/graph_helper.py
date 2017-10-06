@@ -149,6 +149,8 @@ def convert_graphs_to_adjs_tuples(X):
     Returns:
         list(tuple): a list of tuples where the first tuple element is an adjacency matrix and the second a list of labels
     """
+    assert len(X)
+
     if isinstance(X[0], tuple) and not isinstance(X[0][0], nx.Graph):
         return
 

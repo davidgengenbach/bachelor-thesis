@@ -56,10 +56,10 @@ def get_graph_classification_tasks(args: argparse.Namespace, clfs):
     def process(args: argparse.Namespace, task: Task, graph_cache_file: str):
         X, Y = dataset_helper.get_dataset_cached(graph_cache_file)
 
-        empty_graphs = [1 for g in X if nx.number_of_nodes(g) == 0 or nx.number_of_edges(g) == 0]
-        num_vertices = sum([nx.number_of_nodes(g) for g in X]) + len(empty_graphs)
-
         fast_wl_pipeline.convert_graphs_to_tuples(X)
+
+        empty_graphs = [1 for _, labels in X if len(labels) == 0]
+        num_vertices = sum([len(labels) for _, labels  in X]) + len(empty_graphs)
 
         features_params = dict({'feature_extraction__' + k: val for k, val in
                                 graph_fast_wl_grid_params.items()}, **dict(
