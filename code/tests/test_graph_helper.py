@@ -29,7 +29,7 @@ class GraphHelperTestCase(unittest.TestCase):
             with self.subTest(graph_dataset=graph_dataset, dataset_name=dataset_name):
                 yield graph_dataset, dataset_name
 
-    @unittest.skip("Takes to long")
+
     def test_convert_graph_datasets(self):
         for graph_dataset, dataset_name in self.iterate_graph_cache_datasets():
             X, Y = dataset_helper.get_dataset_cached(graph_dataset)
@@ -44,6 +44,7 @@ class GraphHelperTestCase(unittest.TestCase):
                 self.assertTrue(isinstance(x[1], list))
                 break
 
+    @unittest.skip("Takes too long")
     def test_combined_concept_graph_texts(self):
         for graph_dataset, dataset_name in self.iterate_graph_cache_datasets():
             if '_v2' not in graph_dataset: continue
@@ -53,6 +54,7 @@ class GraphHelperTestCase(unittest.TestCase):
                     for node, data in graph.nodes(data=True):
                         self.assertEqual(node, data['name'])
 
+    @unittest.skip("Takes too long")
     def test_mutag_enzyme_graphs(self):
         X, Y = graph_helper.get_graphs_with_mutag_enzyme_format(ENZYME_DIR)
 

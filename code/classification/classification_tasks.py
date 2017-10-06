@@ -76,7 +76,6 @@ def get_graph_classification_tasks(args: argparse.Namespace, clfs):
         graphs = [g for (g, _, _) in X_combined]
         empty_graphs = len([1 for g in graphs if nx.number_of_nodes(g) == 0 or nx.number_of_edges(g) == 0])
         num_vertices = sum([nx.number_of_nodes(g) for g in graphs]) + empty_graphs
-
         fast_wl_pipeline.convert_graphs_to_tuples(graphs)
 
         X_combined = [(graph, text) for (graph, text, _) in X_combined]

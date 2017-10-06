@@ -265,7 +265,7 @@ def get_filtered_text_graph_dataset(graph_cache_file) -> typing.Tuple[typing.Lis
     X_text, Y_text = dataset_helper.get_dataset(dataset_name)
     X_graph, Y_graph = dataset_helper.get_dataset_cached(graph_cache_file)
 
-    if len(X_graph) == len(X_text): return list(zip(X_graph, X_text, [])), Y_graph
+    if len(X_graph) == len(X_text): return list(zip(X_graph, X_text, [None] * len(X_graph))), Y_graph
 
     # Get class to class ids mapping
     class_2_id = collections.defaultdict(lambda: [])
