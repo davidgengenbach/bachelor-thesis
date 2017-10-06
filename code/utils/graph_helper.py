@@ -1,11 +1,13 @@
+import typing
 from glob import glob
 import networkx as nx
 from joblib import Parallel, delayed
 from scipy.sparse import lil_matrix
 
 from preprocessing import preprocessing
-from utils import cooccurrence
+from utils import cooccurrence, filename_utils, dataset_helper
 import numpy as np
+import collections
 
 
 def add_shortest_path_edges(graph, cutoff=2):
@@ -181,9 +183,9 @@ def get_gml_graph(graph_str, undirected=False, num_tries=20, verbose=False):
     """
     graph_str_lines = graph_str.split('\n')
     for idx, line in enumerate(graph_str_lines):
-        if line.startswith('label'):
+        if line.startswith('label '):
             next_line = graph_str_lines[idx + 1]
-            label = next_line.replace('name', 'label')
+            label = next_line.replace('name', 'label', 1)
             graph_str_lines[idx] = label
     def convert_to_nx(graph_):
         try:
@@ -209,7 +211,7 @@ def get_gml_graph(graph_str, undirected=False, num_tries=20, verbose=False):
             # Try to recover
             occurences = []
             for idx, line in enumerate(graph_str_lines):
-                if line.startswith('label'):
+                if line.startswith('label '):
                     label = line.replace('label', '', 1).strip()[1:-1]
                     label_id = graph_str_lines[idx - 1].replace('id ', '').strip()
                     if label == duplicate_label.strip():
@@ -250,6 +252,28 @@ def _parse_graph(graph_definition: str):
         adj_matrix[row_idx, parts] = 1
 
     return adj_matrix, vertices, clazz[0]
+
+
+def get_filtered_text_graph_dataset(graph_cache_file) -> typing.Tuple[typing.List[typing.Tuple], typing.List]:
+    dataset_name = filename_utils.get_dataset_from_filename(graph_cache_file)
+
+    X_text, Y_text = dataset_helper.get_dataset(dataset_name)
+    X_graph, Y_graph = dataset_helper.get_dataset_cached(graph_cache_file)
+
+    if len(X_graph) == len(X_text): return list(zip(X_graph, X_text, [])), Y_graph
+
+    # Get class to class ids mapping
+    class_2_id = collections.defaultdict(lambda: [])
+    for x, y in zip(X_text, Y_text):
+        class_2_id[y].append(x)
+
+    X_combined, Y_combined = [], Y_graph
+    for (x_graph, y_id), y_graph in zip(X_graph, Y_graph):
+        y_id = int(y_id)
+        X_combined.append((x_graph, class_2_id[y_graph][y_id], y_id))
+
+    return X_combined, Y_combined
+
 
 
 def get_graphs_with_mutag_enzyme_format(folder):

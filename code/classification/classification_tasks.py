@@ -12,7 +12,7 @@ from transformers import fast_wl_pipeline
 from transformers.tuple_selector import TupleSelector
 from utils.logger import LOGGER
 from utils.remove_coefs_from_results import remove_coefs_from_results
-from utils import dataset_helper, filename_utils, time_utils, git_utils
+from utils import dataset_helper, filename_utils, time_utils, git_utils, graph_helper
 
 Task = collections.namedtuple('Task', ['type', 'name', 'process_fn', 'process_fn_args'])
 
@@ -71,14 +71,15 @@ def get_graph_classification_tasks(args: argparse.Namespace, clfs):
         cross_validate(args, task, X, Y, graph_fast_wl_classification_pipeline, grid_params_scratch)
 
     def process_combined(args: argparse.Namespace, task: Task, graph_cache_file: str):
-        X, Y = dataset_helper.get_dataset_cached(graph_cache_file)
-        dataset_name = filename_utils.get_dataset_from_filename(graph_cache_file)
-        X_text, Y_text = dataset_helper.get_dataset(dataset_name)
+        X_combined, Y_combined = graph_helper.get_filtered_text_graph_dataset(graph_cache_file)
 
-        empty_graphs = [1 for g in X if nx.number_of_nodes(g) == 0 or nx.number_of_edges(g) == 0]
-        num_vertices = sum([nx.number_of_nodes(g) for g in X]) + len(empty_graphs)
+        graphs = [g for (g, _, _) in X_combined]
+        empty_graphs = len([1 for g in graphs if nx.number_of_nodes(g) == 0 or nx.number_of_edges(g) == 0])
+        num_vertices = sum([nx.number_of_nodes(g) for g in graphs]) + empty_graphs
 
-        fast_wl_pipeline.convert_graphs_to_tuples(X)
+        fast_wl_pipeline.convert_graphs_to_tuples(graphs)
+
+        X_combined = [(graph, text) for (graph, text, _) in X_combined]
 
         grid_params_combined = dict({
             'classifier': clfs
@@ -89,11 +90,11 @@ def get_graph_classification_tasks(args: argparse.Namespace, clfs):
 
         combined_features = sklearn.pipeline.FeatureUnion([
             ('tfidf', sklearn.pipeline.Pipeline([
-                ('selector', TupleSelector(tuple_index=0)),
+                ('selector', TupleSelector(tuple_index=1)),
                 ('tfidf', text_pipeline.get_pipeline()),
             ])),
             ('fast_wl_pipeline', sklearn.pipeline.Pipeline([
-                ('selector', TupleSelector(tuple_index=1, v_stack=False)),
+                ('selector', TupleSelector(tuple_index=0, v_stack=False)),
                 ('feature_extraction', fast_wl_pipeline.get_pipeline())
             ]))
         ])
@@ -103,8 +104,7 @@ def get_graph_classification_tasks(args: argparse.Namespace, clfs):
             ('classifier', None)
         ])
 
-        X_combined = list(zip(X_text, X))
-        cross_validate(args, task, X_combined, Y, pipeline, grid_params_combined)
+        cross_validate(args, task, X_combined, Y_combined, pipeline, grid_params_combined)
 
     for graph_cache_file in dataset_helper.get_all_cached_graph_datasets():
         filename = filename_utils.get_filename_only(graph_cache_file)

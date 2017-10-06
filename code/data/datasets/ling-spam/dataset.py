@@ -24,7 +24,7 @@ def fetch(remove_subject=True, used_state = 'bare'):
         directory = os.path.join(current_folder, 'src', directory)
         if not os.path.isdir(directory):
             continue
-        for file in glob(directory + '/{}/*/*.txt'.format(used_state)):
+        for file in sorted(glob(directory + '/{}/*/*.txt'.format(used_state))):
             filename = file.split('/')[-1]
             is_spam = filename.startswith('spmsg')
             label = SPAM_LABEL if is_spam else NOT_SPAM_LABEL
