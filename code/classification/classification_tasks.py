@@ -150,8 +150,6 @@ def cross_validate(args: argparse.Namespace, task: Task, X, Y, estimator, param_
         except Exception as e:
             LOGGER.warning('Could not split dataset for predictions')
             LOGGER.exception(e)
-    print(X_train.shape)
-    #print(X_train.shape, X_test.shape, Y_train.shape, Y_test.shape)
 
     gscv = GridSearchCV(estimator=estimator, param_grid=param_grid, cv=cv, scoring=args.scoring, n_jobs=args.n_jobs, verbose=args.verbose, refit=args.refit)
 
