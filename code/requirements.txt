@@ -16,3 +16,4 @@ pytest
 sklearn
 gitpython
 configargparse
+statsmodels

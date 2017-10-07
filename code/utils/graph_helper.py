@@ -1,13 +1,15 @@
 import typing
 from glob import glob
+import collections
+import os
+
 import networkx as nx
 from joblib import Parallel, delayed
 from scipy.sparse import lil_matrix
+import numpy as np
 
 from preprocessing import preprocessing
 from utils import cooccurrence, filename_utils, dataset_helper
-import numpy as np
-import collections
 
 
 def add_shortest_path_edges(graph, cutoff=2):
@@ -291,3 +293,12 @@ def get_graphs_with_mutag_enzyme_format(folder):
         X.append((adj_matrix, vertices))
         Y.append(clazz)
     return X, Y
+
+
+def warmup_graph_cache(graphs_folder = 'data/graphs', use_cached = False):
+    for f in glob('{}/*'.format(graphs_folder)):
+        if not os.path.isdir(f): continue
+        is_graph_folder = os.path.isdir('{}/all'.format(f)) or len(glob('{}/*0.gml'.format(f))) != 0
+        if not is_graph_folder: continue
+        print('Creating: {}'.format(f))
+        dataset_helper.get_gml_graph_dataset(f, use_cached=use_cached)

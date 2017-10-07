@@ -53,13 +53,11 @@ def get_graph_classification_tasks(args: argparse.Namespace, clfs):
         'phi_picker__return_iteration': args.wl_phi_picker_iterations
     }
 
-    def process(args: argparse.Namespace, task: Task, graph_cache_file: str):
-        X, Y = dataset_helper.get_dataset_cached(graph_cache_file)
-
+    def process_(args: argparse.Namespace, task: Task, X, Y):
         fast_wl_pipeline.convert_graphs_to_tuples(X)
 
         empty_graphs = [1 for _, labels in X if len(labels) == 0]
-        num_vertices = sum([len(labels) for _, labels  in X]) + len(empty_graphs)
+        num_vertices = sum([len(labels) for _, labels in X]) + len(empty_graphs)
 
         features_params = dict({'feature_extraction__' + k: val for k, val in
                                 graph_fast_wl_grid_params.items()}, **dict(
@@ -69,6 +67,16 @@ def get_graph_classification_tasks(args: argparse.Namespace, clfs):
         grid_params_scratch = dict(dict(classifier=clfs), **features_params)
 
         cross_validate(args, task, X, Y, graph_fast_wl_classification_pipeline, grid_params_scratch)
+
+    def process_plain(args: argparse.Namespace, task: Task, graph_cache_file: str):
+        X, Y = dataset_helper.get_dataset_cached(graph_cache_file)
+        process_(args, task, X, Y)
+
+    def process_same_label(args: argparse.Namespace, task: Task, graph_cache_file: str):
+        X, Y = dataset_helper.get_dataset_cached(graph_cache_file)
+        fast_wl_pipeline.convert_graphs_to_tuples(X)
+        X_same_label = [(x, [0] * len(y)) for x, y in X]
+        process_(args, task, X_same_label, Y)
 
     def process_combined(args: argparse.Namespace, task: Task, graph_cache_file: str):
         X_combined, Y_combined = graph_helper.get_filtered_text_graph_dataset(graph_cache_file)
@@ -108,7 +116,8 @@ def get_graph_classification_tasks(args: argparse.Namespace, clfs):
     for graph_cache_file in dataset_helper.get_all_cached_graph_datasets():
         filename = filename_utils.get_filename_only(graph_cache_file)
 
-        tasks.append(Task(type='graph_fast_wl', name=filename, process_fn=process, process_fn_args=[graph_cache_file]))
+        tasks.append(Task(type='graph_fast_wl', name=filename, process_fn=process_plain, process_fn_args=[graph_cache_file]))
+        tasks.append(Task(type='graph_fast_wl_same_label', name=filename, process_fn=process_same_label, process_fn_args=[graph_cache_file]))
         tasks.append(Task(type='graph_combined-fast_wl', name=filename, process_fn=process_combined,
                           process_fn_args=[graph_cache_file]))
 
