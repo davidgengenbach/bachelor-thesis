@@ -37,6 +37,7 @@ def get_args():
     parser.add_argument('--n_splits', type=int, default=3)
     parser.add_argument('--random_state', type=int, default=42)
     parser.add_argument('--create_predictions', action='store_true')
+    parser.add_argument('--prediction_test_size', type=float, default=0.15)
     parser.add_argument('--keep_coefs', action='store_true')
 
     # FastWL options

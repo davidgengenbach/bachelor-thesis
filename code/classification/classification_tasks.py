@@ -4,8 +4,10 @@ import collections
 import networkx as nx
 import argparse
 import pickle
+import itertools
 from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import Pipeline
+import numpy as np
 
 from transformers import text_pipeline
 from transformers import fast_wl_pipeline
@@ -29,7 +31,7 @@ def get_gram_classification_tasks(args: argparse.Namespace, clfs):
     def process(args: argparse.Namespace, task: Task, gram_cache_file: str):
         K, Y = dataset_helper.get_dataset_cached(gram_cache_file, check_validity=False)
         estimator = sklearn.pipeline.Pipeline([('classifier', sklearn.svm.SVC(kernel='precomputed', class_weight='balanced', max_iter=args.max_iter, tol=args.tol))])
-        cross_validate(args, task, K, Y, estimator, {}, skip_predictions=True)
+        cross_validate(args, task, K, Y, estimator, {}, skip_predictions=False, is_precomputed = True)
 
     # Gram classification
     for gram_cache_file in glob('data/CACHE/*gram*.npy'):
@@ -137,7 +139,16 @@ def get_text_classification_tasks(args: argparse.Namespace, clfs):
     return tasks
 
 
-def cross_validate(args: argparse.Namespace, task: Task, X, Y, estimator, param_grid: dict, skip_predictions = False):
+def get_precomputed_subset(K, indices1, indices2 = None):
+    if not indices2:
+        indices2 = indices1
+
+    K = np.array(K)
+    indices = np.meshgrid(indices1, indices2, indexing='ij')
+    return K[indices]
+
+
+def cross_validate(args: argparse.Namespace, task: Task, X, Y, estimator, param_grid: dict, skip_predictions = False, is_precomputed = False):
     cv = sklearn.model_selection.StratifiedKFold(
         n_splits=args.n_splits,
         random_state=args.random_state,
@@ -151,10 +162,23 @@ def cross_validate(args: argparse.Namespace, task: Task, X, Y, estimator, param_
 
     X_train, Y_train, X_test, Y_test = X, Y, [], []
 
-    # Hold out validation set (15%)
+    def train_test_split(*Xs, Y = None):
+        return sklearn.model_selection.train_test_split(*Xs, stratify=Y, test_size=args.prediction_test_size, random_state=args.random_state)
+
     if not skip_predictions and args.create_predictions:
+        # Hold out validation set (15%) for predictions
         try:
-            X_train, X_test, Y_train, Y_test = sklearn.model_selection.train_test_split(X, Y, stratify=Y, test_size=0.15, random_state = args.random_state)
+            if is_precomputed:
+                # Cut the precomputed gram matrix into a train/test split...
+                num_elements = X.shape[0]
+                indices = list(range(num_elements))
+                # ... by first splitting the dataset into train/test indices
+                X_train_i, X_test_i = train_test_split(indices, Y = Y)
+                # ... then cut the corresponding elements from the gram matrix
+                X_train, Y_train = get_precomputed_subset(X, X_train_i), np.array(Y)[X_train_i]
+                X_test, Y_test = get_precomputed_subset(X, X_test_i, X_train_i), np.array(Y)[X_test_i]
+            else:
+                X_train, X_test, Y_train, Y_test = train_test_split(X, Y, Y = Y)
         except Exception as e:
             LOGGER.warning('Could not split dataset for predictions')
             LOGGER.exception(e)
@@ -172,7 +196,6 @@ def cross_validate(args: argparse.Namespace, task: Task, X, Y, estimator, param_
                 best_classifier = sklearn.base.clone(gscv_result.best_estimator_)
                 best_classifier.fit(X_train, Y_train)
                 Y_test_pred = best_classifier.predict(X_test)
-
                 dump_pickle_file(args, predictions_file, {
                     'results': {
                         'Y_real': Y_test,
