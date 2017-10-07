@@ -8,6 +8,7 @@ import itertools
 from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import Pipeline
 import numpy as np
+import os
 
 from transformers import text_pipeline
 from transformers import fast_wl_pipeline
@@ -18,12 +19,14 @@ from utils import dataset_helper, filename_utils, time_utils, git_utils, graph_h
 
 Task = collections.namedtuple('Task', ['type', 'name', 'process_fn', 'process_fn_args'])
 
-def get_all_classification_tasks(args, clfs = None):
+
+def get_all_classification_tasks(args, clfs=None):
     tasks = []
     tasks += get_text_classification_tasks(args, clfs)
     tasks += get_graph_classification_tasks(args, clfs)
     tasks += get_gram_classification_tasks(args, clfs)
     return tasks
+
 
 def get_gram_classification_tasks(args: argparse.Namespace, clfs):
     tasks = []
@@ -31,7 +34,7 @@ def get_gram_classification_tasks(args: argparse.Namespace, clfs):
     def process(args: argparse.Namespace, task: Task, gram_cache_file: str):
         K, Y = dataset_helper.get_dataset_cached(gram_cache_file, check_validity=False)
         estimator = sklearn.pipeline.Pipeline([('classifier', sklearn.svm.SVC(kernel='precomputed', class_weight='balanced', max_iter=args.max_iter, tol=args.tol))])
-        cross_validate(args, task, K, Y, estimator, {}, skip_predictions=False, is_precomputed = True)
+        cross_validate(args, task, K, Y, estimator, {}, is_precomputed=True)
 
     # Gram classification
     for gram_cache_file in glob('data/CACHE/*gram*.npy'):
@@ -39,6 +42,7 @@ def get_gram_classification_tasks(args: argparse.Namespace, clfs):
         tasks.append(Task(type='graph_gram', name=filename, process_fn=process, process_fn_args=[gram_cache_file]))
 
     return tasks
+
 
 def get_graph_classification_tasks(args: argparse.Namespace, clfs):
     tasks = []
@@ -61,10 +65,10 @@ def get_graph_classification_tasks(args: argparse.Namespace, clfs):
         empty_graphs = [1 for _, labels in X if len(labels) == 0]
         num_vertices = sum([len(labels) for _, labels in X]) + len(empty_graphs)
 
-        features_params = dict({'feature_extraction__' + k: val for k, val in
-                                graph_fast_wl_grid_params.items()}, **dict(
-            feature_extraction__fast_wl__phi_dim=[num_vertices]
-        ))
+        features_params = dict(
+            {'feature_extraction__' + k: val for k, val in graph_fast_wl_grid_params.items()},
+            **dict(feature_extraction__fast_wl__phi_dim=[num_vertices])
+        )
 
         grid_params_scratch = dict(dict(classifier=clfs), **features_params)
 
@@ -120,10 +124,10 @@ def get_graph_classification_tasks(args: argparse.Namespace, clfs):
 
         tasks.append(Task(type='graph_fast_wl', name=filename, process_fn=process_plain, process_fn_args=[graph_cache_file]))
         tasks.append(Task(type='graph_fast_wl_same_label', name=filename, process_fn=process_same_label, process_fn_args=[graph_cache_file]))
-        tasks.append(Task(type='graph_combined-fast_wl', name=filename, process_fn=process_combined,
-                          process_fn_args=[graph_cache_file]))
+        tasks.append(Task(type='graph_combined-fast_wl', name=filename, process_fn=process_combined, process_fn_args=[graph_cache_file]))
 
     return tasks
+
 
 def get_text_classification_tasks(args: argparse.Namespace, clfs):
     tasks = []
@@ -139,16 +143,14 @@ def get_text_classification_tasks(args: argparse.Namespace, clfs):
     return tasks
 
 
-def get_precomputed_subset(K, indices1, indices2 = None):
+def get_precomputed_subset(K, indices1, indices2=None):
     if not indices2:
         indices2 = indices1
-
-    K = np.array(K)
     indices = np.meshgrid(indices1, indices2, indexing='ij')
-    return K[indices]
+    return np.array(K)[indices]
 
 
-def cross_validate(args: argparse.Namespace, task: Task, X, Y, estimator, param_grid: dict, skip_predictions = False, is_precomputed = False):
+def cross_validate(args: argparse.Namespace, task: Task, X, Y, estimator, param_grid: dict, skip_predictions=False, is_precomputed=False):
     cv = sklearn.model_selection.StratifiedKFold(
         n_splits=args.n_splits,
         random_state=args.random_state,
@@ -160,9 +162,12 @@ def cross_validate(args: argparse.Namespace, task: Task, X, Y, estimator, param_
     result_file = '{}/{}'.format(args.results_folder, result_filename_tmpl)
     predictions_file = '{}/{}'.format(args.predictions_folder, result_filename_tmpl)
 
+    if not args.force and os.path.exists(result_file):
+        return
+
     X_train, Y_train, X_test, Y_test = X, Y, [], []
 
-    def train_test_split(*Xs, Y = None):
+    def train_test_split(*Xs, Y=None):
         return sklearn.model_selection.train_test_split(*Xs, stratify=Y, test_size=args.prediction_test_size, random_state=args.random_state)
 
     if not skip_predictions and args.create_predictions:
@@ -173,12 +178,12 @@ def cross_validate(args: argparse.Namespace, task: Task, X, Y, estimator, param_
                 num_elements = X.shape[0]
                 indices = list(range(num_elements))
                 # ... by first splitting the dataset into train/test indices
-                X_train_i, X_test_i = train_test_split(indices, Y = Y)
+                X_train_i, X_test_i = train_test_split(indices, Y=Y)
                 # ... then cut the corresponding elements from the gram matrix
                 X_train, Y_train = get_precomputed_subset(X, X_train_i), np.array(Y)[X_train_i]
                 X_test, Y_test = get_precomputed_subset(X, X_test_i, X_train_i), np.array(Y)[X_test_i]
             else:
-                X_train, X_test, Y_train, Y_test = train_test_split(X, Y, Y = Y)
+                X_train, X_test, Y_train, Y_test = train_test_split(X, Y, Y=Y)
         except Exception as e:
             LOGGER.warning('Could not split dataset for predictions')
             LOGGER.exception(e)
@@ -216,7 +221,7 @@ def cross_validate(args: argparse.Namespace, task: Task, X, Y, estimator, param_
     ))
 
 
-def dump_pickle_file(args, filename: str, data: dict, add_meta: bool=True):
+def dump_pickle_file(args, filename: str, data: dict, add_meta: bool = True):
     if add_meta:
         meta = dict(meta_data=get_metadata(args))
     else:
@@ -226,7 +231,7 @@ def dump_pickle_file(args, filename: str, data: dict, add_meta: bool=True):
         pickle.dump(dict(meta, **data), f)
 
 
-def get_metadata(args, other = None) -> dict:
+def get_metadata(args, other=None) -> dict:
     return dict(
         git_commit=str(git_utils.get_current_commit()),
         timestamp=time_utils.get_timestamp(),

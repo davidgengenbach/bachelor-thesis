@@ -38,8 +38,6 @@ def get_results(folder=None, use_already_loaded=True, results_directory=RESULTS_
         cache_counter['loaded'] += 1
         _RESULT_CACHE.append(filename)
 
-        dataset_name = filename_utils.get_dataset_from_filename(result_file)
-
         with open(result_file, 'rb') as f:
             result_data = pickle.load(f)
 
@@ -56,7 +54,7 @@ def get_results(folder=None, use_already_loaded=True, results_directory=RESULTS_
 
             result['type'] = 'cooccurrence' if is_cooccurrence_dataset else 'concept-graph'
             result['lemmatized'] = '_lemmatized_' in result_file
-            result['same_label'] = 'same-label' in result_file
+            result['same_label'] = 'same_label' in result_file
 
             is_simple_kernel = '.simple.' in result_file
 
