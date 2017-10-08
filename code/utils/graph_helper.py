@@ -50,10 +50,12 @@ def get_all_node_labels(graphs, as_sorted_list=True):
     """
     labels = set()
     for graph in graphs:
-        if isinstance(graph, tuple):
+        if isinstance(graph, tuple) or isinstance(graph, np.ndarray):
             nodes = graph[1]
-        else:
+        elif isinstance(graph, nx.Graph):
             nodes = graph.nodes()
+        else:
+            assert False
         labels |= set(nodes)
     return sorted(list([str(x) for x in labels])) if as_sorted_list else labels
 
@@ -126,6 +128,7 @@ def get_graphs_from_folder(folder, ext='gml', undirected=True, verbose=False):
                 print("Empty graph: {}".format(topic_and_id))
             empty_graphs.append((topic_and_id, graph_file))
 
+    print('Empty graphs found: {}'.format(len(empty_graphs)))
     assert len(X) and len(Y), 'X or Y empty'
     assert len(X) == len(Y), 'X has not the same dimensions as Y'
     return X, Y
@@ -153,11 +156,13 @@ def convert_graphs_to_adjs_tuples(X):
     """
     assert len(X)
 
-    if isinstance(X[0], tuple) and not isinstance(X[0][0], nx.Graph):
+    if (isinstance(X[0], tuple) or isinstance(X[0], np.ndarray)) and not isinstance(X[0][0], nx.Graph):
         return
 
+    #print(X[0], type(X[0]))
+
     for idx, graph in enumerate(X):
-        if isinstance(graph, tuple) and isinstance(graph[0], nx.Graph):
+        if (isinstance(graph, np.ndarray) or isinstance(graph, tuple)) and isinstance(graph[0], nx.Graph):
             graph = graph[0]
 
         nodes = graph.nodes()

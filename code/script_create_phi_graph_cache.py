@@ -3,6 +3,7 @@
 import os
 import pickle
 from glob import glob
+import sys
 
 import numpy as np
 from joblib import delayed, Parallel
@@ -83,7 +84,6 @@ def process_graph_cache_file(graph_cache_file, args):
                     fast_wl_trans.fit(X)
                     with open(used_phi_graph_cache_file , 'wb') as f:
                         pickle.dump((fast_wl_trans.phi_list, Y), f)
-
             fast_wl_trans.set_params(should_cast=False)
 
             # All nodes get same label

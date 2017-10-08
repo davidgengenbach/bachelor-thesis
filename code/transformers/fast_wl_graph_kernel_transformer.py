@@ -45,7 +45,7 @@ class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Tran
         graph_helper.convert_graphs_to_adjs_tuples(X)
 
         # Remove empty graphs
-        X = [x for x in X if x]
+        X = [x for x in X if x is not None]
         self.hashed_x = hash_dataset(X)
 
         if self.debug:

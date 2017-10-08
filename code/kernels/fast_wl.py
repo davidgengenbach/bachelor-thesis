@@ -54,15 +54,16 @@ def transform(
     new_label_lookups = [label_lookup]
     new_label_counters = [label_counter]
 
-
     num_graphs = len(graphs)
     num_vertices = sum(len(x) for x in graph_labels)
 
+    phi_dim = phi_dim if phi_dim is not None else num_vertices
+
+    assert phi_dim is not None
     assert len(graph_labels) == len(graphs)
 
     # The number of unique labels (= the total number of nodes in the graphs)
-    phi_shape = (phi_dim if phi_dim is not None else num_vertices, num_graphs)
-
+    phi_shape = (phi_dim, num_graphs)
     # The upper bound up to which the prime numbers have to be retrieved
     primes_needed = primes_arguments_required[int(np.ceil(np.log2(phi_dim))) + 1]
     log_primes = primes.get_log_primes(1, primes_needed)
