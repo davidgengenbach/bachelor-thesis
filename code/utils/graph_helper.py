@@ -122,8 +122,6 @@ def get_graphs_from_folder(folder, ext='gml', undirected=True, verbose=False):
             X.append((graph, graph_id))
             Y.append(topic)
         else:
-            if graph is None:
-                break
             if verbose:
                 print("Empty graph: {}".format(topic_and_id))
             empty_graphs.append((topic_and_id, graph_file))
