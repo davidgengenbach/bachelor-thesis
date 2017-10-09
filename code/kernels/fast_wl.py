@@ -140,10 +140,7 @@ def transform(
     return phi_lists, new_label_lookups, new_label_counters
 
 
-def relabel_graphs(graphs: collections.abc.Iterable, label_counter: int = 0, label_lookup: dict = {}, labels_dtype: np.dtype = np.uint32, append: bool = True):
-    #assert isinstance(label_counter, int)
-    #assert isinstance(label_lookup, dict)
-
+def relabel_graphs(graphs: collections.abc.Iterable, label_counter: int = 0, label_lookup: dict = {}, labels_dtype: np.dtype = np.uint32, append: bool = True, shuffle_items_before_relabeling: bool = False):
     labels = [[] for i in range(len(graphs))]
     nodes = [nodes for adjs, nodes in graphs]
     for idx, nodes_ in enumerate(nodes):

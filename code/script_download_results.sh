@@ -6,7 +6,7 @@ SERVER='ba'
 
 cd data/results
 
-LAST_FOLDER=$(find . -maxdepth 1 -type d -name '2017*' | sort -r | head -n1 | cut -c3-)
+LAST_FOLDER="$(find . -maxdepth 1 -type d -name '2017*' | sort -r | head -n1 | cut -c3-)/"
 
 FOLDER_NAME="$(date "+%Y-%m-%d_%H-%M")"
 
@@ -18,8 +18,8 @@ if [ -z "$KEEP_OLD" ]; then
     fi
 # If KEEP_OLD, keep the old folder and create a new one
 else
-    echo "########### INFO: using new folder, copying ($FOLDER_NAME)"
-    cp -R $LAST_FOLDER $FOLDER_NAME
+    echo -e "########### INFO: using new folder, copying\t$LAST_FOLDER -> $FOLDER_NAME"
+    cp -R "$LAST_FOLDER" "$FOLDER_NAME"
 fi
 
 #set -x

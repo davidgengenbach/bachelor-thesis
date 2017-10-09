@@ -14,9 +14,12 @@ from relabeling import coreference
 from transformers.fast_wl_graph_kernel_transformer import FastWLGraphKernelTransformer
 from transformers.nx_graph_to_tuple_transformer import NxGraphToTupleTransformer
 from transformers.relabel_graphs_transformer import RelabelGraphsTransformer
-from utils import dataset_helper, graph_helper, filter_utils
+from utils import dataset_helper, graph_helper, filter_utils, filename_utils
+from classification.classification_tasks import Task
 from utils.logger import LOGGER
 
+import sklearn
+from sklearn import utils
 
 def get_args():
     import argparse
@@ -44,9 +47,10 @@ def main():
     Parallel(n_jobs=args.n_jobs)(delayed(process_graph_cache_file)(graph_cache_file, args) for graph_cache_file in dataset_helper.get_all_cached_graph_datasets())
 
 
+
 def process_graph_cache_file(graph_cache_file, args):
     graph_cache_filename = graph_cache_file.split('/')[-1].rsplit('.')[0]
-    dataset = dataset_helper.get_dataset_name_from_graph_cachefile(graph_cache_file)
+    dataset = filename_utils.get_dataset_from_filename(graph_cache_file)
 
     if '.phi.' in graph_cache_filename or not filter_utils.file_should_be_processed(graph_cache_filename, args.include_filter, args.exclude_filter, args.limit_dataset):
         return
@@ -60,7 +64,7 @@ def process_graph_cache_file(graph_cache_file, args):
 
     try:
         phi_graph_cache_file = graph_cache_file.replace('.npy', '.phi.npy')
-        phi_same_label_graph_cache_file = phi_graph_cache_file.replace(dataset, 'same-label_{}'.format(dataset))
+        phi_same_label_graph_cache_file = phi_graph_cache_file.replace(dataset, '{}_same-label'.format(dataset))
 
         X_graphs, Y = dataset_helper.get_dataset_cached(graph_cache_file)
 
@@ -72,18 +76,31 @@ def process_graph_cache_file(graph_cache_file, args):
         if not args.disable_wl:
             X = tuple_trans.transform(np.copy(X_graphs))
             # Without relabeling
-            for should_cast in [True, False]:
-                used_phi_graph_cache_file = phi_graph_cache_file
+            used_phi_graph_cache_file = phi_graph_cache_file
 
-                if should_cast:
-                    used_phi_graph_cache_file = phi_graph_cache_file.replace('.phi.', '.casted.phi.')
+            splitted_phi_graph_cache_file = phi_graph_cache_file.replace('.phi', '.splitted.phi')
 
-                if args.force or not os.path.exists(used_phi_graph_cache_file):
-                    fast_wl_trans.set_params(should_cast=should_cast)
+            if args.force or not os.path.exists(splitted_phi_graph_cache_file):
+                num_vertices = sum([len(labels) for _, labels in X])
+                test_size = 0.2
+                random_state = 42
+                X_train, X_test, Y_train, Y_test = sklearn.model_selection.train_test_split(np.copy(X), np.copy(Y), stratify=Y, test_size=test_size, random_state=random_state)
 
-                    fast_wl_trans.fit(X)
-                    with open(used_phi_graph_cache_file , 'wb') as f:
-                        pickle.dump((fast_wl_trans.phi_list, Y), f)
+                fast_wl_trans.set_params(phi_dim = num_vertices)
+
+                fast_wl_trans.fit(X_train)
+                phi_train = fast_wl_trans.phi_list
+                phi_test = fast_wl_trans.transform(X_test)
+
+                with open(splitted_phi_graph_cache_file , 'wb') as f:
+                    pickle.dump((phi_train, phi_test, X_train, X_test, Y_train, Y_test), f)
+
+
+            if args.force or not os.path.exists(used_phi_graph_cache_file):
+                fast_wl_trans.fit(X)
+                with open(used_phi_graph_cache_file , 'wb') as f:
+                    pickle.dump((fast_wl_trans.phi_list, Y), f)
+
             fast_wl_trans.set_params(should_cast=False)
 
             # All nodes get same label

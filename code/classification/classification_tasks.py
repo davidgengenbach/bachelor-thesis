@@ -150,6 +150,25 @@ def get_precomputed_subset(K, indices1, indices2=None):
     return np.array(K)[indices]
 
 
+def train_test_split(X, Y, test_size: float=0.15, random_state: int = 42, is_precomputed: bool=False):
+    def train_test_split(*Xs, Y = None):
+        return sklearn.model_selection.train_test_split(X, Y, stratify=Y, test_size=test_size, random_state=random_state)
+
+    if is_precomputed:
+        # Cut the precomputed gram matrix into a train/test split...
+        num_elements = X.shape[0]
+        indices = list(range(num_elements))
+        # ... by first splitting the dataset into train/test indices
+        X_train_i, X_test_i = train_test_split(indices, Y=Y)
+        # ... then cut the corresponding elements from the gram matrix
+        X_train, Y_train = get_precomputed_subset(X, X_train_i), np.array(Y)[X_train_i]
+        X_test, Y_test = get_precomputed_subset(X, X_test_i, X_train_i), np.array(Y)[X_test_i]
+    else:
+        X_train, X_test, Y_train, Y_test = train_test_split(X, Y, Y=Y)
+
+    return X_train, X_test, Y_train, Y_test
+
+
 def cross_validate(args: argparse.Namespace, task: Task, X, Y, estimator, param_grid: dict, skip_predictions=False, is_precomputed=False):
     cv = sklearn.model_selection.StratifiedKFold(
         n_splits=args.n_splits,
@@ -167,23 +186,11 @@ def cross_validate(args: argparse.Namespace, task: Task, X, Y, estimator, param_
 
     X_train, Y_train, X_test, Y_test = X, Y, [], []
 
-    def train_test_split(*Xs, Y=None):
-        return sklearn.model_selection.train_test_split(*Xs, stratify=Y, test_size=args.prediction_test_size, random_state=args.random_state)
 
     if not skip_predictions and args.create_predictions:
-        # Hold out validation set (15%) for predictions
+        # Hold out validation set for predictions
         try:
-            if is_precomputed:
-                # Cut the precomputed gram matrix into a train/test split...
-                num_elements = X.shape[0]
-                indices = list(range(num_elements))
-                # ... by first splitting the dataset into train/test indices
-                X_train_i, X_test_i = train_test_split(indices, Y=Y)
-                # ... then cut the corresponding elements from the gram matrix
-                X_train, Y_train = get_precomputed_subset(X, X_train_i), np.array(Y)[X_train_i]
-                X_test, Y_test = get_precomputed_subset(X, X_test_i, X_train_i), np.array(Y)[X_test_i]
-            else:
-                X_train, X_test, Y_train, Y_test = train_test_split(X, Y, Y=Y)
+            X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=args.prediction_test_size, random_state=args.random_state, is_precomputed=is_precomputed)
         except Exception as e:
             LOGGER.warning('Could not split dataset for predictions')
             LOGGER.exception(e)
@@ -222,10 +229,7 @@ def cross_validate(args: argparse.Namespace, task: Task, X, Y, estimator, param_
 
 
 def dump_pickle_file(args, filename: str, data: dict, add_meta: bool = True):
-    if add_meta:
-        meta = dict(meta_data=get_metadata(args))
-    else:
-        meta = dict()
+    meta = dict(meta_data=get_metadata(args)) if add_meta else dict()
 
     with open(filename, 'wb') as f:
         pickle.dump(dict(meta, **data), f)

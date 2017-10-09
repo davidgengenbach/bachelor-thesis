@@ -104,10 +104,11 @@ def test_dataset_validity(X, Y):
 def get_dataset_cached(cache_file, check_validity = True):
     assert os.path.exists(cache_file), 'Could not find cache_file: {}'.format(cache_file)
     with open(cache_file, 'rb') as f:
-        X, Y = pickle.load(f)
+        res = pickle.load(f)
     if check_validity:
+        X, Y = res
         test_dataset_validity(X, Y)
-    return X, Y
+    return res
 
 def get_dataset(dataset_name, use_cached=True, preprocessed=False, dataset_folder=DATASET_FOLDER, preprocessing_args=None, cache_path=CACHE_PATH, transform_fn=None, cache_file=None):
     """Returns the dataset as a tuple of lists. The first list contains the data, the second the labels
