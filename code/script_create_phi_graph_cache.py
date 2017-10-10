@@ -14,7 +14,7 @@ from relabeling import coreference
 from transformers.fast_wl_graph_kernel_transformer import FastWLGraphKernelTransformer
 from transformers.nx_graph_to_tuple_transformer import NxGraphToTupleTransformer
 from transformers.relabel_graphs_transformer import RelabelGraphsTransformer
-from utils import dataset_helper, graph_helper, filter_utils, filename_utils
+from utils import dataset_helper, graph_helper, filter_utils, filename_utils, helper
 from classification.classification_tasks import Task
 from utils.logger import LOGGER
 
@@ -28,6 +28,7 @@ def get_args():
     parser.add_argument('--wl_h', type=int, default=6)
     parser.add_argument('--max_path_distance_to_add', type=int, default=2)
     parser.add_argument('--remove_missing_labels', type=bool, default=True)
+    parser.add_argument('--wl_sort_classes', action='store_true')
     parser.add_argument('--force', action='store_true')
     parser.add_argument('--disable_wl', action='store_true')
     parser.add_argument('--disable_spgk', action='store_true')
@@ -44,8 +45,13 @@ def get_args():
 
 def main():
     args = get_args()
+    helper.print_script_args_and_info(args)
     Parallel(n_jobs=args.n_jobs)(delayed(process_graph_cache_file)(graph_cache_file, args) for graph_cache_file in dataset_helper.get_all_cached_graph_datasets())
 
+
+def sort(*Xs, by):
+    indices = np.argsort(by)
+    return [np.array(x)[indices] for x in Xs]
 
 
 def process_graph_cache_file(graph_cache_file, args):
@@ -74,19 +80,27 @@ def process_graph_cache_file(graph_cache_file, args):
         #    graph_helper.add_shortest_path_edges(graph, cutoff = args.max_path_distance_to_add)
 
         if not args.disable_wl:
-            X = tuple_trans.transform(np.copy(X_graphs))
+            X_, Y_ = np.array(np.copy(X_graphs)), np.array(np.copy(Y))
+
+            if args.wl_sort_classes:
+                X_, Y_ = sort(X_, Y_, by = Y_)
+
+            X_ = tuple_trans.transform(X_)
             # Without relabeling
             used_phi_graph_cache_file = phi_graph_cache_file
 
             splitted_phi_graph_cache_file = phi_graph_cache_file.replace('.phi', '.splitted.phi')
 
             if args.force or not os.path.exists(splitted_phi_graph_cache_file):
-                num_vertices = sum([len(labels) for _, labels in X])
+                num_vertices = sum([len(labels) for _, labels in X_])
                 test_size = 0.2
                 random_state = 42
-                X_train, X_test, Y_train, Y_test = sklearn.model_selection.train_test_split(np.copy(X), np.copy(Y), stratify=Y, test_size=test_size, random_state=random_state)
+                X_train, X_test, Y_train, Y_test = sklearn.model_selection.train_test_split(np.copy(X_), np.copy(Y_), stratify=Y_, test_size=test_size, random_state=random_state)
 
                 fast_wl_trans.set_params(phi_dim = num_vertices)
+
+                X_train, Y_train = sort(X_train, Y_train, by = Y_train)
+                X_test, Y_test = sort(X_test, Y_test, by = Y_test)
 
                 fast_wl_trans.fit(X_train)
                 phi_train = fast_wl_trans.phi_list
@@ -97,18 +111,18 @@ def process_graph_cache_file(graph_cache_file, args):
 
 
             if args.force or not os.path.exists(used_phi_graph_cache_file):
-                fast_wl_trans.fit(X)
+                fast_wl_trans.fit(X_)
                 with open(used_phi_graph_cache_file , 'wb') as f:
-                    pickle.dump((fast_wl_trans.phi_list, Y), f)
+                    pickle.dump((fast_wl_trans.phi_list, Y_), f)
 
             fast_wl_trans.set_params(should_cast=False)
 
             # All nodes get same label
             if args.force or not os.path.exists(phi_same_label_graph_cache_file):
-                X_same_label = [(x, [0] * len(y)) for x, y in X]
+                X_same_label = [(x, [0] * len(y)) for x, y in X_]
                 fast_wl_trans.fit(X_same_label)
                 with open(phi_same_label_graph_cache_file, 'wb') as f:
-                    pickle.dump((fast_wl_trans.phi_list, Y), f)
+                    pickle.dump((fast_wl_trans.phi_list, Y_), f)
 
             # With relabeling
             if not args.disable_relabeling:
@@ -124,13 +138,13 @@ def process_graph_cache_file(graph_cache_file, args):
 
                         relabel_trans = RelabelGraphsTransformer(label_lookup)
 
-                        X = relabel_trans.transform(X)
-                        X = [coreference.fix_duplicate_label_graph(*x) for x in X]
+                        X_ = relabel_trans.transform(X_)
+                        X_ = [coreference.fix_duplicate_label_graph(*x) for x in X_]
 
-                        fast_wl_trans.fit(X)
+                        fast_wl_trans.fit(X_)
 
                         with open(phi_graph_relabeled_cache_file, 'wb') as f:
-                            pickle.dump((fast_wl_trans.phi_list, Y), f)
+                            pickle.dump((fast_wl_trans.phi_list, Y_), f)
 
         if not args.disable_simple_set_matching_kernel:
             simple_kernel_cache_file = graph_cache_file.replace('.npy', '.simple.gram.npy')

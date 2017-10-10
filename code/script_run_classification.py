@@ -32,11 +32,11 @@ def get_args():
     # Options for Classifier and CV
     parser.add_argument('--scoring', type=str, nargs='+', default=['precision_macro', 'recall_macro', 'accuracy', 'f1_macro'])
     parser.add_argument('--refit', type=str, default='f1_macro')
-    parser.add_argument('--max_iter', type=int, default=1000)
+    parser.add_argument('--max_iter', type=int, default=2500)
     parser.add_argument('--tol', type=int, default=6e-4, help='Tolerance for stopping criteria')
     parser.add_argument('--n_splits', type=int, default=3)
     parser.add_argument('--random_state', type=int, default=42)
-    parser.add_argument('--create_predictions', action='store_true')
+    parser.add_argument('--create_predictions', type=bool, default=True)
     parser.add_argument('--prediction_test_size', type=float, default=0.15)
     parser.add_argument('--keep_coefs', action='store_true')
 
