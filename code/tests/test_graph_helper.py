@@ -19,6 +19,7 @@ from utils import graph_helper, dataset_helper, filename_utils
 CURRENT_DIR = os.path.abspath(__file__).rsplit('/', 1)[0]
 
 ENZYME_DIR = '{}/data/enzymes'.format(CURRENT_DIR)
+MUTAG_DIR = '{}/data/mutag'.format(CURRENT_DIR)
 
 H = 2
 class GraphHelperTestCase(unittest.TestCase):
@@ -29,7 +30,7 @@ class GraphHelperTestCase(unittest.TestCase):
             with self.subTest(graph_dataset=graph_dataset, dataset_name=dataset_name):
                 yield graph_dataset, dataset_name
 
-
+    @unittest.skip("Takes too long")
     def test_convert_graph_datasets(self):
         for graph_dataset, dataset_name in self.iterate_graph_cache_datasets():
             X, Y = dataset_helper.get_dataset_cached(graph_dataset)
@@ -54,10 +55,9 @@ class GraphHelperTestCase(unittest.TestCase):
                     for node, data in graph.nodes(data=True):
                         self.assertEqual(node, data['name'])
 
-    @unittest.skip("Takes too long")
+    #@unittest.skip("Takes too long")
     def test_mutag_enzyme_graphs(self):
-        X, Y = graph_helper.get_graphs_with_mutag_enzyme_format(ENZYME_DIR)
-
+        X, Y = graph_helper.get_graphs_with_mutag_enzyme_format(MUTAG_DIR)
         num_vertices = sum([len(labels) for _, labels in X])
 
         estimator = sklearn.pipeline.Pipeline([
@@ -68,3 +68,4 @@ class GraphHelperTestCase(unittest.TestCase):
         ])
 
         scores = sklearn.model_selection.cross_val_score(estimator, X, Y, cv = 3, scoring = 'accuracy')
+        print(scores)

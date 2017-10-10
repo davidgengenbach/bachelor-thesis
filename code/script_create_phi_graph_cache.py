@@ -70,8 +70,6 @@ def process_graph_cache_file(graph_cache_file, args):
 
     try:
         phi_graph_cache_file = graph_cache_file.replace('.npy', '.phi.npy')
-        phi_same_label_graph_cache_file = phi_graph_cache_file.replace(dataset, '{}_same-label'.format(dataset))
-
         X_graphs, Y = dataset_helper.get_dataset_cached(graph_cache_file)
 
         #X_graphs_walk_added = copy.deepcopy(X_graphs)
@@ -90,25 +88,24 @@ def process_graph_cache_file(graph_cache_file, args):
             used_phi_graph_cache_file = phi_graph_cache_file
 
             splitted_phi_graph_cache_file = phi_graph_cache_file.replace('.phi', '.splitted.phi')
+            phi_same_label_graph_cache_file = phi_graph_cache_file.replace(dataset, '{}_same-label'.format(dataset)).replace('.phi', '.splitted.phi')
+
+            num_vertices = sum([len(labels) for _, labels in X_])
+            test_size = 0.2
+            random_state = 42
+            X_train, X_test, Y_train, Y_test = sklearn.model_selection.train_test_split(np.copy(X_), np.copy(Y_), stratify=Y_, test_size=test_size, random_state=random_state)
+
+            X_train, Y_train = sort(X_train, Y_train, by = Y_train)
+            X_test, Y_test = sort(X_test, Y_test, by = Y_test)
 
             if args.force or not os.path.exists(splitted_phi_graph_cache_file):
-                num_vertices = sum([len(labels) for _, labels in X_])
-                test_size = 0.2
-                random_state = 42
-                X_train, X_test, Y_train, Y_test = sklearn.model_selection.train_test_split(np.copy(X_), np.copy(Y_), stratify=Y_, test_size=test_size, random_state=random_state)
-
                 fast_wl_trans.set_params(phi_dim = num_vertices)
-
-                X_train, Y_train = sort(X_train, Y_train, by = Y_train)
-                X_test, Y_test = sort(X_test, Y_test, by = Y_test)
-
-                fast_wl_trans.fit(X_train)
+                fast_wl_trans.fit(np.copy(X_train))
                 phi_train = fast_wl_trans.phi_list
-                phi_test = fast_wl_trans.transform(X_test)
+                phi_test = fast_wl_trans.transform(np.copy(X_test))
 
                 with open(splitted_phi_graph_cache_file , 'wb') as f:
                     pickle.dump((phi_train, phi_test, X_train, X_test, Y_train, Y_test), f)
-
 
             if args.force or not os.path.exists(used_phi_graph_cache_file):
                 fast_wl_trans.fit(X_)
@@ -119,10 +116,16 @@ def process_graph_cache_file(graph_cache_file, args):
 
             # All nodes get same label
             if args.force or not os.path.exists(phi_same_label_graph_cache_file):
-                X_same_label = [(x, [0] * len(y)) for x, y in X_]
-                fast_wl_trans.fit(X_same_label)
-                with open(phi_same_label_graph_cache_file, 'wb') as f:
-                    pickle.dump((fast_wl_trans.phi_list, Y_), f)
+                X_train_same_label = [(x, [0] * len(y)) for x, y in np.copy(X_train)]
+                X_test_same_label = [(x, [0] * len(y)) for x, y in np.copy(X_test)]
+
+                fast_wl_trans.set_params(phi_dim = num_vertices)
+                fast_wl_trans.fit(X_train_same_label)
+                phi_train = fast_wl_trans.phi_list
+                phi_test = fast_wl_trans.transform(X_test_same_label)
+
+                with open(phi_same_label_graph_cache_file , 'wb') as f:
+                    pickle.dump((phi_train, phi_test, X_train, X_test, Y_train, Y_test), f)
 
             # With relabeling
             if not args.disable_relabeling:

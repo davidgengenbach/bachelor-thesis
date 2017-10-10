@@ -143,7 +143,7 @@ def get_result_folder_df(results_directory=RESULTS_DIR):
 
 
 def get_result_folders(results_directory=RESULTS_DIR):
-    return [x for x in glob('{}/201*'.format(results_directory)) if os.path.isdir(x) and len(glob('{}/*.npy'.format(x)))]
+    return sorted([x for x in glob('{}/201*'.format(results_directory)) if os.path.isdir(x) and len(glob('{}/*.npy'.format(x)))])
 
 
 def get_result_filenames_from_folder(folder):
