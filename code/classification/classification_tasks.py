@@ -117,7 +117,7 @@ def get_graph_classification_tasks(args: argparse.Namespace, clfs):
             ('classifier', None)
         ])
 
-        cross_validate(args, task, X_combined, Y_combined, pipeline, grid_params_combined)
+        return cross_validate(args, task, X_combined, Y_combined, pipeline, grid_params_combined)
 
     for graph_cache_file in dataset_helper.get_all_cached_graph_datasets():
         filename = filename_utils.get_filename_only(graph_cache_file)
