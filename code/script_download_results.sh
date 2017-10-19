@@ -26,7 +26,7 @@ fi
 
 echo -e "########### INFO: rsyncing remote server\t(milhouse -> ralph)"
 GET_PREDICTIONS="YES"
-ssh $SERVER sh get_results.sh $GET_PREDICTIONS > /dev/null 2>&1
+ssh $SERVER sh get_results.sh $GET_PREDICTIONS #> /dev/null 2>&1
 
 if [ -z "$KEEP_OLD" ]; then
     DELETE_OPTIONS=''

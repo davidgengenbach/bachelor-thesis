@@ -6,6 +6,7 @@ import os
 import pickle
 import re
 import typing
+import numpy as np
 
 _RESULT_CACHE = []
 _DF_ALL = None
@@ -23,32 +24,29 @@ def get_results(folder=None, use_already_loaded=True, results_directory=RESULTS_
 
     folder = 'data/results/{}'.format(folder) if folder else result_folders[-1]
 
-    cache_counter = collections.Counter()
-
     # Get all result files (pickled)
     result_files = get_result_filenames_from_folder(folder)
 
     for result_file in helper.log_progress(result_files) if log_progress else result_files:
         if exclude_filter and exclude_filter in result_file: continue
-        filename = result_file.split('/')[-1]
-        if filename in _RESULT_CACHE:
-            cache_counter['cached'] += 1
+
+        dataset_name = filename_utils.get_dataset_from_filename(result_file)
+
+        if result_file in _RESULT_CACHE:
             continue
 
-        cache_counter['loaded'] += 1
-        _RESULT_CACHE.append(filename)
+        _RESULT_CACHE.append(result_file)
 
         with open(result_file, 'rb') as f:
             result_data = pickle.load(f)
 
+        result_file = result_file.split('/')[-1]
+
         result = result_data if 'params' in result_data else result_data['results']
 
-        result_file = result_file.split('/')[-1]
-        dataset_name = filename_utils.get_dataset_from_filename(result_file)
         is_graph_dataset = '_graph_' in result_file
-        
         result['combined'] = 'combined' in result_file
-        
+
         if is_graph_dataset:
             is_cooccurrence_dataset = 'cooccurrence' in result_file
 
@@ -63,6 +61,10 @@ def get_results(folder=None, use_already_loaded=True, results_directory=RESULTS_
             else:
                 result['kernel'] = 'spgk' if 'spgk' in result_file else 'wl'
 
+            if result['kernel'] == 'wl':
+                # ....
+                wl_iterations = [[val for key, val in val.items() if key.endswith('return_iteration')][0] for val in result['params']]
+                result['wl_iteration'] = wl_iterations
 
             is_relabeled = 'relabeled' in result_file
             result['relabeled'] = is_relabeled
@@ -72,12 +74,7 @@ def get_results(folder=None, use_already_loaded=True, results_directory=RESULTS_
                 result['topn'] = int(topn)
                 result['threshold'] = float(threshold)
 
-            if result['kernel'] == 'wl':
-                result['wl_iteration'] = result_file.rsplit('.results.')[0].split('.')[-1]
-
-            parts = result_file.split('_')
-
-            # Co-Cccurrence
+            # Co-Occurrence
             if is_cooccurrence_dataset:
                 parts = re.findall(r'cooccurrence_(.+?)_(.+?)_', result_file)[0]
                 result['window_size'], result['words'] = parts
@@ -96,8 +93,8 @@ def get_results(folder=None, use_already_loaded=True, results_directory=RESULTS_
                 result['classifier'][idx] = classifier_name
                 param[attr] = classifier_name
 
-        if '-ana' in result_file:
-            result['is_ana'] = True
+        result['is_ana'] = '-ana' in result_file
+
 
         if dataset_name.endswith('-single') or dataset_name.endswith('-ana'):
             dataset_name = dataset_name.rsplit('-', 1)[0]
@@ -107,26 +104,25 @@ def get_results(folder=None, use_already_loaded=True, results_directory=RESULTS_
 
         result_df = pd.DataFrame(result)
         _DF_ALL = result_df if _DF_ALL is None else _DF_ALL.append(result_df)
-        _DF_ALL = _DF_ALL.reset_index(drop = True)
 
     assert _DF_ALL is not None
     assert len(_DF_ALL)
 
-    # Only keep datasets where there are all three types (text, co-occurence and concept-graph) of results
-
     if filter_out_non_complete_datasets:
+        # Only keep datasets where there are all three types (text, co-occurrence and concept-graph) of results
         df_all = _DF_ALL.groupby('dataset').filter(lambda x: len(x.type.value_counts()) == 3).reset_index(drop=True)
     else:
         df_all = _DF_ALL
 
     # Remove cols
-    df_all = df_all[[x for x in df_all.columns.tolist() if
-                    (not remove_split_cols or not re.match(r'^split\d', x)) and
-                    (not remove_fit_time_cols or not re.match(r'_time$', x)) and
-                    (not remove_rank_cols or not re.match(r'rank_', x))]
-    ]
+    df_all = df_all[[
+        x for x in df_all.columns.tolist() if
+            (not remove_split_cols or not re.match(r'^split\d', x)) and
+            (not remove_fit_time_cols or not re.match(r'_time$', x)) and
+            (not remove_rank_cols or not re.match(r'rank_', x))
+    ]]
 
-    return df_all
+    return df_all.reset_index(drop=True)
 
 
 def get_result_folder_df(results_directory=RESULTS_DIR):
@@ -166,6 +162,3 @@ def get_predictions(folder: str=None) -> typing.Generator:
         with open(prediction_file, 'rb') as f:
             prediction = pickle.load(f)
         yield prediction_file, prediction
-
-
-#def get_kernel_from_result_filename(filename):
