@@ -12,8 +12,7 @@ accuracy = sklearn.metrics.accuracy_score
 recall = functools.partial(sklearn.metrics.recall_score, average='macro')
 f1 = functools.partial(sklearn.metrics.f1_score, average='macro')
 
-metrics = [('accuracy', accuracy)]
-#metrics = [('accuracy', accuracy), ('recall_macro', recall), ('f1_macro', f1)]
+metrics = [('accuracy', accuracy), ('recall_macro', recall), ('f1_macro', f1)]
 
 
 def get_transformed_results(result):
