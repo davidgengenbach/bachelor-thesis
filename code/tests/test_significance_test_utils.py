@@ -3,20 +3,22 @@ from utils import significance_test_utils
 import numpy as np
 import copy
 
+NUM_TRAILS = 1000
+
 class TimeUtilsTest(unittest.TestCase):
 
     def _get_test_result(self, metric, same_label = True):
         y_true = ['a', 'b']
-        y_a = ['b', 'b']
+        y_a = ['a', 'b']
 
         if same_label:
             y_b = copy.deepcopy(y_a)
         else:
-            y_b = ['a', 'b']
+            y_b = ['b', 'a']
 
         result = significance_test_utils.Result(y_true, [y_a, y_b])
         y_true, y_pred_a, y_pred_b = significance_test_utils.get_transformed_results(result)
-        metrics = significance_test_utils.randomization_test(y_true, y_pred_a=y_pred_a, y_pred_b=y_pred_b, metric=metric, num_trails=1000)
+        metrics = significance_test_utils.randomization_test(y_true, y_pred_a=y_pred_a, y_pred_b=y_pred_b, metric=metric, num_trails=NUM_TRAILS)
         diffs = metrics[:, 0] - metrics[:, 1]
         return diffs
 

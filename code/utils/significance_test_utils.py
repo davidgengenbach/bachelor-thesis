@@ -1,21 +1,24 @@
 import sklearn
-from sklearn import preprocessing, metrics
+from sklearn import preprocessing, metrics as m
 import numpy as np
 import functools
 import matplotlib.pyplot as plt
 import pandas as pd
 import collections
+import typing
+
+MetricFunction = typing.Callable[[typing.Iterable, typing.Iterable], float]
 
 Result = collections.namedtuple('Result', ['y_true', 'y_preds'])
 
-accuracy = sklearn.metrics.accuracy_score
-recall = functools.partial(sklearn.metrics.recall_score, average='macro')
-f1 = functools.partial(sklearn.metrics.f1_score, average='macro')
+accuracy: MetricFunction = sklearn.metrics.accuracy_score
+recall: MetricFunction = functools.partial(sklearn.metrics.recall_score, average='macro')
+f1: MetricFunction = functools.partial(sklearn.metrics.f1_score, average='macro')
 
-metrics = [('accuracy', accuracy), ('recall_macro', recall), ('f1_macro', f1)]
+metrics: typing.Iterable[typing.Tuple[str, MetricFunction]] = [('accuracy', accuracy), ('recall_macro', recall), ('f1_macro', f1)]
 
 
-def get_transformed_results(result):
+def get_transformed_results(result: Result):
     y_true = result.y_true
     y_pred_a, y_pred_b = result.y_preds
     trans_enc = sklearn.preprocessing.LabelEncoder()
@@ -24,14 +27,15 @@ def get_transformed_results(result):
     return np.array(y_true), np.array(y_pred_a), np.array(y_pred_b)
 
 
-def randomization_test(y_true, y_pred_a, y_pred_b, metric=sklearn.metrics.f1_score, num_trails=1000):
+def randomization_test(y_true: typing.Iterable, y_pred_a: typing.Iterable, y_pred_b: typing.Iterable, metric: MetricFunction=sklearn.metrics.f1_score, num_trails:int =1000):
     y_true, y_pred_a, y_pred_b = np.array(y_true), np.array(y_pred_a), np.array(y_pred_b)
     metrics_ = np.empty((num_trails, 2), dtype=np.float64)
-    def get_shuffled_array(indices, to_compare=0):
+
+    def get_shuffled_array(indices_, to_compare=0):
         other_to_compare = (to_compare + 1) % 2
         y_shuffled = np.empty(len(y_true), dtype=y_true.dtype)
-        y_shuffled[indices == to_compare] = y_pred_a[indices == to_compare]
-        y_shuffled[indices == other_to_compare] = y_pred_b[indices == other_to_compare]
+        y_shuffled[indices_ == to_compare] = y_pred_a[indices_ == to_compare]
+        y_shuffled[indices_ == other_to_compare] = y_pred_b[indices_ == other_to_compare]
         return y_shuffled
 
     for i in range(num_trails):
@@ -46,20 +50,20 @@ def randomization_test(y_true, y_pred_a, y_pred_b, metric=sklearn.metrics.f1_sco
     return metrics_
 
 
-def get_confidence(diff_global, diffs, num_trails):
+def get_confidence(diff_global: float, diffs: typing.Iterable, num_trails: int):
     return (np.sum(np.fabs(diffs) >= np.fabs(diff_global)) + 1) / (num_trails + 1)
 
 
-def plot_randomzation_test_distribution(result, metric=f1, metric_name='accuracy', num_trails=1000):
+def plot_randomzation_test_distribution(result: Result, metric: MetricFunction=f1, metric_name: str='NOT_SET', num_trails: int=1000):
     y_true, y_pred_a, y_pred_b = get_transformed_results(result)
     metric_a, metric_b = metric(y_true, y_pred_a), metric(y_true, y_pred_b)
     # Global diff
     diff = metric_a - metric_b
     # Randomization test
-    metrics = randomization_test(y_true, y_pred_a, y_pred_b, metric=metric, num_trails=num_trails)
+    metrics_ = randomization_test(y_true, y_pred_a, y_pred_b, metric=metric, num_trails=num_trails)
 
     # Calculate diffs for the randomized results
-    diffs = metrics[:, 0] - metrics[:, 1]
+    diffs = metrics_[:, 0] - metrics_[:, 1]
 
     # Get confidence (= the probability that the observed difference between the metrics on model A and B is a product of chance)
     p = get_confidence(diff, diffs, num_trails=num_trails)

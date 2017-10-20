@@ -2,7 +2,8 @@
 
 KEEP_OLD="$1"
 
-SERVER='ba'
+SERVER='pe'
+SYNC_SERVER=""
 
 cd data/results
 
@@ -22,11 +23,11 @@ else
     cp -R "$LAST_FOLDER" "$FOLDER_NAME"
 fi
 
-#set -x
-
-echo -e "########### INFO: rsyncing remote server\t(milhouse -> ralph)"
-GET_PREDICTIONS="YES"
-ssh $SERVER sh get_results.sh $GET_PREDICTIONS #> /dev/null 2>&1
+if [ ! -z "$SYNC_SERVER" ]; then
+    echo -e "########### INFO: rsyncing remote server\t(milhouse -> ralph)"
+    GET_PREDICTIONS="YES"
+    ssh $SERVER sh get_results.sh $GET_PREDICTIONS #> /dev/null 2>&1
+fi
 
 if [ -z "$KEEP_OLD" ]; then
     DELETE_OPTIONS=''
@@ -34,5 +35,5 @@ else
     DELETE_OPTIONS='--delete'
 fi
 
-echo -e "########### INFO: rsyncing results\t\t(ralph -> this host)"
+echo -e "########### INFO: rsyncing results\t\t($SERVER -> this host)"
 rsync -avz $SERVER:results/ $FOLDER_NAME/ $DELETE_OPTIONS
