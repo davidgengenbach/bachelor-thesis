@@ -1,0 +1,50 @@
+\newcommand{\red}[1]{
+    \textcolor{red}{#1}
+}
+
+\newcommand{\getmydate}{%
+  \ifcase\month%
+    \or Januar\or Februar\or M\"arz%
+    \or April\or Mai\or Juni\or Juli%
+    \or August\or September\or Oktober%
+    \or November\or Dezember%
+  \fi\ \number\year%
+}
+
+
+\newcommand{\refsection}[2] {
+    \section{#1}
+    \label{#2}
+}
+
+\newcommand{\refsubsection}[2] {
+    \subsection{#1}
+    \label{#2}
+}
+
+
+% DEBUG variable
+\newif\ifDEBUG
+
+% Comment out to make DEBUG false and remove todos/notes
+\DEBUGtrue
+
+\ifDEBUG
+    \newcommand{\todo}[1]{
+        \noindent\red{ToDo: \textit{#1}}
+        \\
+    }
+
+    \newcommand{\note}[1]{
+        \noindent\textcolor{cyan}{{\textbf{Note} \textit{#1}}}
+        \\
+    }
+
+    \newcommand{\inlinetodo}[1]{
+        \red{\textbf{(#1)}}
+    }
+\else
+    \newcommand{\todo}[1]{}
+    \newcommand{\note}[1]{}
+    \newcommand{\inlinetodo}[1]{}
+\fi

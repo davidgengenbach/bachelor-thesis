@@ -9,3 +9,8 @@ code/tmp/
 other/unused
 .idea/
 .cache/
+*.log
+*.aux
+*.toc
+*.out
+thesis/*.pdf

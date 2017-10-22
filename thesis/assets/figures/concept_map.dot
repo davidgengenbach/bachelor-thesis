@@ -1,0 +1,11 @@
+# dot -oconcept_map.pdf -Tpdf concept_map.dot
+digraph G {
+    "Caffeine" [shape=box];
+    "a mild CNS stimulant" [shape=box];
+    "Herbal supplements" [shape=box];
+    "ADHD symptoms" [shape=box];
+
+    "Caffeine"  -> "a mild CNS stimulant" [label="is"];
+    "a mild CNS stimulant"  -> "ADHD symptoms" [label="reduces"];
+    "Herbal supplements" -> "ADHD symptoms" [label="are used to treat"];
+}
