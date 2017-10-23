@@ -285,6 +285,11 @@ def get_filtered_text_graph_dataset(graph_cache_file, use_ana = False) -> typing
     return X_combined, Y_combined
 
 
+def remove_graph_labels(X):
+    if not len(X) or not isinstance(X[0], tuple):
+        return
+    for idx, x in enumerate(X):
+        X[idx] = x[0]
 
 def get_graphs_with_mutag_enzyme_format(folder):
     graphs = glob('{}/*.graph'.format(folder))
@@ -296,6 +301,17 @@ def get_graphs_with_mutag_enzyme_format(folder):
         X.append((adj_matrix, vertices))
         Y.append(clazz)
     return X, Y
+
+
+def graph_to_text(graph):
+    text = []
+    for source, target, data in graph.edges(data = True):
+        if 'name' in data:
+            t = [source, data['name'], target]
+        else:
+            t = [source, target]
+        text.append(' '.join(t))
+    return '. '.join(text)
 
 
 def warmup_graph_cache(graphs_folder = 'data/graphs', use_cached = False):
