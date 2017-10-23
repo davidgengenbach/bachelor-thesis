@@ -310,7 +310,7 @@ def graph_to_text(graph):
             t = [source, data['name'], target]
         else:
             t = [source, target]
-        text.append(' '.join(t))
+        text.append(' '.join([str(x) for x in t]))
     return '. '.join(text)
 
 
