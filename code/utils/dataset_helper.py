@@ -208,7 +208,7 @@ def get_dataset_subset_with_most_frequent_classes(dataset_name, num_classes_to_k
         tuple(list, list): X and Y, where the dataset only contains data from the most frequent classes
     """
     X, Y = get_dataset(dataset_name, **get_dataset_kwargs)
-    return get_subset_with_most_frequent_classes(X, Y)
+    return get_subset_with_most_frequent_classes(X, Y, num_classes_to_keep = num_classes_to_keep)
 
 
 def get_all_available_dataset_names(dataset_folder=DATASET_FOLDER):

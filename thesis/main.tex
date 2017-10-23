@@ -1,21 +1,20 @@
 \documentclass[article,type=bsc,colorback,accentcolor=tud9c]{tudthesis}
-%\usepackage{ngerman}
 \usepackage[english]{babel}
-
+\usepackage{amsmath}
+\usepackage{amssymb}
 \usepackage{hyperref}
-\hypersetup{linktoc=all}
+\usepackage{booktabs}
+\usepackage{tabularx}
 
-\input{assets/commands}
-
-\thesistitle{Text classification using concept maps}%
-{}
-  %{Subtitle}
+\thesistitle{Text classification using concept maps}{}
 \author{David Marlon Gengenbach}
 \birthplace{Gemmingen-Stebbach}
 \referee{Prof. Dr. Iryna Gurevych}{Prof. Dr. Kristian Kersting}[Dr. Tobias Falke]
 \department{Fachbereich Informatik}
 \group{UKP Lab}
 \dateofexam{\today}{\today}
+
+\input{assets/commands}
 
 \begin{document}
   \makethesistitle
@@ -29,8 +28,6 @@
   \input{chapters/introduction}
   \refsection{Background}{sec:background}
   \input{chapters/background}
-  \refsection{Main Contributions}{sec:main_contributions}
-  \input{chapters/main_contributions}
   \refsection{Evaluation}{sec:evaluation}
   \input{chapters/evaluation}
   \refsection{Implementation}{sec:implementation}
