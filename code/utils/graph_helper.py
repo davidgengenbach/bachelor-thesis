@@ -303,10 +303,10 @@ def get_graphs_with_mutag_enzyme_format(folder):
     return X, Y
 
 
-def graph_to_text(graph):
+def graph_to_text(graph, use_edges = True):
     text = []
     for source, target, data in graph.edges(data = True):
-        if 'name' in data:
+        if use_edges and 'name' in data:
             t = [source, data['name'], target]
         else:
             t = [source, target]

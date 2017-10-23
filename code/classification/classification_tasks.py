@@ -12,12 +12,14 @@ import os
 
 from transformers import text_pipeline
 from transformers import fast_wl_pipeline
+from transformers.graph_to_text_transformer import GraphToTextTransformer
 from transformers.tuple_selector import TupleSelector
 from utils.logger import LOGGER
 from utils.remove_coefs_from_results import remove_coefs_from_results
 from utils import dataset_helper, filename_utils, time_utils, git_utils, graph_helper
 
 Task = collections.namedtuple('Task', ['type', 'name', 'process_fn', 'process_fn_args'])
+
 
 
 def get_all_classification_tasks(args, clfs=None):
@@ -86,10 +88,12 @@ def get_graph_classification_tasks(args: argparse.Namespace, clfs):
 
     def process_tfidf_graphs(args: argparse.Namespace, task: Task, graph_cache_file: str):
         X, Y = dataset_helper.get_dataset_cached(graph_cache_file)
-        graph_helper.remove_graph_labels(X)
-        X = [graph_helper.graph_to_text(g) for g in X]
 
-        cross_validate(args, task, X, Y, text_pipeline.get_pipeline(), dict(text_pipeline.get_param_grid(), **dict(classifier=clfs)))
+        text_p = text_pipeline.get_pipeline()
+
+        text_p.steps.insert(0, ('graph_to_text', GraphToTextTransformer()))
+
+        cross_validate(args, task, X, Y, text_p, dict(text_pipeline.get_param_grid(), **dict(graph_to_text__use_edges = [True, False], classifier=clfs)))
 
 
     def process_combined(args: argparse.Namespace, task: Task, graph_cache_file: str):
@@ -194,7 +198,6 @@ def cross_validate(args: argparse.Namespace, task: Task, X, Y, estimator, param_
         return
 
     X_train, Y_train, X_test, Y_test = X, Y, [], []
-
 
     if not skip_predictions and args.create_predictions:
         # Hold out validation set for predictions

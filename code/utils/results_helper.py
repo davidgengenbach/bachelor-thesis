@@ -47,6 +47,8 @@ def get_results(folder=None, use_already_loaded=True, results_directory=RESULTS_
         is_graph_dataset = '_graph_' in result_file
         result['combined'] = 'combined' in result_file
 
+        result['kernel'] = 'unknown'
+
         if is_graph_dataset:
             is_cooccurrence_dataset = 'cooccurrence' in result_file
 
@@ -54,12 +56,21 @@ def get_results(folder=None, use_already_loaded=True, results_directory=RESULTS_
             result['lemmatized'] = '_lemmatized_' in result_file
             result['same_label'] = 'same_label' in result_file
 
+            is_tfidf = 'tfidf' in result_file
+            result['is_tfidf'] = is_tfidf
+
             is_simple_kernel = '.simple.' in result_file
 
             if is_simple_kernel:
                 result['kernel'] = 'simple_set_matching'
+            elif 'spgk' in result_file:
+                result['kernel'] = 'spgk'
+            elif 'wl' in result_file:
+                result['kernel'] = 'wl'
+            elif 'tfidf' in result_file:
+                result['kernel'] = 'tfidf'
             else:
-                result['kernel'] = 'spgk' if 'spgk' in result_file else 'wl'
+                assert False
 
             if result['kernel'] == 'wl':
                 # ....
