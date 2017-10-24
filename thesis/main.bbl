@@ -1,0 +1,137 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 2.7 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \sortlist[entry]{nty/global/}
+    \entry{Gulrandhe2015}{article}{}
+      \name{author}{2}{}{%
+        {{hash=259356a2b4948b73a14d46561ff5ddd8}{%
+           family={Gulrandhe},
+           family_i={G\bibinitperiod},
+           given={Chetna},
+           given_i={C\bibinitperiod}}}%
+        {{hash=13a4cbe359463ce79cdb02e12b5c8109}{%
+           family={Bawankar},
+           family_i={B\bibinitperiod},
+           given={Chetan},
+           given_i={C\bibinitperiod}}}%
+      }
+      \strng{namehash}{e1fa099fce45aa4984922614a0c3f05b}
+      \strng{fullhash}{e1fa099fce45aa4984922614a0c3f05b}
+      \field{sortinit}{G}
+      \field{sortinithash}{1c854ef9177a91bf894e66485bdbd3ed}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{Recently, graph representations of text have been showing improved performance over conventional bag-of-words representations in text categorization applications. In this paper, we present a graph-based representation for biomedical articles and use graph kernels to classify those articles into high-level categories. In our representation, common biomedical concepts and semantic relationships are identified with the help of an existing ontology and are used to build a rich graph structure that provides a consistent feature set and preserves additional semantic information that could improve a classifier's performance. We attempt to classify the graphs using both a set-based graph kernel that is capable of dealing with the disconnected nature of the graphs and a simple linear kernel. Finally, we report the results comparing the classification performance of the kernel classifiers to common text based classifiers.}
+      \field{journaltitle}{International Journal Of Computer Science And Applications}
+      \field{number}{1}
+      \field{title}{{Concept Graph Preserving Semantic Relationship for Biomedical Text Categorization}}
+      \field{volume}{8}
+      \field{year}{2015}
+      \field{pages}{9\bibrangedash 12}
+      \range{pages}{4}
+      \verb{file}
+      \verb :Users/davidgengenbach/Documents/Mendeley Desktop/Concept Graph Preserving Semantic Relationship for Biomedical Text Categorization - Gulrandhe, Bawankar - 2015.pdf:pdf
+      \endverb
+      \keyw{biomedical ontology,classifier design and,evaluation,graph kernels,graph representations,methods and algorithms,mining,modelling structured,query processing,s,text categorization,text mining,text retrieval,textual and multimedia data}
+    \endentry
+    \entry{Nikolentzos2017a}{article}{}
+      \name{author}{5}{}{%
+        {{hash=d17f55fb1669e9c5047812134fd326fb}{%
+           family={Nikolentzos},
+           family_i={N\bibinitperiod},
+           given={Giannis},
+           given_i={G\bibinitperiod}}}%
+        {{hash=39bb056724b76f882934207dc50f1e35}{%
+           family={Meladianos},
+           family_i={M\bibinitperiod},
+           given={Polykarpos},
+           given_i={P\bibinitperiod}}}%
+        {{hash=6f000472fd9938ee79042af4cfe47fe8}{%
+           family={Rousseau},
+           family_i={R\bibinitperiod},
+           given={Francois},
+           given_i={F\bibinitperiod}}}%
+        {{hash=a325a5cf58bcb9d372a4bcab568fc2c5}{%
+           family={Vazirgiannis},
+           family_i={V\bibinitperiod},
+           given={Michalis},
+           given_i={M\bibinitperiod}}}%
+        {{hash=522b8c90d93de1fd8a7f8f3c77be8af7}{%
+           family={Stavrakas},
+           family_i={S\bibinitperiod},
+           given={Yannis},
+           given_i={Y\bibinitperiod}}}%
+      }
+      \strng{namehash}{7b44c57fbc061c47d9db727ec6c7e028}
+      \strng{fullhash}{b0528b00d73a51aea5136b977ccf1a51}
+      \field{sortinit}{N}
+      \field{sortinithash}{925374ca63e7594de7fafdb83e64d41d}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{{Shortest-Path Graph Kernels for Document Similarity}}
+      \field{year}{2017}
+      \field{pages}{1891\bibrangedash 1901}
+      \range{pages}{11}
+      \verb{file}
+      \verb :Users/davidgengenbach/Documents/Mendeley Desktop/Shortest-Path Graph Kernels for Document Similarity - Nikolentzos et al. - 2017.pdf:pdf;:Users/davidgengenbach/Documents/Mendeley Desktop/Shortest-Path Graph Kernels for Document Similarity - Nikolentzos et al. - 2017.png:png
+      \endverb
+    \endentry
+    \entry{Rousseau2015a}{article}{}
+      \name{author}{3}{}{%
+        {{hash=6f000472fd9938ee79042af4cfe47fe8}{%
+           family={Rousseau},
+           family_i={R\bibinitperiod},
+           given={Francois},
+           given_i={F\bibinitperiod}}}%
+        {{hash=bc15fb9a852e80e185c43e0204bbc941}{%
+           family={Kiagias},
+           family_i={K\bibinitperiod},
+           given={Emmanouil},
+           given_i={E\bibinitperiod}}}%
+        {{hash=a325a5cf58bcb9d372a4bcab568fc2c5}{%
+           family={Vazirgiannis},
+           family_i={V\bibinitperiod},
+           given={Michalis},
+           given_i={M\bibinitperiod}}}%
+      }
+      \strng{namehash}{d5b609789fe661a7dce972460e4bcb7d}
+      \strng{fullhash}{d5b609789fe661a7dce972460e4bcb7d}
+      \field{sortinit}{R}
+      \field{sortinithash}{c7387613477035a752d935acfc3e3ea2}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{abstract}{In this paper, we consider the task of text categorization as a graph classification problem. By representing textual documents as graph-of-words instead of historical n-gram bag-of-words, we extract more discriminative features that correspond to long-distance n-grams through frequent subgraph mining. Moreover, by capitalizing on the concept of k-core, we reduce the graph representation to its densest part - its main core - speeding up the feature extraction step for little to no cost in prediction performances. Experiments on four standard text classification datasets show statistically significant higher accuracy and macro-Averaged F1-score compared to baseline approaches. {{$\copyright$}} 2015 Association for Computational Linguistics.}
+      \field{isbn}{9781941643723}
+      \field{journaltitle}{Proceedings of the 53rd Annual Meeting of the Association for Computational Linguistics and the 7th International Joint Conference on Natural Language Processing (Volume 1: Long Papers)}
+      \field{title}{{Text Categorization as a Graph Classification Problem}}
+      \field{year}{2015}
+      \field{pages}{1702\bibrangedash 1712}
+      \range{pages}{11}
+      \verb{file}
+      \verb :Users/davidgengenbach/Documents/Mendeley Desktop/Text Categorization as a Graph Classification Problem - Rousseau, Kiagias, Vazirgiannis - 2015(2).pdf:pdf
+      \endverb
+      \verb{url}
+      \verb http://www.aclweb.org/anthology/P15-1164
+      \endverb
+    \endentry
+  \endsortlist
+\endrefsection
+\endinput
+

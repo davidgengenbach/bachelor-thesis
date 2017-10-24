@@ -27,7 +27,8 @@ def transform(
         used_matrix_type: scipy.sparse.spmatrix = dok_matrix,
         round_signatures_to_decimals: int = 1,
         cast_after_rounding: bool = False,
-        append_to_labels: bool = True
+        append_to_labels: bool = True,
+        ignore_label_order = False
     ) -> tuple:
     assert len(graphs)
 
@@ -44,8 +45,9 @@ def transform(
     for idx, adj in enumerate(adjacency_matrices):
         adj = adj.tocsr()
         adj.data = np.where(adj.data > 1, 0, 1)
+        # Use this?
+        np.fill_diagonal(adj, 1)
         adjacency_matrices[idx] = adj
-        #adj[adj.nonzero()] = 1
 
     # Relabel the graphs, mapping the string labels to unique IDs (ints)
     label_lookup, label_counter, graph_labels = relabel_graphs(graphs, label_counter = label_counters[0], label_lookup = label_lookups[0], labels_dtype = labels_dtype, append = append_to_labels)
@@ -117,6 +119,9 @@ def transform(
 
             # ... generate the signatures (see paper) for each graph
             signatures = (labels + adjacency_matrix * log_primes[labels] * rounding_factor).astype(labels_dtype)
+
+            if ignore_label_order:
+                signatures -= labels
 
             # ... add missing signatures to the label lookup
             for signature in signatures:

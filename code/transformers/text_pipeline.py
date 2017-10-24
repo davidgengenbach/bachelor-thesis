@@ -1,5 +1,8 @@
 import sklearn
 from sklearn import feature_extraction
+from sklearn import preprocessing
+from transformers.preprocessing_transformer import PreProcessingTransformer
+from transformers.simple_preprocessing_transformer import SimplePreProcessingTransformer
 
 def get_pipeline():
     return sklearn.pipeline.Pipeline([
@@ -10,7 +13,6 @@ def get_pipeline():
     ])
 
 
-
 def get_param_grid():
     return dict(
         vectorizer = [
@@ -18,7 +20,8 @@ def get_param_grid():
             sklearn.feature_extraction.text.TfidfVectorizer()
         ],
         vectorizer__stop_words = [None, 'english'],
-        vectorizer__ngram_range = [(1, 1), (1, 2), (2, 2)]
-        # preprocessing= [None, PreProcessingTransformer(only_nouns=True, return_lemma = True)],
-        #scaler=[None, sklearn.preprocessing.StandardScaler(with_mean=False)]
+        vectorizer__ngram_range = [(1, 1), (1, 2), (2, 2)],
+        #preprocessing= [None, PreProcessingTransformer(only_nouns=True, return_lemma = True)],
+        preprocessing = [None, SimplePreProcessingTransformer()],
+        #scaler=[None, sklearn.preprocessing.MaxAbsScaler()]
     )

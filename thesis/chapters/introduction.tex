@@ -9,17 +9,31 @@
 \todo{Outlook}
 
 \refsubsection{Hypothesis and Goals}{subsec:hypothesis_and_goals}
-In this work, we evaluate the usefulness of graph representation of text in the context of text classification. In particular, we work out how or whether the structure of the graph representation actually improves the classification performance.
+In this work, we evaluate the usefulness of graph representations of text in the context of text classification. In particular, we work out how or whether the structure of the graph representation actually improves the classification performance.
+For this, we evaluate the performance of different graph types like co-occurrence graphs or concept maps.
 
-The main hypothesis is:
+The main hypothesis of this work is:
 \begin{quote}
 Concept maps capture structural information about the underlying text. Mining this structural information in the context of text-classification leads to an improved classification score.
 \end{quote}
 
 \refsubsection{Applications}{subsec:applications}
+\paragraph{Text Classification}
 Text classification has a great number of applications. Not limited to spam detection, genre classification or sentiment analysis.
 
-\todo{Graph classification also important.}
+\paragraph{Graph Classification}
+Graph classification also has a growing importance in many fields. Graphs are a fitting representation for structured data. Following are some examples of graph classification:
+
+\begin{figure}[h]
+\centering
+\begin{tabular}{llll}
+field &  nodes &  edges & classes\\
+\midrule
+chemistry & atoms & bonds & toxicity (binary)\\
+biology & amino acids & spatial link & protein types \\ 
+social networks & users & 'are friends' or 'like the same content' & bot detection (binary) or user classification
+\end{tabular}
+\end{figure}
 
 \refsubsection{Related Work}{subsec:related_work}
 \todo{How did the field evolve?}
@@ -27,3 +41,14 @@ Text classification has a great number of applications. Not limited to spam dete
 \todo{What is the most related work, how do they differ from our approach
 Relate the other work to the new approach and work out their differences/results}
 \todo{Other approaches to graph classification}
+\paragraph{``Shortest-Path Graph Kernels for Document Similarity" \cite{Nikolentzos2017a}}
+The most similar and recent approach to our approach that we found was \cite{Nikolentzos2017a}. In this paper, the authors first create co-occurrence graphs out of the text, then run their own graph kernel on top of them. They create a gram matrix and use a SVM to classify the graphs. Their graph kernel consists of three parts:
+\begin{enumerate}
+\item{Simple label matching: the number of matching node labels are compared between the two graphs}
+\item{Shortest path: generate a shortest-path graph}
+\end{enumerate}
+
+\paragraph{``Text Categorization as a Graph Classification Problem" \cite{Rousseau2015a}}
+
+
+\paragraph{``Concept Graph Preserving Semantic Relationship for Biomedical Text Categorization" \cite{Gulrandhe2015}}

@@ -122,3 +122,23 @@ def remove_stopwords(tokens, stopwords=set(stopwords.words('english'))):
 
 def remove_interpunction(tokens):
     return [w.lower() for w in tokens if w.isalnum()]
+
+
+import unicodedata, re
+
+control_chars = '\x00-\x1f\x7f-\x9f'
+
+control_char_re = re.compile('[%s]' % re.escape(control_chars))
+
+def remove_non_printable(text):
+    return control_char_re.sub('', text)
+
+NUM_REGEXP = re.compile(r'\d+')
+def number_to_placeholder(text):
+    return NUM_REGEXP.sub(' NUMBER ', text)
+
+def preprocess__(t):
+    fns = [remove_non_printable, number_to_placeholder, ana_preprocessing]
+    for fn in fns:
+        t = fn(t)
+    return t

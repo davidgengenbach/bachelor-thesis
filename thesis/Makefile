@@ -5,4 +5,4 @@ watch: main.tex
 	#> /dev/null 2>&1
 
 compile: main.tex
-	latex-compile $^
+	latex-compile main

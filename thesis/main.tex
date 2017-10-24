@@ -16,14 +16,15 @@
 
 \input{assets/commands}
 
+\usepackage[backend=biber]{biblatex}
+\addbibresource{literature.bib}
+
 \begin{document}
   \makethesistitle
   \affidavit{David Marlon Gengenbach}
-
+  \setcounter{page}{1}
   \tableofcontents
-
   \newpage
-
   \refsection{Introduction}{sec:introduction}
   \input{chapters/introduction}
   \refsection{Background}{sec:background}
@@ -35,4 +36,6 @@
   \refsection{Conclusions}{sec:conclusions}
   \input{chapters/conclusions}
 
+  \newpage
+  \printbibliography
 \end{document}
