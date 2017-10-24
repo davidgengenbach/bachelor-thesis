@@ -14,3 +14,9 @@ other/unused
 *.toc
 *.out
 thesis/*.pdf
+*.bbl
+*.bcf
+*.blg
+*.xml
+*.bbl
+*.blg
