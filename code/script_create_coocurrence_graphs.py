@@ -10,6 +10,21 @@ from preprocessing import preprocessing
 from utils import dataset_helper, graph_helper
 
 
+def get_args():
+    import argparse
+    parser = argparse.ArgumentParser(description='Calculates the cooccurrence matrices and saves them')
+    parser.add_argument('--n_jobs', type=int, default=1)
+    parser.add_argument('--n_jobs_coo', type=int, default=1)
+    parser.add_argument('--window_size_start', type=int, default=1)
+    parser.add_argument('--window_size_end', type=int, default=4)
+    parser.add_argument('--min_length', type=int, default=-1)
+    parser.add_argument('--lemmatize', action = 'store_true')
+    parser.add_argument('--force', action = 'store_true')
+    parser.add_argument('--limit_dataset', type=str, default = None)
+    args = parser.parse_args()
+    return args
+
+
 def main():
     args = get_args()
     print('args=', args)
@@ -43,19 +58,6 @@ def process_dataset(dataset, args):
             with open(cache_file, 'wb') as f:
                 pickle.dump((X_processed, Y_processed), f)
 
-def get_args():
-    import argparse
-    parser = argparse.ArgumentParser(description='Calculates the cooccurrence matrices and saves them')
-    parser.add_argument('--n_jobs', type=int, default=1)
-    parser.add_argument('--n_jobs_coo', type=int, default=1)
-    parser.add_argument('--window_size_start', type=int, default=1)
-    parser.add_argument('--window_size_end', type=int, default=4)
-    parser.add_argument('--min_length', type=int, default=-1)
-    parser.add_argument('--lemmatize', action = 'store_true')
-    parser.add_argument('--force', action = 'store_true')
-    parser.add_argument('--limit_dataset', type=str, default = None)
-    args = parser.parse_args()
-    return args
 
 if __name__ == '__main__':
     main()

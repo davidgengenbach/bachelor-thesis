@@ -1,0 +1,25 @@
+
+strict graph "" {
+a;
+for;
+is;
+quotation;
+serviceable;
+substitute;
+wit;
+a -- for  [weight=1];
+a -- is  [weight=1];
+a -- quotation  [weight=1];
+a -- serviceable  [weight=1];
+a -- substitute  [weight=1];
+for -- serviceable  [weight=1];
+for -- substitute  [weight=1];
+for -- wit  [weight=1];
+is -- quotation  [weight=1];
+is -- serviceable  [weight=1];
+is -- substitute  [weight=1];
+quotation -- serviceable  [weight=1];
+serviceable -- substitute  [weight=1];
+serviceable -- wit  [weight=1];
+substitute -- wit  [weight=1];
+}

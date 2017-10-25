@@ -1,3 +1,20 @@
+In order to test the hypothesis, we first derive a number of subgoals/questions from the hypothesis.
+
+Questions:
+\begin{enumerate}
+    \item{How important are the labels in graphs? Does structural-only data improve the classification score?}
+    \item{How does the classification performance compare to classical, non-structural approaches?}
+    \item{How does the size of a graph affect the classification result?}
+\end{enumerate}
+
+\paragraph{Question: ``How similar/diverse are the graphs structurally?"}
+If the structure of the graphs is too similar and the structural differences are not distinct between the classes, they most likely will not be that useful for classification.
+When comparing the graph similarity with respect to some graph kernel, the graphs in some class should be distinguishable from the graphs in another class.
+
+To explore the differences, we look at three questions in particular:
+\quote{How similar are the graphs... $a)$ in the same class, $b)$ between (pairs of) classes and $c)$ in the complete dataset?}
+
+\todo{Since we are especially interested in answering structure-related questions about the graphs, we first have to distinguish structural from non-structural data.}
 \todo{Explain the used metrics and how they relate to hypothesis}
 \todo{Explain the datasets and how they differ, why they are important?}
 \todo{Introduce the baselines, explain how they relate to the hypothesis, why they - are chosen, how they differ}
@@ -12,14 +29,32 @@
 \todo{Mention difficulties and possible solutions}
 \todo{Add runtime analysis}
 
-\paragraph{Baselines}
-\paragraph{Approach}
+\subsubsection{Baselines}
 
+\paragraph{Text-based}
+\todo{Preprocessing}
+\todo{CountVectorizer, TfIdfVectorizer}
+
+\paragraph{Graph-based}
+\todo{Preprocessing}
+\todo{Window sizes}
+\todo{}
+
+\subsubsection{Approach}
+\todo{Combined}
+\todo{Code by Tobias, explain steps}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.6\linewidth]{assets/figures/approach.pdf}
+\caption{\todo{Caption}}
+\end{figure}
 
 \refsubsection{Datasets}{subsec:datasets}
 \todo{Statistics about datasets and derived graphs}
 \todo{Skewed classes}
 \todo{Graph statistics}
+\todo{Give hints where to download the datasets from}
 
 \begin{figure}
 \centering
@@ -42,19 +77,27 @@ webkb           &  7 &  8274 \\
 \end{figure}
 
 \refsubsection{Methods}{subsec:methods}
-\todo{Pre-Processing}
-\todo{CV}
-\todo{Significance tests}
 \todo{Combined}
 \todo{Scaler}
 \todo{Merging nodes?}
+
+\subsubsection{Cross-Validation}
+
+\subsubsection{Pre-Processing}
+
+\subsubsection{Metrics}
+
+\subsubsection{Significance tests}
+
 
 \refsubsection{Results and Observations}{subsec:results_and_observations}
 \todo{Observations + possible explanations}
 \todo{How does the results relate to hypothesis?}
 \todo{Error analysis}
+\todo{Confusion matrices?}
+\todo{Comparison between text n-grams and concept maps/co-occurrence graphs}
 
-\paragraph{Structure Of The Used Graphs}
+\subsubsection{Structure Of The Used Graphs}
 The co-occurrence graphs have a relatively simple structure.
 Co-occurrence graphs are always connected, ie. the number of connected components is 1 (or 0 in case of an empty graph).
 When the window size is 1, the graph is similar to a path, meaning that most of the nodes have a degree $< 2$. With increasing window size, the graph gets more connected.
@@ -81,3 +124,4 @@ When the window size is 1, the graph is similar to a path, meaning that most of 
 
 \refsubsection{Related And Intermediate Observations}{subsec:related_and_intermediate_observation}
 \todo{Sparsity of feature vectors}
+\todo{Complexity of approach}

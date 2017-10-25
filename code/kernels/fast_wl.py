@@ -46,7 +46,7 @@ def transform(
         adj = adj.tocsr()
         adj.data = np.where(adj.data > 1, 0, 1)
         # Use this?
-        np.fill_diagonal(adj, 1)
+        #np.fill_diagonal(adj, 1)
         adjacency_matrices[idx] = adj
 
     # Relabel the graphs, mapping the string labels to unique IDs (ints)
