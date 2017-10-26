@@ -1,43 +1,66 @@
-\refsubsection{Concepts}{subsec:concepts}
 \todo{Graphs, eg. concept maps, co-occurrence graphs}
 \todo{Classical text representations, eg.tfidf
 Categories of algorithms, eg. algorithms on feature vectors, kernelized - algorithms}
 
-\refsubsection{Definitions and Notations}{subsec:definitions_and_notations}
+%\refsubsection{Definitions and Notations}{subsec:definitions_and_notations}
 \todo{Lay groundwork for the later description of the problem}
 \todo{Introductions to used classifiers, concepts}
 \todo{Concretize the problem and its notation}
 \todo{Comparison of the used data sources}
 
-\subsubsection{Classification Task}
+\refsubsection{Classification Task}{sec:classification_task}
 \todo{Supervised}
 
-\subsubsection{Graphs}
-A graph is a triple $G = (V, E, L)$, where $V$ is the set of vertices, $E \subset V \times V$ are the edges and $L: V \to X$ is a labeling function which assign a labels from some space $X$ to a given node.
+\refsubsection{Graphs}{sec:graphs}
+A (labeled) graph is a triple $G = (V, E, \pi, )$, where $V$ is the set of vertices or nodes, $E \subseteq V \times V$ are the edges and $\pi: V \to X$ is a labeling function which assigns a label to a given vertex.
 
 A graph is called undirected when $\forall (v_1, v_2) \in E: (v_2, v_1) \in E$, otherwise it is called directed.
 
-The neighbours $n(v)$ of a node $v$ are defined as $n(v) = \{v' | (v, v') \in E \}$.
+A graph $G'=(V', E', \pi)$ is called a subgraph of the graph $G = (V, E, \pi)$ when $V' \subseteq V$, $E' \subseteq E$ and $\forall (v, v') \in V': v \in V' \land v' in V'$.
 
+The neighbours $neighbours(v)$ of a node $v$ are defined as the set $neighbours(v) = \{v' | (v, v') \in E \}$.
 
-\todo{Degree, centrality, random-walk, ...}
-%The in-degree $degree_{in}$ of a vertex $v \in V$ is $degree_{in}(v) = |\{v | (v_1, v_2) \in E \land v_2 = v\}|$.
-%The out-degree $degree_{out}$ is analogously defined as $degree_{out}(v) = |\{v | (v_1, v_2) \in E \land v_1 = v\}|$.
-%The degree of a vertex $v$ is $degree(v) = degree_{in}(v) + degree_{out}(v)$ for directed graphs, and $degree(v) = degree_{in}$ for undirected graphs.
+\paragraph{Walks and Paths}
+A walk on a graph is a (finite) sequence of edges, $w = (e_1, \cdots, e_n)$ with the constraint that $\forall 0 < i < n: \forall e_i = (v_1, v_2) \in w: \exists v_3: e_{i + 1} = (v_2, v_3)$. The length of the walk is $n$.
+The set of all possible walks is denoted $W_G$.
+A random walk starting from vertex $v$ is a walk where the first element of walk $w$ is $e = (v, v')$ for some $v'$.
 
-A walk on a graph is a (finite) sequence of edges, $w = (e_1, \cdots, e_n)$ with the constraint that $\forall e_i = (v_1, v_2) \in w: \exists v_3: e_{i + 1} = (v_2, v_3)$.
-The set of all possible walks is denoted $W$.
+A path is the sequence of the vertices visited on a walk, ie. for the walk $w = ((v_1, v_2), (v_2, v_3), \dots, (v_{n-1}, v_n)$, the path is $(v_1, v_2, v_3, \dots, v_n)$.
+The set of all possible paths is denoted $P_G$.
 
-A path is a walk with the constraint that every node is visited at most once.
-The set of all possible paths is denoted $P$.
+The distance $d(v, v')$ between two vertices is defined as the length of the shortest path between them.
 
-The distance $d(v_1, v_2)$ between two vertices is defined as the length of the shortest path between them.
+\paragraph{Connected components}
+A connected component $c$ of a graph is a set of vertices with the constraint $\forall v, v' \in c: \exists p \in P_G: v \in p \land v' \in p$, ie. there exists a path between every vertex in the connected component.
+The connected component $c_v$ of a vertex $v$ is the connected component $c$ of a graph where $v \in c$.
+The set of all connected components of a graph is $conn\_comp(G) = \{ c_v | v \in V \}$. A graph is called connected when there is only one connected component. Only the empty graph has zero connected components.
 
-A connected component $c$ of a graph is a set of vertices with the constraint $\forall v, v' \in c: \exists p \in P: v \in p \land v' \in p$, ie. a path between the two vertices exists.
+\paragraph{Degree}
+The in-degree $degree_{in}$ of a vertex $v \in V$ is $degree_{in}(v) = |\{v | (v_1, v_2) \in E \land v_2 = v\}|$.
+The out-degree $degree_{out}$ is analogously defined as $degree_{out}(v) = |\{v | (v_1, v_2) \in E \land v_1 = v\}|$.
+The degree of a vertex $v$ is $degree(v) = degree_{in}(v) + degree_{out}(v)$ for directed graphs, and $degree(v) = degree_{in}$ for undirected graphs.
 
+\begin{figure}[ht]
+\centering
+\begin{tabular}{ll}
+symbol &  meaning \\
+\midrule
+G & Graph \\
+$E$ & Set of edges \\
+$V$ & Set of vertices \\
+$\pi(v)$ & Vertex labeling function \\
+$neighbours(v)$ & Neighbours of vertex $v$ \\
+$W$ & All possible graph walks on graph $G$ \\
+$w$ & Graph walk \\
+$P$ & All possible paths on graph $G$ \\
+$p$ & Path \\
+$d(v, v')$ & Shortest path length between $v$ and $v'$ \\
+$conn\_comp(G)$ & Set of all connected components of $G$ \\
+$c(v)$ & Connected component of $v$ \\
+\end{tabular}
+\end{figure}
 
-
-\paragraph{Concept Map}
+\subsubsection{Concept Map}
 A concept map is a (directed) graph where the nodes are concepts.
 Concepts are tokens in a text.
 Concepts consist of one or more words.
@@ -61,18 +84,19 @@ The visualization with concept maps of one or more individual texts therefor ena
 Because the concepts in a concept map often contain only a small subset of the text, concept maps also summarize the underlying text.
 Only relevant concepts and their relation to each other are captured, making concept maps interesting for (multi-document) text summarization, too.
 
-In Chapter \ref{sec:implementation} we introduce the concept map extraction implementation we used and further explain the steps in creating the concept maps.
+\todo{In Chapter \ref{sec:implementation} we introduce the concept map extraction implementation we used and further explain the steps in creating the concept maps.}
+
 
 \todo{"Capture important concepts and the structure of texts (spanning over whole text)"}
 \todo{Advantages}
 \todo{Text summarization}
 
-\paragraph{Co-Occurrence Graph}
+\subsubsection{Co-Occurrence Graph}
 A co-occurrence graph, or graph-of-words, is generated from a text by creating a (undirected) graph with the words of the text as nodes.
 There is an edge between two nodes if their labels co-occur in the text.
 Two words co-occur when the distance between the words in the text is below a given threshold, the window size.
 
-In Figure \ref{fig:cooccurrence_graphs} are examples of co-occurrence graphs for the sentence: .
+In Figure \ref{fig:cooccurrence_graphs} are examples of co-occurrence graphs with different windows sizes.
 
 \begin{figure}[ht]%
     \centering
@@ -86,76 +110,98 @@ In Figure \ref{fig:cooccurrence_graphs} are examples of co-occurrence graphs for
 Co-occurrence graphs not only contain the words of the underlying text but also their co-occurrence.
 For a window size of $w$, they capture n-grams of size $n \leq w$.
 
-\subsubsection{Graph kernel}
-In most cases, texts and graphs are of non-fixed size. 
+\refsubsection{Graph kernel}{sec:graph_kernel}
+In most cases, texts and graphs are not of a fixed size.
 However, most classification algorithms require fixed size vectors to operate on.
-In graph classification, the number of the nodes and edges per graph is also not fixed.
-Nevertheless, there are several approaches to overcome this problem and enable graph classification.
-One of these approaches are so-called graph kernels.
+Fortunately, there are several approaches to overcome this problem.
+One of these approaches are so-called kernels.
 
-A graph kernel is a function $k$ which returns a measure of similarity between two graphs:
+A kernel is a function $k$ which returns a measure of similarity between two (structured) objects:
 \begin{equation*}
-k: G \times G \rightarrow \mathbb{Q}
+k: X \times X \rightarrow \mathbb{Q}
 \end{equation*}
 
-The graph kernel function has to be:
+A kernel function has to be:
 \begin{itemize}
-    \item{\textit{symmetric}: $k(G_1, G_2) = k(G_2, G_1)$}
+    \item{\textit{symmetric}: $k(x, x') = k(x', x)$}
     \item{\textit{non-negative definite}: \dots}
 \end{itemize}
 
-Graph kernels can be used in kernel methods for classification and other tasks.
+For example, a simple kernel on two numbers could be $k(x, x') = | x - x' |$, where $| \cdot |$ is the absolute value.
+Another example of a kernel on strings is $k(s, s') = \delta(s = s')$, where $\delta(\cdot)$ is the Kronecker delta. This kernel returns 1 if the two given strings are the same, and 0 if they are different.
+Note that both kernels are valid: both return a measure of similarity, both are symmetric and non-negative definite.
+
+Kernels can be used directly in kernel methods for classification and other tasks.
 Prominent examples of kernel methods are the SVM, kernelized PCA and Gaussian Processes.
 
-For a subset of graph kernels, one can also create explicit feature vectors for the graphs. In this case, the kernel can be written as an inner product on two fixed-size vectors:
+For a subset of kernels, one can also create explicit feature vectors for a given object. In this case, the kernel can be written as an inner product on two fixed-size vectors:
 \begin{equation*}
-    k(G_1, G_2) = \langle \phi(G_1), \phi(G_2) \rangle
+    k(X, X') = \langle \phi(X), \phi(X') \rangle
 \end{equation*}
-Here, $\phi(G)$ returns a fixed-size vector representation of graph $G$.
-This $\phi(G)$ can be used in all vector-based classification algorithms, not only kernel methods.
+Here, $\phi(X)$ returns a fixed-size vector representation of the object $X$.
+This $\phi(X)$ can then be used in all vector-based classification algorithms, not only kernel methods.
 
-\paragraph{Example}
-As an example we will investigate a simple graph kernel which actually discards all structural information about the graph. This graph kernel only operates on the labels of the nodes:
+A graph kernel is simply a kernel that operates on graphs.
+
+\subsubsection{Examples}
+\paragraph{Simple Non-Structural Graph Kernel}
+As an example we will investigate a simple graph kernel which actually discards all structural information about the graph. This graph kernel only operates on the labels of the vertices:
 \begin{equation*}
 k_{common\_label}(G_1, G_2) = | l(G_1) \cap l(G_2) |
 \end{equation*}
 where $l(G)$ returns the set of labels for graph $G$.
-Therefor, this graph kernel counts the number of common labels of the two graphs. Two graphs are similar if they have the same node labels.
-An extension to this graph kernel is using the Jaccard coefficient instead of just counting the common node labels:
+Therefor, this graph kernel counts the number of common labels of the two graphs. Under this kernel, two graphs are similar when they have the same node labels.
+
+An extension to this graph kernel is using the Jaccard coefficient instead of simply counting the common node labels:
 \begin{equation*}
 k_{common\_label\_jaccard}(G_1, G_2) = \frac{| l(G_1) \cap l(G_2) |}{| l(G_1) \cup l(G_2) |}
 \end{equation*}
 This extension normalizes the function and confines the codomain of $k$ to $[0, 1]$.
 
-Another example for a graph kernel which only operates on the structure of the graph is the following:
+\paragraph{Gram matrix}
+A gram or kernel matrix for a given kernel is a matrix $A$ where the entries are the pairwise similarities of two objects in a dataset:
 \begin{equation*}
-k_{simple\_structure}(G_1, G_2) = 
+    A_{i,j} = k(x, x')
 \end{equation*}
-%where $c(G)$ returns the number of connected components of $G$, and $d(G)$ returns the average degree
+The gram matrix is symmetric by definition since the underlying kernel is also symmetric, so $A_{i,j} = A_{j, i}$.
 
+\paragraph{Simple Structure-Only Graph Kernel}
+Another example for a graph kernel which only operates on the structure of the graph, is the following:
+\begin{equation*}
+k_{simple\_structure}(G_1, G_2) = \langle \phi(G_1), \phi(G_1) \rangle
+\end{equation*}
+with $\phi(G) = (n_{triangle}(G), n_{rectangle}(G))^T$. Here, $n_{triangle}$ is the number of the triangle subgraphs in $G$ and $n_{rectangle}$ the number of rectangle subgraphs in $G$.
+This graph kernel is an example of a kernel where the explicit feature map, $\phi(G)$, can be computed directly and completely independent of other graphs.
+
+\todo{This kernel actually is quite similar to a real-world kernel named graphlet kernel. In the graphlet kernel, the sub-structures are not triangles and rectangles, but graphlets.}
+
+\paragraph{Graph Kernel Categories}
 Several graph kernels have been proposed in the literature.
-Categories of graph kernels include graph kernels based on shortest-paths, random-walks, 
-Graph kernels can be categorized coarsely into graph kernels based on shortest-paths, random-walks and subtree patterns.
+Categories of graph kernels include graph kernels based on shortest-paths, random-walks and subtree patterns, to name just a few.
+Most approaches to graph kernels have in common that they first create a decomposition of the graph into sub-structures, for example into subtrees, and then count the occurrences of these sub-structures in the graphs. The aforementioned graph kernel $k_{simple\_structure}$ is an example for this approach. In this kernel the sub-structures are triangle and rectangle subgraphs.
+
+\paragraph{Weisfeiler-Lehman Graph Kernel}
+The Weisfeiler-Lehman graph kernel is also a kernel that works by counting common sub-structures on two graphs.
+Here the sub-structures are the subtrees starting from each vertex.
+In each iteration $i$ with $0 < i < h$ for some given number of iterations $h$, the WL graph kernel relabels the vertices of the two given graphs. The relabeling is also sometimes called recoloring.
+The WL graph kernel recolors a vertex $v$ by concatenating two components:
+
+\begin{enumerate}
+    \item{the current label of the vertex: $\pi_{i-1}(v)$}
+    \item{the sorted labels of the neighbourhood: $\{ \pi_{i-1}(v') | v' \in neighbours(v) \}$}
+\end{enumerate}
+
+The resulting new label of $v$ is the sequence $(\phi_{i-1}(v), phi_{i-1}(v_{neighbour,1}), \dots , phi_{i-1}(v_{neighbour,n}))$. Here the sub-sequence $(phi_{i-1}(v_{neighbour,1}), \dots , phi_{i-1}(v_{neighbour,n}))$ is sorted, ie. $\forall 0 < p < n - 1: \phi_{i - 1}(v_{neighbour,p}) \geq \phi_{i - 1}(v_{neighbour,p+1})$.
 
 \todo{Categories of graph kernels, eg. random-walk-based, subtree-based}
 \todo{Graph kernels can be combined!}
-\todo{Simple graph kernel, eg. simple-label-matching or jaccard}
-\todo{Examples of graph kernels}
 \todo{Mention similarity of graph kernel task to graph isomorphism test}
 \todo{Explain when $\phi$ can be constructed (Mercer's theorem: an implicitly defined function $\varphi$  exists whenever the space $\mathcal{X}$ can be equipped with a suitable measure ensuring the function $k$ satisfies Mercer's condition.)}
-
-\paragraph{Gram matrix}
-A gram or kernel matrix for a given kernel is a matrix $A$ where the entries are the pairwise similarities of graphs:
-\begin{equation*}
-    A_{i,j} = k(G_i, G_j)
-\end{equation*}
-The gram matrix is symmetric by definition since the underlying kernel is also symmetric, so $A_{i,j} = A_{j, i}$.
 
 \subsubsection{Kernel Methods and Kernel trick}
 
 
-
-\refsubsection{Related Work}{subsec:related_work}
+\refsubsection{Graph Kernel Based Text Classification}{subsec:graph_kernel_based_text_classification}
 \todo{How did the field evolve?}
 \todo{Hint related tasks}
 \todo{What is the most related work, how do they differ from our approach

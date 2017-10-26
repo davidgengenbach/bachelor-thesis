@@ -12,7 +12,7 @@ If the structure of the graphs is too similar and the structural differences are
 When comparing the graph similarity with respect to some graph kernel, the graphs in some class should be distinguishable from the graphs in another class.
 
 To explore the differences, we look at three questions in particular:
-\quote{How similar are the graphs... $a)$ in the same class, $b)$ between (pairs of) classes and $c)$ in the complete dataset?}
+``How similar are the graphs... $a)$ in the same class, $b)$ between (pairs of) classes and $c)$ in the complete dataset?"
 
 \todo{Since we are especially interested in answering structure-related questions about the graphs, we first have to distinguish structural from non-structural data.}
 \todo{Explain the used metrics and how they relate to hypothesis}
@@ -45,8 +45,7 @@ To explore the differences, we look at three questions in particular:
 \todo{Code by Tobias, explain steps}
 
 \begin{figure}[h]
-\centering
-\includegraphics[width=0.6\linewidth]{assets/figures/approach.pdf}
+\centering\includegraphics[width=0.6\linewidth]{assets/figures/approach.pdf}
 \caption{\todo{Caption}}
 \end{figure}
 
@@ -89,39 +88,6 @@ webkb           &  7 &  8274 \\
 
 \subsubsection{Significance tests}
 
-
-\refsubsection{Results and Observations}{subsec:results_and_observations}
-\todo{Observations + possible explanations}
-\todo{How does the results relate to hypothesis?}
-\todo{Error analysis}
-\todo{Confusion matrices?}
-\todo{Comparison between text n-grams and concept maps/co-occurrence graphs}
-
-\subsubsection{Structure Of The Used Graphs}
-The co-occurrence graphs have a relatively simple structure.
-Co-occurrence graphs are always connected, ie. the number of connected components is 1 (or 0 in case of an empty graph).
-When the window size is 1, the graph is similar to a path, meaning that most of the nodes have a degree $< 2$. With increasing window size, the graph gets more connected.
-
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.7\linewidth]{assets/figures/hist-edgesnodes.pdf}
-\caption{Histogram of the number of edges divided by the number of nodes. Per graph type. The lines correspond to the median value.}
-\label{fig:histogram-edges-div-nodes-per-type}
-\end{figure}
-
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.6\linewidth]{assets/figures/graph-examples.pdf}
-\caption{Graph examples per type. Three examples are shown per type. The concept map examples all have more than one connected component, while the co-occurrence graphs all have only one. Dataset: ling-spam}
-\end{figure}
-
-\begin{figure}[h]
-\centering
-\includegraphics[width=0.8\linewidth]{assets/figures/hist-connected-components-ling-spam-CMap.pdf}
-\caption{Histogram of connected components per concept map. Dataset: ling-spam.}
-\end{figure}
-
-
-\refsubsection{Related And Intermediate Observations}{subsec:related_and_intermediate_observation}
-\todo{Sparsity of feature vectors}
-\todo{Complexity of approach}
+\refsubsection{Implementation}{sec:implementation}
+\todo{Scikit-learn, networkx, \dots}
+\todo{Code by Tobias to extract concept maps}

@@ -11,11 +11,13 @@
         - mean/std and student-t test
 - Thesis
     - ToC
-        - 1.1 Applications -> Motivation
-        - 2.1 Concepts delete
-        - 2.2 Definitions and Notations delete
-            - Subsection one level higher
-        - Concept Map and Co-Occurrence Graph as subsections to "Graphs"
+        - 1
+            - 1.1 Applications -> Motivation
+            - 2.1 Concepts delete
+        - 2
+            - 2.2 Definitions and Notations delete
+                - Subsections one level higher
+                - Concept Map and Co-Occurrence Graph as subsections to "Graphs"
         - Text classification
         - Related Work -> "Graph kernel based text classification"
         - Split "Evaluation" into
