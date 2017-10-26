@@ -27,7 +27,7 @@ def get_transformed_results(result: Result):
     return np.array(y_true), np.array(y_pred_a), np.array(y_pred_b)
 
 
-def randomization_test(y_true: typing.Iterable, y_pred_a: typing.Iterable, y_pred_b: typing.Iterable, metric: MetricFunction=sklearn.metrics.f1_score, num_trails:int =1000):
+def randomization_test(y_true: typing.Iterable, y_pred_a: typing.Iterable, y_pred_b: typing.Iterable, metric: MetricFunction=sklearn.metrics.f1_score, num_trails:int=1000):
     y_true, y_pred_a, y_pred_b = np.array(y_true), np.array(y_pred_a), np.array(y_pred_b)
     metrics_ = np.empty((num_trails, 2), dtype=np.float64)
 

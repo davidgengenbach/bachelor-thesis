@@ -1,3 +1,32 @@
+## 26.10.2017
+- Slides about goals/results/observations
+    - max 5 slides
+    - Also progress on non-finished goals/questions
+- Significance test
+    - Exact/Randomization test Implementation
+        - For confidence: only count diffs that are greater than global diff?
+    - Reference implementation?
+        - Test against student-t test, should be consistent
+    - Confusion Matrix of gram matrix similarities between classes
+        - mean/std and student-t test
+- Thesis
+    - ToC
+        - 1.1 Applications -> Motivation
+        - 2.1 Concepts delete
+        - 2.2 Definitions and Notations delete
+            - Subsection one level higher
+        - Concept Map and Co-Occurrence Graph as subsections to "Graphs"
+        - Text classification
+        - Related Work -> "Graph kernel based text classification"
+        - Split "Evaluation" into
+            - Experiments and Explanations of Approach ("Experimental Setup")
+            - Results and Discussion (Observations)
+        - Implementation chapter as child of "Experiments"
+        - Enumerate questions in "Experimental Setup" for later reference
+    - Content
+        - Hypothesis and Goals: remove subgoals
+
+
 ## 28.08.2017
 - Problem: SVMs learn better with zero mean and unit variance data
     - Sparse feature vectors (like phi or tfidf vectors) will become dense after subtracting mean (= zero mean)
