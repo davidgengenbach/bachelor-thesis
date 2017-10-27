@@ -1,11 +1,10 @@
-In order to test the hypothesis, we first derive a number of subgoals/questions from the hypothesis.
+In order to test the hypothesis, we first derive a number of questions from the hypothesis.
 
-Questions:
-\begin{enumerate}
-    \item{How important are the labels in graphs? Does structural-only data improve the classification score?}
-    \item{How does the classification performance compare to classical, non-structural approaches?}
-    \item{How does the size of a graph affect the classification result?}
-\end{enumerate}
+\begin{itemize}
+\item{Improvement in performance can only come from extraction of relations between concepts, since all words are also contained in the plain text underlying the graph.}
+\item{Structure of concept maps must bear more information than simple bi- or tri-grams.}
+\item{Kernels that only take the labels into account, should perform worse.}
+\end{itemize}
 
 \paragraph{Question: ``How similar/diverse are the graphs structurally?"}
 If the structure of the graphs is too similar and the structural differences are not distinct between the classes, they most likely will not be that useful for classification.
@@ -13,6 +12,14 @@ When comparing the graph similarity with respect to some graph kernel, the graph
 
 To explore the differences, we look at three questions in particular:
 ``How similar are the graphs... $a)$ in the same class, $b)$ between (pairs of) classes and $c)$ in the complete dataset?"
+
+\paragraph{Question: ``How important (relatively) are the labels/structure?"}
+
+\paragraph{Question: ``How does the classification performance compare to classical, non-structural approaches (text based, tfidf?)"}
+
+\paragraph{Question: ``What are possible roadblocks for text classification by using graph classification?}
+
+\paragraph{Question: ``How do the graph kernel parameters, for example the depth of the sub-structures that are considered, affect the classification score?}
 
 \todo{Since we are especially interested in answering structure-related questions about the graphs, we first have to distinguish structural from non-structural data.}
 \todo{Explain the used metrics and how they relate to hypothesis}
@@ -30,15 +37,37 @@ To explore the differences, we look at three questions in particular:
 \todo{Add runtime analysis}
 
 \subsubsection{Baselines}
+\paragraph{Preprocessing}
+Before creating the vector representations of the text documents or the creation of the co-occurrence graphs and concept maps, we first pre-processed the plain text by
 
-\paragraph{Text-based}
-\todo{Preprocessing}
-\todo{CountVectorizer, TfIdfVectorizer}
+\begin{itemize}
+\item{lowercasing the text,}
+\item{removing non-printable characters,}
+\item{replacing numbers with a \textit{NUMBER} placeholder,}
+\item{replacing tabs and newlines with a space,}
+\item{and normalizing the whitespace (eg. replacing multiple spaces with a single space)}
+\end{itemize}
+These pre-processing steps are similar to the pre-processing done in \cite{Cachopo2007}.
 
-\paragraph{Graph-based}
-\todo{Preprocessing}
+\todo{Filtered out only nouns?}
+
+\paragraph{Text-based representations}
+For the text classification pipeline, we then used two different vectorization algorithms, namely
+\begin{itemize}
+\item{Bag Of Words (BoW): this vectorizer simply gathers all words in the corpus and creates a mapping between words and indices (ids). Then it creates a vector representation for each text so that the i-th vector component  is the count of the corresponding word in the text. Ie. $i$ is the index of the word in the mapping.}
+\item{Term-Frequency-Inverse-Document-Frequency (TfIdf): this approach is similar to BoW. Instead of using only the counts of a word in the text, this approach also incorporates the term frequency and the inverse document frequency of the words to the vector representation (see below).}
+\end{itemize}
+Both approaches can also be extended by not only utilize single words, unigrams, but also n-grams. N-grams consist of $n$ consecutive words in the text.
+For example, the sentence ``This is a sentence." has the following 2-grams, or bigrams: $\{ (This, is), (is, a), (a, sentence) \}$.
+For our purposes, we looked at n-grams of lengths \textit{i)} (1, 1), \textit{ii)} (1, 2) and \textit{iii)} (2, 2).
+
+\todo{Explain tfidf}
+
+\paragraph{Graph-based representations}
+
+\todo{Co-occurrence and concept maps}
+\todo{Mention filtering by nouns}
 \todo{Window sizes}
-\todo{}
 
 \subsubsection{Approach}
 \todo{Combined}
@@ -48,6 +77,7 @@ To explore the differences, we look at three questions in particular:
 \centering\includegraphics[width=0.6\linewidth]{assets/figures/approach.pdf}
 \caption{\todo{Caption}}
 \end{figure}
+\todo{Add diagram for gram-matrix based classification.}
 
 \labelsubsection{Datasets}{subsec:datasets}
 \todo{Statistics about datasets and derived graphs}
