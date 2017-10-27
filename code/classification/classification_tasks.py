@@ -86,7 +86,7 @@ def get_graph_classification_tasks(args: argparse.Namespace, clfs):
         X_same_label = [(x, [0] * len(y)) for x, y in X]
         process_(args, task, X_same_label, Y)
 
-    def process_tfidf_graphs(args: argparse.Namespace, task: Task, graph_cache_file: str):
+    def process_text_graphs(args: argparse.Namespace, task: Task, graph_cache_file: str):
         X, Y = dataset_helper.get_dataset_cached(graph_cache_file)
 
         text_p = text_pipeline.get_pipeline()
@@ -134,7 +134,7 @@ def get_graph_classification_tasks(args: argparse.Namespace, clfs):
     for graph_cache_file in dataset_helper.get_all_cached_graph_datasets():
         filename = filename_utils.get_filename_only(graph_cache_file)
 
-        tasks.append(Task(type='graph_tfidf', name=filename, process_fn=process_tfidf_graphs, process_fn_args=[graph_cache_file]))
+        tasks.append(Task(type='graph_text', name=filename, process_fn=process_text_graphs, process_fn_args=[graph_cache_file]))
         tasks.append(Task(type='graph_fast_wl', name=filename, process_fn=process_plain, process_fn_args=[graph_cache_file]))
         tasks.append(Task(type='graph_fast_wl_same_label', name=filename, process_fn=process_same_label, process_fn_args=[graph_cache_file]))
         tasks.append(Task(type='graph_combined-fast_wl', name=filename, process_fn=process_combined, process_fn_args=[graph_cache_file]))

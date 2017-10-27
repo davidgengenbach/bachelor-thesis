@@ -11,7 +11,7 @@ Categories of algorithms, eg. algorithms on feature vectors, kernelized - algori
 \todo{Supervised vs. unsupervised}
 
 \labelsubsection{Graphs}{subsec:graphs}
-A (labeled) graph is a triple $G = (V, E, \pi, )$, where $V$ is the set of vertices or nodes, $E \subseteq V \times V$ are the edges and $\pi: V \to X$ is a labeling function which assigns a label to a given vertex.
+A (labeled) graph is a triple $G = (V, E, \pi)$, where $V$ is the set of vertices or nodes, $E \subseteq V \times V$ are the edges and $\pi: V \to X$ is a labeling function which assigns a label to a given vertex.
 
 A graph is called undirected when $\forall (v_1, v_2) \in E: (v_2, v_1) \in E$, otherwise it is called directed.
 
@@ -77,7 +77,8 @@ Concept maps are useful for visualizing concepts and their relation to each othe
 Concept maps can thus be used to quickly explore a given topic and immediately see connections between concepts.
 Through the degree of a concept, one can also infer the relative importance of that concept in the underlying text.
 
-By combining different texts of the same topic, one can also create a concept map for that topic - the concepts are not confined to a single text in this case.
+By combining different texts of the same topic, one can also create a concept map for that topic.
+The concepts are not confined to a single text in this case.
 The visualization with concept maps of one or more individual texts therefor enables the non-linear exploration of multiple texts of a topic.
 
 Because the concepts in a concept map often contain only a small subset of the text, concept maps also summarize the underlying text.
@@ -95,19 +96,19 @@ A co-occurrence graph, or graph-of-words, is generated from a text by creating a
 There is an edge between two nodes if their labels co-occur in the text.
 Two words co-occur when the distance between the words in the text is below a given threshold, the window size.
 
-In Figure \ref{fig:cooccurrence_graphs} are examples of co-occurrence graphs with different windows sizes.
+Figure \ref{fig:cooccurrence_graphs} shows examples of co-occurrence graphs with different windows sizes.
 
 \begin{figure}[ht]%
     \centering
     \subfloat[Window size: 1]{{\includegraphics[width=0.3\textwidth]{assets/figures/cooccurrence_graph_1.pdf} }}%
     \subfloat[Window size: 2]{{\includegraphics[width=0.3\textwidth]{assets/figures/cooccurrence_graph_2.pdf} }}%
     \subfloat[Window size: 3]{{\includegraphics[width=0.3\textwidth]{assets/figures/cooccurrence_graph_3.pdf} }}%
-    \caption{Example for co-occurrence graphs. Generated from the sentence: ``Quotation is a serviceable substitute for wit". Different window sizes.}%
+    \caption{Example for co-occurrence graphs. Generated from the sentence: ``Quotation is a serviceable substitute for wit". With increasing window size the number of edges and therefor the connectedness of the co-occurrence graph also increases.}%
     \label{fig:cooccurrence_graphs}%
 \end{figure}
 
 Co-occurrence graphs not only contain the words of the underlying text but also their co-occurrence.
-For a window size of $w$, they capture n-grams of size $n \leq w$.
+Co-occurrence graphs capture (undirected) n-grams of size 2.
 
 \labelsubsection{Graph kernel}{sec:graph_kernel}
 In most cases, texts and graphs are not of a fixed size.
@@ -126,7 +127,7 @@ A kernel function has to be:
     \item{\textit{non-negative definite}: \dots}
 \end{itemize}
 
-For example, a simple kernel on two numbers could be $k(x, x') = | x - x' |$, where $| \cdot |$ is the absolute value.
+For example, a simple kernel on two numbers (or vectors) could be $k(x, x') = \frac{1}{| x - x' |}$, where $| \cdot |$ is the absolute value (or a norm). \inlinetodo{This is wrong! Division by zero}
 Another example of a kernel on strings is $k(s, s') = \delta(s = s')$, where $\delta(\cdot)$ is the Kronecker delta. This kernel returns 1 if the two given strings are the same, and 0 if they are different.
 Note that indeed both kernels are valid.
 
@@ -140,6 +141,19 @@ This $\phi(X)$ can then be used in all vector-based classification algorithms, n
 
 A graph kernel is simply a kernel that operates on graphs. Here the graph kernel also returns a measure of similarity between two graphs.
 
+Graph kernels that measure the similarity of two graphs are related to the isomorphism test between two graphs.
+The graph isomorphism test returns whether two graphs are structurally the same.
+In this test, the labels of the vertices and edges are ignored. Otherwise the task would be far easier, since one could only compare the labels and edges of the graphs - when they are the same, the graphs are the same.
+In the graph isomorphism test, one has to find a mapping between the vertices of one graph to another, the same for the edges.
+\inlinetodo{Explain constraints for the mapping}
+If such a mapping exists, the two graphs are called isomorphic.
+
+As one can show, the problem of graph isomorphism is far harder: while the complexity of the problem is yet to be proved, it is believed that it either lies in P or is NP-complete. There is no known algorithm which solves the problem in polynomial time.
+
+%Creating a graph kernel is always a trade-off between complexity and accuracy. 
+%A simple kernel which only compares the exact match of the edges and vertices of the graphs is quite easy to implement and fast. However such a kernel only returns whether the graphs are the same and not whether there are partially the same.
+
+\todo{Creating a graph kernel is always a trade-off}
 \todo{Kernels can be combined!}
 \todo{Mention similarity of graph kernel task to graph isomorphism test}
 \todo{Explain when $\phi$ can be constructed (Mercer's theorem: an implicitly defined function $\varphi$  exists whenever the space $\mathcal{X}$ can be equipped with a suitable measure ensuring the function $k$ satisfies Mercer's condition.)}
@@ -147,7 +161,7 @@ A graph kernel is simply a kernel that operates on graphs. Here the graph kernel
 \paragraph{Gram matrix}
 A gram or kernel matrix for a given kernel is a matrix $A$ where the entries are the pairwise similarities of two objects in a dataset:
 \begin{equation*}
-    A_{i,j} = k(x, x')
+    A_{i,j} = k(x_i, x_j)
 \end{equation*}
 The gram matrix is symmetric by definition since the underlying kernel is also symmetric, so $A_{i,j} = A_{j, i}$.
 
@@ -156,11 +170,11 @@ Several graph kernels have been proposed in the literature.
 Categories of graph kernels include graph kernels based on shortest-paths, random-walks and subtree patterns, to name just a few.
 Most approaches to graph kernels have in common that they first create a decomposition of the graph into sub-structures, for example into subtrees, and then count the occurrences of these sub-structures in the graphs.
 
-%The aforementioned graph kernel $k_{simple\_structure}$ is an example for this approach. In this kernel the sub-structures are triangle and rectangle subgraphs.
+\todo{Mention R-Convolution?}
 
 \subsubsection{Examples}
 \paragraph{Simple Non-Structural Graph Kernel}
-As an example we will investigate a simple graph kernel which actually discards all structural information about the graph. This graph kernel only operates on the labels of the vertices:
+As the first example for a graph kernel we will investigate a simple kernel which actually discards all structural information about the graph. This graph kernel only operates on the labels of the vertices:
 \begin{equation*}
 k_{common\_label}(G_1, G_2) = | l(G_1) \cap l(G_2) |
 \end{equation*}
@@ -173,23 +187,22 @@ k_{common\_label\_jaccard}(G_1, G_2) = \frac{| l(G_1) \cap l(G_2) |}{| l(G_1) \c
 \end{equation*}
 This extension normalizes the function and confines the codomain of $k$ to $[0, 1]$.
 
-
 \paragraph{Simple Structure-Only Graph Kernel}
 Another example for a graph kernel which only operates on the structure of the graph, is the following:
 \begin{equation*}
 k_{simple\_structure}(G_1, G_2) = \langle \phi(G_1), \phi(G_1) \rangle
 \end{equation*}
 with $\phi(G) = (n_{triangle}(G), n_{rectangle}(G))^T$. Here, $n_{triangle}$ is the number of the triangle subgraphs in $G$ and $n_{rectangle}$ the number of rectangle subgraphs in $G$.
-This graph kernel is an example of a kernel where the explicit feature map, $\phi(G)$, can be computed directly and completely independent of other graphs.
+This graph kernel is an example of a kernel where the explicit feature map $\phi(G)$ can be computed directly and completely independent of other graphs.
 
 \todo{This kernel actually is quite similar to a real-world kernel named graphlet kernel. In the graphlet kernel, the sub-structures are not triangles and rectangles, but graphlets.}
-
 
 \paragraph{Weisfeiler-Lehman Graph Kernel}
 The Weisfeiler-Lehman graph kernel is also a kernel that works by counting common sub-structures on two graphs.
 Here the sub-structures are the subtrees starting from each vertex.
-In each iteration $i$ with $0 < i < h$ for some given number of iterations $h$, the WL graph kernel relabels the vertices of the two given graphs. The relabeling is also sometimes called recoloring.
-The WL graph kernel recolors a vertex $v$ by concatenating two components:
+In each iteration $i$ with $0 < i < h$ for a given number of iterations $h$ (or till convergence), the WL graph kernel relabels the vertices of the two given graphs. The relabeling is also sometimes called recoloring.
+
+The WL graph kernel relabels a vertex $v$ by concatenating two components:
 \begin{enumerate}
     \item{the current label of the vertex: $\pi_{i-1}(v)$}
     \item{the sorted labels of the neighbourhood: $\{ \pi_{i-1}(v') | v' \in neighbours(v) \}$}
@@ -201,8 +214,8 @@ The resulting new label of $v$ is the sequence $(\pi_{i-1}(v), \pi_{i-1}(v_{neig
 
 The new labeling function is updated accordingly: $\pi_i(v)$ now returns to the new label of $v$.
 
-\todo{Explain extensions/modifications we actually used.}
-
+\todo{Explain extensions/modifications we actually used: fast\_wl, label compression, ...}
+\todo{Mention possibility to create $\phi(G)$ feature map directly (not possible with label-compression)}
 
 \subsubsection{Kernel Methods and Kernel trick}
 
@@ -215,12 +228,13 @@ Relate the other work to the new approach and work out their differences/results
 \todo{Mention other graphs}
 
 \paragraph{``Shortest-Path Graph Kernels for Document Similarity" \cite{Nikolentzos2017a}}
-The most similar and recent approach to our approach that we found was \cite{Nikolentzos2017a}. In this work, the authors first create co-occurrence graphs out of the text, then evaluate their own graph kernel on these graphs. Next, they create the gram matrix for the graphs and use a SVM to classify them. 
+The most similar and recent approach to our approach that we found was \cite{Nikolentzos2017a}. In this work, the authors first create co-occurrence graphs out of the text. Next, they create the gram matrix for the graphs with their own graph kernel and use a SVM to classify them.
 
-Their graph kernel consists of two parts:
+Their graph kernel consists of these sub-kernels:
 \begin{enumerate}
-\item{Simple label matching: the number of matching node labels are compared between the two graphs}
-\item{Shortest path: generate a shortest-path graph}
+\item{\textit{Simple label matching}: the number of matching node labels are compared between the two graphs}
+\item{\textit{Shortest path}: generate a shortest-path graph}
+\item{\textit{Normalization}: the rows are normalized by \inlinetodo{?}}
 \end{enumerate}
 
 \paragraph{``Text Categorization as a Graph Classification Problem" \cite{Rousseau2015a}}
@@ -231,9 +245,8 @@ Here they first the k-core (or main core), then do most-frequent subgraph mining
 This work is the first real evaluation of graph-based classification with a high number of graphs/unique nodes/...
 
 \todo{Only using the most-important subgraph of a graph (main core) does not greatly damage prediction accuracy, but substantially reduces compute time}
-
 \paragraph{``Concept Graph Preserving Semantic Relationship for Biomedical Text Categorization" \cite{Gulrandhe2015}}
-
+\todo{?}
 \paragraph{``Deep Graph Kernels" \cite{Yanardag2015}}
 \todo{R-Convolution?}
 \todo{Embeddings for graphs}

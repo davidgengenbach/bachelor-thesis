@@ -10,6 +10,8 @@ other/unused
 .idea/
 .cache/
 
+# Latex files
+thesis/test/
 thesis/*.pdf
 thesis/*.xml
 *.fmt
