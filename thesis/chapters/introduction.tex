@@ -8,34 +8,45 @@
 \todo{Introduce earlier approaches/results and their weaknesses}
 \todo{Outlook}
 
-\refsubsection{Motivation}{subsec:motivation}
+\labelsubsection{Motivation}{subsec:motivation}
 \todo{Applications also}
+
 \paragraph{Text Classification}
 Text classification has a great number of applications.
 
 Not limited to spam detection, genre classification or sentiment analysis.
 
 \paragraph{Graph Classification}
-Graph classification also has a growing importance in many fields. Graphs are a fitting representation for structured data. Following are some examples of graph classification:
+Graph classification also grows in importance for many fields.
+Graphs are a fitting representation for structured data.
+Sequences like strings/text or trees can all be expressed easily as graphs.
+\todo{Relationships between entities}
 
-\begin{figure}[h]
+Following are some applications of graph classification:
+
+\begin{figure}[ht]
 \centering
 \begin{tabular}{llll}
-field &  nodes &  edges & classes\\
+field & nodes & edges & classes \\
 \midrule
-chemistry & atoms & bonds & toxicity (binary)\\
+chemistry & atoms & bonds & toxicity (binary) \\
 biology & amino acids & spatial link & protein types \\ 
 social networks & users & 'are friends' or 'like the same content' & bot detection (binary) or user classification
 \end{tabular}
 \end{figure}
 
-\refsubsection{Hypothesis and Goals}{subsec:hypothesis_and_goals}
+As we will see later on, the graph classification task is also near to the task of finding similar graphs for a given graph.
+
+\labelsubsection{Hypothesis and Goals}{subsec:hypothesis_and_goals}
 In this work, we evaluate the usefulness of graph representations of text in the context of text classification. In particular, we work out how or whether the structure of the graph representation actually improves the classification performance.
-For this, we evaluate the classification performance of different graph types like co-occurrence graphs or concept maps.
+For this, we first create graph representations for set of texts and then evaluate the graph classification performance.
+%For this, we evaluate the classification performance of different graph types like co-occurrence graphs or concept maps.
 
 The main hypothesis of this work is:
 \begin{quote}
 Concept maps capture structural information about the underlying text. Mining this structural information in the context of text-classification leads to an improved classification score.
 \end{quote}
 
-\refsubsection{Thesis Structure}{subsec:thesis_structure}
+\todo{Why could graph classification be useful? Why not only use non-structural data for classification?}
+
+\labelsubsection{Thesis Structure}{subsec:thesis_structure}

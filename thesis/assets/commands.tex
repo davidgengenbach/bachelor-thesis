@@ -11,15 +11,19 @@
   \fi\ \number\year%
 }
 
-
-\newcommand{\refsection}[2] {
-    \section{#1}
-    \label{#2}
+\newcommand{\labelsection}[2]{%
+    \section{#1}%
+    \label{#2}%
 }
 
-\newcommand{\refsubsection}[2] {
-    \subsection{#1}
-    \label{#2}
+\newcommand{\labelsectioninclude}[3]{%
+    \labelsection{#1}{#2}%
+    \input{#3}%
+}
+
+\newcommand{\labelsubsection}[2]{%
+    \subsection{#1}%
+    \label{#2}%
 }
 
 

@@ -1,14 +1,15 @@
+%&main
 \documentclass[article,type=bsc,colorback,accentcolor=tud9c]{tudthesis}
 \usepackage[english]{babel}
 \usepackage{amsmath}
-\usepackage{amssymb}
+%\usepackage{amssymb}
 \usepackage{hyperref}
 \usepackage{booktabs}
 \usepackage{tabularx}
 \usepackage{subfig}
-\usepackage{pgf}
 \usepackage{enumitem}
-\setenumerate{itemsep=0.4pt,topsep=14pt,parsep=10pt,partopsep=14pt}
+\setenumerate{itemsep=0.2pt,topsep=10pt}
+\setitemize{itemsep=0.2pt,topsep=10pt}
 
 \thesistitle{Text classification using concept maps}{}
 \author{David Marlon Gengenbach}
@@ -21,34 +22,24 @@
 \input{assets/commands}
 
 \usepackage[backend=biber]{biblatex}
-\addbibresource{literature.bib}
+\addbibresource{library.bib}
+
+\endofdump
+%\input{preamble.tex}
+
 
 \begin{document}
   \makethesistitle
   \affidavit{David Marlon Gengenbach}
-  \setcounter{page}{1}
+
   \tableofcontents
   \newpage
-  
-  \refsection{Introduction}{sec:introduction}
-  \input{chapters/introduction}
-  \newpage
-
-  \refsection{Background}{sec:background}
-  \input{chapters/background}
-  \newpage
-
-  \refsection{Experimental Setup}{sec:evaluation}
-  \input{chapters/evaluation}
-  \newpage
-
-  \refsection{Results and Discussion}{sec:results}
-  \input{chapters/results}
-  \newpage
-
-  \refsection{Conclusions}{sec:conclusions}
-  \input{chapters/conclusions}
-  \newpage
+  \setcounter{page}{1}
+  \labelsectioninclude{Introduction}{sec:introduction}{chapters/introduction}
+  \labelsectioninclude{Background}{sec:background}{chapters/background}
+  \labelsectioninclude{Experimental Setup}{sec:evaluation}{chapters/evaluation}
+  \labelsectioninclude{Results and Discussion}{sec:results}{chapters/results}
+  \labelsectioninclude{Conclusions}{sec:conclusions}{chapters/conclusions}
 
   \printbibliography
 \end{document}
