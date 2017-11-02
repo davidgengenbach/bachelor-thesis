@@ -57,10 +57,11 @@ For the text classification pipeline, we then used two different vectorization a
 \item{Bag Of Words (BoW): this vectorizer simply gathers all words in the corpus and creates a mapping between words and indices (ids). Then it creates a vector representation for each text so that the i-th vector component  is the count of the corresponding word in the text. Ie. $i$ is the index of the word in the mapping.}
 \item{Term-Frequency-Inverse-Document-Frequency (TfIdf): this approach is similar to BoW. Instead of using only the counts of a word in the text, this approach also incorporates the term frequency and the inverse document frequency of the words to the vector representation (see below).}
 \end{itemize}
-Both approaches can also be extended by not only utilize single words, unigrams, but also n-grams. N-grams consist of $n$ consecutive words in the text.
+Both approaches can also be extended by not only utilizing single words (unigrams) but n-grams, too. N-grams consist of $n$ consecutive words in the text.
 For example, the sentence ``This is a sentence." has the following 2-grams, or bigrams: $\{ (This, is), (is, a), (a, sentence) \}$.
-For our purposes, we looked at n-grams of lengths \textit{i)} (1, 1), \textit{ii)} (1, 2) and \textit{iii)} (2, 2).
+For our purposes, we looked at n-grams of lengths (1, 1), (1, 2) and (2, 2).
 
+\todo{Explain ranges of n-grams}
 \todo{Explain tfidf}
 
 \paragraph{Graph-based representations}
@@ -84,11 +85,42 @@ For our purposes, we looked at n-grams of lengths \textit{i)} (1, 1), \textit{ii
 \todo{Skewed classes}
 \todo{Graph statistics}
 \todo{Give hints where to download the datasets from}
+\todo{A script to download all datasets is also provided alongside the other code}
 
-\begin{figure}
+\paragraph{ling-spam}
+The Ling-Spam dataset was created by Ion Androutsopoulos et al. \cite{Androutsopoulos2000}.
+The corpus contains the texts, which are categorized as ``spam" and ``no spam". For this work, we used the version which can be downloaded from here\footnote{\url{http://csmining.org/index.php/ling-spam-datasets.html}}.
+
+\paragraph{ng20}
+The 20 Newsgroup corpus consists of newsgroup documents. They are labeled with 20 different classes, corresponding to the newsgroup boards they have been posted on. The texts are mostly informal and consist of discussions between members of a newsgroup.
+
+\todo{Removed headers and footers}
+\todo{It has to be noted that some classes are highly correlated}
+
+\paragraph{reuters-21578}
+\footnote{\url{http://www.nltk.org/book/ch02.html#reuters-corpus}}
+\todo{Documents came from Reuters newswire in 1987.}
+
+\paragraph{r8}
+This dataset is a subset of the \textit{reuters-21578} dataset. The 8 most frequent classes, ie. the classes with the most instances, have been filtered out of the \textit{reuters-21578} dataset.
+
+\paragraph{review\_polarity}
+\cite{Pang2004}.
+\url{http://www.cs.cornell.edu/people/pabo/movie-review-data/review_polarity.tar.gz}
+
+\paragraph{rotten\_imdb}
+\cite{Pang2004}.
+\url{http://www.cs.cornell.edu/people/pabo/movie-review-data/rotten_imdb.tar.gz}
+
+\paragraph{tagmynews}
+\url{http://acube.di.unipi.it/repo/news.gz}
+
+\paragraph{webkb}
+\url{http://www.cs.cmu.edu/afs/cs/project/theo-20/www/data/}
+
+\begin{figure}[ht]
 \centering
 \begin{tabular}{lrr}
-
 dataset &  \# classes &  \# documents \\
 \midrule
 ling-spam       &  2 &  2893 \\
@@ -102,8 +134,10 @@ webkb           &  7 &  8274 \\
 
 \end{tabular}
 
-\caption{Datasets}
+\caption{Dataset statistics}
 \end{figure}
+
+\todo{Add statistics about concept maps/co-occurrence graphs (like avg. nodes, avg. edges)}
 
 \labelsubsection{Methods}{subsec:methods}
 \todo{Combined}

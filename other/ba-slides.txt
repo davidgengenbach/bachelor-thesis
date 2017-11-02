@@ -1,0 +1,57 @@
+1)
+    Main hypothesis
+        Concept Maps capture structures of the underlying text that are useful in the context of text classification.
+2)
+    Subgoal
+        How diverse is the structure of the concept maps? How big are the connected components in the graphs?
+    Hypothesis
+        The structure is relatively simple. Disconnected graphs with connected components having a low number of vertices
+    Methodology
+        1) Create histogram of number of connected components
+        2) Create histogram of size of connected components
+    Result
+        ?
+    Discussion
+        Maybe the simple structure is due to the low number of sentences in the documents. No cross-references.
+3)
+    Subgoal
+        How important is the structure of the concept maps, compared to the content (= the labels)?
+    Hypothesis
+        The structure is not that important. 
+    Methodology
+        1)
+            Compare
+                1) Results with the graph linearized, then simple CountVectorizer/TfIdfVectorizer
+                2) Results of WL
+            Compare
+                1) Results of WL with labels
+                2) Results of WL without labels
+        2)
+            Look at change in WL phi feature maps with different iterations
+    Results
+        ?
+    Discussion
+        ?
+4)
+    Subgoal
+        How useful are the concept maps combined with conventional text classification?
+    Hypothesis
+        ?
+    Methodology
+        1) Train SVM with combined features
+        2) Look at the importance of each feature range (text, wl iteration 1, wl iteration 2)
+    Results
+        ?
+    Discussion
+        ?
+5)
+    Subgoal
+        How does the classification of co-occurrence graph compare to concept maps?
+    Hypothesis
+        Co-occurrence graphs perform better due to the sheer number of labels in them. Concept maps have a compression factor of 0.0X%, thus 
+    Methodology
+        Compare f1 score of 
+    Results
+        ?
+    Discussion
+        ?

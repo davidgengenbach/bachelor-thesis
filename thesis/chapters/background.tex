@@ -7,7 +7,7 @@ Categories of algorithms, eg. algorithms on feature vectors, kernelized - algori
 \todo{Concretize the problem and its notation}
 \todo{Comparison of the used data sources}
 
-\labelsubsection{Classification Task}{sec:classification_task}
+\labelsubsection{Classification Task}{subsec:classification_task}
 \todo{Supervised vs. unsupervised}
 
 \labelsubsection{Graphs}{subsec:graphs}
@@ -110,7 +110,7 @@ Figure \ref{fig:cooccurrence_graphs} shows examples of co-occurrence graphs with
 Co-occurrence graphs not only contain the words of the underlying text but also their co-occurrence.
 Co-occurrence graphs capture (undirected) n-grams of size 2.
 
-\labelsubsection{Graph kernel}{sec:graph_kernel}
+\labelsubsection{Graph Kernel}{subsec:graph_kernel}
 In most cases, texts and graphs are not of a fixed size.
 However, most classification algorithms require fixed size vectors to operate on.
 Fortunately, there are several approaches to overcome this problem.
@@ -144,14 +144,13 @@ A graph kernel is simply a kernel that operates on graphs. Here the graph kernel
 Graph kernels that measure the similarity of two graphs are related to the isomorphism test between two graphs.
 The graph isomorphism test returns whether two graphs are structurally the same.
 In this test, the labels of the vertices and edges are ignored. Otherwise the task would be far easier, since one could only compare the labels and edges of the graphs - when they are the same, the graphs are the same.
-In the graph isomorphism test, one has to find a mapping between the vertices of one graph to another, the same for the edges.
+Instead, in the graph isomorphism test, one has to find a mapping between the vertices of one graph to another, the same for the edges.
 \inlinetodo{Explain constraints for the mapping}
 If such a mapping exists, the two graphs are called isomorphic.
+While the complexity of the graph isomorphism test is not known yet, it is suspected to lie in P or maybe is also NP-complete. This potentially super-polynomial complexity has grave consequences for a graph kernel.
+\todo{Namely?}
 
-As one can show, the problem of graph isomorphism is far harder: while the complexity of the problem is yet to be proved, it is believed that it either lies in P or is NP-complete. There is no known algorithm which solves the problem in polynomial time.
-
-%Creating a graph kernel is always a trade-off between complexity and accuracy. 
-%A simple kernel which only compares the exact match of the edges and vertices of the graphs is quite easy to implement and fast. However such a kernel only returns whether the graphs are the same and not whether there are partially the same.
+\todo{Difference of graph isomorphism and graph kernels}
 
 \todo{Creating a graph kernel is always a trade-off}
 \todo{Kernels can be combined!}
@@ -179,7 +178,7 @@ As the first example for a graph kernel we will investigate a simple kernel whic
 k_{common\_label}(G_1, G_2) = | l(G_1) \cap l(G_2) |
 \end{equation*}
 where $l(G)$ returns the set of labels for graph $G$.
-Therefor, this graph kernel counts the number of common labels of the two graphs. Under this kernel, two graphs are similar when they have the same node labels.
+Therefor, this graph kernel counts the number of common labels of the two graphs. Under this kernel, two graphs are the same when they have the same node labels, completely ignoring the edges.
 
 An extension to this graph kernel is using the Jaccard coefficient instead of simply counting the common node labels:
 \begin{equation*}
@@ -200,7 +199,7 @@ This graph kernel is an example of a kernel where the explicit feature map $\phi
 \paragraph{Weisfeiler-Lehman Graph Kernel}
 The Weisfeiler-Lehman graph kernel is also a kernel that works by counting common sub-structures on two graphs.
 Here the sub-structures are the subtrees starting from each vertex.
-In each iteration $i$ with $0 < i < h$ for a given number of iterations $h$ (or till convergence), the WL graph kernel relabels the vertices of the two given graphs. The relabeling is also sometimes called recoloring.
+In each iteration $i$ with $0 < i < h$ for a given number of iterations $h$ (or till convergence), the WL graph kernel relabels the vertices of the two given graphs. This relabeling is also called recoloring.
 
 The WL graph kernel relabels a vertex $v$ by concatenating two components:
 \begin{enumerate}
@@ -210,10 +209,10 @@ The WL graph kernel relabels a vertex $v$ by concatenating two components:
 where $\pi_{i}$ is the labeling function for the iteration $i$ and $\pi_0 = \pi$.
 The resulting new label of $v$ is the sequence $(\pi_{i-1}(v), \pi_{i-1}(v_{neighbour,1}), \dots , \pi_{i-1}(v_{neighbour,n}))$.
 
-%Here the sub-sequence $(phi_{i-1}(v_{neighbour,1}), \dots , phi_{i-1}(v_{neighbour,n}))$ is sorted, ie. $\forall 0 < p < n - 1: \phi_{i - 1}(v_{neighbour,p}) \geq \phi_{i - 1}(v_{neighbour,p+1})$.
-
 The new labeling function is updated accordingly: $\pi_i(v)$ now returns to the new label of $v$.
 
+
+\todo{Mention complexity}
 \todo{Explain extensions/modifications we actually used: fast\_wl, label compression, ...}
 \todo{Mention possibility to create $\phi(G)$ feature map directly (not possible with label-compression)}
 
@@ -234,7 +233,7 @@ Their graph kernel consists of these sub-kernels:
 \begin{enumerate}
 \item{\textit{Simple label matching}: the number of matching node labels are compared between the two graphs}
 \item{\textit{Shortest path}: generate a shortest-path graph}
-\item{\textit{Normalization}: the rows are normalized by \inlinetodo{?}}
+\item{\textit{Normalization}: the gram matrix rows are normalized by \inlinetodo{?}}
 \end{enumerate}
 
 \paragraph{``Text Categorization as a Graph Classification Problem" \cite{Rousseau2015a}}
@@ -245,8 +244,16 @@ Here they first the k-core (or main core), then do most-frequent subgraph mining
 This work is the first real evaluation of graph-based classification with a high number of graphs/unique nodes/...
 
 \todo{Only using the most-important subgraph of a graph (main core) does not greatly damage prediction accuracy, but substantially reduces compute time}
+
 \paragraph{``Concept Graph Preserving Semantic Relationship for Biomedical Text Categorization" \cite{Gulrandhe2015}}
-\todo{?}
+Graphs: extracted keywords/concepts (POS tagger, only nouns), mapping of concepts to UMLS database, extraction of relationship between them.
+
+Nodes are get 4 different weight components: tf, idf, connectivity, #connected components.
+
+Kernel: number of shared edges
+
+No results
+
 \paragraph{``Deep Graph Kernels" \cite{Yanardag2015}}
 \todo{R-Convolution?}
 \todo{Embeddings for graphs}
