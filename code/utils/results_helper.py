@@ -69,13 +69,17 @@ def get_results(folder=None, use_already_loaded=True, results_directory=RESULTS_
                 result['kernel'] = 'wl'
             elif 'tfidf' in result_file:
                 result['kernel'] = 'tfidf'
+            elif '_graph_text_' in result_file:
+                result['kernel'] = 'text'
             else:
                 assert False
+
 
             if result['kernel'] == 'wl':
                 # ....
                 wl_iterations = [[val for key, val in val.items() if key.endswith('return_iteration')][0] for val in result['params']]
                 result['wl_iteration'] = wl_iterations
+
 
             is_relabeled = 'relabeled' in result_file
             result['relabeled'] = is_relabeled

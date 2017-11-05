@@ -7,6 +7,7 @@ import pickle
 import itertools
 from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import Pipeline
+from sklearn import dummy
 import numpy as np
 import os
 
@@ -21,14 +22,32 @@ from utils import dataset_helper, filename_utils, time_utils, git_utils, graph_h
 Task = collections.namedtuple('Task', ['type', 'name', 'process_fn', 'process_fn_args'])
 
 
-
 def get_all_classification_tasks(args, clfs=None):
     tasks = []
     tasks += get_text_classification_tasks(args, clfs)
     tasks += get_graph_classification_tasks(args, clfs)
     tasks += get_gram_classification_tasks(args, clfs)
+    tasks += get_dummy_classification_tasks(args, clfs)
     return tasks
 
+
+
+def get_dummy_classification_tasks(args, clfs):
+    tasks = []
+    dummy_classifier = [
+        sklearn.dummy.DummyClassifier()
+    ]
+
+    dummy_classifier_strategy = ['most_frequent', 'stratified', 'uniform']
+
+    for dataset_name in dataset_helper.get_all_available_dataset_names():
+        def process(args: argparse.Namespace, task: Task, dataset_name: str):
+            X, Y = dataset_helper.get_dataset(dataset_name)
+            cross_validate(args, task, X, Y, sklearn.pipeline.Pipeline([('classifier', None)]), dict(classifier=dummy_classifier, classifier__strategy = dummy_classifier_strategy ))
+
+        # Text classification
+        tasks.append(Task(type='dummy', name=dataset_name, process_fn=process, process_fn_args=[dataset_name]))
+    return tasks
 
 def get_gram_classification_tasks(args: argparse.Namespace, clfs):
     tasks = []

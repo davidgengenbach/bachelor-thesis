@@ -1,9 +1,14 @@
 1)
     Main hypothesis
-        Concept Maps capture structures of the underlying text that are useful in the context of text classification.
+        Concept Maps capture structures of the underlying text that are useful in the context of text classification
+    Questions
+        1) How diverse is the structure of the concept maps?
+        2) How important is the structure of the concept maps, compared to the labels?
+        3) How useful are the concept maps combined with conventional text classification?
+        4) How does the classification of co-occurrence graph compare to concept maps?
 2)
     Subgoal
-        How diverse is the structure of the concept maps? How big are the connected components in the graphs?
+        How diverse is the structure of the concept maps?
     Hypothesis
         The structure is relatively simple. Disconnected graphs with connected components having a low number of vertices
     Methodology
@@ -17,7 +22,7 @@
     Subgoal
         How important is the structure of the concept maps, compared to the content (= the labels)?
     Hypothesis
-        The structure is not that important. 
+        The structure is not that important.
     Methodology
         1)
             Compare
@@ -48,10 +53,10 @@
     Subgoal
         How does the classification of co-occurrence graph compare to concept maps?
     Hypothesis
-        Co-occurrence graphs perform better due to the sheer number of labels in them. Concept maps have a compression factor of 0.0X%, thus 
+        Co-occurrence graphs perform better than concept maps.
     Methodology
         Compare f1 score of 
     Results
         ?
     Discussion
-        ?
+        The better score of coo. graphs is due to the sheer number of labels in them. Concept maps have a compression factor of 0.0X%
