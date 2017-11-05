@@ -34,18 +34,15 @@ def get_all_classification_tasks(args, clfs=None):
 
 def get_dummy_classification_tasks(args, clfs):
     tasks = []
-    dummy_classifier = [
-        sklearn.dummy.DummyClassifier()
-    ]
-
+    dummy_classifier = [sklearn.dummy.DummyClassifier()]
     dummy_classifier_strategy = ['most_frequent', 'stratified', 'uniform']
+    vectorizer = sklearn.feature_extraction.text.CountVectorizer()
 
     for dataset_name in dataset_helper.get_all_available_dataset_names():
         def process(args: argparse.Namespace, task: Task, dataset_name: str):
             X, Y = dataset_helper.get_dataset(dataset_name)
-            cross_validate(args, task, X, Y, sklearn.pipeline.Pipeline([('classifier', None)]), dict(classifier=dummy_classifier, classifier__strategy = dummy_classifier_strategy ))
+            cross_validate(args, task, X, Y, sklearn.pipeline.Pipeline([('vectorizer', vectorizer), ('classifier', None)]), dict(classifier=dummy_classifier, classifier__strategy = dummy_classifier_strategy ))
 
-        # Text classification
         tasks.append(Task(type='dummy', name=dataset_name, process_fn=process, process_fn_args=[dataset_name]))
     return tasks
 
