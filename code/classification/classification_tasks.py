@@ -114,7 +114,6 @@ def get_graph_classification_tasks(args: argparse.Namespace, clfs):
 
     def process_combined(args: argparse.Namespace, task: Task, graph_cache_file: str):
         X_combined, Y_combined = graph_helper.get_filtered_text_graph_dataset(graph_cache_file)
-
         graphs = [g for (g, _, _) in X_combined]
         empty_graphs = len([1 for g in graphs if nx.number_of_nodes(g) == 0 or nx.number_of_edges(g) == 0])
         num_vertices = sum([nx.number_of_nodes(g) for g in graphs]) + empty_graphs
@@ -129,14 +128,19 @@ def get_graph_classification_tasks(args: argparse.Namespace, clfs):
             features__fast_wl_pipeline__feature_extraction__fast_wl__phi_dim=[num_vertices]
         )))
 
+        grid_params_combined = dict(
+            grid_params_combined,
+            **{'features__text__vectorizer__' + k: val for k, val in text_pipeline.get_param_grid().items()}
+        )
+
         combined_features = sklearn.pipeline.FeatureUnion([
-            ('tfidf', sklearn.pipeline.Pipeline([
+            ('text', sklearn.pipeline.Pipeline([
                 ('selector', TupleSelector(tuple_index=1)),
-                ('tfidf', text_pipeline.get_pipeline()),
+                ('vectorizer', text_pipeline.get_pipeline()),
             ])),
             ('fast_wl_pipeline', sklearn.pipeline.Pipeline([
                 ('selector', TupleSelector(tuple_index=0, v_stack=False)),
-                ('feature_extraction', fast_wl_pipeline.get_pipeline())
+                ('feature_extraction', fast_wl_pipeline.get_pipeline()),
             ]))
         ])
 

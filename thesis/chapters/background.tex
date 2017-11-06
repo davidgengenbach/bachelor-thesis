@@ -107,16 +107,15 @@ Figure \ref{fig:cooccurrence_graphs} shows examples of co-occurrence graphs with
     \label{fig:cooccurrence_graphs}%
 \end{figure}
 
-Co-occurrence graphs not only contain the words of the underlying text but also their co-occurrence.
-Co-occurrence graphs capture (undirected) n-grams of size 2.
+Co-occurrence graphs not only contain the words of the underlying text but also their co-occurrence. Thus they capture not only the content of the text but also the relation between words of the text.
 
 \labelsubsection{Graph Kernel}{subsec:graph_kernel}
 In most cases, texts and graphs are not of a fixed size.
-However, most classification algorithms require fixed size vectors to operate on.
+However, most classification algorithms can only operate on fixed size vectors.
 Fortunately, there are several approaches to overcome this problem.
 One of these approaches are so-called kernels.
 
-A kernel is a function $k$ which returns a measure of similarity between two (structured) objects:
+A kernel is a function $k$ which returns a measure of similarity between two objects:
 \begin{equation*}
 k: X \times X \rightarrow \mathbb{Q}
 \end{equation*}
@@ -127,19 +126,20 @@ A kernel function has to be:
     \item{\textit{non-negative definite}: \dots}
 \end{itemize}
 
-For example, a simple kernel on two numbers (or vectors) could be $k(x, x') = \frac{1}{| x - x' |}$, where $| \cdot |$ is the absolute value (or a norm). \inlinetodo{This is wrong! Division by zero}
-Another example of a kernel on strings is $k(s, s') = \delta(s = s')$, where $\delta(\cdot)$ is the Kronecker delta. This kernel returns 1 if the two given strings are the same, and 0 if they are different.
-Note that indeed both kernels are valid.
+For example, a simple kernel on two numbers (or vectors) is $k(x, x') = | x - x' |$, where $| \cdot |$ is the absolute value (or a norm).
+Another example of a kernel between strings is $k(s, s') = \delta(s = s')$, where $\delta(\cdot)$ is the Kronecker delta. This kernel returns 1 if the two given strings are the same, and 0 if they are different.
+Note that indeed both these kernels are valid.
 
-Kernels can be used directly in kernel methods for classification and other tasks.
+Kernel functions can be used directly in kernel methods for classification and other tasks.
 Prominent examples of kernel methods are the SVM, kernelized PCA and Gaussian Processes. For a subset of kernels, one can also create explicit feature vectors for a given object. In this case, the kernel can be written as an inner product on two fixed-size vectors:
 \begin{equation*}
     k(X, X') = \langle \phi(X), \phi(X') \rangle
 \end{equation*}
-Here, $\phi(X)$ returns a fixed-size vector representation of the object $X$.
+Here, $\phi(X)$ returns a fixed-size vector representation of the object $X$ and is the main part of the kernel.
 This $\phi(X)$ can then be used in all vector-based classification algorithms, not only kernel methods.
+An example for such a kernel is the string kernel which counts the number of occurrences of words in a given text, then creates a vector representation by giving each word an index in the vector and setting this index to the number of occurrences of that word. The inner product of two of these vector representations then create a kernel.
 
-A graph kernel is simply a kernel that operates on graphs. Here the graph kernel also returns a measure of similarity between two graphs.
+A graph kernel is simply a kernel that operates on graphs. A graph kernel returns a measure of similarity between two graphs.
 
 Graph kernels that measure the similarity of two graphs are related to the isomorphism test between two graphs.
 The graph isomorphism test returns whether two graphs are structurally the same.
