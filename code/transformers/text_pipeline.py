@@ -13,8 +13,8 @@ def get_pipeline():
     ])
 
 
-def get_param_grid():
-    return dict(
+def get_param_grid(reduced = False):
+    params = dict(
         vectorizer = [
             sklearn.feature_extraction.text.CountVectorizer(),
             sklearn.feature_extraction.text.TfidfVectorizer()
@@ -25,3 +25,11 @@ def get_param_grid():
         preprocessing = [None, SimplePreProcessingTransformer()],
         #scaler=[None, sklearn.preprocessing.MaxAbsScaler()]
     )
+
+    if reduced:
+        params['vectorizer'] = [sklearn.feature_extraction.text.CountVectorizer()]
+        params['vectorizer__ngram_range'] = [(1, 2)]
+        params['vectorizer__stop_words'] = ['english']
+        params['preprocessing'] = [None]
+
+    return params

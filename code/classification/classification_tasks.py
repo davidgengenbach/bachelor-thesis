@@ -130,7 +130,10 @@ def get_graph_classification_tasks(args: argparse.Namespace, clfs):
 
         grid_params_combined = dict(
             grid_params_combined,
-            **{'features__text__vectorizer__' + k: val for k, val in text_pipeline.get_param_grid().items()}
+            **{
+                'features__text__vectorizer__' + k: val
+                for k, val in text_pipeline.get_param_grid(reduced=True).items()
+            }
         )
 
         combined_features = sklearn.pipeline.FeatureUnion([
