@@ -7,11 +7,32 @@ import pickle
 import re
 import typing
 import numpy as np
+import sklearn
+import typing
 
 _RESULT_CACHE = []
 _DF_ALL = None
 
 RESULTS_DIR = 'data/results'
+
+def remove_transformer_classes(d):
+    def get_typename(val):
+        return type(val).__name__
+
+    if isinstance(d, dict):
+        for key, val in d.items():
+            if val is None: continue
+            if isinstance(val, (np.ma.masked_array, list)):
+                for idx, x in enumerate(val):
+                    if isinstance(x, sklearn.base.BaseEstimator):
+                        val[idx] = get_typename(x)
+                    if isinstance(x, dict):
+                        remove_transformer_classes(x)
+            if isinstance(val, sklearn.base.BaseEstimator):
+                d[key] = get_typename(val)
+            if isinstance(val, dict):
+                remove_transformer_classes(val)
+
 
 def get_results(folder=None, use_already_loaded=True, results_directory=RESULTS_DIR, log_progress=True, exclude_filter = None, filter_out_non_complete_datasets = True, remove_split_cols = True, remove_rank_cols = True, remove_fit_time_cols = True):
     global _DF_ALL, _RESULT_CACHE
@@ -27,6 +48,7 @@ def get_results(folder=None, use_already_loaded=True, results_directory=RESULTS_
     # Get all result files (pickled)
     result_files = get_result_filenames_from_folder(folder)
 
+    data_ = []
     for result_file in helper.log_progress(result_files) if log_progress else result_files:
         if exclude_filter and exclude_filter in result_file: continue
 
@@ -39,6 +61,8 @@ def get_results(folder=None, use_already_loaded=True, results_directory=RESULTS_
 
         with open(result_file, 'rb') as f:
             result_data = pickle.load(f)
+
+        remove_transformer_classes(result_data)
 
         result_file = result_file.split('/')[-1]
 
@@ -61,6 +85,7 @@ def get_results(folder=None, use_already_loaded=True, results_directory=RESULTS_
 
             is_simple_kernel = '.simple.' in result_file
 
+
             if is_simple_kernel:
                 result['kernel'] = 'simple_set_matching'
             elif 'spgk' in result_file:
@@ -73,6 +98,16 @@ def get_results(folder=None, use_already_loaded=True, results_directory=RESULTS_
                 result['kernel'] = 'text'
             else:
                 assert False
+
+            result['wl_return_iteration'] = [None] * len(result['params'])
+            result['wl_round_to_decimals'] = [None] * len(result['params'])
+
+            for idx, param in enumerate(result['params']):
+                if param is None: continue
+                for k, v in param.items():
+                    for x in ['return_iteration', 'round_to_decimals']:
+                        if k.endswith(x):
+                            result['wl_' + x][idx] = v
 
 
             if result['kernel'] == 'wl':
@@ -100,16 +135,8 @@ def get_results(folder=None, use_already_loaded=True, results_directory=RESULTS_
             result['type'] = 'text'
             result['words'] = ['all' for x in result['params']]
 
-        result['classifier'] = [None] * len(result['params'])
-        for idx, param in enumerate(result['params']):
-            for attr in ['classifier', 'clf']:
-                if attr not in param: continue
-                classifier_name = type(param[attr]).__name__
-                result['classifier'][idx] = classifier_name
-                param[attr] = classifier_name
-
+        result['classifier'] = [x['classifier'] if 'classifier' in x else None for x in result['params']]
         result['is_ana'] = '-ana' in result_file
-
 
         if dataset_name.endswith('-single') or dataset_name.endswith('-ana'):
             dataset_name = dataset_name.rsplit('-', 1)[0]
@@ -117,7 +144,10 @@ def get_results(folder=None, use_already_loaded=True, results_directory=RESULTS_
         result['filename'] = result_file
         result['dataset'] = dataset_name
 
-        result_df = pd.DataFrame(result)
+        data_.append(result)
+
+    for d in data_:
+        result_df = pd.DataFrame(d)
         _DF_ALL = result_df if _DF_ALL is None else _DF_ALL.append(result_df)
 
     assert _DF_ALL is not None

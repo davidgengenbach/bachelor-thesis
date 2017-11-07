@@ -4,8 +4,10 @@ try:
 except:
     pass
 
+import psutil
 import numpy as np
 import itertools
+import os
 from glob import glob
 from utils import time_utils, git_utils
 
@@ -58,6 +60,22 @@ def plot_confusion_matrix(cm,
     plt.tight_layout()
     plt.ylabel('True label')
     plt.xlabel('Predicted label')
+
+def get_human_readable_size(num):
+    if not isinstance(num, int): return
+    exp_str = [ (0, 'B'), (10, 'KB'),(20, 'MB'),(30, 'GB'),(40, 'TB'), (50, 'PB'),]               
+    i = 0
+    while i+1 < len(exp_str) and num >= (2 ** exp_str[i+1][0]):
+        i += 1
+        rounded_val = round(float(num) / 2 ** exp_str[i][0], 2)
+    return '%s %s' % (int(rounded_val), exp_str[i][1])
+
+
+def get_memory_footprint():
+    process = psutil.Process(os.getpid())
+    #memory = psutil.virtual_memory()
+    #mem = {k: get_human_readable_size(getattr(memory, k)) for k in dir(memory) if not k.startswith('_') and isinstance(getattr(memory, k), int)}
+    return get_human_readable_size(process.memory_info().rss)
 
 
 def log_progress(sequence, every=None, size=None, name='Items'):
