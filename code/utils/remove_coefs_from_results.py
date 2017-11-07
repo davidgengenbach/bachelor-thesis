@@ -7,9 +7,10 @@ import numpy as np
 
 def remove_coefs(clf):
     found = False
-    for x in ['coef_', 'class_log_prior_', 'intercept_', 'feature_log_prob_', 'class_count_', 'feature_count_']:
+    for x in ['coef_', 'class_log_prior_', 'intercept_', 'feature_log_prob_', 'class_count_', 'feature_count_', 'vocabulary_', 'idf_', 'stop_words_']:
         try:
-            delattr(clf, x)
+            #delattr(clf, x)
+            setattr(clf, x, None)
             found = True
         except:
             pass
@@ -18,8 +19,9 @@ def remove_coefs(clf):
 
 def remove_coefs_from_results(results):
     found = False
-    for attr in ['param_clf', 'param_classifier']:
-        if attr not in results: continue
+    #for attr in ['param_clf', 'param_classifier', 'param_vectorizer', 'param_preprocessing']:
+    for attr in results.keys():
+        #if attr not in results: continue
         param_clf = results[attr]
         if np.ma.isMaskedArray(param_clf):
             param_clf = np.ma.asarray(param_clf)
