@@ -66,7 +66,7 @@ def preprocess_text_spacy(texts, min_length=-1, concat=True, n_jobs=2, batch_siz
     """
 
     if only_alpha_num:
-        texts = [ALPHA_NUM_REGEX.sub(' ', text) for text in text]
+        texts = [ALPHA_NUM_REGEX.sub(' ', text) for text in texts]
 
     if ana_preprocessing_:
         texts = [ana_preprocessing(text) for text in texts]

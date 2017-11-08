@@ -7,10 +7,10 @@ joblib==0.11
 matplotlib==2.0.2
 networkx==1.11
 nltk==3.2.4
-numpy==1.13.1
+numpy==1.13.*
 pandas==0.20.3
 scipy==0.19.1
-spacy==1.9.0
+spacy==2.0.*
 sympy==1.1
 pytest
 sklearn

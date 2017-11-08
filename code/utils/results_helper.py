@@ -107,13 +107,13 @@ def get_results(folder=None, use_already_loaded=True, results_directory=RESULTS_
                 for k, v in param.items():
                     for x in ['return_iteration', 'round_to_decimals']:
                         if k.endswith(x):
-                            result['wl_' + x][idx] = v
+                            result['wl_' + x][idx] = v if v != 'stacked' else -1
 
 
             if result['kernel'] == 'wl':
                 # ....
                 wl_iterations = [[val for key, val in val.items() if key.endswith('return_iteration')][0] for val in result['params']]
-                result['wl_iteration'] = wl_iterations
+                result['wl_iteration'] = [x if isinstance(x, int) else -1 for x in wl_iterations]
 
 
             is_relabeled = 'relabeled' in result_file
@@ -166,6 +166,7 @@ def get_results(folder=None, use_already_loaded=True, results_directory=RESULTS_
             (not remove_fit_time_cols or not re.match(r'_time$', x)) and
             (not remove_rank_cols or not re.match(r'rank_', x))
     ]]
+
 
     return df_all.reset_index(drop=True)
 

@@ -11,7 +11,8 @@ from joblib import Parallel, delayed
 from sklearn.model_selection import train_test_split
 from sklearn.utils import shuffle
 from utils import filename_utils
-
+from preprocessing import preprocessing
+import spacy
 
 DATASETS_LIMITED = ['ng20', 'reuters-21578', 'webkb', 'ling-spam']
 
@@ -148,6 +149,25 @@ def get_dataset(dataset_name, use_cached=True, preprocessed=False, dataset_folde
             pickle.dump((X, Y), f)
 
     test_dataset_validity(X, Y)
+    return X, Y
+
+
+def get_dataset_spacy(dataset_name, use_cached=True, cache_path=CACHE_PATH, pipe_kwargs = {}):
+    from spacy.tokens.doc import Doc
+    from spacy.vocab import Vocab
+
+    cache_file = '{}/{}.spacy.npy'.format(cache_path, dataset_name)
+    X, Y = get_dataset(dataset_name, cache_path=cache_path)
+    if use_cached and os.path.exists(cache_file):
+        with open(cache_file, 'rb') as f:
+            X, Y = pickle.load(f)
+            X = [Doc(Vocab()).from_bytes(x) for x in X]
+    else:
+        nlp = spacy.load('en')
+        X = list(nlp.pipe(X, **pipe_kwargs))
+        X_b = [x.to_bytes() for x in X]
+        with open(cache_file, 'wb') as f:
+            pickle.dump((X_b, Y), f)
     return X, Y
 
 
