@@ -101,19 +101,24 @@ def get_results(folder=None, use_already_loaded=True, results_directory=RESULTS_
 
             result['wl_return_iteration'] = [None] * len(result['params'])
             result['wl_round_to_decimals'] = [None] * len(result['params'])
+            result['wl_fast_wl__h'] = [None] * len(result['params'])
 
             for idx, param in enumerate(result['params']):
                 if param is None: continue
                 for k, v in param.items():
-                    for x in ['return_iteration', 'round_to_decimals']:
+                    for x in ['fast_wl__h', 'return_iteration', 'round_to_decimals']:
                         if k.endswith(x):
-                            result['wl_' + x][idx] = v if v != 'stacked' else -1
+                            result['wl_' + x][idx] = v
 
 
             if result['kernel'] == 'wl':
                 # ....
                 wl_iterations = [[val for key, val in val.items() if key.endswith('return_iteration')][0] for val in result['params']]
                 result['wl_iteration'] = [x if isinstance(x, int) else -1 for x in wl_iterations]
+
+            for idx, param in enumerate(result['wl_return_iteration']):
+                if param == 'stacked':
+                    result['wl_iteration'][idx] = max(result['wl_fast_wl__h']) * -1 + 1
 
 
             is_relabeled = 'relabeled' in result_file

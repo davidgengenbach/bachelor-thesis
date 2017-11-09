@@ -21,6 +21,7 @@ def get_param_grid(reduced = False):
         ],
         vectorizer__stop_words = [None, 'english'],
         vectorizer__ngram_range = [(1, 1), (1, 2), (2, 2)],
+        vectorizer__binary = [True, False],
         #preprocessing= [None, PreProcessingTransformer(only_nouns=True, return_lemma = True)],
         preprocessing = [None, SimplePreProcessingTransformer()],
         #scaler=[None, sklearn.preprocessing.MaxAbsScaler()]
