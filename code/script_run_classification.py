@@ -54,8 +54,8 @@ def get_args():
         'ling-spam',
         'reuters-21578',
         'webkb',
-        'webkb-ana',
-        'ng20-ana'
+        #'webkb-ana',
+        #'ng20-ana'
     ])
 
     args = parser.parse_args()
