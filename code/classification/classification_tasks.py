@@ -22,16 +22,21 @@ Task = collections.namedtuple('Task', ['type', 'name', 'process_fn', 'process_fn
 
 
 def get_all_classification_tasks(args, clfs=None):
+    classifier_params = {
+        'classifier': clfs,
+        'classifier__C': [0.1, 1]
+    }
+
     tasks = []
-    tasks += get_text_classification_tasks(args, clfs)
-    tasks += get_graph_classification_tasks(args, clfs)
-    tasks += get_gram_classification_tasks(args, clfs)
-    tasks += get_dummy_classification_tasks(args, clfs)
+    tasks += get_text_classification_tasks(args, classifier_params)
+    tasks += get_graph_classification_tasks(args, classifier_params)
+    tasks += get_gram_classification_tasks(args, classifier_params)
+    tasks += get_dummy_classification_tasks(args, classifier_params)
     return tasks
 
 
 
-def get_dummy_classification_tasks(args, clfs):
+def get_dummy_classification_tasks(args, classifier_param_grid):
     tasks = []
     dummy_classifier = [sklearn.dummy.DummyClassifier()]
     dummy_classifier_strategy = ['most_frequent', 'stratified', 'uniform']
@@ -45,7 +50,7 @@ def get_dummy_classification_tasks(args, clfs):
         tasks.append(Task(type='dummy', name=dataset_name, process_fn=process, process_fn_args=[dataset_name]))
     return tasks
 
-def get_gram_classification_tasks(args: argparse.Namespace, clfs):
+def get_gram_classification_tasks(args: argparse.Namespace, classifier_param_grid):
     tasks = []
 
     def process(args: argparse.Namespace, task: Task, gram_cache_file: str):
@@ -61,7 +66,9 @@ def get_gram_classification_tasks(args: argparse.Namespace, clfs):
     return tasks
 
 
-def get_graph_classification_tasks(args: argparse.Namespace, clfs):
+def get_graph_classification_tasks(args: argparse.Namespace, classifier_param_grid):
+
+
     tasks = []
 
     graph_fast_wl_classification_pipeline = sklearn.pipeline.Pipeline([
@@ -90,7 +97,7 @@ def get_graph_classification_tasks(args: argparse.Namespace, clfs):
             **dict(feature_extraction__fast_wl__phi_dim=[num_vertices])
         )
 
-        grid_params_scratch = dict(dict(classifier=clfs), **features_params)
+        grid_params_scratch = dict(classifier_param_grid, **features_params)
 
         cross_validate(args, task, X, Y, graph_fast_wl_classification_pipeline, grid_params_scratch)
 
@@ -108,10 +115,12 @@ def get_graph_classification_tasks(args: argparse.Namespace, clfs):
         X, Y = dataset_helper.get_dataset_cached(graph_cache_file)
 
         text_p = text_pipeline.get_pipeline()
-
+        # Convert graph to text
         text_p.steps.insert(0, ('graph_to_text', GraphToTextTransformer()))
 
-        cross_validate(args, task, X, Y, text_p, dict(text_pipeline.get_param_grid(), **dict(graph_to_text__use_edges = [True, False], classifier=clfs)))
+        _param_grid = dict(text_pipeline.get_param_grid(), **dict(graph_to_text__use_edges = [True, False]))
+        _param_grid = dict(classifier_param_grid, **_param_grid)
+        cross_validate(args, task, X, Y, text_p, _param_grid)
 
 
     def process_combined(args: argparse.Namespace, task: Task, graph_cache_file: str):
@@ -123,13 +132,8 @@ def get_graph_classification_tasks(args: argparse.Namespace, clfs):
 
         X_combined = [(graph, text) for (graph, text, _) in X_combined]
 
-        grid_params_combined = dict({
-            #'normalizer': graph_fast_wl_grid_params['normalizer'],
-            'classifier': clfs,
-            'classifier__C': [0.1, 1],
-            #'classifier__penalty': ['l1', 'l2'],
-        }, **dict({'features__fast_wl_pipeline__feature_extraction__' + k: val for k, val in
-                   graph_fast_wl_grid_params.items()}, **dict(
+        grid_params_combined = dict(classifier_param_grid, **dict({'features__fast_wl_pipeline__feature_extraction__' + k: val for k, val in
+                                                                   graph_fast_wl_grid_params.items()}, **dict(
             features__fast_wl_pipeline__feature_extraction__fast_wl__phi_dim=[num_vertices]
         )))
 
@@ -171,12 +175,12 @@ def get_graph_classification_tasks(args: argparse.Namespace, clfs):
     return tasks
 
 
-def get_text_classification_tasks(args: argparse.Namespace, clfs):
+def get_text_classification_tasks(args: argparse.Namespace, classifier_param_grid):
     tasks = []
 
     def process(args: argparse.Namespace, task: Task, dataset_name: str):
         X, Y = dataset_helper.get_dataset(dataset_name)
-        cross_validate(args, task, X, Y, text_pipeline.get_pipeline(), dict(text_pipeline.get_param_grid(), **dict(classifier=clfs)))
+        cross_validate(args, task, X, Y, text_pipeline.get_pipeline(), dict(text_pipeline.get_param_grid(), **classifier_param_grid))
 
     # Text classification
     for dataset_name in dataset_helper.get_all_available_dataset_names():

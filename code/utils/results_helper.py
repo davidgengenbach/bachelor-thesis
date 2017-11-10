@@ -34,6 +34,37 @@ def remove_transformer_classes(d):
                 remove_transformer_classes(val)
 
 
+replacements = [
+    ('param_feature_extraction__', ''),
+    ('param_features__fast_wl_pipeline__feature_extraction__', ''),
+    ('param_features__text__', ''),
+    ('features__text__vectorizer__', ''),
+    ('param_', '')
+]
+
+
+def clean_result_keys(el: dict)->dict:
+    results = {}
+    for key, val in el.items():
+        for search, replace in replacements:
+            key = key.replace(search, replace)
+        results[key] = val
+    return results
+
+
+def get_kernel_from_filename(filename:str)->str:
+    for kernel in ['spgk', 'wl', 'tfidf']:
+        if kernel in filename:
+            return kernel
+
+    is_simple_kernel = '.simple.' in filename
+    if is_simple_kernel:
+        return 'simple_set_matching'
+    elif '_graph_text_' in filename:
+        return 'text'
+    else:
+        assert False
+
 def get_results(folder=None, use_already_loaded=True, results_directory=RESULTS_DIR, log_progress=True, exclude_filter = None, filter_out_non_complete_datasets = True, remove_split_cols = True, remove_rank_cols = True, remove_fit_time_cols = True):
     global _DF_ALL, _RESULT_CACHE
 
@@ -68,58 +99,24 @@ def get_results(folder=None, use_already_loaded=True, results_directory=RESULTS_
 
         result = result_data if 'params' in result_data else result_data['results']
 
+        assert 'params' in result
+
+        result = clean_result_keys(result)
+        for idx, el in enumerate(result['params']):
+            result['params'][idx] = clean_result_keys(el)
+
         is_graph_dataset = '_graph_' in result_file
         result['combined'] = 'combined' in result_file
-
         result['kernel'] = 'unknown'
 
         if is_graph_dataset:
             is_cooccurrence_dataset = 'cooccurrence' in result_file
 
-            result['type'] = 'cooccurrence' if is_cooccurrence_dataset else 'concept-graph'
+            result['type'] = 'cooccurrence' if is_cooccurrence_dataset else 'concept_map'
             result['lemmatized'] = '_lemmatized_' in result_file
             result['same_label'] = 'same_label' in result_file
 
-            is_tfidf = 'tfidf' in result_file
-            result['is_tfidf'] = is_tfidf
-
-            is_simple_kernel = '.simple.' in result_file
-
-
-            if is_simple_kernel:
-                result['kernel'] = 'simple_set_matching'
-            elif 'spgk' in result_file:
-                result['kernel'] = 'spgk'
-            elif 'wl' in result_file:
-                result['kernel'] = 'wl'
-            elif 'tfidf' in result_file:
-                result['kernel'] = 'tfidf'
-            elif '_graph_text_' in result_file:
-                result['kernel'] = 'text'
-            else:
-                assert False
-
-            result['wl_return_iteration'] = [None] * len(result['params'])
-            result['wl_round_to_decimals'] = [None] * len(result['params'])
-            result['wl_fast_wl__h'] = [None] * len(result['params'])
-
-            for idx, param in enumerate(result['params']):
-                if param is None: continue
-                for k, v in param.items():
-                    for x in ['fast_wl__h', 'return_iteration', 'round_to_decimals']:
-                        if k.endswith(x):
-                            result['wl_' + x][idx] = v
-
-
-            if result['kernel'] == 'wl':
-                # ....
-                wl_iterations = [[val for key, val in val.items() if key.endswith('return_iteration')][0] for val in result['params']]
-                result['wl_iteration'] = [x if isinstance(x, int) else -1 for x in wl_iterations]
-
-            for idx, param in enumerate(result['wl_return_iteration']):
-                if param == 'stacked':
-                    result['wl_iteration'][idx] = max(result['wl_fast_wl__h']) * -1 + 1
-
+            result['kernel'] = get_kernel_from_filename(result_file)
 
             is_relabeled = 'relabeled' in result_file
             result['relabeled'] = is_relabeled
@@ -172,8 +169,13 @@ def get_results(folder=None, use_already_loaded=True, results_directory=RESULTS_
             (not remove_rank_cols or not re.match(r'rank_', x))
     ]]
 
+    prio_columns = ['dataset', 'type', 'combined']
+    low_prio_columns = ['params', 'filename'] + [c for c in df_all.columns if c.startswith('std_') or c.startswith('mean_')]
+    columns = df_all.columns.tolist()
+    for c in prio_columns + low_prio_columns:
+        columns.remove(c)
 
-    return df_all.reset_index(drop=True)
+    return df_all.reset_index(drop=True)[prio_columns + columns + low_prio_columns]#.set_index('filename')
 
 
 def get_result_folder_df(results_directory=RESULTS_DIR):
