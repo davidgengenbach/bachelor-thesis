@@ -8,6 +8,12 @@ import numpy as np
 def hash_dataset(X):
     return ''.join([str(hash(''.join([str(a) for a in labels]))) for adj, labels in X])
 
+
+def get_node_weight_factors(X, use_node_weight_factors = True):
+    if not use_node_weight_factors:
+        return None
+    return [adj.sum(axis = 1, dtype=np.uint32) for adj, _ in X]
+
 class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.TransformerMixin):
     """Fast Weisfeiler-Lehman transformer.
     
@@ -23,7 +29,7 @@ class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Tran
         train_graph_count (int): how many graphs have been seen in the fit stage
     """
 
-    def __init__(self, h=1, remove_missing_labels=True, debug=False, should_cast = False, phi_dim = None, round_to_decimals = 10, ignore_label_order = False):
+    def __init__(self, h=1, remove_missing_labels=True, debug=False, should_cast = False, phi_dim = None, round_to_decimals = 10, ignore_label_order = False, use_node_weight_factors = False):
         self.remove_missing_labels = remove_missing_labels
         self.h = h
         self.debug = debug
@@ -31,6 +37,7 @@ class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Tran
         self.phi_dim = phi_dim
         self.round_to_decimals = round_to_decimals
         self.ignore_label_order = ignore_label_order
+        self.use_node_weight_factors = use_node_weight_factors
 
     def fit(self, X, y=None, **fit_params):
         """Initializes the list of node labels.
@@ -56,7 +63,9 @@ class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Tran
         if self.debug:
             print("FastWLGraphKernelTransformer.fit: Found empty graphs in training set: {}".format(empty_graph_counter))
 
-        phi_list, label_lookups, label_counters = fast_wl.transform(X, h=self.h, cast_after_rounding=self.should_cast, phi_dim=self.phi_dim, round_signatures_to_decimals=self.round_to_decimals, ignore_label_order = self.ignore_label_order)
+        node_weight_factors = get_node_weight_factors(X, self.use_node_weight_factors)
+
+        phi_list, label_lookups, label_counters = fast_wl.transform(X, h=self.h, phi_dim=self.phi_dim, round_signatures_to_decimals=self.round_to_decimals, ignore_label_order = self.ignore_label_order, node_weight_factors=node_weight_factors)
 
         self.train_graph_count = len(X)
         self.all_nodes = graph_helper.get_all_node_labels(X, as_sorted_list=False)
@@ -85,8 +94,10 @@ class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Tran
                 if len(missing_labels):
                     pass
 
+        node_weight_factors = get_node_weight_factors(X, self.use_node_weight_factors)
+
         phi_list, label_lookups, label_counters = fast_wl.transform(
-            X, h=self.h, label_lookups=np.copy(self.label_lookups), label_counters=np.copy(self.label_counters), phi_dim=self.phi_shape[1], cast_after_rounding=self.should_cast, append_to_labels = True,round_signatures_to_decimals=self.round_to_decimals, ignore_label_order = self.ignore_label_order)
+            X, h=self.h, label_lookups=np.copy(self.label_lookups), label_counters=np.copy(self.label_counters), phi_dim=self.phi_shape[1], cast_after_rounding=self.should_cast, append_to_labels = True,round_signatures_to_decimals=self.round_to_decimals, ignore_label_order = self.ignore_label_order, node_weight_factors=node_weight_factors)
 
         # Do NOT save label lookups and counters! This would effectively be fitting!
         #self.label_lookups = label_lookups

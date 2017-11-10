@@ -26,9 +26,9 @@ def transform(
         phi_dtype: np.dtype = np.uint32,
         used_matrix_type: scipy.sparse.spmatrix = dok_matrix,
         round_signatures_to_decimals: int = 1,
-        cast_after_rounding: bool = False,
         append_to_labels: bool = True,
-        ignore_label_order = False
+        ignore_label_order = False,
+        node_weight_factors = None
     ) -> tuple:
     assert len(graphs)
 
@@ -63,6 +63,7 @@ def transform(
 
     assert phi_dim is not None
     assert len(graph_labels) == len(graphs)
+    assert node_weight_factors is None or len(node_weight_factors) == len(graphs)
 
     # The number of unique labels (= the total number of nodes in the graphs)
     phi_shape = (phi_dim, num_graphs)
@@ -81,15 +82,26 @@ def transform(
         Returns:
 
         '''
+        if node_weight_factors is not None:
+            factor = node_weight_factors[graph_idx]
+        else:
+            factor = 1
+
         # The labels are all unique, so just set the entry for the labels to 1
         if len(set(labels)) == len(labels):
-            phi[labels, graph_idx] = 1
+            phi[labels, graph_idx] = factor
         else:
+            if not isinstance(factor, (int, float)):
+                new_labels = []
+                for l, f in zip(labels, factor):
+                    new_labels += ([l] * f[0, 0])
+                labels = new_labels
             # There are duplicates in labels. Do a histogram of the labels. Unfortunately you can not just use np.add.at(...) for duplicate indices to be accumulated, since it does not work with sparse matrices
             label_counter_ = collections.Counter(labels)
             # new_label_indices: are the unique (!) indices in new_labels
             # vals: are the number of occurrences of a index in new_labels
             new_label_indices, vals = zip(*label_counter_.items())
+            #print(np.matrix(list(vals), dtype=phi.dtype).T.shape, factor.shape)
             phi[list(new_label_indices), graph_idx] += np.matrix(list(vals), dtype=phi.dtype).T
 
     # Just count the labels in the 0-th iteration. This corresponds to the graph_labels, but indexed correctly into phi
@@ -115,8 +127,6 @@ def transform(
         phi = used_matrix_type(phi_shape, dtype=phi_dtype)
         # ... go over all graphs
         for idx, (labels, adjacency_matrix) in enumerate(zip(graph_labels, adjacency_matrices)):
-            has_same_labels = len(set(labels)) != len(labels)
-
             # ... generate the signatures (see paper) for each graph
             signatures = (labels + adjacency_matrix * log_primes[labels] * rounding_factor).astype(labels_dtype)
 
@@ -145,7 +155,7 @@ def transform(
     return phi_lists, new_label_lookups, new_label_counters
 
 
-def relabel_graphs(graphs: collections.abc.Iterable, label_counter: int = 0, label_lookup: dict = {}, labels_dtype: np.dtype = np.uint32, append: bool = True, shuffle_items_before_relabeling: bool = False):
+def relabel_graphs(graphs: collections.abc.Iterable, label_counter: int = 0, label_lookup: dict = {}, labels_dtype: np.dtype = np.uint32, append: bool = True):
     labels = [[] for i in range(len(graphs))]
     nodes = [nodes for adjs, nodes in graphs]
     for idx, nodes_ in enumerate(nodes):
