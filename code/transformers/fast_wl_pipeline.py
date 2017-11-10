@@ -8,7 +8,8 @@ def get_pipeline():
         [
             ('tuple_transformer', NxGraphToTupleTransformer()),
             ('fast_wl', FastWLGraphKernelTransformer(debug = False)),
-            ('phi_picker', PhiPickerTransformer())
+            ('phi_picker', PhiPickerTransformer()),
+            ('normalizer', None)
         ]
     )
 

@@ -67,6 +67,7 @@ def get_graph_classification_tasks(args: argparse.Namespace, clfs):
 
     graph_fast_wl_classification_pipeline = sklearn.pipeline.Pipeline([
         ('feature_extraction', fast_wl_pipeline.get_pipeline()),
+        ('normalizer', None),
         ('classifier', None)
     ])
 
@@ -75,7 +76,8 @@ def get_graph_classification_tasks(args: argparse.Namespace, clfs):
         'fast_wl__phi_dim': [None],
         'fast_wl__round_to_decimals': args.wl_round_to_decimal,
         'fast_wl__use_node_weight_factors': [True, False],
-        'phi_picker__return_iteration': args.wl_phi_picker_iterations
+        'phi_picker__return_iteration': args.wl_phi_picker_iterations,
+        'normalizer': [sklearn.preprocessing.MaxAbsScaler()],
     }
 
     def process_(args: argparse.Namespace, task: Task, X, Y):
@@ -123,6 +125,7 @@ def get_graph_classification_tasks(args: argparse.Namespace, clfs):
         X_combined = [(graph, text) for (graph, text, _) in X_combined]
 
         grid_params_combined = dict({
+            'normalizer': graph_fast_wl_grid_params['normalizer'],
             'classifier': clfs,
             'classifier__C': [0.1, 1],
             'classifier__penalty': ['l1', 'l2'],
@@ -149,12 +152,15 @@ def get_graph_classification_tasks(args: argparse.Namespace, clfs):
                 ('feature_extraction', fast_wl_pipeline.get_pipeline()),
             ]))
         ])
+        print(grid_params_combined)
 
         pipeline = sklearn.pipeline.Pipeline([
             ('features', combined_features),
+            ('normalizer', None),
             ('classifier', None)
         ])
 
+        print(pipeline, grid_params_combined)
         return cross_validate(args, task, X_combined, Y_combined, pipeline, grid_params_combined)
 
     for graph_cache_file in dataset_helper.get_all_cached_graph_datasets():
