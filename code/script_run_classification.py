@@ -41,9 +41,10 @@ def get_args():
     parser.add_argument('--keep_coefs', action='store_true')
 
     # FastWL options
-    parser.add_argument('--wl_round_to_decimal', nargs='+', type=int, default=[-1, 0, 5, 10])
-    parser.add_argument('--wl_iterations', nargs='+', type=int, default=[4])
-    parser.add_argument('--wl_phi_picker_iterations', nargs='+', default=[0, 3, 'stacked'])
+    #parser.add_argument('--wl_round_to_decimal', nargs='+', type=int, default=[-1, 0, 5, 10])
+    parser.add_argument('--wl_round_to_decimal', nargs='+', type=int, default=[-1, 7])
+    parser.add_argument('--wl_iterations', nargs='+', type=int, default=[5])
+    parser.add_argument('--wl_phi_picker_iterations', nargs='+', default=[0, 4, 'stacked'])
 
     # Task filters
     parser.add_argument('--task_name_filter', type=str, default=None)

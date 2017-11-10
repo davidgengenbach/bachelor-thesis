@@ -122,7 +122,9 @@ def get_graph_classification_tasks(args: argparse.Namespace, clfs):
         X_combined = [(graph, text) for (graph, text, _) in X_combined]
 
         grid_params_combined = dict({
-            'classifier': clfs
+            'classifier': clfs,
+            'classifier__C': [0.1, 1],
+            'classifier__penalty': ['l1', 'l2'],
         }, **dict({'features__fast_wl_pipeline__feature_extraction__' + k: val for k, val in
                    graph_fast_wl_grid_params.items()}, **dict(
             features__fast_wl_pipeline__feature_extraction__fast_wl__phi_dim=[num_vertices]
