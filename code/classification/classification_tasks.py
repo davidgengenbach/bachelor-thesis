@@ -74,6 +74,7 @@ def get_graph_classification_tasks(args: argparse.Namespace, clfs):
         'fast_wl__h': args.wl_iterations,
         'fast_wl__phi_dim': [None],
         'fast_wl__round_to_decimals': args.wl_round_to_decimal,
+        'fast_wl__use_node_weight_factors': [True, False],
         'phi_picker__return_iteration': args.wl_phi_picker_iterations
     }
 

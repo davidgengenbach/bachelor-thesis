@@ -92,10 +92,10 @@ def transform(
             phi[labels, graph_idx] = factor
         else:
             if not isinstance(factor, (int, float)):
-                new_labels = []
                 for l, f in zip(labels, factor):
-                    new_labels += ([l] * f[0, 0])
-                labels = new_labels
+                    f = f[0, 0] - 1
+                    if f != 0:
+                        labels += ([l] * f)
             # There are duplicates in labels. Do a histogram of the labels. Unfortunately you can not just use np.add.at(...) for duplicate indices to be accumulated, since it does not work with sparse matrices
             label_counter_ = collections.Counter(labels)
             # new_label_indices: are the unique (!) indices in new_labels
