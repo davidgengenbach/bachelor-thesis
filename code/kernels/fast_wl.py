@@ -95,13 +95,12 @@ def transform(
                 for l, f in zip(labels, factor):
                     f = f[0, 0] - 1
                     if f != 0:
-                        labels += ([l] * f)
+                        labels = np.concatenate ((labels, [l] * f))
             # There are duplicates in labels. Do a histogram of the labels. Unfortunately you can not just use np.add.at(...) for duplicate indices to be accumulated, since it does not work with sparse matrices
             label_counter_ = collections.Counter(labels)
             # new_label_indices: are the unique (!) indices in new_labels
             # vals: are the number of occurrences of a index in new_labels
             new_label_indices, vals = zip(*label_counter_.items())
-            #print(np.matrix(list(vals), dtype=phi.dtype).T.shape, factor.shape)
             phi[list(new_label_indices), graph_idx] += np.matrix(list(vals), dtype=phi.dtype).T
 
     # Just count the labels in the 0-th iteration. This corresponds to the graph_labels, but indexed correctly into phi

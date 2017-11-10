@@ -22,7 +22,7 @@ def get_args():
     parser.add_argument('--config', is_config_file=True)
 
     # Options
-    parser.add_argument('--n_jobs', type=int, default=2)
+    parser.add_argument('--n_jobs', type=int, default=1)
     parser.add_argument('--verbose', type=int, default=11)
     parser.add_argument('--dry_run', action='store_true', help='Do not classify. Only show description, tasks, ...')
     parser.add_argument('--results_folder', type=str, default='data/results')

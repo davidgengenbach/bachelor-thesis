@@ -4,10 +4,9 @@ import collections
 import networkx as nx
 import argparse
 import pickle
-import itertools
+from sklearn import dummy, model_selection, pipeline
 from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import Pipeline
-from sklearn import dummy
 import numpy as np
 import os
 
@@ -125,10 +124,10 @@ def get_graph_classification_tasks(args: argparse.Namespace, clfs):
         X_combined = [(graph, text) for (graph, text, _) in X_combined]
 
         grid_params_combined = dict({
-            'normalizer': graph_fast_wl_grid_params['normalizer'],
+            #'normalizer': graph_fast_wl_grid_params['normalizer'],
             'classifier': clfs,
             'classifier__C': [0.1, 1],
-            'classifier__penalty': ['l1', 'l2'],
+            #'classifier__penalty': ['l1', 'l2'],
         }, **dict({'features__fast_wl_pipeline__feature_extraction__' + k: val for k, val in
                    graph_fast_wl_grid_params.items()}, **dict(
             features__fast_wl_pipeline__feature_extraction__fast_wl__phi_dim=[num_vertices]
@@ -152,15 +151,13 @@ def get_graph_classification_tasks(args: argparse.Namespace, clfs):
                 ('feature_extraction', fast_wl_pipeline.get_pipeline()),
             ]))
         ])
-        print(grid_params_combined)
 
         pipeline = sklearn.pipeline.Pipeline([
             ('features', combined_features),
-            ('normalizer', None),
+            #('normalizer', None),
             ('classifier', None)
         ])
 
-        print(pipeline, grid_params_combined)
         return cross_validate(args, task, X_combined, Y_combined, pipeline, grid_params_combined)
 
     for graph_cache_file in dataset_helper.get_all_cached_graph_datasets():
@@ -197,7 +194,7 @@ def get_precomputed_subset(K, indices1, indices2=None):
 
 def train_test_split(X, Y, test_size: float=0.15, random_state: int = 42, is_precomputed: bool=False):
     def train_test_split(*Xs, Y = None):
-        return sklearn.model_selection.train_test_split(X, Y, stratify=Y, test_size=test_size, random_state=random_state)
+        return sklearn.model_selection.train_test_split(*Xs, stratify=Y, test_size=test_size, random_state=random_state)
 
     if is_precomputed:
         # Cut the precomputed gram matrix into a train/test split...
@@ -209,18 +206,13 @@ def train_test_split(X, Y, test_size: float=0.15, random_state: int = 42, is_pre
         X_train, Y_train = get_precomputed_subset(X, X_train_i), np.array(Y)[X_train_i]
         X_test, Y_test = get_precomputed_subset(X, X_test_i, X_train_i), np.array(Y)[X_test_i]
     else:
-        X_train, X_test, Y_train, Y_test = train_test_split(X, Y, Y=Y)
+        indices = list(range(len(X)))
+        X_train, X_test, Y_train, Y_test, X_train_i, X_test_i = train_test_split(X, Y, indices, Y=Y)
 
-    return X_train, X_test, Y_train, Y_test
+    return X_train, X_test, Y_train, Y_test, X_train_i, X_test_i
 
 
 def cross_validate(args: argparse.Namespace, task: Task, X, Y, estimator, param_grid: dict, skip_predictions=False, is_precomputed=False):
-    cv = sklearn.model_selection.StratifiedKFold(
-        n_splits=args.n_splits,
-        random_state=args.random_state,
-        shuffle=True
-    )
-
     result_filename_tmpl = filename_utils.get_result_filename_for_task(task)
 
     result_file = '{}/{}'.format(args.results_folder, result_filename_tmpl)
@@ -229,15 +221,25 @@ def cross_validate(args: argparse.Namespace, task: Task, X, Y, estimator, param_
     if not args.force and os.path.exists(result_file):
         return
 
-    X_train, Y_train, X_test, Y_test = X, Y, [], []
+    X_train, Y_train, X_test, Y_test, train_i, test_i = X, Y, [], [], range(len(X)), []
 
     if not skip_predictions and args.create_predictions:
         # Hold out validation set for predictions
         try:
-            X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=args.prediction_test_size, random_state=args.random_state, is_precomputed=is_precomputed)
+            X_train, X_test, Y_train, Y_test, train_i, test_i = train_test_split(X, Y, test_size=args.prediction_test_size, random_state=args.random_state, is_precomputed=is_precomputed)
         except Exception as e:
             LOGGER.warning('Could not split dataset for predictions')
             LOGGER.exception(e)
+
+    if args.n_splits == -1:
+        _, _, _, _, X_train_i, X_test_i = train_test_split(X_train, Y_train, test_size=0.33, is_precomputed = is_precomputed)
+        cv = [(X_train_i, X_test_i)]
+    else:
+        cv = sklearn.model_selection.StratifiedKFold(
+            n_splits=args.n_splits,
+            random_state=args.random_state,
+            shuffle=True
+        )
 
     gscv = GridSearchCV(estimator=estimator, param_grid=param_grid, cv=cv, scoring=args.scoring, n_jobs=args.n_jobs, verbose=args.verbose, refit=args.refit)
 
