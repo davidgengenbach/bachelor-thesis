@@ -133,6 +133,8 @@ def get_results(folder=None, use_already_loaded=True, results_directory=RESULTS_
             # Concept Maps
             else:
                 result['words'] = 'concepts'
+        elif 'dummy' in result_file:
+            result['type'] = 'dummy'
         else:
             result['type'] = 'text'
             result['words'] = ['all' for x in result['params']]
@@ -148,6 +150,8 @@ def get_results(folder=None, use_already_loaded=True, results_directory=RESULTS_
 
         data_.append(result)
 
+
+
     for d in data_:
         result_df = pd.DataFrame(d)
         _DF_ALL = result_df if _DF_ALL is None else _DF_ALL.append(result_df)
@@ -157,7 +161,7 @@ def get_results(folder=None, use_already_loaded=True, results_directory=RESULTS_
 
     if filter_out_non_complete_datasets:
         # Only keep datasets where there are all three types (text, co-occurrence and concept-graph) of results
-        df_all = _DF_ALL.groupby('dataset').filter(lambda x: len(x.type.value_counts()) == 3).reset_index(drop=True)
+        df_all = _DF_ALL.groupby('dataset').filter(lambda x: len(x.type.value_counts()) == 4).reset_index(drop=True)
     else:
         df_all = _DF_ALL
 

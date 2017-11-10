@@ -4,6 +4,7 @@ KEEP_OLD="$1"
 
 SERVER='pe'
 SYNC_SERVER=""
+RSYNC_EXCLUDE="--exclude predictions/"
 
 cd data/results
 
@@ -36,4 +37,4 @@ else
 fi
 
 echo -e "########### INFO: rsyncing results\t\t($SERVER -> this host)"
-rsync -avz $SERVER:results/ $FOLDER_NAME/ $DELETE_OPTIONS
+rsync $RSYNC_EXCLUDE -avz $SERVER:results/ $FOLDER_NAME/ $DELETE_OPTIONS

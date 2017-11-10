@@ -35,7 +35,6 @@ def get_all_classification_tasks(args, clfs=None):
     return tasks
 
 
-
 def get_dummy_classification_tasks(args, classifier_param_grid):
     tasks = []
     dummy_classifier = [sklearn.dummy.DummyClassifier()]
@@ -45,18 +44,23 @@ def get_dummy_classification_tasks(args, classifier_param_grid):
     for dataset_name in dataset_helper.get_all_available_dataset_names():
         def process(args: argparse.Namespace, task: Task, dataset_name: str):
             X, Y = dataset_helper.get_dataset(dataset_name)
-            cross_validate(args, task, X, Y, sklearn.pipeline.Pipeline([('vectorizer', vectorizer), ('classifier', None)]), dict(classifier=dummy_classifier, classifier__strategy = dummy_classifier_strategy ))
+            cross_validate(args, task, X, Y, sklearn.pipeline.Pipeline([('vectorizer', vectorizer), ('classifier', None)]), dict(classifier=dummy_classifier, classifier__strategy=dummy_classifier_strategy))
 
         tasks.append(Task(type='dummy', name=dataset_name, process_fn=process, process_fn_args=[dataset_name]))
     return tasks
+
 
 def get_gram_classification_tasks(args: argparse.Namespace, classifier_param_grid):
     tasks = []
 
     def process(args: argparse.Namespace, task: Task, gram_cache_file: str):
         K, Y = dataset_helper.get_dataset_cached(gram_cache_file, check_validity=False)
-        estimator = sklearn.pipeline.Pipeline([('classifier', sklearn.svm.SVC(kernel='precomputed', class_weight='balanced', max_iter=args.max_iter, tol=args.tol))])
-        cross_validate(args, task, K, Y, estimator, {}, is_precomputed=True)
+        estimator = sklearn.pipeline.Pipeline([('classifier', None)])
+        params = dict(
+            classifier=[
+                sklearn.svm.SVC(kernel='precomputed', class_weight='balanced', max_iter=args.max_iter, tol = args.tol)
+            ])
+        cross_validate(args, task, K, Y, estimator, params, is_precomputed=True)
 
     # Gram classification
     for gram_cache_file in glob('data/CACHE/*gram*.npy'):
@@ -67,8 +71,6 @@ def get_gram_classification_tasks(args: argparse.Namespace, classifier_param_gri
 
 
 def get_graph_classification_tasks(args: argparse.Namespace, classifier_param_grid):
-
-
     tasks = []
 
     graph_fast_wl_classification_pipeline = sklearn.pipeline.Pipeline([
@@ -118,10 +120,9 @@ def get_graph_classification_tasks(args: argparse.Namespace, classifier_param_gr
         # Convert graph to text
         text_p.steps.insert(0, ('graph_to_text', GraphToTextTransformer()))
 
-        _param_grid = dict(text_pipeline.get_param_grid(), **dict(graph_to_text__use_edges = [True, False]))
+        _param_grid = dict(text_pipeline.get_param_grid(), **dict(graph_to_text__use_edges=[True, False]))
         _param_grid = dict(classifier_param_grid, **_param_grid)
         cross_validate(args, task, X, Y, text_p, _param_grid)
-
 
     def process_combined(args: argparse.Namespace, task: Task, graph_cache_file: str):
         X_combined, Y_combined = graph_helper.get_filtered_text_graph_dataset(graph_cache_file)
@@ -158,7 +159,7 @@ def get_graph_classification_tasks(args: argparse.Namespace, classifier_param_gr
 
         pipeline = sklearn.pipeline.Pipeline([
             ('features', combined_features),
-            #('normalizer', None),
+            # ('normalizer', None),
             ('classifier', None)
         ])
 
@@ -176,17 +177,11 @@ def get_graph_classification_tasks(args: argparse.Namespace, classifier_param_gr
 
 
 def get_text_classification_tasks(args: argparse.Namespace, classifier_param_grid):
-    tasks = []
-
     def process(args: argparse.Namespace, task: Task, dataset_name: str):
         X, Y = dataset_helper.get_dataset(dataset_name)
         cross_validate(args, task, X, Y, text_pipeline.get_pipeline(), dict(text_pipeline.get_param_grid(), **classifier_param_grid))
 
-    # Text classification
-    for dataset_name in dataset_helper.get_all_available_dataset_names():
-        tasks.append(Task(type='text', name=dataset_name, process_fn=process, process_fn_args=[dataset_name]))
-
-    return tasks
+    return [Task(type='text', name=dataset_name, process_fn=process, process_fn_args=[dataset_name]) for dataset_name in dataset_helper.get_all_available_dataset_names()]
 
 
 def get_precomputed_subset(K, indices1, indices2=None):
@@ -196,8 +191,8 @@ def get_precomputed_subset(K, indices1, indices2=None):
     return np.array(K)[indices]
 
 
-def train_test_split(X, Y, test_size: float=0.15, random_state: int = 42, is_precomputed: bool=False):
-    def train_test_split(*Xs, Y = None):
+def train_test_split(X, Y, test_size: float = 0.15, random_state: int = 42, is_precomputed: bool = False):
+    def train_test_split(*Xs, Y=None):
         return sklearn.model_selection.train_test_split(*Xs, stratify=Y, test_size=test_size, random_state=random_state)
 
     if is_precomputed:
@@ -236,7 +231,7 @@ def cross_validate(args: argparse.Namespace, task: Task, X, Y, estimator, param_
             LOGGER.exception(e)
 
     if args.n_splits == -1:
-        _, _, _, _, X_train_i, X_test_i = train_test_split(X_train, Y_train, test_size=0.33, is_precomputed = is_precomputed)
+        _, _, _, _, X_train_i, X_test_i = train_test_split(X_train, Y_train, test_size=0.33, is_precomputed=is_precomputed)
         cv = [(X_train_i, X_test_i)]
     else:
         cv = sklearn.model_selection.StratifiedKFold(
