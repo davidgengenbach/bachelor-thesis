@@ -1,0 +1,190 @@
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Explain text classification task and its real world importance}{1}{section*.1}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Clearly state problem}{1}{section*.2}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Give a motivating example for the task}{1}{section*.3}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Explain difficulties of the task}{1}{section*.4}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Explain the research question and how it relates to the field}{1}{section*.5}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Hint how the presented approach is an improvement over the old approach}{1}{section*.6}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Hint the hypothesis}{1}{section*.7}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Introduce earlier approaches/results and their weaknesses}{1}{section*.8}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Outlook}{1}{section*.9}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Applications also}{1}{section*.10}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Relationships between entities}{1}{section*.13}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Why could graph classification be useful? Why not only use non-structural data for classification?}{1}{section*.15}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Graphs, eg. concept maps, co-occurrence graphs}{1}{section*.16}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Classical text representations, eg.tfidf Categories of algorithms, eg. algorithms on feature vectors, kernelized - algorithms}{1}{section*.17}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Lay groundwork for the later description of the problem}{1}{section*.18}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Introductions to used classifiers, concepts}{2}{section*.19}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Concretize the problem and its notation}{2}{section*.20}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Comparison of the used data sources}{2}{section*.21}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Supervised vs. unsupervised}{2}{section*.22}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{In Chapter \ref {sec:implementation} we introduce the concept map extraction implementation we used and further explain the steps in creating the concept maps.}{3}{section*.28}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{"Capture important concepts and the structure of texts (spanning over whole text)"}{3}{section*.29}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Advantages}{3}{section*.30}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Text summarization}{3}{section*.31}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Namely?}{4}{section*.33}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Difference of graph isomorphism and graph kernels}{4}{section*.34}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Creating a graph kernel is always a trade-off}{4}{section*.35}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Kernels can be combined!}{4}{section*.36}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Mention similarity of graph kernel task to graph isomorphism test}{4}{section*.37}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Explain when $\phi $ can be constructed (Mercer's theorem: an implicitly defined function $\varphi $ exists whenever the space $\mathcal {X}$ can be equipped with a suitable measure ensuring the function $k$ satisfies Mercer's condition.)}{4}{section*.38}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Mention R-Convolution?}{5}{section*.41}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Mention linearization of graphs?}{5}{section*.42}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{This kernel actually is quite similar to a real-world kernel named graphlet kernel. In the graphlet kernel, the sub-structures are not triangles and rectangles, but graphlets.}{5}{section*.45}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Mention complexity}{5}{section*.47}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Explain extensions/modifications we actually used: fast\_wl, label compression, ...}{5}{section*.48}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Mention possibility to create $\phi (G)$ feature map directly (not possible with label-compression)}{5}{section*.49}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{How did the field evolve?}{6}{section*.50}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Hint related tasks}{6}{section*.51}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{What is the most related work, how do they differ from our approach Relate the other work to the new approach and work out their differences/results}{6}{section*.52}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Other approaches to graph classification}{6}{section*.53}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Mention other graphs}{6}{section*.54}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Only using the most-important subgraph of a graph (main core) does not greatly damage prediction accuracy, but substantially reduces compute time}{6}{section*.57}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{R-Convolution?}{6}{section*.60}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Embeddings for graphs}{6}{section*.61}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Explain the used metrics and how they relate to hypothesis}{6}{section*.62}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Introduce the baselines, explain how they relate to the hypothesis, why they - are chosen, how they differ}{6}{section*.63}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Explain methodology, why the chosen metric really captures the problem at - hand}{6}{section*.64}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Work out differences of graph types, find similarities across datasets}{6}{section*.65}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Provide the questions that are relevant for the hypothesis}{6}{section*.66}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Answer these questions through metrics/results}{6}{section*.67}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{}{7}{section*.72}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Test the hypothesis}{7}{section*.74}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Tables with results}{7}{section*.75}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Mention difficulties and possible solutions}{7}{section*.76}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Add runtime analysis}{7}{section*.77}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Filtered out only nouns?}{8}{section*.79}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Explain ranges of n-grams}{8}{section*.81}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Explain tfidf}{8}{section*.82}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Co-occurrence and concept maps}{8}{section*.84}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Mention filtering by nouns}{8}{section*.85}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Window sizes}{8}{section*.86}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Combined}{8}{section*.87}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Code by Tobias, explain steps}{8}{section*.88}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Add diagram for gram-matrix based classification.}{8}{section*.92}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Statistics about datasets and derived graphs}{8}{section*.93}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Skewed classes}{8}{section*.94}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Graph statistics}{8}{section*.95}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Give hints where to download the datasets from}{8}{section*.96}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{A script to download all datasets is also provided alongside the other code}{8}{section*.97}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Caption}{9}{section*.91}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Removed headers and footers}{9}{section*.100}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{It has to be noted that some classes are highly correlated}{9}{section*.101}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Documents came from Reuters newswire in 1987.}{9}{section*.103}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Add statistics about concept maps/co-occurrence graphs (like avg. nodes, avg. edges)}{9}{section*.110}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Add compression factor table}{9}{section*.111}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Combined}{10}{section*.112}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Scaler}{10}{section*.113}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Merging nodes?}{10}{section*.114}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{\url {https://stats.stackexchange.com/questions/104040/resampling-simulation-methods-monte-carlo-bootstrapping-jackknifing-cross}}{10}{section*.116}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Scikit-learn, networkx, \dots }{10}{section*.117}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Code by Tobias to extract concept maps}{10}{section*.118}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Observations + possible explanations}{10}{section*.119}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{How does the results relate to hypothesis?}{10}{section*.120}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Error analysis}{11}{section*.121}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Confusion matrices?}{11}{section*.122}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Comparison between text n-grams and concept maps/co-occurrence graphs}{11}{section*.123}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Look at concepts used in concept maps: frequency in whole corpus, ...}{11}{section*.124}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Sparsity of feature vectors}{11}{section*.128}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Complexity of approach}{11}{section*.129}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Revisit approach}{12}{section*.130}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Mention encountered difficulties/problems}{12}{section*.131}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Mention pros/cons}{12}{section*.132}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Repeat hypothesis and how it was (dis-) proved by the work}{12}{section*.133}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Rethink assumptions about the problem}{12}{section*.134}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Hint solutions}{12}{section*.135}
+\defcounter {refsection}{0}\relax 
+\contentsline {todo}{Clearly state conclusion!}{12}{section*.136}

@@ -26,29 +26,3 @@
     \label{#2}%
 }
 
-
-% DEBUG variable
-\newif\ifDEBUG
-
-% Comment out to make DEBUG false and remove todos/notes
-\DEBUGtrue
-
-\ifDEBUG
-    \newcommand{\todo}[1]{
-        \noindent\red{ToDo: \textit{#1}}
-        \\
-    }
-
-    \newcommand{\note}[1]{
-        \noindent\textcolor{cyan}{{\textbf{Note} \textit{#1}}}
-        \\
-    }
-
-    \newcommand{\inlinetodo}[1]{
-        \red{\textbf{(#1)}}
-    }
-\else
-    \newcommand{\todo}[1]{}
-    \newcommand{\note}[1]{}
-    \newcommand{\inlinetodo}[1]{}
-\fi

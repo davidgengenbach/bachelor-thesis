@@ -1,14 +1,9 @@
-\todo{Graphs, eg. concept maps, co-occurrence graphs}
-\todo{Classical text representations, eg.tfidf
-Categories of algorithms, eg. algorithms on feature vectors, kernelized - algorithms}
-
-\todo{Lay groundwork for the later description of the problem}
-\todo{Introductions to used classifiers, concepts}
-\todo{Concretize the problem and its notation}
-\todo{Comparison of the used data sources}
+\todo[inline]{Lay groundwork for the later description of the problem}
+\todo[inline]{Introductions to used classifiers, concepts}
+\todo[inline]{Concretize the problem and its notation}
 
 \labelsubsection{Classification Task}{subsec:classification_task}
-\todo{Supervised vs. unsupervised}
+\todo[inline]{Supervised vs. unsupervised}
 
 \labelsubsection{Graphs}{subsec:graphs}
 A (labeled) graph is a triple $G = (V, E, \pi)$, where $V$ is the set of vertices or nodes, $E \subseteq V \times V$ are the edges and $\pi: V \to X$ is a labeling function which assigns a label to a given vertex.
@@ -84,12 +79,12 @@ The visualization with concept maps of one or more individual texts therefor ena
 Because the concepts in a concept map often contain only a small subset of the text, concept maps also summarize the underlying text.
 Only relevant concepts and their relation to each other are captured, making concept maps interesting for (multi-document) text summarization, too.
 
-\todo{In Chapter \ref{sec:implementation} we introduce the concept map extraction implementation we used and further explain the steps in creating the concept maps.}
+\todo[inline]{In Chapter \ref{sec:implementation} we introduce the concept map extraction implementation we used and further explain the steps in creating the concept maps.}
 
 
-\todo{"Capture important concepts and the structure of texts (spanning over whole text)"}
-\todo{Advantages}
-\todo{Text summarization}
+\todo[inline]{"Capture important concepts and the structure of texts (spanning over whole text)"}
+\todo[inline]{Advantages}
+\todo[inline]{Text summarization}
 
 \subsubsection{Co-Occurrence Graph}
 A co-occurrence graph, or graph-of-words, is generated from a text by creating a (undirected) graph with the words of the text as nodes.
@@ -148,14 +143,14 @@ Instead, in the graph isomorphism test, one has to find a mapping between the ve
 \inlinetodo{Explain constraints for the mapping}
 If such a mapping exists, the two graphs are called isomorphic.
 While the complexity of the graph isomorphism test is not known yet, it is suspected to lie in P or maybe is also NP-complete. This potentially super-polynomial complexity has grave consequences for a graph kernel.
-\todo{Namely?}
+\todo[inline]{Namely?}
 
-\todo{Difference of graph isomorphism and graph kernels}
+\todo[inline]{Difference of graph isomorphism and graph kernels}
 
-\todo{Creating a graph kernel is always a trade-off}
-\todo{Kernels can be combined!}
-\todo{Mention similarity of graph kernel task to graph isomorphism test}
-\todo{Explain when $\phi$ can be constructed (Mercer's theorem: an implicitly defined function $\varphi$  exists whenever the space $\mathcal{X}$ can be equipped with a suitable measure ensuring the function $k$ satisfies Mercer's condition.)}
+\todo[inline]{Creating a graph kernel is always a trade-off}
+\todo[inline]{Kernels can be combined!}
+\todo[inline]{Mention similarity of graph kernel task to graph isomorphism test}
+\todo[inline]{Explain when $\phi$ can be constructed (Mercer's theorem: an implicitly defined function $\varphi$  exists whenever the space $\mathcal{X}$ can be equipped with a suitable measure ensuring the function $k$ satisfies Mercer's condition.)}
 
 \paragraph{Gram matrix}
 A gram or kernel matrix for a given kernel is a matrix $A$ where the entries are the pairwise similarities of two objects in a dataset:
@@ -169,7 +164,8 @@ Several graph kernels have been proposed in the literature.
 Categories of graph kernels include graph kernels based on shortest-paths, random-walks and subtree patterns, to name just a few.
 Most approaches to graph kernels have in common that they first create a decomposition of the graph into sub-structures, for example into subtrees, and then count the occurrences of these sub-structures in the graphs.
 
-\todo{Mention R-Convolution?}
+\todo[inline]{Mention R-Convolution?}
+\todo[inline]{Mention linearization of graphs?}
 
 \subsubsection{Examples}
 \paragraph{Simple Non-Structural Graph Kernel}
@@ -194,7 +190,7 @@ k_{simple\_structure}(G_1, G_2) = \langle \phi(G_1), \phi(G_1) \rangle
 with $\phi(G) = (n_{triangle}(G), n_{rectangle}(G))^T$. Here, $n_{triangle}$ is the number of the triangle subgraphs in $G$ and $n_{rectangle}$ the number of rectangle subgraphs in $G$.
 This graph kernel is an example of a kernel where the explicit feature map $\phi(G)$ can be computed directly and completely independent of other graphs.
 
-\todo{This kernel actually is quite similar to a real-world kernel named graphlet kernel. In the graphlet kernel, the sub-structures are not triangles and rectangles, but graphlets.}
+\todo[inline]{This kernel actually is quite similar to a real-world kernel named graphlet kernel. In the graphlet kernel, the sub-structures are not triangles and rectangles, but graphlets.}
 
 \paragraph{Weisfeiler-Lehman Graph Kernel}
 The Weisfeiler-Lehman graph kernel is also a kernel that works by counting common sub-structures on two graphs.
@@ -212,19 +208,19 @@ The resulting new label of $v$ is the sequence $(\pi_{i-1}(v), \pi_{i-1}(v_{neig
 The new labeling function is updated accordingly: $\pi_i(v)$ now returns to the new label of $v$.
 
 
-\todo{Mention complexity}
-\todo{Explain extensions/modifications we actually used: fast\_wl, label compression, ...}
-\todo{Mention possibility to create $\phi(G)$ feature map directly (not possible with label-compression)}
+\todo[inline]{Mention complexity}
+\todo[inline]{Explain extensions/modifications we actually used: fast\_wl, label compression, ...}
+\todo[inline]{Mention possibility to create $\phi(G)$ feature map directly (not possible with label-compression)}
 
 \subsubsection{Kernel Methods and Kernel trick}
 
 \labelsubsection{Graph Kernel Based Text Classification}{subsec:graph_kernel_based_text_classification}
-\todo{How did the field evolve?}
-\todo{Hint related tasks}
-\todo{What is the most related work, how do they differ from our approach
+\todo[inline]{How did the field evolve?}
+\todo[inline]{Hint related tasks}
+\todo[inline]{What is the most related work, how do they differ from our approach
 Relate the other work to the new approach and work out their differences/results}
-\todo{Other approaches to graph classification}
-\todo{Mention other graphs}
+\todo[inline]{Other approaches to graph classification}
+\todo[inline]{Mention other graphs}
 
 \paragraph{``Shortest-Path Graph Kernels for Document Similarity" \cite{Nikolentzos2017a}}
 The most similar and recent approach to our approach that we found was \cite{Nikolentzos2017a}. In this work, the authors first create co-occurrence graphs out of the text. Next, they create the gram matrix for the graphs with their own graph kernel and use a SVM to classify them.
@@ -243,7 +239,7 @@ Here they first the k-core (or main core), then do most-frequent subgraph mining
 
 This work is the first real evaluation of graph-based classification with a high number of graphs/unique nodes/...
 
-\todo{Only using the most-important subgraph of a graph (main core) does not greatly damage prediction accuracy, but substantially reduces compute time}
+\todo[inline]{Only using the most-important subgraph of a graph (main core) does not greatly damage prediction accuracy, but substantially reduces compute time}
 
 \paragraph{``Concept Graph Preserving Semantic Relationship for Biomedical Text Categorization" \cite{Gulrandhe2015}}
 Graphs: extracted keywords/concepts (POS tagger, only nouns), mapping of concepts to UMLS database, extraction of relationship between them.
@@ -255,5 +251,5 @@ Kernel: number of shared edges
 No results
 
 \paragraph{``Deep Graph Kernels" \cite{Yanardag2015}}
-\todo{R-Convolution?}
-\todo{Embeddings for graphs}
+\todo[inline]{R-Convolution?}
+\todo[inline]{Embeddings for graphs}

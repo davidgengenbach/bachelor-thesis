@@ -1,25 +1,27 @@
-\todo{Explain the used metrics and how they relate to hypothesis}
-\todo{Introduce the baselines, explain how they relate to the hypothesis, why they - are chosen, how they differ}
-\todo{Explain methodology, why the chosen metric really captures the problem at - hand}
-\todo{Work out differences of graph types, find similarities across datasets}
-\todo{Provide the questions that are relevant for the hypothesis}
-\todo{Answer these questions through metrics/results}
+\todo[inline]{Explain the used metrics and how they relate to hypothesis}
+\todo[inline]{Introduce the baselines, explain how they relate to the hypothesis, why they - are chosen, how they differ}
+\todo[inline]{Explain methodology, why the chosen metric really captures the problem at - hand}
+\todo[inline]{Work out differences of graph types, find similarities across datasets}
+\todo[inline]{Provide the questions that are relevant for the hypothesis}
+\todo[inline]{Answer these questions through metrics/results}
 
 In order to test the hypothesis, we first derive a number of questions from the hypothesis.
 We will also often compare the results on these questions for concept maps to co-occurrence graphs to find differences. While the comparison to co-occurrence graphs is interesting by itself, it is not entirely fair since co-occurrence graphs have far more nodes than concept maps.
+
+In the subsequent chapter, we will give results to these questions and then discuss their relation to the hypothesis.
 
 \paragraph{How diverse is the structure of the concept maps?}
 When the structure of the graphs is mostly homogeneous or the structural differences are not distinct between graphs of different classes, the structure by itself will most likely not contribute to the classification performance.
 When comparing the graph similarity under some graph kernel, the graphs of a given class should be distinguishable from the graphs of the other classes.
 
-To explore the variance in the structure of concept maps, we use the following metrics/approaches to understand the differences in structure:
+To explore the variance in the structure of concept maps, we use the following metrics:
 \begin{enumerate}
     \item{Histogram of the number of connected components}
     \item{Histogram of the size of connected components}
     \item{Average node/edge ratio}
 \end{enumerate}
 
-All these methods aim to find out the diversity of the connectedness of concept maps. There a lot of other metrics, but as we will see, these metrics suffice to get a good picture about the structure of the concept maps.
+All these methods aim to find out the diversity of the connectedness of concept maps. There a lot of other metrics, but as we will see these metrics suffice to get a good picture about the structure of the concept maps.
 
 \paragraph{How important is the structure of concept maps compared to the content?}
 Another important question is the relative importance of the structure compared to the content, or the labels. For this, we use the following methodology:
@@ -31,20 +33,27 @@ Another important question is the relative importance of the structure compared 
     \end{enumerate}
 \end{enumerate}
 
-\paragraph{How useful are the concept maps combined with text classification?}
-When concept maps indeed have a structure that is useful for classification and which is not captured by text-only approaches, the classification performance should increase when combining graph- and text based approaches. Here, we also compare the results with results from the same approach with co-occurrence graphs.
+For the content-only kernel, we will simply count the number of occurrences of labels in the graphs and essentially create a bag-of-words representation of the graph. The kernel then creates the similarity score by calculating the inner product on these representations, effectively counting the number of common labels.
+
+For the structure-only kernel, we will use a modified version of the Weisfeiler-Lehman kernel: before executing the WL kernel on the graphs, we first discard all labels on the graph. All nodes of all graphs get the same label. This way, only the structure gets used for the similarity score.
+
+For the structure-and-content kernel, we use the plain Weisfeiler-Lehman graph kernel.
 
 \paragraph{How does the classification results of co-occurrence graphs compare to concept maps?}
-Here we directly compare the classification results for concept maps and co-occurrence graphs. While this comparison is interesting by itself, it has to be noted that it is not a fair since co-occurrence graphs have a far greater number of content.
+We compare the classification results for concept maps and co-occurrence graphs. As noted before, this comparison is slightly unfair since co-occurrence graphs have far more content than concept maps.
+Nevertheless, it is an interesting baseline for graph-based text-classification.
 
 \paragraph{How does the classification performance compare to non-structural, text-based approaches?}
-\todo{}
+\todo[inline]{}
+
+\paragraph{How useful are the concept maps combined with text classification?}
+When concept maps indeed have a structure that is useful for classification and which is not captured by text-only approaches, the classification performance should increase when combining graph- and text based approaches.
 
 \labelsubsection{Experiments}{subsec:experiments}
-\todo{Test the hypothesis}
-\todo{Tables with results}
-\todo{Mention difficulties and possible solutions}
-\todo{Add runtime analysis}
+\todo[inline]{Test the hypothesis}
+\todo[inline]{Tables with results}
+\todo[inline]{Mention difficulties and possible solutions}
+\todo[inline]{Add runtime analysis}
 
 \subsubsection{Baselines}
 \paragraph{Preprocessing}
@@ -59,7 +68,7 @@ Before creating the vector representations of the text documents or the creation
 \end{itemize}
 These pre-processing steps are similar to the pre-processing done in \cite{Cachopo2007}.
 
-\todo{Filtered out only nouns?}
+\todo[inline]{Filtered out only nouns?}
 
 \paragraph{Text-based representations}
 For the text classification pipeline, we then used two different vectorization algorithms, namely
@@ -71,48 +80,51 @@ Both approaches can also be extended by not only utilizing single words (unigram
 For example, the sentence ``This is a sentence." has the following 2-grams, or bigrams: $\{ (This, is), (is, a), (a, sentence) \}$.
 For our purposes, we looked at n-grams of lengths (1, 1), (1, 2) and (2, 2).
 
-\todo{Explain ranges of n-grams}
-\todo{Explain tfidf}
+\todo[inline]{Explain ranges of n-grams}
+\todo[inline]{Explain tfidf}
 
 \paragraph{Graph-based representations}
 
-\todo{Co-occurrence and concept maps}
-\todo{Mention filtering by nouns}
-\todo{Window sizes}
+\todo[inline]{Co-occurrence and concept maps}
+\todo[inline]{Mention filtering by nouns}
+\todo[inline]{Window sizes}
 
 \subsubsection{Approach}
-\todo{Combined}
-\todo{Code by Tobias, explain steps}
+\todo[inline]{Combined}
+\todo[inline]{Code by Tobias, explain steps}
 
 \begin{figure}[ht]
 \centering\includegraphics[width=0.6\linewidth]{assets/figures/approach.pdf}
-\caption{\todo{Caption}}
+\caption{\todo[inline]{Caption}}
 \end{figure}
-\todo{Add diagram for gram-matrix based classification.}
+\todo[inline]{Add diagram for gram-matrix based classification.}
 
 \labelsubsection{Datasets}{subsec:datasets}
-\todo{Statistics about datasets and derived graphs}
-\todo{Skewed classes}
-\todo{Graph statistics}
-\todo{Give hints where to download the datasets from}
-\todo{A script to download all datasets is also provided alongside the other code}
+\todo[inline]{Statistics about datasets and derived graphs}
+\todo[inline]{Skewed classes}
+\todo[inline]{Graph statistics}
+\todo[inline]{Give hints where to download the datasets from}
+\todo[inline]{A script to download all datasets is also provided alongside the other code}
 
 \paragraph{ling-spam}
 The Ling-Spam dataset was created by Ion Androutsopoulos et al. \cite{Androutsopoulos2000}.
 The corpus contains the texts, which are categorized as ``spam" and ``no spam". For this work, we used the version which can be downloaded from here\footnote{\url{http://csmining.org/index.php/ling-spam-datasets.html}}.
 
 \paragraph{ng20}
-The 20 Newsgroup corpus consists of newsgroup documents. They are labeled with 20 different classes, corresponding to the newsgroup boards they have been posted on. The texts are mostly informal and consist of discussions between members of a newsgroup.
+The 20 Newsgroup corpus \cite{Lang} consists of posts within a forum. They are labeled with 20 different classes, corresponding to the newsgroup topic they have been posted on. The texts are mostly informal and consist of discussions between users of a newsgroup.
+For this dataset, as an additional pre-processing step, we remove the headers and footers from the documents.
 
-\todo{Removed headers and footers}
-\todo{It has to be noted that some classes are highly correlated}
+While the classes are nearly evenly distributed, some classes are highly correlated. This adds an additional difficulty to the task.
+
+\todo[inline]{Explain correlation more throughly}
 
 \paragraph{reuters-21578}
 \footnote{\url{http://www.nltk.org/book/ch02.html#reuters-corpus}}
-\todo{Documents came from Reuters newswire in 1987.}
+\todo[inline]{Documents came from Reuters newswire in 1987.}
 
 \paragraph{r8}
-This dataset is a subset of the \textit{reuters-21578} dataset. The 8 most frequent classes, ie. the classes with the most instances, have been filtered out of the \textit{reuters-21578} dataset.
+This dataset is a subset of the \textit{reuters-21578} dataset.
+It consists of the 8 most frequent classes of the \textit{reuters-21578} dataset, ie. the 8 classes with the most documents.
 
 \paragraph{review\_polarity}
 \cite{Pang2004}.
@@ -130,35 +142,74 @@ This dataset is a subset of the \textit{reuters-21578} dataset. The 8 most frequ
 
 \begin{figure}[ht]
 \centering
-\begin{tabular}{lrr}
-dataset &  \# classes &  \# documents \\
+\begin{tabular}{lrrrr}
+{} &  \# docs &  \# classes &  median \#words/doc &  \#uniq. words/\#words \\
 \midrule
-ling-spam       &  2 &  2893 \\
-ng20            &  20 &  18846 \\
-r8              &  8 &  9459 \\
-reuters-21578   &  90 &  13328 \\
-review\_polarity &  2 &  2000 \\
-rotten\_imdb     &  2 &  10000 \\
-tagmynews       &  7 &  32600 \\
-webkb           &  7 &  8274 \\
-
+ling-spam       & 18846 & 20 & 277 & 0.20 \\
+ng20            & 2893 & 2 & 79 & 0.22 \\
+reuters-21578   & 18846 & 20 & 94 & 0.07 \\
+review\_polarity & 13328 & 90 & 589 & 0.16 \\
+rotten\_imdb     & 2000 & 2 & 19 & 0.34 \\
+tagmynews       & 10000 & 2 & 24 & 0.11 \\
+webkb           & 32600 & 7 & 158 & 0.15 \\
+\bottomrule
 \end{tabular}
-
 \caption{Dataset statistics}
 \end{figure}
 
-\todo{Add statistics about concept maps/co-occurrence graphs (like avg. nodes, avg. edges)}
-\todo{Add compression factor table}
+\begin{figure}[ht]
+\centering
+\begin{tabular}{lcccc}
+{} &  \multicolumn{2}{c}{\#nodes/\#words} &  \multicolumn{2}{c}{\#edges/\#nodes} \\
+{} & concept map &  co-occurrence &  concept map &  co-occurrence \\
+\midrule
+ling-spam       & 0.05 & 0.23 & 1.32 & 2.86 \\
+ng20            & 0.05 & 0.18 & 1.38 & 2.71 \\
+reuters-21578   & 0.09 & 0.21 & 1.46 & 2.86 \\
+review\_polarity & 0.08 & 0.20 & 1.42 & 2.67 \\
+rotten\_imdb     & 0.09 & 0.30 & 1.22 & 1.70 \\
+tagmynews       & 0.13 & 0.37 & 1.30 & 1.81 \\
+webkb           & 0.05 & 0.22 & 1.39 & 3.01 \\
+\midrule
+\O{}            & 0.08 & 0.24 & 1.36 & 2.52 \\
+\bottomrule
+\end{tabular}
+\caption{Graph statistics. \textit{\#words} is the number of words in the whole text dataset. The \textit{\#nodes/\#words} metric is a compression factor. The \textit{\#edges/\#nodes} metric is for the co-occurrence graphs with a window size of 1.}
+\end{figure}
+
+\todo[inline]{Add statistics about concept maps/co-occurrence graphs (like avg. nodes, avg. edges)}
+\todo[inline]{Add compression factor table}
 
 \labelsubsection{Methods}{subsec:methods}
-\todo{Combined}
-\todo{Scaler}
-\todo{Merging nodes?}
+\todo[inline]{Combined}
+\todo[inline]{Scaler}
+\todo[inline]{Merging nodes?}
 
 \subsubsection{Cross-Validation}
+For all the classification tasks we used train-/validation- and test sets.
+The split is done as follows: 85\% for train- and validation set together and 15\% for the validation set.
+We then use stratified k-fold cross-validation to further split the train- and validation set. In our case, we used $k = 3$, meaning that $\frac{2}{3}$ of the dataset is used for training, and the rest for validation.
+The stratification ensures that the class distribution in the train set is (nearly) the same as in the validation set.
+
 \subsubsection{Metrics}
+We evaluated a number of metrics for each classification task, namely: 
+recall, precision, accuracy and the F1-score. We mostly focus on the F1-score since it captures the overall performance of classification algorithms.
+
 \subsubsection{Significance tests}
+When comparing two models we used the permutation test, or exact test, to test the significance of the difference in performance of these two approaches.
+The permutation test tests whether the observed difference of the performances of the two approaches is the product of chance.
+The test only returns a probability for observing a given performance difference. The test does not give a definite answer whether the difference was due to chance.
+When the probability of observing the difference by chance is below a given threshold, we say that the test shows that the approaches really differ in their performance.
+For our case, we chose the threshold of 0.5\%.
+
+\begin{figure}[ht]
+\centering
+\missingfigure[figcolor=white]{Add diagram of permutation test!}
+\caption{Permutation test}
+\end{figure}
+
+\todo[inline]{\url{https://stats.stackexchange.com/questions/104040/resampling-simulation-methods-monte-carlo-bootstrapping-jackknifing-cross}}
 
 \labelsubsection{Implementation}{sec:implementation}
-\todo{Scikit-learn, networkx, \dots}
-\todo{Code by Tobias to extract concept maps}
+\todo[inline]{Scikit-learn, networkx, \dots}
+\todo[inline]{Code by Tobias to extract concept maps}
