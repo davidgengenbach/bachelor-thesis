@@ -11,6 +11,16 @@ import numpy as np
 from preprocessing import preprocessing
 from utils import cooccurrence, filename_utils, dataset_helper
 
+TYPE_COOCCURRENCE = 'cooccurrence'
+TYPE_CONCEPT_MAP = 'concept-map'
+
+GRAPH_TYPES = [TYPE_COOCCURRENCE, TYPE_CONCEPT_MAP]
+
+def get_graph_type_from_filename(x):
+    for t in GRAPH_TYPES:
+        if t in x:
+            return t
+    return None
 
 def add_shortest_path_edges(graph, cutoff=2):
     if graph.number_of_edges() == 0 or graph.number_of_nodes() == 0:

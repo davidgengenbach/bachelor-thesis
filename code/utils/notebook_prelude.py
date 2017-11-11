@@ -32,6 +32,9 @@ import sys
 import unicodedata, re
 import warnings
 import psutil
+import matplotlib.style as style
+
+from utils.graph_helper import TYPE_COOCCURRENCE, TYPE_CONCEPT_MAP
 
 
 EXPORT_DPI = 100
@@ -44,8 +47,23 @@ pd.options.display.max_rows = 80
 pd.options.display.max_columns = 999
 pd.options.display.max_colwidth = -1
 
-sns.set('notebook', 'whitegrid', palette = 'deep')
-plt.rcParams['figure.figsize'] = EXPORT_FIG_SIZE_BIG
-plt.rcParams['figure.dpi'] = EXPORT_DPI
+#style.use('fivethirtyeight')
+sns.set('paper', 'whitegrid', palette = 'deep')
+params = [
+    ('axes.titleweight', 'normal'),
+    ('axes.titlepad', 10),
+    ('axes.titlesize', 11),
+    ('axes.labelweight', 'normal'),
+    ('axes.labelsize', 9),
+    ('figure.titlesize', 13),
+    ('figure.titleweight', 'normal'),
+    ('figure.figsize', EXPORT_FIG_SIZE_BIG),
+    ('figure.dpi', EXPORT_DPI),
+    ('font.family', 'sans-serif'),
+    ('font.sans-serif', ['Verdana'])
+]
+
+for name, val in params:
+    plt.rcParams[name] = val
 
 
