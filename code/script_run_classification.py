@@ -6,6 +6,7 @@ import configargparse as argparse
 import typing
 from time import time
 import numpy as np
+import gc
 
 from utils.logger import LOGGER
 from utils import filename_utils, time_utils, helper
@@ -143,11 +144,13 @@ def start_tasks(args, all_tasks: typing.List[Task]):
         print_task('Started')
         try:
             t.process_fn(args, t, *t.process_fn_args)
+            gc.collect()
         except Exception as e:
             print_task('Error: {}'.format(e))
             LOGGER.exception(e)
         elapsed_seconds = time() - start_time
         print_task('Finished (time={})'.format(time_utils.seconds_to_human_readable(elapsed_seconds)))
+        gc.collect()
 
     LOGGER.info('Finished!')
 
