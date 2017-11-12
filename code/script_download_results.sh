@@ -36,6 +36,7 @@ if [ -z "$KEEP_OLD" ]; then
 else
     DELETE_OPTIONS='--delete'
 fi
+#DELETE_OPTIONS='--delete'
 
 echo -e "########### INFO: rsyncing results\t\t($SERVER -> this host)"
 rsync $RSYNC_EXCLUDE -avz $SERVER:results/ $FOLDER_NAME/ $DELETE_OPTIONS

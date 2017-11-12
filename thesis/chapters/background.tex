@@ -10,9 +10,9 @@ A (labeled) graph is a triple $G = (V, E, \pi)$, where $V$ is the set of vertice
 
 A graph is called undirected when $\forall (v_1, v_2) \in E: (v_2, v_1) \in E$, otherwise it is called directed.
 
-A graph $G'=(V', E', \pi)$ is called a subgraph of the graph $G = (V, E, \pi)$ when $V' \subseteq V$, $E' \subseteq E$ and $\forall (v, v') \in V': v \in V' \land v' in V'$.
+A graph $G'=(V', E', \pi)$ is called a subgraph of the graph $G = (V, E, \pi)$ when $V' \subseteq V$, $E' \subseteq E$ and $\forall (v, v') \in V': v \in V' \land v' \in V'$.
 
-The neighbours $neighbours(v)$ of a node $v$ are defined as the set $neighbours(v) = \{v' | (v, v') \in E \}$.
+The neighbours $n(v)$ of a node $v$ are defined as the set $n(v) = \{v' | (v, v') \in E \}$.
 
 \paragraph{Walks and Paths}
 A walk on a graph is a (finite) sequence of edges, $w = (e_1, \cdots, e_n)$ with the constraint that $\forall 0 < i < n: \forall e_i = (v_1, v_2) \in w: \exists v_3: e_{i + 1} = (v_2, v_3)$. The length of the walk is $n$.
@@ -27,7 +27,7 @@ The distance $d(v, v')$ between two vertices is defined as the length of the sho
 \paragraph{Connected components}
 A connected component $c$ of a graph is a set of vertices with the constraint $\forall v, v' \in c: \exists p \in P_G: v \in p \land v' \in p$, ie. there exists a path between every vertex in the connected component.
 The connected component $c_v$ of a vertex $v$ is the connected component $c$ of a graph where $v \in c$.
-The set of all connected components of a graph is $conn\_comp(G) = \{ c_v | v \in V \}$. A graph is called connected when there is only one connected component. Only the empty graph has zero connected components.
+The set of all connected components of a graph is $c_{all}(G) = \{ c_v | v \in V \}$. A graph is called connected when there is only one connected component. Only the empty graph has zero connected components.
 
 \paragraph{Degree}
 The in-degree $degree_{in}$ of a vertex $v \in V$ is $degree_{in}(v) = |\{v | (v_1, v_2) \in E \land v_2 = v\}|$.
@@ -43,13 +43,13 @@ G & Graph \\
 $E$ & Set of edges \\
 $V$ & Set of vertices \\
 $\pi(v)$ & Vertex labeling function \\
-$neighbours(v)$ & Neighbours of vertex $v$ \\
+$n(v)$ & Neighbours of vertex $v$ \\
 $W$ & All possible graph walks on graph $G$ \\
 $w$ & Graph walk \\
 $P$ & All possible paths on graph $G$ \\
 $p$ & Path \\
 $d(v, v')$ & Shortest path length between $v$ and $v'$ \\
-$conn\_comp(G)$ & Set of all connected components of $G$ \\
+$c_{all}(G)$ & Set of all connected components of $G$ \\
 $c(v)$ & Connected component of $v$ \\
 \end{tabular}
 \end{figure}
@@ -69,26 +69,24 @@ For an example of a concept map, see Figure \ref{fig:concept_map}.
 \end{figure}
 
 Concept maps are useful for visualizing concepts and their relation to each other.
-Concept maps can thus be used to quickly explore a given topic and immediately see connections between concepts.
+Concept maps can be used to quickly explore a given topic and immediately see connections between concepts.
 Through the degree of a concept, one can also infer the relative importance of that concept in the underlying text.
 
 By combining different texts of the same topic, one can also create a concept map for that topic.
 The concepts are not confined to a single text in this case.
+
 The visualization with concept maps of one or more individual texts therefor enables the non-linear exploration of multiple texts of a topic.
 
 Because the concepts in a concept map often contain only a small subset of the text, concept maps also summarize the underlying text.
-Only relevant concepts and their relation to each other are captured, making concept maps interesting for (multi-document) text summarization, too.
+Only relevant concepts and their relation to each other are captured, making concept maps interesting for (multi-document) text summarization.
 
-\todo[inline]{In Chapter \ref{sec:implementation} we introduce the concept map extraction implementation we used and further explain the steps in creating the concept maps.}
-
+In Chapter \ref{sec:implementation} we introduce the concept map extraction implementation we used and further explain the steps in creating the concept maps.
 
 \todo[inline]{"Capture important concepts and the structure of texts (spanning over whole text)"}
-\todo[inline]{Advantages}
-\todo[inline]{Text summarization}
 
 \subsubsection{Co-Occurrence Graph}
-A co-occurrence graph, or graph-of-words, is generated from a text by creating a (undirected) graph with the words of the text as nodes.
-There is an edge between two nodes if their labels co-occur in the text.
+A co-occurrence graph, or graph-of-words, is generated from a text by creating a (undirected) graph with the words of the underlying text as nodes.
+There is an edge between two nodes if their words co-occur in the text.
 Two words co-occur when the distance between the words in the text is below a given threshold, the window size.
 
 Figure \ref{fig:cooccurrence_graphs} shows examples of co-occurrence graphs with different windows sizes.
@@ -102,10 +100,13 @@ Figure \ref{fig:cooccurrence_graphs} shows examples of co-occurrence graphs with
     \label{fig:cooccurrence_graphs}%
 \end{figure}
 
-Co-occurrence graphs not only contain the words of the underlying text but also their co-occurrence. Thus they capture not only the content of the text but also the relation between words of the text.
+Since co-occurrence graphs not only contain the words of the underlying text but also their co-occurrence, they capture not only the content of the text but also the relation between words of the text.
+Therefor they contain structural information about the text as well, just as the concept maps.
+
+\todo[inline]{Co-occurrence graphs can have edge weights corresponding to the number of occurrences of a co-occurrence of words. One can derive the number of occurrences of the label by summing up the edge weights of edges of a node}
 
 \labelsubsection{Graph Kernel}{subsec:graph_kernel}
-In most cases, texts and graphs are not of a fixed size.
+In most cases, texts and graphs are not of fixed size.
 However, most classification algorithms can only operate on fixed size vectors.
 Fortunately, there are several approaches to overcome this problem.
 One of these approaches are so-called kernels.
@@ -121,12 +122,14 @@ A kernel function has to be:
     \item{\textit{non-negative definite}: \dots}
 \end{itemize}
 
-For example, a simple kernel on two numbers (or vectors) is $k(x, x') = | x - x' |$, where $| \cdot |$ is the absolute value (or a norm).
+For example, a simple kernel on two numbers (or vectors) is $k(x, x') = | x * x' |$, where $| \cdot |$ is the absolute value (or a norm).
 Another example of a kernel between strings is $k(s, s') = \delta(s = s')$, where $\delta(\cdot)$ is the Kronecker delta. This kernel returns 1 if the two given strings are the same, and 0 if they are different.
-Note that indeed both these kernels are valid.
+Note that both these kernels are indeed valid.
 
-Kernel functions can be used directly in kernel methods for classification and other tasks.
-Prominent examples of kernel methods are the SVM, kernelized PCA and Gaussian Processes. For a subset of kernels, one can also create explicit feature vectors for a given object. In this case, the kernel can be written as an inner product on two fixed-size vectors:
+Kernel functions can be used in kernel methods for classification and other tasks.
+Prominent examples of kernel methods are the SVM, kernelized PCA and Gaussian Processes.
+
+For a subset of kernels, one can also create explicit feature vectors for a given object. In this case, the kernel can be written as an inner product on two fixed-size vectors:
 \begin{equation*}
     k(X, X') = \langle \phi(X), \phi(X') \rangle
 \end{equation*}
@@ -138,19 +141,17 @@ A graph kernel is simply a kernel that operates on graphs. A graph kernel return
 
 Graph kernels that measure the similarity of two graphs are related to the isomorphism test between two graphs.
 The graph isomorphism test returns whether two graphs are structurally the same.
-In this test, the labels of the vertices and edges are ignored. Otherwise the task would be far easier, since one could only compare the labels and edges of the graphs - when they are the same, the graphs are the same.
+In this test, the labels of the vertices and edges are ignored. Otherwise the task would be far easier, since one could just compare the labels and edges of the graphs - when they are the same, the graphs are the same.
 Instead, in the graph isomorphism test, one has to find a mapping between the vertices of one graph to another, the same for the edges.
-\inlinetodo{Explain constraints for the mapping}
+\todo[inline]{Explain constraints for the mapping}
 If such a mapping exists, the two graphs are called isomorphic.
 While the complexity of the graph isomorphism test is not known yet, it is suspected to lie in P or maybe is also NP-complete. This potentially super-polynomial complexity has grave consequences for a graph kernel.
 \todo[inline]{Namely?}
 
-\todo[inline]{Difference of graph isomorphism and graph kernels}
-
 \todo[inline]{Creating a graph kernel is always a trade-off}
 \todo[inline]{Kernels can be combined!}
-\todo[inline]{Mention similarity of graph kernel task to graph isomorphism test}
-\todo[inline]{Explain when $\phi$ can be constructed (Mercer's theorem: an implicitly defined function $\varphi$  exists whenever the space $\mathcal{X}$ can be equipped with a suitable measure ensuring the function $k$ satisfies Mercer's condition.)}
+\todo[inline]{Explain when $\phi$ can be constructed (Mercer's theorem: ``an implicitly defined function $\varphi$  exists whenever the space $\mathcal{X}$ can be equipped with a suitable measure ensuring the function $k$ satisfies Mercer's condition.")}
+\todo[inline]{Mention that functions that do not satisfy Mercer's condition and are not non-negative definite can nevertheless perform quite good in real world applications}
 
 \paragraph{Gram matrix}
 A gram or kernel matrix for a given kernel is a matrix $A$ where the entries are the pairwise similarities of two objects in a dataset:
@@ -163,13 +164,21 @@ The gram matrix is symmetric by definition since the underlying kernel is also s
 Several graph kernels have been proposed in the literature.
 Categories of graph kernels include graph kernels based on shortest-paths, random-walks and subtree patterns, to name just a few.
 Most approaches to graph kernels have in common that they first create a decomposition of the graph into sub-structures, for example into subtrees, and then count the occurrences of these sub-structures in the graphs.
+The kernels in this category is also sometimes called R-Convolution graph kernels.
 
-\todo[inline]{Mention R-Convolution?}
 \todo[inline]{Mention linearization of graphs?}
 
 \subsubsection{Examples}
+\paragraph{Simple Equality Graph Kernel}
+This graph kernel simply compares the nodes and edges of the two graphs and returns whether they are exactly the same:
+\begin{equation*}
+    k(G_1, G_2) = \delta(V_{G_1} = V_{G_2}) * \delta(E_{G_1} = E_{G_2})
+\end{equation*}
+This kernel takes both structure and content of the graphs into account. Note that there is no partial similarity. The co-domain of $k$ is $\{0, 1\}$, returning 1 when the graphs are exactly the same and 0 otherwise.
+While this is an exact, simple and fast algorithm, in most cases it is not of great use since it depends on exact matches.
+
 \paragraph{Simple Non-Structural Graph Kernel}
-As the first example for a graph kernel we will investigate a simple kernel which actually discards all structural information about the graph. This graph kernel only operates on the labels of the vertices:
+Following is an example of a simple kernel which actually discards all structural information about the graph. This graph kernel only operates on the labels of the vertices:
 \begin{equation*}
 k_{common\_label}(G_1, G_2) = | l(G_1) \cap l(G_2) |
 \end{equation*}
@@ -183,7 +192,7 @@ k_{common\_label\_jaccard}(G_1, G_2) = \frac{| l(G_1) \cap l(G_2) |}{| l(G_1) \c
 This extension normalizes the function and confines the codomain of $k$ to $[0, 1]$.
 
 \paragraph{Simple Structure-Only Graph Kernel}
-Another example for a graph kernel which only operates on the structure of the graph, is the following:
+An example for a graph kernel which only operates on the structure of the graph, is the following:
 \begin{equation*}
 k_{simple\_structure}(G_1, G_2) = \langle \phi(G_1), \phi(G_1) \rangle
 \end{equation*}
@@ -192,54 +201,94 @@ This graph kernel is an example of a kernel where the explicit feature map $\phi
 
 \todo[inline]{This kernel actually is quite similar to a real-world kernel named graphlet kernel. In the graphlet kernel, the sub-structures are not triangles and rectangles, but graphlets.}
 
+\paragraph{Random Walk Graph Kernel}
+This kernel does random walks on both graphs and returns the number of matching random walks between the two graphs:
+\begin{equation*}
+    k(G_1, G_2) = |r(G_1, n, l) \cap r(G_2, n, l)|
+\end{equation*}
+where $r(G, n, l)$ is return a set of $n$ random walks of length $l$ on graph $G$.
+This graph kernel takes both structure and content into account.
+
 \paragraph{Weisfeiler-Lehman Graph Kernel}
 The Weisfeiler-Lehman graph kernel is also a kernel that works by counting common sub-structures on two graphs.
-Here the sub-structures are the subtrees starting from each vertex.
-In each iteration $i$ with $0 < i < h$ for a given number of iterations $h$ (or till convergence), the WL graph kernel relabels the vertices of the two given graphs. This relabeling is also called recoloring.
+Here, the sub-structures are subtrees starting from each vertex.
+In each iteration $i$ with $0 < i < h$ for a given number of iterations $h$ , or until convergence, the WL graph kernel relabels the vertices of the two given graphs.
+This relabeling is also called recoloring or color refinement.
 
 The WL graph kernel relabels a vertex $v$ by concatenating two components:
 \begin{enumerate}
     \item{the current label of the vertex: $\pi_{i-1}(v)$}
-    \item{the sorted labels of the neighbourhood: $\{ \pi_{i-1}(v') | v' \in neighbours(v) \}$}
+    \item{the sorted labels of the neighbourhood: $\{ \pi_{i-1}(v') | v' \in n(v) \}$}
 \end{enumerate}
-where $\pi_{i}$ is the labeling function for the iteration $i$ and $\pi_0 = \pi$.
+where $\pi_{i}$ is the labeling function for iteration $i$ with $\pi_0 = \pi$.
 The resulting new label of $v$ is the sequence $(\pi_{i-1}(v), \pi_{i-1}(v_{neighbour,1}), \dots , \pi_{i-1}(v_{neighbour,n}))$.
+After the iteration, a new labeling function is created accordingly: $\pi_i(v)$ now returns to the new label of $v$.
+So, for each iteration, a node gets the same label as another node if they have the same label and neighbourhood.
+For the first iteration, the labels of a node consist of the immediate neighbourhood.
+In the next iteration, the label of a node than encodes the neighbourhood of the neighbourhood, ie. 
 
-The new labeling function is updated accordingly: $\pi_i(v)$ now returns to the new label of $v$.
+The Weisfeiler-Lehman graph kernel has been to shown to achieve state-of-the-art performance on several datasets and applications.
+$\mathcal{O}(hm)$, where $h$ is the number of iterations and $m$ is the number of edges in the dataset.
 
+It has to be noted that the Weisfeiler-Lehman does not use edge labels by default, but can be extended to do so.
+There are also several other extensions to the Weisfeiler-Lehman kernel in the literature.
+One example of such an extension reduces the space requirement of the algorithm by ``compressing" the labels after each iterations, ie. by giving each composite label a unique and shorter label.
 
+\todo[inline]{Explain and mention ``fast_wl"}
+\todo[inline]{How?}
 \todo[inline]{Mention complexity}
 \todo[inline]{Explain extensions/modifications we actually used: fast\_wl, label compression, ...}
 \todo[inline]{Mention possibility to create $\phi(G)$ feature map directly (not possible with label-compression)}
+\todo[inline]{Mention that WL can be used as a graph isomorphism test - but it fails on certain types of graphs, ie. it reports a isomorphism between graphs that are not the same}
+
+\begin{figure}[ht]
+\centering
+\missingfigure[figcolor=white]{}
+\caption{Weisfeiler Lehman algorithm example}
+\end{figure}
 
 \subsubsection{Kernel Methods and Kernel trick}
 
 \labelsubsection{Graph Kernel Based Text Classification}{subsec:graph_kernel_based_text_classification}
+In this section, we will introduce related work and briefly recap the history of the field.
+
 \todo[inline]{How did the field evolve?}
 \todo[inline]{Hint related tasks}
-\todo[inline]{What is the most related work, how do they differ from our approach
-Relate the other work to the new approach and work out their differences/results}
+\todo[inline]{What is the most related work, how do they differ from our approach}
+\todo[inline]{Relate the other work to the new approach and work out their differences/results}
 \todo[inline]{Other approaches to graph classification}
 \todo[inline]{Mention other graphs}
 
 \paragraph{``Shortest-Path Graph Kernels for Document Similarity" \cite{Nikolentzos2017a}}
-The most similar and recent approach to our approach that we found was \cite{Nikolentzos2017a}. In this work, the authors first create co-occurrence graphs out of the text. Next, they create the gram matrix for the graphs with their own graph kernel and use a SVM to classify them.
+The most similar and recent work to our approach that we found was \cite{Nikolentzos2017a}. In this work, the authors first create co-occurrence graphs out of the text. Next, they create the gram matrix for the graphs with their own graph kernel and use a SVM to classify them.
 
-Their graph kernel consists of these sub-kernels:
+Their graph kernel is a combination of two sub-kernels:
 \begin{enumerate}
-\item{\textit{Simple label matching}: the number of matching node labels are compared between the two graphs}
-\item{\textit{Shortest path}: generate a shortest-path graph}
-\item{\textit{Normalization}: the gram matrix rows are normalized by \inlinetodo{?}}
+    \item{\textit{Simple label matching}: the number of matching node labels are compared between the two graphs}
+    \item{\textit{Shortest path}: generate a shortest-path graph, then compare the edges}
+\end{enumerate}
+Note that the simple label matching sub-kernel does not take the structure into account, while the second sub-kernel actually uses both.
+Both sub-kernels return a number which is added to produce the final value of the kernel.
+
+The shortest path sub-kernel works as follows:
+\begin{enumerate}
+    \item{Generate shortest-path graphs for the two given graphs: The shortest path graph of a given graph has the same nodes.
+    The edges are added by calculating the shortest paths between all pairs of nodes in the original graph. An edge is added between two nodes in the shortest path graph if the shortest path length between these nodes in the original graph is below a given parameter $d$. The edge also gets a weight assigned, which is $\frac{1}{d}$}
+    \item{Count the number of same edges in the both graphs: when two edges are the same, add the product of their edge weights to the similarity}
 \end{enumerate}
 
+\todo[inline]{Note that the shortest-path sub-kernel does not actually add a lot of performance?}
+\todo[inline]{Why is this approach different to ours? Co-occurrence vs. concept map}
+
 \paragraph{``Text Categorization as a Graph Classification Problem" \cite{Rousseau2015a}}
-In this paper, the authors generate co-occurrence graphs out of different text classification corpora.
-To classify the graphs they introduce their own graph kernel which is also an instance of the aforementioned kernels that count the number occurrences of sub-structures.
-Here they first the k-core (or main core), then do most-frequent subgraph mining on the graphs.
+In this paper, the authors generate co-occurrence graphs out of different text classification datasets.
+To classify the graphs, they introduce their own graph kernel which is also an instance of the aforementioned kernels that count the number of occurrences of sub-structures.
+Here, they first calculate the k-core (or main core) of the graphs, then do most-frequent subgraph mining on the graphs.
 
 This work is the first real evaluation of graph-based classification with a high number of graphs/unique nodes/...
 
 \todo[inline]{Only using the most-important subgraph of a graph (main core) does not greatly damage prediction accuracy, but substantially reduces compute time}
+\todo[inline]{How does this approach differ from ours? In this case, the authors use graphs with duplicate labels. The subgraph mining is not that relevant and useful in our case. This is because in our cases, the graphs are quite small.}
 
 \paragraph{``Concept Graph Preserving Semantic Relationship for Biomedical Text Categorization" \cite{Gulrandhe2015}}
 Graphs: extracted keywords/concepts (POS tagger, only nouns), mapping of concepts to UMLS database, extraction of relationship between them.
@@ -251,5 +300,4 @@ Kernel: number of shared edges
 No results
 
 \paragraph{``Deep Graph Kernels" \cite{Yanardag2015}}
-\todo[inline]{R-Convolution?}
 \todo[inline]{Embeddings for graphs}

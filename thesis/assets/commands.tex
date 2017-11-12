@@ -26,3 +26,18 @@
     \label{#2}%
 }
 
+\newcounter{question}
+\makeatletter
+\newenvironment{question}[1]%
+{\refstepcounter{question}%
+\protected@edef\@currentlabelname{Question \thequestion: #1}%
+{\paragraph{Question \thequestion: #1}}{}}%
+\makeatother
+
+\newcommand{\subquestion}[2]{%
+    \begin{question}{#1}\label{#2}\end{question}
+}%
+
+\newcommand{\subquestionref}[1]{
+    \paragraph{\nameref{#1}}
+}
