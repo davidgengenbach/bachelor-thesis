@@ -35,7 +35,7 @@ import psutil
 import matplotlib.style as style
 from pprint import pprint
 
-from utils.graph_helper import TYPE_COOCCURRENCE, TYPE_CONCEPT_MAP
+from utils.graph_helper import TYPE_COOCCURRENCE, TYPE_CONCEPT_MAP, GRAPH_TYPES
 
 
 EXPORT_DPI = 100
