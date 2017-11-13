@@ -39,4 +39,4 @@ fi
 #DELETE_OPTIONS='--delete'
 
 echo -e "########### INFO: rsyncing results\t\t($SERVER -> this host)"
-rsync $RSYNC_EXCLUDE -avz $SERVER:results/ $FOLDER_NAME/ $DELETE_OPTIONS
+rsync $RSYNC_EXCLUDE -avz $SERVER:bachelor-thesis/code/data/results/ $FOLDER_NAME/ $DELETE_OPTIONS

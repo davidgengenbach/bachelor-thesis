@@ -22,7 +22,7 @@ A random walk starting from vertex $v$ is a walk where the first element of walk
 A path is the sequence of the vertices visited on a walk, ie. for the walk $w = ((v_1, v_2), (v_2, v_3), \dots, (v_{n-1}, v_n)$, the path is $(v_1, v_2, v_3, \dots, v_n)$.
 The set of all possible paths is denoted $P_G$.
 
-The distance $d(v, v')$ between two vertices is defined as the length of the shortest path between them.
+The distance $d_{istance}(v, v')$ between two vertices is defined as the length of the shortest path between them.
 
 \paragraph{Connected components}
 A connected component $c$ of a graph is a set of vertices with the constraint $\forall v, v' \in c: \exists p \in P_G: v \in p \land v' \in p$, ie. there exists a path between every vertex in the connected component.
@@ -30,9 +30,9 @@ The connected component $c_v$ of a vertex $v$ is the connected component $c$ of 
 The set of all connected components of a graph is $c_{all}(G) = \{ c_v | v \in V \}$. A graph is called connected when there is only one connected component. Only the empty graph has zero connected components.
 
 \paragraph{Degree}
-The in-degree $degree_{in}$ of a vertex $v \in V$ is $degree_{in}(v) = |\{v | (v_1, v_2) \in E \land v_2 = v\}|$.
-The out-degree $degree_{out}$ is analogously defined as $degree_{out}(v) = |\{v | (v_1, v_2) \in E \land v_1 = v\}|$.
-The degree of a vertex $v$ is $degree(v) = degree_{in}(v) + degree_{out}(v)$ for directed graphs, and $degree(v) = degree_{in}$ for undirected graphs.
+The in-degree $d_{in}$ of a vertex $v \in V$ is $d_{in}(v) = |\{v | (v_1, v_2) \in E \land v_2 = v\}|$.
+The out-degree $d_{out}$ is defined analogously as $d_{out}(v) = |\{v | (v_1, v_2) \in E \land v_1 = v\}|$.
+The degree of a vertex $v$ is $d(v) = d_{in}(v) + d_{out}(v)$ for directed graphs, and $d(v) = degree_{in}$ for undirected graphs.
 
 \begin{figure}[ht]
 \centering
@@ -48,7 +48,10 @@ $W$ & All possible graph walks on graph $G$ \\
 $w$ & Graph walk \\
 $P$ & All possible paths on graph $G$ \\
 $p$ & Path \\
-$d(v, v')$ & Shortest path length between $v$ and $v'$ \\
+$d(v)$ & Degree of vertex $v$ \\
+$d_{in}(v)$ & In-degree of vertex $v$ \\
+$d_{out}(v)$ & Out-degree of vertex $v$ \\
+$d_{istance}(v, v')$ & Shortest path length between $v$ and $v'$ \\
 $c_{all}(G)$ & Set of all connected components of $G$ \\
 $c(v)$ & Connected component of $v$ \\
 \end{tabular}
@@ -234,6 +237,8 @@ It has to be noted that the Weisfeiler-Lehman does not use edge labels by defaul
 There are also several other extensions to the Weisfeiler-Lehman kernel in the literature.
 One example of such an extension reduces the space requirement of the algorithm by ``compressing" the labels after each iterations, ie. by giving each composite label a unique and shorter label.
 
+In Figure \ref{fig:wl_example} we show an example of one WL iteration with label compression.
+
 \todo[inline]{Explain and mention ``fast_wl"}
 \todo[inline]{How?}
 \todo[inline]{Mention complexity}
@@ -242,10 +247,16 @@ One example of such an extension reduces the space requirement of the algorithm 
 \todo[inline]{Mention that WL can be used as a graph isomorphism test - but it fails on certain types of graphs, ie. it reports a isomorphism between graphs that are not the same}
 
 \begin{figure}[ht]
-\centering
-\missingfigure[figcolor=white]{}
-\caption{Weisfeiler Lehman algorithm example}
-\end{figure}
+  \subfloat[Initial graphs]{\includegraphics[width=0.32\textwidth]{assets/figures/wl_example/wl_iteration_0.pdf}\label{fig:wl_example_0}}
+  \hfill
+  \subfloat[After relabeling]{\includegraphics[width=0.32\textwidth]{assets/figures/wl_example/wl_iteration_1_stage_0_recolored}\label{fig:wl_example_1}}
+  \hfill
+  \subfloat[After label compression]{\includegraphics[width=0.32\textwidth]{assets/figures/wl_example/wl_iteration_1_stage_1_compressed.pdf}\label{fig:wl_example_2}}
+  \caption{Weisfeiler Lehman algorithm example. This examples shows one WL iteration with two graphs. The initial graphs are shown in \textbf{(a)}. The first step of the iteration is relabeling the graph vertices by concatenating each node label with its sorted neighbourhood labels. The finished relabeled graph is shown in \textbf{(b)}. As an extension to the plain Weisfeiler-Lehman algorithm, we also show the label compression step where the long labels, consisting of the node label and its neighbourhood labels, get compressed into a smaller label by assigning each unique label a new number. Same labels in different graphs get the same new label. The result of this step is shown in \textbf{(c)}. Under \textbf{(a)} and \textbf{(c)} we also added the feature maps $\phi{}$ for the graphs. Each entry in the vector corresponds to a label. If a vector entry is 1, it means that the corresponding label is present in the given graph. The inner product on the vectors of the graphs is the value of the Weisfeiler-Lehman graph kernel for these two graphs.
+  In this case, the similarity before the iteration would be $\langle \phi(G_1), \phi(G_2) \rangle = \langle [1, 1, 1, 1, 0, 0, 0, 0], [1, 1, 1, 1, 0, 0, 0, 0] \rangle = 4$. After the relabeling, the value of the inner product is $2$.
+  Before doing the WL iteration, the inner product on the feature maps simply returns the number of common labels. After the first iteration, the neighbourhood of each node and therefor the structure of the graph is also reflected in the feature map - resulting in a lower similarity in out example.
+  Please note that these feature vectors are specific to these two graphs and their labels. The dimension of the vector corresponds to the sum of the number of vertices in the two graphs.}\label{fig:wl_example}
+\end{figure*}
 
 \subsubsection{Kernel Methods and Kernel trick}
 

@@ -25,7 +25,7 @@ The shortness of the text results in a lower number of occurrences of some conce
 
 Another hint for the un-connectedness of concept maps is the number of connected components.
 In Figure \ref{fig:percentage_more_than_one_connected_component} we can see that most of the graphs have more than one connected component. Together with the observation of the low number of nodes per graph, this also implies the low connectedness of concept maps.
-In Figure \ref{fig:histogram_connected_components} we also plotted the histogram of the number of connected components per graph which also confirms the hypothesis that concept maps are fairly un-connected.
+In Figure \ref{fig:histogram_connected_components} we also plotted the histogram of the number of connected components per graph.
 
 In Figure \ref{fig:graph_examples} shows examples of concept maps and co-occurrence graphs with different window sizes.
 
@@ -74,22 +74,45 @@ webkb           & 0.05 & 0.22 & 1.39 & 3.01 & 55.69 & 5.36 \\
 \label{fig:histogram-edges-div-nodes-per-type}
 \end{figure}
 
-The co-occurrence graphs have a relatively simple structure.
+The co-occurrence graphs also have a simple structure.
 Co-occurrence graphs are always connected, ie. the number of connected components is 1, or 0 in the case of an empty graph.
 When the window size is 1, the graph is similar to a path, meaning that most of the nodes have a degree $< 2$. With increasing window size, the graph gets more connected.
 
-
 \subquestionref{question:importance_structure}
-\begin{figure}[ht]
-\centering
-\missingfigure[figcolor=white]{}
-\caption{Comparison of linearized graph with CountVectorizer and results of WL}
-\end{figure}
+After investigating the structure of concept maps, we now aim to quantify the importance of the structure compared to the content.
+The content, that is the node and edge labels, of concept maps are also captured in co-occurrence graphs and with conventional text-based approaches. So, the next interesting question about concept maps is, how much or whether the structure adds to the classification performance.
+For this, we compare the results of using graph kernels which use \textbf{(a)} only the content, \textbf{(b)} only the structure and \textbf{(c)} both content and structure.
+
+For \textbf{(a)} (content only), we use a kernel that discards all edges and uses only the labels of nodes and edges. Next, we create a bag-of-words vector representation out of the labels and edges.
+In this step, we also evaluated using not only single words and counting them, but also using word n-grams of size 2, or bigrams.
+For this, we create pairs of words by joining node labels together that have an edge between them.
+The resulting vector representations of the graph then get fed into a conventional classifier, in our case a SVM.
+
+For \textbf{(b)} (structure only), we use a modified version of the Weisfeiler-Lehman graph kernel. Before applying the actual WL kernel, we discard all node labels and give every node in all graphs the same label, effectively ridding the graphs of content. Next, we apply the WL graph kernel. This variant of WL only takes the structure of the graph into account.
+After executing WL on the graphs, we obtain the feature maps which get subsequently get fed into a SVM also.
+
+For \textbf{(c)} (structure and content combined), we use the Weisfeiler-Lehman that takes both structure and content into account.
 
 \begin{figure}[ht]
 \centering
-\missingfigure[figcolor=white]{}
-\caption{Comparison of WL with and without labels}
+\begin{tabular}{llrrr}
+          & & \multicolumn{3}{c}{f1 macro} \\
+Dataset & Type & \textbf{(a)} content only & \textbf{(b)} structure only & \textbf{(c)} combined\\
+\midrule
+ling-spam & concept map &  0.933020 &  0.468187 &  0.741138 \\
+          & cooccurrence &  0.959041 &  0.519897 &  0.794719 \\
+\midrule
+ng20 & concept map &  0.592340 &  0.035334 &  0.263055 \\
+          & cooccurrence &  0.679036 &  0.049227 &  0.511980 \\
+\midrule
+reuters-21578 & concept map &  0.241263 &  0.005962 &  0.085752 \\
+          & cooccurrence &  0.293941 &  0.012733 &  0.229710 \\
+\midrule
+webkb & concept map &  0.472472 &  0.162010 &  0.222296 \\
+          & cooccurrence &  0.714741 &  0.170633 &  0.472485 \\
+\bottomrule
+\end{tabular}
+\caption{Comparison of linearized graph with CountVectorizer and results of WL}
 \end{figure}
 
 \subquestionref{question:comparison_coo}
@@ -106,15 +129,39 @@ When the window size is 1, the graph is similar to a path, meaning that most of 
 \caption{Comparison of concept maps with text}
 \end{figure}
 
+
 \subquestionref{question:comparison_combined}
 \begin{figure}[ht]
 \centering
-\missingfigure[figcolor=white]{}
-\caption{Comparison of classification using both concept maps and text}
+\begin{tabular}{llcc}
+  &  & \multicolumn{2}{c}{Graph type} \\
+   dataset   & &  Concept Map &  Co-Occurrence \\
+\midrule
+ling-spam 
+          & text only & \multicolumn{2}{c}{ 0.966179 }\\
+          & graph only &  0.741138 &  0.794719\\
+          & combined &  0.986928 &  0.977104\\
+\midrule
+ng20 
+          & text only & \multicolumn{2}{c}{ 0.681245 }\\
+          & graph only &  0.263055 &  0.511980\\
+          & combined &  0.738239 &  0.690968\\
+\midrule
+reuters-21578 
+          & text only & \multicolumn{2}{c}{ 0.320838 }\\
+          & graph only &  0.085752 &  0.229710\\
+          & combined &  0.264947 &  0.291086\\
+\midrule
+webkb 
+          & text only & \multicolumn{2}{c}{ 0.702095 }\\
+          & graph only &  0.222296 &  0.472485\\
+          & combined &  0.722667 &  0.741964\\
+\bottomrule
+\end{tabular}
+\caption{Comparison of classification using both concept maps and text. TODO: Add standard deviations}
 \end{figure}
-
-
 
 \labelsubsection{Related And Intermediate Observations}{subsec:related_and_intermediate_observation}
 \todo[inline]{Sparsity of feature vectors}
 \todo[inline]{Complexity of approach}
+\todo[inline]{Usefulness of WL to get feeling for graph connectedness, uniqueness of structure, uniqueness of labels}
