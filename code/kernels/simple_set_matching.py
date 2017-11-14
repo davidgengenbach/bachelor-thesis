@@ -13,10 +13,7 @@ def transform(graphs: typing.List, use_edge_labels: bool=False):
 
     for i, graph_1 in enumerate(graphs):
         for j, graph_2 in enumerate(graphs[i + 1:]):
-            if use_edge_labels:
-                value = simple_set_matching_kernel_for_nx_graphs(graph_1, graph_2, use_edge_labels = True)
-            else:
-                value = simple_set_matching_kernel(graph_1, graph_2)
+            value = simple_set_matching_kernel_for_nx_graphs(graph_1, graph_2, use_edge_labels = use_edge_labels)
             K[i, i + j + 1] = value
 
     # Make gram matrix symmetric

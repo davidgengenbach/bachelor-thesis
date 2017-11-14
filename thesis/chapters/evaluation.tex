@@ -31,11 +31,8 @@ To explore the variance in the structure of concept maps, we look at the followi
 All these methods aim to find out the diversity of the connectedness of concept maps. There a lot of other metrics, but as we will see later on these metrics suffice to get a good picture about the structure of the concept maps.
 
 \subquestion{How important is the structure of concept maps compared to the content?}{question:importance_structure}
-Another important question is the relative importance of the structure compared to the content, or the labels. For this, we use the following methodology:
-
-\begin{quote}
-Compare results from structure-only graph kernels with the results of graph kernels that use a) only content and b) both content and structure.
-\end{quote}
+Another important question is the relative importance of the structure compared to the content, or the labels.
+For this we compare the results of different graph kernels that use \textbf{(a)} only content and \textbf{(b)} only structure and \textbf{(c)} both content and structure.
 
 For the content-only kernel, we will simply count the number of occurrences of labels in the graphs and essentially create a bag-of-words representation of the graph. The kernel then creates the similarity score by calculating the inner product on these vector representations, effectively counting the number of common labels.
 
@@ -44,17 +41,20 @@ For the structure-only kernel, we will use a modified version of the Weisfeiler-
 For the structure-and-content kernel, we use the plain Weisfeiler-Lehman graph kernel.
 
 \subquestion{How does the classification results of co-occurrence graphs compare to concept maps?}{question:comparison_coo}
-We compare the classification results for concept maps and co-occurrence graphs. As noted before, this comparison is slightly unfair since co-occurrence graphs have far more content than concept maps.
+For this question, we compare the classification results for concept maps and co-occurrence graphs. As noted before, this comparison is slightly unfair since co-occurrence graphs have far more content than concept maps.
 Nevertheless, it is an interesting baseline for graph-based text-classification.
 
-\subquestion{How does the classification performance compare to non-structural, text-based approaches?}{question:comparison_text}
+\subquestion{How does the classification performance with concept maps compare to non-structural, text-based approaches?}{question:comparison_text}
+Here we test the classification performance of graph-based classification directly with the performance of text-only approaches.
 
 \subquestion{How useful are the concept maps combined with text classification?}{question:comparison_combined}
 When concept maps indeed have a structure that is useful for classification and which is not captured by text-only approaches, the classification performance should increase when combining graph- and text based approaches.
+We test the performance of the combined text- and graph features by concatenating the vectors of both approaches and then training a classifier with these vectors.
+We also compare the results with both text-only and graph-only approaches.
 
 \subsubsection{Baselines}
 \paragraph{Preprocessing}
-Before creating the vector representations of the text documents or the creation of the co-occurrence graphs and concept maps, we first pre-processed the plain text by
+Before creating the vector representations of the text documents or the creation of the co-occurrence graphs and concept maps, we first pre-process the plain text by
 
 \begin{itemize}
 \item{lowercasing the text,}
@@ -65,8 +65,6 @@ Before creating the vector representations of the text documents or the creation
 \end{itemize}
 These pre-processing steps are similar to the pre-processing done in \cite{Cachopo2007}.
 
-\todo[inline]{Filtered out only nouns?}
-
 \paragraph{Text-based representations}
 For the text classification pipeline, we used two different vectorization algorithms, namely
 \begin{itemize}
@@ -75,18 +73,19 @@ For the text classification pipeline, we used two different vectorization algori
 \end{itemize}
 Both approaches can also be extended by not only utilizing single words (unigrams) but n-grams, too. A word n-gram consists of $n$ words that appear consecutively in the text.
 For example, the sentence ``This is a sentence." has the following 2-grams, or bigrams: $\{ (This, is), (is, a), (a, sentence) \}$.
-For our purposes, we looked at n-grams of lengths (1, 1), (1, 2) and (2, 2).
+For our purposes, we looked at n-grams of lengths (1), (1, 2) and (2).
 Note that word n-grams do not take word inversion into account, ie. the bigram (a, b) is not the same as (b, a).
 
-\todo[inline]{Explain ranges of n-grams}
+\todo[inline]{Explain why we used these ranges of n-grams}
 \todo[inline]{Explain tfidf}
 
 \paragraph{Graph-based representations}
-To compare the performance of concept maps with other graphs, we generated co-occurrence graphs with window sizes of $\{1, 2, 3\}$.
+To compare the performance of concept maps with other graphs, we generated co-occurrence graphs with window sizes of $\{1, 2\}$.
 
 \todo[inline]{Co-occurrence and concept maps}
 \todo[inline]{Mention filtering by nouns}
 \todo[inline]{Window sizes}
+\todo[inline]{Mention Tobias' code for generating the concept maps}
 
 \begin{figure}[ht]
 \centering\includegraphics[width=0.6\linewidth]{assets/figures/approach.pdf}
@@ -95,9 +94,6 @@ To compare the performance of concept maps with other graphs, we generated co-oc
 \todo[inline]{Add diagram for gram-matrix based classification.}
 
 \labelsubsection{Datasets}{subsec:datasets}
-\todo[inline]{Statistics about datasets and derived graphs}
-\todo[inline]{Skewed classes}
-\todo[inline]{Give hints where to download the datasets from}
 \todo[inline]{A script to download all datasets is also provided alongside the other code}
 
 \paragraph{ling-spam}
@@ -151,7 +147,6 @@ webkb           & 32600 & 7 & 158 & 0.15 \\
 \caption{Dataset statistics}
 \end{figure}
 
-
 \labelsubsection{Methods}{subsec:methods}
 
 \subsubsection{Cross-Validation}
@@ -169,13 +164,45 @@ When comparing two models we used the permutation test, or exact test, to test t
 The permutation test tests whether the observed difference of the performances of the two approaches is the product of chance.
 The test only returns a probability for observing a given performance difference. The test does not give a definite answer whether the difference was due to chance.
 When the probability of observing the difference by chance is below a given threshold, we say that the test shows that the approaches really differ in their performance.
-For our case, we chose the threshold of 0.5\%.
+
+\todo[inline]{What confidence interval did we choose?}
 
 \begin{figure}[ht]
-\centering
-\missingfigure[figcolor=white]{}
-\caption{Permutation test}
-\end{figure}
+  \subfloat[True labels]{\includegraphics[width=0.19\textwidth]{assets/figures/permutation_test/true_labels.pdf}\label{fig:permutation_test_true}}
+  \hfill
+  \subfloat[Predictions]{\includegraphics[width=0.17\textwidth]{assets/figures/permutation_test/initial_predictions.pdf}\label{fig:permutation_test_model_predictions}}
+  \hfill
+  \subfloat[Samples]{\includegraphics[width=0.51\textwidth]{assets/figures/permutation_test/samples.pdf}\label{fig:permutation_test_samples}}
+  \\
+  \subfloat[Observed differences in sample scores]{\includegraphics[width=1\textwidth]{assets/figures/permutation_test/distribution.pdf}\label{fig:permutation_test_distribution}}
+  \caption{
+  Permutation test example.
+  A significance test is most often used to test whether a hypothesis is true with a given confidence.
+  In this example we use the permutation test to test whether the 
+  performance of two given classifiers, Model A and Model B, differs in a non-random way. Our hypothesis is that Model A has a lower performance than Model B, ie. it has a lower score.
+  For this example we chose accuracy as the score metric. 
+  To calculate the accuracy, we need the true labels, \textbf{\subref{fig:permutation_test_true}}, of the dataset.
+  In \textbf{\subref{fig:permutation_test_model_predictions}} we see the predicted labels of the two models and the accuracy as a score beneath them. 
+  We also see the difference in the scores.
+  In \textbf{\subref{fig:permutation_test_model_predictions}} we also see that Model A has a lower score than Model B.
+  This lower score could be due to chance and not because Model B is fundamentally better than Model A.
+  To test our hypothesis more throughly we now execute the permutation test.
+  In the first step, \textbf{\subref{fig:permutation_test_samples}}, we generate $n$ samples by interchanging the predictions of the two models randomly.
+  Here, we depicted three randomly selected samples from the $n$ generated samples.
+  To generate a sample, we switch the predictions of Model A and B for every document with a probability of 0.5.
+  The switch of two predictions is marked with a red arrow in our depiction.
+  In the optimal case, one could generate all possible permutations of the predictions, ie. generate all possible samples.
+  Unfortunately this is often not an option due to the sheer number of possibilities. That said, generating a large number of samples also gives a good basis for judgment.
+  Next, we calculate the accuracy scores for both models for each of the samples and also calculate the difference between these scores.
+  In \textbf{\subref{fig:permutation_test_distribution}} we see the histogram of score differences in the samples.
+  The red lines mark the initially observed difference between the models A and B (also it's negative).
+  In the last step, we gather these differences and count the number of samples, $n_{higher}$, where the absolute difference between the models is smaller than the score difference of the original predictions of Model A and B.
+  $n_{higher}$ divided by the total number of generated samples, $n$, is then the frequency of samples, $f_{higher} = \frac{n_{higher}}{n}$, where the score difference was higher when randomly exchanging the predictions compared to the original observed score difference.
+  $f_{higher}$ gives an intuition about the likelihood of observing the difference between the scores of Model A and B.
+  In the histogram of observed differences \textbf{\subref{fig:permutation_test_distribution}} this $f_{higher}$ corresponds to the area of the red surfaces divided by the observations between the red lines.
+  In our example, $f_{higher}$ is 0.135, meaning that the probability to observe the score difference we see between the two models is 13.5\% when randomly exchanging the predictions of the two models.
+  This is far too high to accept the hypothesis on ground of these predictions.}
+\end{figure*}
 
 \todo[inline]{\url{https://stats.stackexchange.com/questions/104040/resampling-simulation-methods-monte-carlo-bootstrapping-jackknifing-cross}}
 

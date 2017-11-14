@@ -1,3 +1,10 @@
+import sys
+import os 
+
+dir_path = os.path.dirname(os.path.realpath(__file__))
+parent_dir = os.path.join(dir_path, '..')
+sys.path.append(parent_dir)
+os.chdir(parent_dir)
 
 from glob import glob
 from glob import glob 
@@ -68,3 +75,18 @@ for name, val in params:
     plt.rcParams[name] = val
 
 
+def cleanup_axes(ax):
+    ax.grid('off')
+    for pos, spine in ax.spines.items(): spine.set_visible(False)
+    ax.get_xaxis().set_visible(False)
+    ax.get_yaxis().set_visible(False)
+
+
+IMAGE_FOLDER = 'tmp'
+os.makedirs(IMAGE_FOLDER, exist_ok=True)
+
+def save_fig(fig, filename_without_ext, folder = IMAGE_FOLDER, extensions = ['png', 'pdf']):
+    os.makedirs(folder, exist_ok=True)
+    for ext in extensions:
+        filename = '{}/{}.{}'.format(folder, filename_without_ext, ext)
+        fig.savefig(filename)
