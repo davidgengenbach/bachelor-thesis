@@ -5,6 +5,9 @@
 \labelsubsection{Classification Task}{subsec:classification_task}
 \todo[inline]{Supervised vs. unsupervised}
 
+\labelsubsection{Texts}{subsec:texts}
+\todo[inline]{Mention approaches to represent text}
+
 \labelsubsection{Graphs}{subsec:graphs}
 A (labeled) graph is a triple $G = (V, E, \pi)$, where $V$ is the set of vertices or nodes, $E \subseteq V \times V$ are the edges and $\pi: V \to X$ is a labeling function which assigns a label to a given vertex.
 
@@ -104,7 +107,7 @@ Figure \ref{fig:cooccurrence_graphs} shows examples of co-occurrence graphs with
 \end{figure}
 
 Since co-occurrence graphs not only contain the words of the underlying text but also their co-occurrence, they capture not only the content of the text but also the relation between words of the text.
-Therefor they contain structural information about the text as well, just as the concept maps.
+Therefor they contain structural information about the text as well.
 
 \todo[inline]{Co-occurrence graphs can have edge weights corresponding to the number of occurrences of a co-occurrence of words. One can derive the number of occurrences of the label by summing up the edge weights of edges of a node}
 
@@ -125,6 +128,13 @@ A kernel function has to be:
     \item{\textit{non-negative definite}: \dots}
 \end{itemize}
 
+An interesting property of kernels is that they can be combined easily with symmetric operations, eg. by adding or multiplicating the results of two kernel functions, $k_1(x, x')$ and $k_2(x, x')$:
+\begin{equation*}
+k_{combined}(x, x') = k_1(x, x') * k_2(x, x')
+\end{equation*}
+One can easily confirm that when $k_1$ and $k_2$ are valid kernels, $k_{combined}$ is also a valid kernel.
+This property enables composite kernels to capture multiple means of similarity in one metric.
+
 For example, a simple kernel on two numbers (or vectors) is $k(x, x') = | x * x' |$, where $| \cdot |$ is the absolute value (or a norm).
 Another example of a kernel between strings is $k(s, s') = \delta(s = s')$, where $\delta(\cdot)$ is the Kronecker delta. This kernel returns 1 if the two given strings are the same, and 0 if they are different.
 Note that both these kernels are indeed valid.
@@ -140,15 +150,28 @@ Here, $\phi(X)$ returns a fixed-size vector representation of the object $X$ and
 This $\phi(X)$ can then be used in all vector-based classification algorithms, not only kernel methods.
 An example for such a kernel is the string kernel which counts the number of occurrences of words in a given text, then creates a vector representation by giving each word an index in the vector and setting this index to the number of occurrences of that word. The inner product of two of these vector representations then create a kernel.
 
-A graph kernel is simply a kernel that operates on graphs. A graph kernel returns a measure of similarity between two graphs.
+A graph kernel is simply a kernel that operates on graphs.
 
 Graph kernels that measure the similarity of two graphs are related to the isomorphism test between two graphs.
 The graph isomorphism test returns whether two graphs are structurally the same.
-In this test, the labels of the vertices and edges are ignored. Otherwise the task would be far easier, since one could just compare the labels and edges of the graphs - when they are the same, the graphs are the same.
-Instead, in the graph isomorphism test, one has to find a mapping between the vertices of one graph to another, the same for the edges.
+In this test, the labels of the vertices and edges are ignored. Otherwise the task would be far easier since one could simply compare the labels and edges of the graphs - when they are both exactly the same, the graphs are the same.
+Instead, in the graph isomorphism test one has to find two mappings: one bijective mapping $\psi_{V}: V_1 \mapsto V_2$ from the vertices of the first graph to the vertices of the second graph and another bijective mapping $\psi_{E}: E_1 \mapsto E_2$ with the constraint:
+\begin{equation*}
+    \forall e = (v_s, v_t) \in E_1:
+    \exists e' = (v'_s, v'_t) \in E_2:
+    \psi_{E}(e) = e'
+    \Rightarrow
+    \psi_{V}(v_s) = v'_s
+    \land
+    \psi_{V}(v_t) = v'_t
+\end{equation*}
+
+
 \todo[inline]{Explain constraints for the mapping}
 If such a mapping exists, the two graphs are called isomorphic.
-While the complexity of the graph isomorphism test is not known yet, it is suspected to lie in P or maybe is also NP-complete. This potentially super-polynomial complexity has grave consequences for a graph kernel.
+While the complexity of the graph isomorphism test is not known yet, it is suspected to lie in P or maybe is also NP-complete.
+
+\todo[inline]{This potentially super-polynomial complexity has grave consequences for a graph kernel.}
 \todo[inline]{Namely?}
 
 \todo[inline]{Creating a graph kernel is always a trade-off}
@@ -157,17 +180,27 @@ While the complexity of the graph isomorphism test is not known yet, it is suspe
 \todo[inline]{Mention that functions that do not satisfy Mercer's condition and are not non-negative definite can nevertheless perform quite good in real world applications}
 
 \paragraph{Gram matrix}
-A gram or kernel matrix for a given kernel is a matrix $A$ where the entries are the pairwise similarities of two objects in a dataset:
+A gram, or kernel matrix, for a given kernel is a matrix $A$ for a set of objects, $D = (x_1, x_2, \ldots, x_n)$
+The entries of the gram matrix are the pairwise similarities between all objects in the dataset:
 \begin{equation*}
     A_{i,j} = k(x_i, x_j)
 \end{equation*}
-The gram matrix is symmetric by definition since the underlying kernel is also symmetric, so $A_{i,j} = A_{j, i}$.
+When the $\phi$ for each $x$ is given, one can also construct the gram matrix by stacking these vectors into a matrix $M_{\phi}$ and calculating the product on the transpose
+\begin{equation*}
+    A = M_{\phi} M_{\phi}^T
+\end{equation*}
+The gram matrix is symmetric by definition since the underlying kernel is also symmetric, ie. $A_{i,j} = A_{j, i}$.
 
 \paragraph{Graph Kernel Categories}
 Several graph kernels have been proposed in the literature.
-Categories of graph kernels include graph kernels based on shortest-paths, random-walks and subtree patterns, to name just a few.
-Most approaches to graph kernels have in common that they first create a decomposition of the graph into sub-structures, for example into subtrees, and then count the occurrences of these sub-structures in the graphs.
-The kernels in this category is also sometimes called R-Convolution graph kernels.
+Categories of graph kernels include kernels based on shortest-paths, random-walks and subtree patterns, to name just a few.
+A great number of graph kernels have in common that they first create a decomposition of the graph into sub-structures, for example into subtrees, and then count the occurrences of these sub-structures in the graphs.
+The kernels in this category are sometimes called R-Convolution graph kernels.
+In the next section, we introduce some examples of graph kernels to get a feeling for the possibilities and trade-offs that different approaches have.
+As mentioned before, any set of valid kernels can be combined easily to form a composite kernel.
+So, any of the algorithms we will introduce in the next section can be combined and extended using other kernels.
+As we will also see in this next section, graph kernels can be quite diverse and capture different information of the objects they are operating on.
+The scope of a graph kernel can therefor also vary widely from only capturing narrow aspects of the graph to actually capturing the complete graph structure and content.
 
 \todo[inline]{Mention linearization of graphs?}
 
@@ -231,7 +264,8 @@ For the first iteration, the labels of a node consist of the immediate neighbour
 In the next iteration, the label of a node than encodes the neighbourhood of the neighbourhood, ie. 
 
 The Weisfeiler-Lehman graph kernel has been to shown to achieve state-of-the-art performance on several datasets and applications.
-$\mathcal{O}(hm)$, where $h$ is the number of iterations and $m$ is the number of edges in the dataset.
+
+\todo[inline]{Complexity? $\mathcal{O}(hm)$, where $h$ is the number of iterations and $m$ is the number of edges in the dataset.}
 
 It has to be noted that the Weisfeiler-Lehman does not use edge labels by default, but can be extended to do so.
 There are also several other extensions to the Weisfeiler-Lehman kernel in the literature.
@@ -259,6 +293,21 @@ In Figure \ref{fig:wl_example} we show an example of one WL iteration with label
 \end{figure*}
 
 \subsubsection{Kernel Methods and Kernel trick}
+We have seen that a kernel can be used to calculate a measure of similarity between two objects, eg. graphs.
+Some kernels can be expressed as an inner product $k(X, X') = \langle \phi(X), \phi(X') \rangle$ on two (implicit) vector representations of the objects $X$ and $X'$.
+In this case, the vector representations $\phi(X)$ can be used in conventional classification algorithms.
+Yet, calculating these representations is not always possible or feasible since the dimension of such a representation is quite high and most often very sparse.
+There is another approach for classification (and regression), the aforementioned kernel methods.
+Kernel methods operate directly with the kernel values and do not use the implicit feature representations $\phi(X)$.
+Instead, kernel methods use the similarities $k(X, X')$ directly.
+Therefor kernel methods can be used with kernels where no implicit feature representation $\phi(X)$ can be calculated or where calculating $\phi(X)$ is not feasible.
+
+One popular example of a kernel method is the Support Vector Machine, or SVM.
+The SVM is actually able to use either vector representations of the elements in the dataset or the pairwise similarities, the gram matrix, between them.
+At training time, the gram matrix $A$ of all objects in the training set, $d_{train} = \{X_1, X_2, \ldots, X_n\}$, is calculated.
+This gram matrix $A$ and the corresponding labels then get fed into the SVM which optimizes its parameters.
+\todo[inline]{Prediction time?}
+
 
 \labelsubsection{Graph Kernel Based Text Classification}{subsec:graph_kernel_based_text_classification}
 In this section, we will introduce related work and briefly recap the history of the field.

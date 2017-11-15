@@ -152,7 +152,7 @@ def convert_adjs_tuples_to_graphs(X):
         X[idx] = g
 
 
-def convert_graphs_to_adjs_tuples(X):
+def convert_graphs_to_adjs_tuples(X, copy = False):
     """Converts the graphs from the nx.Graph format to a tuple.
     Note: this function changes the input!
 
@@ -167,17 +167,25 @@ def convert_graphs_to_adjs_tuples(X):
     if (isinstance(X[0], tuple) or isinstance(X[0], np.ndarray)) and not isinstance(X[0][0], nx.Graph):
         return
 
-    #print(X[0], type(X[0]))
+    X_ = []
 
     for idx, graph in enumerate(X):
         if (isinstance(graph, np.ndarray) or isinstance(graph, tuple)) and isinstance(graph[0], nx.Graph):
             graph = graph[0]
 
         nodes = graph.nodes()
+
         if len(nodes) == 0 or nx.number_of_edges(graph) == 0:
-            X[idx] = (lil_matrix(1, 1), ['no_label'])
+            out = (lil_matrix(1, 1), ['no_label'])
         else:
-            X[idx] = (nx.adjacency_matrix(graph, nodelist=nodes), nodes)
+            out = (nx.adjacency_matrix(graph, nodelist=nodes), nodes)
+
+        if copy:
+            X_.append(out)
+        else:
+            X[idx] = out
+    return X_
+
 
 
 def get_empty_graphs_count(graphs):
@@ -331,3 +339,13 @@ def warmup_graph_cache(graphs_folder = 'data/graphs', use_cached = False):
         if not is_graph_folder: continue
         print('Creating: {}'.format(f))
         dataset_helper.get_gml_graph_dataset(f, use_cached=use_cached)
+
+def get_graphs_only(X):
+    assert len(X)
+    if isinstance(X[0], nx.Graph) or (isinstance(X[0], tuple) and not isinstance(X[0][1], str)):
+        return X
+
+    assert isinstance(X[0], tuple)
+
+    X_ = [x for x, _ in X]
+    return X_

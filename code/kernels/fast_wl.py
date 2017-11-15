@@ -10,6 +10,7 @@ from scipy.sparse import lil_matrix, dok_matrix
 from utils import primes
 import collections
 import typing
+import networkx
 
 # https://oeis.org/A033844
 primes_arguments_required_ = [2, 3, 7, 19, 53, 131, 311, 719, 1619, 3671, 8161, 17863, 38873, 84017, 180503, 386093, 821641, 1742537, 3681131, 7754077, 16290047, 34136029, 71378569, 148948139, 310248241, 645155197, 1339484197, 2777105129, 5750079047, 11891268401, 24563311309, 50685770167, 104484802057, 215187847711]
@@ -71,6 +72,9 @@ def transform(
     primes_needed = primes_arguments_required[int(np.ceil(np.log2(phi_dim))) + 1]
     log_primes = primes.get_log_primes(1, primes_needed)
 
+    if node_weight_factors is not None:
+        node_weight_factors = [np.array(x, dtype=object) for x in node_weight_factors]
+
     def add_labels_to_phi(phi: scipy.sparse.spmatrix, graph_idx: int, labels: typing.Iterable):
         '''
         Histogram
@@ -89,11 +93,11 @@ def transform(
 
         # The labels are all unique, so just set the entry for the labels to 1
         if len(set(labels)) == len(labels):
-            phi[labels, graph_idx] = factor
+            phi[labels, graph_idx] = factor[:,np.newaxis]
         else:
             if not isinstance(factor, (int, float)):
                 for l, f in zip(labels, factor):
-                    f = f[0, 0] - 1
+                    f = f - 1
                     if f != 0:
                         labels = np.concatenate ((labels, [l] * f))
             # There are duplicates in labels. Do a histogram of the labels. Unfortunately you can not just use np.add.at(...) for duplicate indices to be accumulated, since it does not work with sparse matrices

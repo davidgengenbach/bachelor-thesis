@@ -72,7 +72,7 @@ def main():
 
     create_results_dir(args)
 
-    clfs: typing.List = classifiers.get_classifiers(args)
+    clfs: typing.List = classifiers.get_classifiers()
     tasks: typing.List[Task] = classification_tasks.get_all_classification_tasks(args, clfs)
 
     start_tasks(args, tasks)

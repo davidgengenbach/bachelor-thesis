@@ -24,7 +24,10 @@ Task = collections.namedtuple('Task', ['type', 'name', 'process_fn', 'process_fn
 def get_all_classification_tasks(args, clfs=None):
     classifier_params = {
         'classifier': clfs,
-        'classifier__C': [0.1, 1]
+        'classifier__C': [0.1, 1],
+        'classifier__max_iter': [args.max_iter],
+        'classifier__tol': [args.tol]
+        #'classifier__penalty': ['l1']
     }
 
     tasks = []

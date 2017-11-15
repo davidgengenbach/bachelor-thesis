@@ -1,5 +1,6 @@
 import collections
-from utils import helper, filename_utils
+from utils import helper, filename_utils, git_utils, time_utils
+from utils.remove_coefs_from_results import remove_coefs_from_results
 import pandas as pd
 from glob import glob
 import os
@@ -219,3 +220,29 @@ def get_predictions(folder: str=None) -> typing.Generator:
         with open(prediction_file, 'rb') as f:
             prediction = pickle.load(f)
         yield prediction_file, prediction
+
+
+def save_results(gscv_result, filename, info = None, remove_coefs = True):
+    if remove_coefs:
+        remove_coefs_from_results(gscv_result.cv_results_)
+
+    dump_pickle_file(info, filename, dict(
+        results=gscv_result.cv_results_
+    ))
+
+
+def dump_pickle_file(args, filename: str, data: dict, add_meta: bool = True):
+    meta = dict(meta_data=get_metadata(args)) if add_meta else dict()
+
+    with open(filename, 'wb') as f:
+        pickle.dump(dict(meta, **data), f)
+
+
+def get_metadata(args, other=None) -> dict:
+    return dict(
+        git_commit=str(git_utils.get_current_commit()),
+        timestamp=time_utils.get_timestamp(),
+        timestamp_readable=time_utils.get_time_formatted(),
+        args=vars(args),
+        other=other
+    )

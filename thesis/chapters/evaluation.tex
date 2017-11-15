@@ -38,7 +38,11 @@ For the content-only kernel, we will simply count the number of occurrences of l
 
 For the structure-only kernel, we will use a modified version of the Weisfeiler-Lehman kernel: before executing the WL kernel on the graphs, we first discard all labels on the graph. All nodes of all graphs get the same label. This way, only the structure gets used for the similarity score.
 
-For the structure-and-content kernel, we use the plain Weisfeiler-Lehman graph kernel.
+For the structure-and-content kernel, we use the plain Weisfeiler-Lehman graph kernel. We also added an extension to the kernel by using node weights as weights for the labels. We first extracted a weight for each node by calculating the node degree.
+We added this extension to give additional weight to label matches of nodes with a greater number of neighbours, ie. higher degree, since matches with a greater neighbourhood are far less often.
+Instead of the degree, one could also use another metric like PageRank and using the resulting node weights.
+
+\todo[inline]{Using node weights is a trade-off: giving the nodes more weight when they are more connect implies that words that occur often have a high importance!}
 
 \subquestion{How does the classification results of co-occurrence graphs compare to concept maps?}{question:comparison_coo}
 For this question, we compare the classification results for concept maps and co-occurrence graphs. As noted before, this comparison is slightly unfair since co-occurrence graphs have far more content than concept maps.
@@ -155,6 +159,8 @@ The split is done as follows: 85\% for train- and validation set together and 15
 We then use stratified k-fold cross-validation to further split the train- and validation set. In our case, we used $k = 3$, meaning that $\frac{2}{3}$ of the dataset is used for training, and the rest for validation.
 The stratification ensures that the class distribution in the train set is (nearly) the same as in the validation set.
 
+\todo[inline]{Hold-out set!}
+
 \subsubsection{Metrics}
 We evaluated a number of metrics for each classification task, namely: 
 recall, precision, accuracy and the F1-score. We mostly focus on the F1-score since it captures the overall performance of classification algorithms.
@@ -199,7 +205,7 @@ When the probability of observing the difference by chance is below a given thre
   In the last step, we gather these differences and count the number of samples, $n_{higher}$, where the absolute difference between the models is smaller than the score difference of the original predictions of Model A and B.
   $n_{higher}$ divided by the total number of generated samples, $n$, is then the frequency of samples, $f_{higher} = \frac{n_{higher}}{n}$, where the score difference was higher when randomly exchanging the predictions compared to the original observed score difference.
   $f_{higher}$ gives an intuition about the likelihood of observing the difference between the scores of Model A and B.
-  In the histogram of observed differences \textbf{\subref{fig:permutation_test_distribution}} this $f_{higher}$ corresponds to the area of the red surfaces divided by the observations between the red lines.
+  In the histogram of observed differences \textbf{\subref{fig:permutation_test_distribution}} this $f_{higher}$ corresponds to the ratio between the area of elements in the blue surface to total area of the histogram.
   In our example, $f_{higher}$ is 0.135, meaning that the probability to observe the score difference we see between the two models is 13.5\% when randomly exchanging the predictions of the two models.
   This is far too high to accept the hypothesis on ground of these predictions.}
 \end{figure*}

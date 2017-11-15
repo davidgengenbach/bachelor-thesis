@@ -6,7 +6,7 @@ from transformers.nx_graph_to_tuple_transformer import NxGraphToTupleTransformer
 def get_pipeline():
     return sklearn.pipeline.Pipeline(
         [
-            ('tuple_transformer', NxGraphToTupleTransformer()),
+            #('tuple_transformer', NxGraphToTupleTransformer()),
             ('fast_wl', FastWLGraphKernelTransformer(debug = False)),
             ('phi_picker', PhiPickerTransformer()),
             ('normalizer', None)
