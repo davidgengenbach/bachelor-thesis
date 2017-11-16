@@ -1,3 +1,5 @@
+
+
 class ClassificationOptions(object):
     def __init__(
             self,
@@ -36,3 +38,11 @@ class ClassificationOptions(object):
 
             assert hasattr(self, key)
             assert getattr(self, key) == val
+
+    @classmethod
+    def from_argparse_options(cls, args):
+        opts = cls()
+        for k, v in vars(args).items():
+            if hasattr(opts, k):
+                setattr(opts, k, v)
+        return opts

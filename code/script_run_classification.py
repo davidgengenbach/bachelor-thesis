@@ -75,7 +75,8 @@ def main():
 
     create_results_dir(args)
 
-    classification_options: ClassificationOptions = ClassificationOptions()
+    classification_options: ClassificationOptions = ClassificationOptions.from_argparse_options(args)
+
     tasks: typing.List[ExperimentTask] = experiments.get_all_tasks()
 
     start_tasks(args, tasks, classification_options)
