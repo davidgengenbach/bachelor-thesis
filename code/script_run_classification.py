@@ -148,7 +148,6 @@ def start_tasks(args, all_tasks: typing.List[ExperimentTask], classification_opt
         print_task('Started')
         try:
             task_runner.run_classification_task(t, classification_options)
-            t.process_fn(args, t, *t.process_fn_args)
             gc.collect()
         except Exception as e:
             print_task('Error: {}'.format(e))
