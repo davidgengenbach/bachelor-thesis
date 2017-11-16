@@ -222,12 +222,12 @@ def get_predictions(folder: str=None) -> typing.Generator:
         yield prediction_file, prediction
 
 
-def save_results(gscv_result, filename, info = None, remove_coefs = True):
+def save_results(gscv_result, filename, info = None, remove_coefs=True):
     if remove_coefs:
-        remove_coefs_from_results(gscv_result.cv_results_)
+        remove_coefs_from_results(gscv_result)
 
     dump_pickle_file(info, filename, dict(
-        results=gscv_result.cv_results_
+        results=gscv_result
     ))
 
 
@@ -243,6 +243,6 @@ def get_metadata(args, other=None) -> dict:
         git_commit=str(git_utils.get_current_commit()),
         timestamp=time_utils.get_timestamp(),
         timestamp_readable=time_utils.get_time_formatted(),
-        args=vars(args),
+        args=args,
         other=other
     )

@@ -1,4 +1,4 @@
-"""Implementation of the fast hashing-based algorithm.
+"""Implementation of the fast hashing-based Weißfeiler Lehman algorithm.
 Ported from the MATLAB version: https://github.com/rmgarnett/fast_wl
 
 Attributes:
@@ -23,7 +23,7 @@ def transform(
         label_counters: typing.List[int] = None,
         primes_arguments_required: typing.List[int] = primes_arguments_required_,
         phi_dim: int = None,
-        labels_dtype: np.dtype = np.uint32,
+        labels_dtype: np.dtype = np.uint64,
         phi_dtype: np.dtype = np.uint32,
         used_matrix_type: scipy.sparse.spmatrix = dok_matrix,
         round_signatures_to_decimals: int = 1,
@@ -76,16 +76,6 @@ def transform(
         node_weight_factors = [np.array(x, dtype=object) for x in node_weight_factors]
 
     def add_labels_to_phi(phi: scipy.sparse.spmatrix, graph_idx: int, labels: typing.Iterable):
-        '''
-        Histogram
-        Args:
-            phi:
-            graph_idx:
-            labels:
-
-        Returns:
-
-        '''
         if node_weight_factors is not None:
             factor = node_weight_factors[graph_idx]
         else:
@@ -93,7 +83,10 @@ def transform(
 
         # The labels are all unique, so just set the entry for the labels to 1
         if len(set(labels)) == len(labels):
-            phi[labels, graph_idx] = factor[:,np.newaxis]
+            if isinstance(factor, int):
+                phi[labels, graph_idx] = factor
+            else:
+                phi[labels, graph_idx] = factor[:,np.newaxis]
         else:
             if not isinstance(factor, (int, float)):
                 for l, f in zip(labels, factor):
@@ -121,6 +114,7 @@ def transform(
 
     phi_lists = [phi.tolil()]
 
+    last_highest_label = -1
     # For the number of iterations h...
     for i in range(h):
         # ... use previous label counters/lookups, if given
@@ -149,11 +143,34 @@ def transform(
             graph_labels[idx] = new_labels
 
             add_labels_to_phi(phi, idx, new_labels)
+
+
         # ... save phi
         phi_lists.append(phi.tolil())
         # ... save label counters/lookups for later use
         new_label_counters.append(label_counter)
         new_label_lookups.append(label_lookup)
+
+        # ... exit early when no new labels are found (= convergence)
+        highest_label = np.max(phi.nonzero()[1])
+        if last_highest_label == highest_label:
+            break
+        last_highest_label = highest_label
+
+
+    expected_elements = (h + 1)
+    diff_in_h = expected_elements - len(phi_lists)
+    # When the algorithm converged...
+    if diff_in_h != 0:
+        # ... fill the remaining iterations
+        for i in range(diff_in_h):
+            phi_lists.append(phi_lists[-1])
+            new_label_counters.append(new_label_counters[-1])
+            new_label_lookups.append(new_label_lookups[-1])
+
+    for x in [phi_lists, new_label_counters, new_label_lookups]:
+        assert len(x) == expected_elements
+
     # Return the phis, the lookups and counter, so the calculation can resumed later on with new graphs
     return phi_lists, new_label_lookups, new_label_counters
 

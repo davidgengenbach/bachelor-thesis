@@ -266,6 +266,10 @@ def get_all_cached_graph_datasets(dataset_name = None, cache_path = CACHE_PATH):
     return [x for x in get_all_cached_datasets(cache_path) if graph_dataset_filter(x)]
 
 
+def get_all_gram_datasets(dataset_name = None, cache_path = CACHE_PATH):
+    gram_files = glob('{}/*gram*.npy'.format(cache_path))
+    return [x for x in gram_files if not dataset_name or filename_utils.get_dataset_from_filename(x) == dataset_name]
+
 
 def get_all_cached_graph_phi_datasets(dataset_name = None, cache_path = CACHE_PATH):
     if dataset_name:

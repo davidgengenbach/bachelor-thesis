@@ -10,8 +10,11 @@ import gc
 
 from utils.logger import LOGGER
 from utils import filename_utils, time_utils, helper
-from classification import classification_tasks, classifiers
-from classification.classification_tasks import Task
+from utils.classification_options import ClassificationOptions
+
+import experiments
+from experiments.task_helper import ExperimentTask
+from experiments import task_runner
 
 
 def get_args():
@@ -72,15 +75,15 @@ def main():
 
     create_results_dir(args)
 
-    clfs: typing.List = classifiers.get_classifiers()
-    tasks: typing.List[Task] = classification_tasks.get_all_classification_tasks(args, clfs)
+    classification_options: ClassificationOptions = ClassificationOptions()
+    tasks: typing.List[ExperimentTask] = experiments.get_all_tasks()
 
-    start_tasks(args, tasks)
+    start_tasks(args, tasks, classification_options)
 
 
-def start_tasks(args, all_tasks: typing.List[Task]):
+def start_tasks(args, all_tasks: typing.List[ExperimentTask], classification_options: ClassificationOptions):
 
-    def should_process_task(task: Task):
+    def should_process_task(task: ExperimentTask):
         # Dataset filter
         is_filtered_by_dataset = args.limit_dataset and filename_utils.get_dataset_from_filename(task.name) not in args.limit_dataset
 
@@ -104,7 +107,7 @@ def start_tasks(args, all_tasks: typing.List[Task]):
 
         return should_process
 
-    def print_tasks(tasks: typing.List[Task]):
+    def print_tasks(tasks: typing.List[ExperimentTask]):
         for task in tasks:
             print('\t{t.type:26} {dataset:18} {t.name}'.format(t=task, dataset = filename_utils.get_dataset_from_filename(task.name)))
         print('\n')
@@ -143,6 +146,7 @@ def start_tasks(args, all_tasks: typing.List[Task]):
         start_time = time()
         print_task('Started')
         try:
+            task_runner.run_classification_task(t, classification_options)
             t.process_fn(args, t, *t.process_fn_args)
             gc.collect()
         except Exception as e:

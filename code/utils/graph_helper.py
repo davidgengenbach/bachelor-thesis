@@ -165,7 +165,7 @@ def convert_graphs_to_adjs_tuples(X, copy = False):
     assert len(X)
 
     if (isinstance(X[0], tuple) or isinstance(X[0], np.ndarray)) and not isinstance(X[0][0], nx.Graph):
-        return
+        return X
 
     X_ = []
 

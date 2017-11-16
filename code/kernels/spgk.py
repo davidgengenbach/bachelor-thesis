@@ -5,7 +5,6 @@ Created on Fri Apr 14 2017
 
 """
 
-import sys
 import numpy as np
 import networkx as nx
 

@@ -1,5 +1,5 @@
+import os
 import sys
-import os 
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 parent_dir = os.path.join(dir_path, '..')
@@ -7,13 +7,12 @@ sys.path.append(parent_dir)
 os.chdir(parent_dir)
 
 from glob import glob
-from glob import glob 
 from IPython.display import display
 from PIL import Image
 from preprocessing import preprocessing
 from sklearn import dummy
 from sklearn import metrics, pipeline, preprocessing, svm
-from transformers import fast_wl_pipeline, text_pipeline
+from transformers.pipelines import text_pipeline
 from transformers.fast_wl_graph_kernel_transformer import FastWLGraphKernelTransformer
 from transformers.nx_graph_to_tuple_transformer import NxGraphToTupleTransformer
 from transformers.tuple_selector import TupleSelector
@@ -44,7 +43,6 @@ from pprint import pprint
 
 from utils.graph_helper import TYPE_COOCCURRENCE, TYPE_CONCEPT_MAP, GRAPH_TYPES
 
-
 EXPORT_DPI = 100
 EXPORT_FIG_SIZE = (8, 4)
 EXPORT_FIG_SIZE_BIG = (10, 7)
@@ -55,7 +53,6 @@ pd.options.display.max_rows = 80
 pd.options.display.max_columns = 999
 pd.options.display.max_colwidth = -1
 
-#style.use('fivethirtyeight')
 sns.set('paper', 'whitegrid', palette = 'deep')
 params = [
     ('axes.titleweight', 'normal'),

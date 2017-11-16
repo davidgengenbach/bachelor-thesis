@@ -9,18 +9,25 @@ from utils import graph_helper
 def hash_dataset(X):
     return ''.join([str(hash(''.join([str(a) for a in labels]))) for adj, labels in X])
 
+def degrees_metric_adj(x):
+    assert isinstance(x, tuple)
+    adj, labels  = x
+    return adj.sum(axis=1, dtype=np.uint32)
+
 def pagerank_metric(x):
     return {k: v * 100 for k, v in nx.pagerank(nx.Graph(x)).items()}
 
 def degrees_metric(x):
     return x.degree()
-    #return [adj.sum(axis = 1, dtype=np.uint32) for adj, _ in X]
 
-def get_node_weight_factors(X, metric = pagerank_metric, use_node_weight_factors = True):
-    if not use_node_weight_factors:
+def get_node_weight_factors(X, metric = pagerank_metric):
+    if metric is None:
         return None
+
     out = [metric(x) for x in X]
-    out = [[int(val) for key, val in sorted(val.items(), key = lambda x: x[0])] for val in out]
+    if isinstance(out[0], dict):
+        out = [[int(val) for key, val in sorted(val.items(), key = lambda x: x[0])] for val in out]
+
     return out
 
 
@@ -31,14 +38,13 @@ class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Tran
 
     """
 
-    def __init__(self, h=1, debug=False, should_cast = False, phi_dim = None, round_to_decimals = 10, ignore_label_order = False, use_node_weight_factors = False, node_weight_function = pagerank_metric):
+    def __init__(self, h=1, debug=False, should_cast = False, phi_dim = None, round_to_decimals = 10, ignore_label_order = False, node_weight_function = None):
         self.h = h
         self.debug = debug
         self.should_cast = should_cast
         self.phi_dim = phi_dim
         self.round_to_decimals = round_to_decimals
         self.ignore_label_order = ignore_label_order
-        self.use_node_weight_factors = use_node_weight_factors
         self.node_weight_function = node_weight_function
 
     def fit(self, X, y=None, **fit_params):
@@ -55,10 +61,13 @@ class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Tran
 
         X = graph_helper.get_graphs_only(X)
 
-        assert isinstance(X[0], nx.Graph)
-        node_weight_factors = get_node_weight_factors(X, metric = self.node_weight_function, use_node_weight_factors=self.use_node_weight_factors)
-        X = graph_helper.convert_graphs_to_adjs_tuples(X, copy = True)
+        if self.node_weight_function is not None:
+            assert isinstance(X[0], nx.Graph)
+            node_weight_factors = get_node_weight_factors(X, metric = self.node_weight_function)
+        else:
+            node_weight_factors = None
 
+        X = graph_helper.convert_graphs_to_adjs_tuples(X, copy = True)
 
         # Remove empty graphs
         X = [x for x in X if x is not None]
@@ -88,7 +97,12 @@ class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Tran
             print('FastWLGraphKernelTransformer.transform: len(X)={}, H={}'.format(len(X), self.h))
 
         X = graph_helper.get_graphs_only(X)
-        node_weight_factors = get_node_weight_factors(X, metric = self.node_weight_function, use_node_weight_factors=self.use_node_weight_factors)
+        if self.node_weight_function is not None:
+            assert isinstance(X[0], nx.Graph)
+            node_weight_factors = get_node_weight_factors(X, metric = self.node_weight_function)
+        else:
+            node_weight_factors = None
+
         X = graph_helper.convert_graphs_to_adjs_tuples(X, copy=True)
 
         # Use already computed phi_list if the given X is the same as in fit()

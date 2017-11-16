@@ -1,8 +1,3 @@
-#!/usr/bin/env python
-from glob import glob
-import pickle
-from pprint import pprint
-import os
 import numpy as np
 
 def remove_coefs(clf):

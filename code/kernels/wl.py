@@ -2,7 +2,6 @@ import scipy
 from scipy.sparse import lil_matrix, csr_matrix, csc_matrix, vstack
 import numpy as np
 import copy
-import psutil
 import networkx as nx
 import math
 import gc

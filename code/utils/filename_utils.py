@@ -20,8 +20,11 @@ def get_dataset_from_filename(filename: str, ignore_subtype = False) -> str:
 def get_abs_path(file):
     return os.path.abspath('./' + file)
 
-def get_filename_only(file):
-    return file.rsplit('/', 1)[-1]
+def get_filename_only(file, with_extension = True):
+    filename = file.rsplit('/', 1)[-1]
+    if not with_extension:
+        filename = filename.rsplit('.', 1)[0]
+    return filename
 
 def remove_file_extension(file):
     return file.rsplit('.', 1)[0]
@@ -36,7 +39,7 @@ def get_result_filename_for_task(task):
         task.type
     ]
 
-    file = remove_file_extension(task.name)
+    file = remove_file_extension(get_filename_only(task.name))
     if dataset != file:
         parts.append(file)
 
