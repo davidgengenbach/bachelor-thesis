@@ -43,7 +43,7 @@ def get_task_dummy(dataset_name: str) -> ExperimentTask:
             params = dict(classifier=dummy_classifier, classifier__strategy=[strategy], classifier__C = None, classifier__max_iter = None, classifier__tol = None)
             return ClassificationData(X, Y, estimator, params)
 
-        tasks.append(ExperimentTask('dummy', dataset_name, process))
+        tasks.append(ExperimentTask('dummy_{}'.format(strategy), dataset_name, process))
     return tasks
 
 

@@ -8,6 +8,7 @@ import psutil
 import numpy as np
 import itertools
 import os
+import argparse
 from glob import glob
 from utils import time_utils, git_utils
 
@@ -24,6 +25,17 @@ def print_script_args_and_info(args):
     for key, val in vars(args).items():
         print('\t{:26} {}'.format(key, val))
     print()
+
+def argparse_str2bool(v):
+    '''
+    From https://stackoverflow.com/questions/15008758/parsing-boolean-values-with-argparse
+    '''
+    if v.lower() in ('yes', 'true', 't', 'y', '1'):
+        return True
+    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean value expected.')
 
 
 def plot_confusion_matrix(cm,

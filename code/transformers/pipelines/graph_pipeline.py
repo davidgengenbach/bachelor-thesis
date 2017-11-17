@@ -66,10 +66,10 @@ def get_fast_wl_params():
     )
 
     params = dict(
-        fast_wl__h=[6],
+        fast_wl__h=[7],
         fast_wl__phi_dim=[None],
         phi_picker__return_iteration=['stacked'],
-        fast_wl__round_to_decimals=[-1, 5]
+        fast_wl__round_to_decimals=[-1, 6]
     )
 
     return pipeline, params
