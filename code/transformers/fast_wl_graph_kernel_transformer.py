@@ -109,8 +109,10 @@ class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Tran
         if self.hashed_x == hash_dataset(X):
             return self.phi_list
 
+        h = min(len(self.phi_list) - 1, self.h)
+
         phi_list, label_lookups, label_counters = fast_wl.transform(
-            X, h=self.h, label_lookups=np.copy(self.label_lookups), label_counters=np.copy(self.label_counters), phi_dim=self.phi_shape[1], append_to_labels = True, round_signatures_to_decimals=self.round_to_decimals, ignore_label_order = self.ignore_label_order, node_weight_factors=node_weight_factors)
+            X, h=h, label_lookups=np.copy(self.label_lookups), label_counters=np.copy(self.label_counters), phi_dim=self.phi_shape[1], append_to_labels = True, round_signatures_to_decimals=self.round_to_decimals, ignore_label_order = self.ignore_label_order, node_weight_factors=node_weight_factors)
 
         # Do NOT save label lookups and counters! This would effectively be fitting!
         #self.label_lookups = label_lookups

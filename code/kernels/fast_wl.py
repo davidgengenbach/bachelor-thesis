@@ -29,7 +29,9 @@ def transform(
         round_signatures_to_decimals: int = 1,
         append_to_labels: bool = True,
         ignore_label_order = False,
-        node_weight_factors = None
+        node_weight_factors = None,
+        use_early_stopping = True,
+        fill_up_missing_iterations = False
     ) -> tuple:
     assert len(graphs)
 
@@ -153,23 +155,24 @@ def transform(
 
         # ... exit early when no new labels are found (= convergence)
         highest_label = np.max(phi.nonzero()[1])
-        if last_highest_label == highest_label:
+        if use_early_stopping and last_highest_label == highest_label:
             break
         last_highest_label = highest_label
 
 
-    expected_elements = (h + 1)
-    diff_in_h = expected_elements - len(phi_lists)
-    # When the algorithm converged...
-    if diff_in_h != 0:
-        # ... fill the remaining iterations
-        for i in range(diff_in_h):
-            phi_lists.append(phi_lists[-1])
-            new_label_counters.append(new_label_counters[-1])
-            new_label_lookups.append(new_label_lookups[-1])
+    if use_early_stopping and fill_up_missing_iterations:
+        expected_elements = (h + 1)
+        diff_in_h = expected_elements - len(phi_lists)
+        # When the algorithm converged...
+        if diff_in_h != 0:
+            # ... fill the remaining iterations
+            for i in range(diff_in_h):
+                phi_lists.append(phi_lists[-1])
+                new_label_counters.append(new_label_counters[-1])
+                new_label_lookups.append(new_label_lookups[-1])
 
-    for x in [phi_lists, new_label_counters, new_label_lookups]:
-        assert len(x) == expected_elements
+        for x in [phi_lists, new_label_counters, new_label_lookups]:
+            assert len(x) == expected_elements
 
     # Return the phis, the lookups and counter, so the calculation can resumed later on with new graphs
     return phi_lists, new_label_lookups, new_label_counters
