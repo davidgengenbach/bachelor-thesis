@@ -49,7 +49,7 @@ def run_classification_task(task: ExperimentTask, cfo: ClassificationOptions):
     is_precomputed = isinstance(X, np.ndarray) and X.shape[0] == X.shape[1]
 
     # This is also a heuristic
-    is_dummy = 'classifier__strategy' in param_grid and 'classifier__C' not in param_grid
+    is_dummy = 'classifier__strategy' in param_grid and 'cl assifier__C' not in param_grid
 
     # Merge param_grid with classifiers
     classifier_params = get_classifier_params()

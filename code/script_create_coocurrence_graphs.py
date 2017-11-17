@@ -36,7 +36,7 @@ def process_dataset(dataset, args):
     #X, Y = X[:1], Y[:1]
 
     print('dataset: {:15} - preprocessing'.format(dataset))
-    X_preprocessed = preprocessing.preprocess_text_spacy(X, min_length=args.min_length, concat = False)
+    X_preprocessed = preprocessing.preprocess_text_spacy(X, only_nouns=False, min_length=args.min_length, concat = False)
     
     for window_size in range(args.window_size_start, args.window_size_end):
         for only_nouns in [False, True]:
@@ -53,7 +53,16 @@ def process_dataset(dataset, args):
             else:
                 X_filtered = X_preprocessed
 
-            X_processed, Y_processed = graph_helper.convert_dataset_to_co_occurence_graph_dataset(X_filtered, Y, only_nouns = only_nouns, min_length = args.min_length, window_size = window_size, n_jobs = args.n_jobs_coo, preprocess = False, lemma_ = args.lemmatize)
+            X_processed, Y_processed = graph_helper.convert_dataset_to_co_occurence_graph_dataset(
+                X_filtered,
+                Y,
+                only_nouns = only_nouns,
+                min_length = args.min_length,
+                window_size = window_size,
+                n_jobs = args.n_jobs_coo,
+                preprocess = False,
+                lemma_ = args.lemmatize
+            )
 
             with open(cache_file, 'wb') as f:
                 pickle.dump((X_processed, Y_processed), f)

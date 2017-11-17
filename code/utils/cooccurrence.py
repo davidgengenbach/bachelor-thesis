@@ -6,7 +6,7 @@ from nltk.tokenize import word_tokenize
 import networkx as nx
 
 
-def words_to_dict(words, remove_point=True):
+def words_to_dict(words):
     words = set(words)
     words = sorted(list(words))
     word2id = {word: idx for idx, word in enumerate(words)}

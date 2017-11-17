@@ -2,7 +2,6 @@ import sklearn
 from transformers.pipelines import text_pipeline
 from transformers.tuple_selector import TupleSelector
 from transformers.phi_picker_transformer import PhiPickerTransformer
-from transformers.nx_graph_to_tuple_transformer import NxGraphToTupleTransformer
 from transformers.fast_wl_graph_kernel_transformer import FastWLGraphKernelTransformer
 
 from . import pipeline_helper

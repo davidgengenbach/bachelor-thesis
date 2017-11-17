@@ -61,10 +61,12 @@ def get_kernel_from_filename(filename:str)->str:
     is_simple_kernel = '.simple.' in filename
     if is_simple_kernel:
         return 'simple_set_matching'
-    elif '_graph_text_' in filename:
+    elif 'graph_text_' in filename or 'graph_content_only' in filename:
         return 'text'
+    elif 'combined' in filename or '__graph__' in filename or 'graph_structure_only' in filename:
+        return 'wl'
     else:
-        assert False
+        raise Exception('Unkown kernel: {}'.format(filename))
 
 def get_results(folder=None, use_already_loaded=True, results_directory=RESULTS_DIR, log_progress=True, exclude_filter = None, filter_out_non_complete_datasets = True, remove_split_cols = True, remove_rank_cols = True, remove_fit_time_cols = True):
     global _DF_ALL, _RESULT_CACHE
