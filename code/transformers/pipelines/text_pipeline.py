@@ -6,7 +6,8 @@ def get_params(reduced = False):
     pipeline = sklearn.pipeline.Pipeline([
         ('preprocessing', None),
         ('vectorizer', None),
-        ('scaler', None)
+        ('scaler', None),
+        ('classifier', None)
     ])
 
     params = dict(

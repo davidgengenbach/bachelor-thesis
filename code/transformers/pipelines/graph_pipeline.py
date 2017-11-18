@@ -12,7 +12,8 @@ def get_params():
 
     pipeline = sklearn.pipeline.Pipeline([
         ('feature_extraction', fast_wl_estimator),
-        ('normalizer', None)
+        ('normalizer', None),
+        ('classifier', None)
     ])
 
     params = pipeline_helper.flatten_nested_params(dict(
@@ -46,7 +47,8 @@ def get_combined_params(text_reduced=True):
     ])
 
     pipeline = sklearn.pipeline.Pipeline([
-        ('features', combined_features)
+        ('features', combined_features),
+        ('classifier', None)
     ])
 
     return pipeline, params
