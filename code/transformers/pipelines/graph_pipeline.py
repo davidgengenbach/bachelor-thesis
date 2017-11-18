@@ -7,8 +7,8 @@ from transformers.fast_wl_graph_kernel_transformer import FastWLGraphKernelTrans
 from . import pipeline_helper
 
 
-def get_params():
-    fast_wl_estimator, fast_wl_params = get_fast_wl_params()
+def get_params(reduced = False):
+    fast_wl_estimator, fast_wl_params = get_fast_wl_params(reduced = reduced)
 
     pipeline = sklearn.pipeline.Pipeline([
         ('feature_extraction', fast_wl_estimator),
@@ -24,8 +24,8 @@ def get_params():
     return pipeline, params
 
 
-def get_combined_params(text_reduced=True):
-    graph_estimator, graph_params = get_params()
+def get_combined_params(text_reduced=True, graph_reduced=True):
+    graph_estimator, graph_params = get_params(reduced=graph_reduced)
     text_estimator, text_params = text_pipeline.get_params(reduced=text_reduced)
 
     # Params
@@ -54,7 +54,7 @@ def get_combined_params(text_reduced=True):
     return pipeline, params
 
 
-def get_fast_wl_params():
+def get_fast_wl_params(reduced = False):
     pipeline = sklearn.pipeline.Pipeline([
         ('fast_wl', FastWLGraphKernelTransformer()),
         ('phi_picker', PhiPickerTransformer()),
@@ -66,6 +66,9 @@ def get_fast_wl_params():
         fast_wl__round_to_decimals=[-1, 10],
         phi_picker__return_iteration=['stacked']
     )
+
+    if reduced:
+        params['fast_wl__round_to_decimals'] = [10]
 
     return pipeline, params
 
