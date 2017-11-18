@@ -1,7 +1,5 @@
 import sklearn
 
-from utils import graph_helper
-
 
 class RelabelGraphsTransformer(sklearn.base.BaseEstimator, sklearn.base.TransformerMixin):
 
@@ -12,8 +10,9 @@ class RelabelGraphsTransformer(sklearn.base.BaseEstimator, sklearn.base.Transfor
         return self
 
     def transform(self, X, y=None, **fit_params):
+        out = []
         for idx, (adj, nodes) in enumerate(X):
             relabeled_nodes = [str(self.lookup.get(label, label)).strip() for label in nodes]
-            X[idx] = (adj, relabeled_nodes)
-        return X
+            out.append((adj, relabeled_nodes))
+        return out
 

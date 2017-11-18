@@ -1,8 +1,5 @@
 """Implementation of the fast hashing-based Weißfeiler Lehman algorithm.
 Ported from the MATLAB version: https://github.com/rmgarnett/fast_wl
-
-Attributes:
-    primes_arguments_required (list):
 """
 import numpy as np
 import scipy
@@ -10,7 +7,6 @@ from scipy.sparse import lil_matrix, dok_matrix
 from utils import primes
 import collections
 import typing
-import networkx
 
 # https://oeis.org/A033844
 primes_arguments_required_ = [2, 3, 7, 19, 53, 131, 311, 719, 1619, 3671, 8161, 17863, 38873, 84017, 180503, 386093, 821641, 1742537, 3681131, 7754077, 16290047, 34136029, 71378569, 148948139, 310248241, 645155197, 1339484197, 2777105129, 5750079047, 11891268401, 24563311309, 50685770167, 104484802057, 215187847711]
@@ -158,7 +154,6 @@ def transform(
         if use_early_stopping and last_highest_label == highest_label:
             break
         last_highest_label = highest_label
-
 
     if use_early_stopping and fill_up_missing_iterations:
         expected_elements = (h + 1)

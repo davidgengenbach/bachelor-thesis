@@ -12,8 +12,7 @@ def get_params():
 
     pipeline = sklearn.pipeline.Pipeline([
         ('feature_extraction', fast_wl_estimator),
-        ('normalizer', None),
-        ('classifier', None)
+        ('normalizer', None)
     ])
 
     params = pipeline_helper.flatten_nested_params(dict(
@@ -24,7 +23,7 @@ def get_params():
     return pipeline, params
 
 
-def get_combined_params(text_reduced = True):
+def get_combined_params(text_reduced=True):
     graph_estimator, graph_params = get_params()
     text_estimator, text_params = text_pipeline.get_params(reduced=text_reduced)
 
@@ -47,28 +46,23 @@ def get_combined_params(text_reduced = True):
     ])
 
     pipeline = sklearn.pipeline.Pipeline([
-        ('features', combined_features),
-        ('classifier', None)
+        ('features', combined_features)
     ])
 
     return pipeline, params
 
 
-
 def get_fast_wl_params():
-    pipeline = sklearn.pipeline.Pipeline(
-        [
-            ('fast_wl', FastWLGraphKernelTransformer(debug = False)),
-            ('phi_picker', PhiPickerTransformer()),
-            ('normalizer', None)
-        ]
-    )
+    pipeline = sklearn.pipeline.Pipeline([
+        ('fast_wl', FastWLGraphKernelTransformer()),
+        ('phi_picker', PhiPickerTransformer()),
+    ])
 
     params = dict(
-        fast_wl__h=[7],
+        fast_wl__h=[5],
         fast_wl__phi_dim=[None],
-        phi_picker__return_iteration=['stacked'],
-        fast_wl__round_to_decimals=[-1, 6]
+        fast_wl__round_to_decimals=[-1, 10],
+        phi_picker__return_iteration=['stacked']
     )
 
     return pipeline, params

@@ -3,6 +3,7 @@ def add_prefix_to_params(params: dict, prefix: str) -> dict:
         prefix + k: v for k, v in params.items()
     }
 
+
 def flatten_nested_params(params: dict):
     if not isinstance(params, dict): return params
 
@@ -24,12 +25,15 @@ def flatten_nested_params(params: dict):
                     raise Exception('Invalid params type: "{}" (type={})'.format(flatted, type(flatted)))
     return out
 
+
 def remove_complex_types(params):
     out = {}
     for k, v in params.items():
         assert isinstance(v, list)
+
         def is_complex_type(x):
             return not isinstance(x, (int, float, str, bool, tuple))
+
         v = [v_ if not is_complex_type(v_) else type(v_).__name__ for v_ in v]
         out[k] = v
     return out

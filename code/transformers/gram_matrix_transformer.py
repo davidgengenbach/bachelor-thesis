@@ -1,8 +1,6 @@
 import sklearn
-import scipy
-from scipy import sparse
 
-class GramMatrixTransformer(sklearn.base.BaseEstimator, sklearn.base.TransformerMixin):
+class PhiListToGramMatrixTransformer(sklearn.base.BaseEstimator, sklearn.base.TransformerMixin):
 
     def __init__(self):
         pass

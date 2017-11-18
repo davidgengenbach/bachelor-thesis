@@ -4,7 +4,6 @@ Similar to the "zero" iteration of WL? The phi feature maps per dot product and 
 """
 import numpy as np
 import networkx as nx
-import collections
 import typing
 
 

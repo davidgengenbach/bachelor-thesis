@@ -81,7 +81,7 @@ def get_task_text(dataset_name: str) -> ExperimentTask:
 
 def get_task_combined(graph_cache_file: str) -> ExperimentTask:
     def process() -> tuple:
-        X, Y = graph_helper.get_filtered_text_graph_dataset(graph_cache_file)
+        X, Y = graph_helper.get_combined_text_graph_dataset(graph_cache_file)
 
         graphs = [g for (g, _, _) in X]
         graph_helper.convert_graphs_to_adjs_tuples(graphs)

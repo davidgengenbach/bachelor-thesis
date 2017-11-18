@@ -7,7 +7,7 @@ import spacy
 from joblib import delayed, Parallel
 
 from preprocessing import preprocessing
-from utils import dataset_helper, graph_helper
+from utils import dataset_helper, graph_helper, helper
 
 
 def get_args():
@@ -27,7 +27,9 @@ def get_args():
 
 def main():
     args = get_args()
-    print('args=', args)
+
+    helper.print_script_args_and_info(args)
+
     Parallel(n_jobs=args.n_jobs)(delayed(process_dataset)(dataset_name, args) for dataset_name in dataset_helper.get_all_available_dataset_names())
 
 def process_dataset(dataset, args):
@@ -36,7 +38,7 @@ def process_dataset(dataset, args):
     #X, Y = X[:1], Y[:1]
 
     print('dataset: {:15} - preprocessing'.format(dataset))
-    X_preprocessed = preprocessing.preprocess_text_spacy(X, only_nouns=False, min_length=args.min_length, concat = False)
+    X_preprocessed = preprocessing.preprocess_text_spacy(X, n_jobs = args.n_jobs_coo, only_nouns=False, min_length=args.min_length, concat = False)
     
     for window_size in range(args.window_size_start, args.window_size_end):
         for only_nouns in [False, True]:
@@ -48,10 +50,10 @@ def process_dataset(dataset, args):
 
             print('dataset: {:15} - window_size={}, only_nouns={:<6} ({})'.format(dataset, window_size,  only_nouns, cache_file))
 
+            X_filtered = X_preprocessed
+
             if only_nouns:
                 X_filtered = [[word for word in doc if (word.pos == spacy.parts_of_speech.NOUN) and (word.text.strip() != '')] for doc in X_preprocessed]
-            else:
-                X_filtered = X_preprocessed
 
             X_processed, Y_processed = graph_helper.convert_dataset_to_co_occurence_graph_dataset(
                 X_filtered,

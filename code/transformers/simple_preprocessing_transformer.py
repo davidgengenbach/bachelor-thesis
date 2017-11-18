@@ -1,5 +1,4 @@
 from preprocessing import preprocessing
-import spacy
 import sklearn
 
 class SimplePreProcessingTransformer(sklearn.base.BaseEstimator, sklearn.base.TransformerMixin):

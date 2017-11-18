@@ -5,7 +5,7 @@ import os
 import scipy
 import sklearn
 from transformers.phi_picker_transformer import PhiPickerTransformer
-from transformers.gram_matrix_transformer import GramMatrixTransformer
+from transformers.gram_matrix_transformer import PhiListToGramMatrixTransformer
 from transformers.fast_wl_graph_kernel_transformer import FastWLGraphKernelTransformer
 from sklearn import model_selection
 from sklearn import linear_model
@@ -50,7 +50,7 @@ class GraphHelperTestCase(unittest.TestCase):
         for graph_dataset, dataset_name in self.iterate_graph_cache_datasets():
             if '_v2' not in graph_dataset: continue
             with self.subTest(graph_dataset = graph_dataset, dataset_name = dataset_name):
-                X_combined, Y_combined = graph_helper.get_filtered_text_graph_dataset(graph_dataset)
+                X_combined, Y_combined = graph_helper.get_combined_text_graph_dataset(graph_dataset)
                 for (graph, text, y_id), y in zip(X_combined, Y_combined):
                     for node, data in graph.nodes(data=True):
                         self.assertEqual(node, data['name'])

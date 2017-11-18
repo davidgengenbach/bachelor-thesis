@@ -16,11 +16,13 @@ TYPE_CONCEPT_MAP = 'concept-map'
 
 GRAPH_TYPES = [TYPE_COOCCURRENCE, TYPE_CONCEPT_MAP]
 
+
 def get_graph_type_from_filename(x):
     for t in GRAPH_TYPES:
         if t in x:
             return t
     return None
+
 
 def add_shortest_path_edges(graph, cutoff=2):
     if graph.number_of_edges() == 0 or graph.number_of_nodes() == 0:
@@ -41,12 +43,6 @@ def convert_dataset_to_co_occurence_graph_dataset(X, Y, min_length=2, n_jobs=4, 
 
     graphs = Parallel(n_jobs=n_jobs)(delayed(convert_from_numpy_to_nx)(*mat) for mat in mats)
     return graphs, Y
-
-
-def get_wl_args(graphs):
-    nodes = [sorted(g.nodes()) for g in graphs]
-    adjs = [nx.adjacency_matrix(g, nodelist=labels).toarray() for g, labels in zip(graphs, nodes)]
-    return adjs, nodes
 
 
 def get_all_node_labels(graphs, as_sorted_list=True):
@@ -86,7 +82,7 @@ def convert_from_numpy_to_nx(word2id, id2word, mat):
     return graph
 
 
-def get_graphs_from_folder(folder, ext='gml', undirected=True, verbose=False):
+def get_graphs_from_folder(folder, ext='gml', undirected=False, verbose=False):
     """Reads in and parses all gml graphs from a folder.
 
     Args:
@@ -102,7 +98,7 @@ def get_graphs_from_folder(folder, ext='gml', undirected=True, verbose=False):
     empty_graphs = []
 
     def get_all_files(folder):
-        files = glob('{}/**/*.gml'.format(folder), recursive=True) + glob('{}/**/*.graph'.format(folder), recursive=True)
+        files = glob('{}/**/*.{}'.format(folder, ext), recursive=True) + glob('{}/**/*.graph'.format(folder), recursive=True)
         return sorted(files)
 
     def extract_y_and_id(file_path):
@@ -152,7 +148,7 @@ def convert_adjs_tuples_to_graphs(X):
         X[idx] = g
 
 
-def convert_graphs_to_adjs_tuples(X, copy = False):
+def convert_graphs_to_adjs_tuples(X, copy=False) -> typing.Iterable:
     """Converts the graphs from the nx.Graph format to a tuple.
     Note: this function changes the input!
 
@@ -187,15 +183,6 @@ def convert_graphs_to_adjs_tuples(X, copy = False):
     return X_
 
 
-
-def get_empty_graphs_count(graphs):
-    empty_graph_counter = 0
-    for adj, nodes in graphs:
-        if len(nodes) < 1:
-            empty_graph_counter += 1
-    return empty_graph_counter
-
-
 def get_gml_graph(graph_str, undirected=False, num_tries=20, verbose=False):
     """Given a gml string, this function returns a networkx graph.
     Mostly tries to resolve "duplicate node label" exceptions by replacing node labels with the first occurrence of that label.
@@ -215,6 +202,7 @@ def get_gml_graph(graph_str, undirected=False, num_tries=20, verbose=False):
             next_line = graph_str_lines[idx + 1]
             label = next_line.replace('name', 'label', 1)
             graph_str_lines[idx] = label
+
     def convert_to_nx(graph_):
         try:
             graph = nx.parse_gml('\n'.join(graph_str_lines))
@@ -282,7 +270,7 @@ def _parse_graph(graph_definition: str):
     return adj_matrix, vertices, clazz[0]
 
 
-def get_filtered_text_graph_dataset(graph_cache_file, use_ana = False) -> typing.Tuple[typing.List[typing.Tuple], typing.List]:
+def get_combined_text_graph_dataset(graph_cache_file, use_ana=False) -> typing.Tuple[typing.List[typing.Tuple], typing.List]:
     dataset_name = filename_utils.get_dataset_from_filename(graph_cache_file)
 
     X_text, Y_text = dataset_helper.get_dataset(dataset_name + ('-ana' if use_ana else ''))
@@ -303,11 +291,12 @@ def get_filtered_text_graph_dataset(graph_cache_file, use_ana = False) -> typing
     return X_combined, Y_combined
 
 
-def remove_graph_labels(X):
+def get_adjs_only(X):
     if not len(X) or not isinstance(X[0], tuple):
         return
     for idx, x in enumerate(X):
         X[idx] = x[0]
+
 
 def get_graphs_with_mutag_enzyme_format(folder):
     graphs = glob('{}/*.graph'.format(folder))
@@ -321,9 +310,9 @@ def get_graphs_with_mutag_enzyme_format(folder):
     return X, Y
 
 
-def graph_to_text(graph, use_edges = True):
+def graph_to_text(graph, use_edges=True):
     text = []
-    for source, target, data in graph.edges(data = True):
+    for source, target, data in graph.edges(data=True):
         if use_edges and 'name' in data:
             t = [source, data['name'], target]
         else:
@@ -332,7 +321,7 @@ def graph_to_text(graph, use_edges = True):
     return '. '.join(text)
 
 
-def warmup_graph_cache(graphs_folder = 'data/graphs', use_cached = False):
+def warmup_graph_cache(graphs_folder='data/graphs', use_cached=False):
     for f in glob('{}/*'.format(graphs_folder)):
         if not os.path.isdir(f): continue
         is_graph_folder = os.path.isdir('{}/all'.format(f)) or len(glob('{}/*0.gml'.format(f))) != 0
@@ -340,12 +329,11 @@ def warmup_graph_cache(graphs_folder = 'data/graphs', use_cached = False):
         print('Creating: {}'.format(f))
         dataset_helper.get_gml_graph_dataset(f, use_cached=use_cached)
 
-def get_graphs_only(X):
+
+def get_graphs_only(X) -> list:
     assert len(X)
     if isinstance(X[0], nx.Graph) or (isinstance(X[0], tuple) and not isinstance(X[0][1], str)):
         return X
-
     assert isinstance(X[0], tuple)
-
     X_ = [x for x, _ in X]
     return X_

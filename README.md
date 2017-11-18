@@ -4,10 +4,10 @@
 
 ## Install Instructions
 
-TODO!
 ```shell
-python -m spacy.en.download all
+cd code
+pip install -r requirements.txt
+./script_download_datasets.sh
+python -m spacy download en
 python -c 'import nltk; nltk.download("stopwords")'
-wget -O ana-datasets.zip "https://www.dropbox.com/s/p0xr0oe6sffb4xi/phd-datasets.zip?dl=0"
-unzip ana-datasets.zip
 ```

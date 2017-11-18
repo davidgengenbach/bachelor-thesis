@@ -15,7 +15,6 @@ from transformers.fast_wl_graph_kernel_transformer import FastWLGraphKernelTrans
 from transformers.nx_graph_to_tuple_transformer import NxGraphToTupleTransformer
 from transformers.relabel_graphs_transformer import RelabelGraphsTransformer
 from utils import dataset_helper, graph_helper, filter_utils, filename_utils, helper
-from classification.classification_tasks import Task
 from utils.logger import LOGGER
 
 import sklearn
@@ -27,7 +26,6 @@ def get_args():
     parser.add_argument('--n_jobs', type=int, default=1)
     parser.add_argument('--wl_h', type=int, default=6)
     parser.add_argument('--max_path_distance_to_add', type=int, default=2)
-    parser.add_argument('--remove_missing_labels', type=bool, default=True)
     parser.add_argument('--wl_sort_classes', action='store_true')
     parser.add_argument('--force', action='store_true')
     parser.add_argument('--disable_wl', action='store_true')
@@ -66,7 +64,7 @@ def process_graph_cache_file(graph_cache_file, args):
     label_lookup_files = glob('{}/{}.*.label-lookup.npy'.format(args.lookup_path, dataset))
 
     tuple_trans = NxGraphToTupleTransformer()
-    fast_wl_trans = FastWLGraphKernelTransformer(h=args.wl_h, remove_missing_labels=args.remove_missing_labels)
+    fast_wl_trans = FastWLGraphKernelTransformer(h=args.wl_h)
 
     try:
         phi_graph_cache_file = graph_cache_file.replace('.npy', '.phi.npy')
