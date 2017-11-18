@@ -89,7 +89,7 @@ def get_task_combined(graph_cache_file: str) -> ExperimentTask:
 
         X = [(graph, text) for (graph, text, _) in X]
 
-        estimator, params = graph_pipeline.get_combined_params(text_reduced=False)
+        estimator, params = graph_pipeline.get_combined_params(text_reduced=True)
         graph_pipeline.add_num_vertices_to_fast_wl_params(params, num_vertices=num_vertices)
 
         return ClassificationData(X, Y, estimator, params)

@@ -23,7 +23,6 @@ def get_params(reduced = False):
     if reduced:
         params['vectorizer'] = [CountVectorizer()]
         params['vectorizer__ngram_range'] = [(1, 1)]
-        params['vectorizer__binary'] = [True]
-        params['preprocessing'] = [None]
+        params['vectorizer__binary'] = [True, False]
 
     return pipeline, params

@@ -5,9 +5,8 @@ from utils import filename_utils, git_utils, time_utils, results_helper
 from utils.classification_options import ClassificationOptions
 from utils.logger import LOGGER
 from utils.remove_coefs_from_results import remove_coefs_from_results
-import pickle
 import os
-from . import task_helper
+from transformers.pipelines import pipeline_helper
 from .task_helper import ExperimentTask
 from transformers.pipelines.classifiers import get_classifier_params
 
@@ -56,6 +55,10 @@ def run_classification_task(task: ExperimentTask, cfo: ClassificationOptions):
     param_grid = dict(classifier_params, **param_grid)
     # Remove "voided" params
     param_grid = {k: v for k, v in param_grid.items() if v is not None}
+
+    param_grid_flattened = sklearn.model_selection.ParameterGrid(param_grid)
+
+    LOGGER.info('ParamGrid: {}\n\n'.format(pipeline_helper.remove_complex_types(param_grid)))
 
     result_filename_tmpl = filename_utils.get_result_filename_for_task(task)
 
