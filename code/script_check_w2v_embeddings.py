@@ -73,7 +73,7 @@ def process_dataset(dataset_name, args, embedding_models):
         for graph_cache_file in graph_cache_files:
             print('\tdataset: {:20} - Graph: {}'.format(dataset_name, graph_cache_file))
             X, Y = dataset_helper.get_dataset_cached(graph_cache_file)
-            labels = graph_helper.get_all_node_labels(X)
+            labels = graph_helper.get_all_node_labels_uniq(X)
             print('\tdataset: {:20} - #unique labels: {}'.format(dataset_name, len(labels)))
             counter = {'found': 0, 'not_found': 0}
             not_found_labels = []

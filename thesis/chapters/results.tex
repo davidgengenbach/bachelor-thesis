@@ -118,6 +118,9 @@ webkb & concept map &  0.472472 &  0.162010 &  0.222296 \\
 \end{figure}
 
 \subquestionref{question:comparison_coo}
+
+\todo[inline]{Co-occurrence:"Text kernel" performs nearly as well as normal text}
+\todo[inline]{Co-occurrence: only minor decrease (1\%) in performance when only using nouns}
 \begin{figure}[ht]
 \centering
 \missingfigure[figcolor=white]{}
@@ -125,14 +128,24 @@ webkb & concept map &  0.472472 &  0.162010 &  0.222296 \\
 \end{figure}
 
 \subquestionref{question:comparison_text}
+As one can see in Figure \ref{fig:results_cmap_vs_text}, the text-only approaches outperform graph-only approaches by a high margin.
+This is most likely due to the high compression factor of both concept maps and co-occurrence graphs.
+
 \begin{figure}[ht]
 \centering
 \missingfigure[figcolor=white]{}
 \caption{Comparison of concept maps with text}
+\label{fig:results_cmap_vs_text}
 \end{figure}
 
-
 \subquestionref{question:comparison_combined}
+As we have seen in the results of the last section, text-based approaches outperform graph-only approaches.
+In this section we investigate how and whether the graph-based approaches improve the classification score when combined with text-based approaches.
+In Figure \ref{fig:results_comparison_combined} we see the classification scores for the combined features for both co-occurrence graphs and concept maps.
+One observation is that the relative performance of the combined approach to the text-only approach greatly varies per dataset.
+
+\todo[inline]{SVM trained on combined, coefficients}
+
 \begin{figure}[ht]
 \centering
 \begin{tabular}{llcc}
@@ -160,7 +173,8 @@ webkb
           & combined &  0.722667 &  0.741964\\
 \bottomrule
 \end{tabular}
-\caption{Comparison of classification using both concept maps and text. TODO: Add standard deviations}
+\caption{Comparison of classification using both concept maps and text. TODO: Add standard deviations}%
+\label{fig:results_comparison_combined}
 \end{figure}
 
 \labelsubsection{Related And Intermediate Observations}{subsec:related_and_intermediate_observation}

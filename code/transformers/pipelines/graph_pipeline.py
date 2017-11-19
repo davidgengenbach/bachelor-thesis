@@ -64,6 +64,7 @@ def get_fast_wl_params(reduced = False):
         fast_wl__h=[5],
         fast_wl__phi_dim=[None],
         fast_wl__round_to_decimals=[-1, 10],
+        phi_picker__use_zeroth=[False],
         phi_picker__return_iteration=['stacked']
     )
 

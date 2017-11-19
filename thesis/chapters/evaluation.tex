@@ -73,27 +73,24 @@ Before creating the vector representations of the text documents or the creation
 \end{itemize}
 These pre-processing steps are similar to the pre-processing done in \cite{Cachopo2007}.
 
+For the co-occurrence graphs, we also optionally filtered out the non-nouns to increase the compression and thus achieve more comparability to concept maps.
+
 \paragraph{Text-based representations}
-For the text classification pipeline, we used two different vectorization algorithms, namely
+For the text classification pipeline, we used two different text vectorization algorithms, namely
 \begin{itemize}
-\item{Bag Of Words (BoW): this vectorizer simply gathers all words in the corpus and creates a mapping between words and indices (ids). Then it creates a vector representation for each text so that the i-th vector component  is the count of the corresponding word in the text. Ie. $i$ is the index of the word in the mapping.}
-\item{Term-Frequency-Inverse-Document-Frequency (TfIdf): this approach is similar to BoW. Instead of using only the counts of a word in the text, this approach also incorporates the term frequency and the inverse document frequency of the words to the vector representation (see below).}
+\item{Bag Of Words (BoW): this algorithm simply gathers all words in the corpus and creates a mapping between words and indices (ids). Then it creates a vector representation for each text so that the i-th vector component is the count of the corresponding word in the text. Ie. $i$ is the index of the word in the mapping.}
+\item{Term-Frequency-Inverse-Document-Frequency (TfIdf): this approach is an extension to BoW. Instead of using only the counts of a word in the text, this approach also incorporates the term frequency and the inverse document frequency of the words into the vector representation.}
 \end{itemize}
 Both approaches can also be extended by not only utilizing single words (unigrams) but n-grams, too. A word n-gram consists of $n$ words that appear consecutively in the text.
 For example, the sentence ``This is a sentence." has the following 2-grams, or bigrams: $\{ (This, is), (is, a), (a, sentence) \}$.
-For our purposes, we looked at n-grams of lengths (1), (1, 2) and (2).
+For our purposes, we looked at both uni-grams and bi-grams.
 Note that word n-grams do not take word inversion into account, ie. the bigram (a, b) is not the same as (b, a).
-
-\todo[inline]{Explain why we used these ranges of n-grams}
-\todo[inline]{Explain tfidf}
 
 \paragraph{Graph-based representations}
 To compare the performance of concept maps with other graphs, we generated co-occurrence graphs with window sizes of $\{1, 2\}$.
+We also evaluated the performance of co-occurrence graphs where only nouns are retained to mimic the compression factor of concept maps.
 
-\todo[inline]{Co-occurrence and concept maps}
-\todo[inline]{Mention filtering by nouns}
-\todo[inline]{Window sizes}
-\todo[inline]{Mention Tobias' code for generating the concept maps}
+For the extraction of the concept maps from the text, we used the implementation by Falke \cite{Falke2017}.
 
 \begin{figure}[ht]
 \centering\includegraphics[width=0.6\linewidth]{assets/figures/approach.pdf}
@@ -106,19 +103,30 @@ To compare the performance of concept maps with other graphs, we generated co-oc
 
 \paragraph{ling-spam}
 The Ling-Spam dataset was created by Ion Androutsopoulos et al. \cite{Androutsopoulos2000}.
-The corpus contains the texts, which are categorized as ``spam" and ``no spam". For this work, we used the version which can be downloaded from here\footnote{\url{http://csmining.org/index.php/ling-spam-datasets.html}}.
+The corpus contains the texts that are categorized as ``spam" and ``no spam".
+One thing to note is that the classification scores with standard methods are quite high by default, so most likely there is substantial increase in performance to be expected.
+
+For this work, we used the version which can be downloaded from here \footnote{\url{http://csmining.org/index.php/ling-spam-datasets.html}}.
+
 
 \paragraph{ng20}
-The 20 Newsgroup corpus \cite{Lang} consists of posts from an internet forum. They are labeled with 20 different classes, corresponding to the topic they have been posted on. The texts are mostly informal and consist of discussions between users of the forum.
+The 20 Newsgroup corpus \cite{Lang} consists of posts from an internet forum. Each post is labeled with one of 20 different classes, corresponding to the topic it have been posted on. The texts are mostly informal and consist of discussions between users of the forum.
 For this dataset, as an additional pre-processing step, we remove the headers and footers from the documents.
 
 While the classes are nearly evenly distributed, some classes are highly correlated. This adds an additional difficulty to the task.
+\todo[inline]{Cite!}
 
-\todo[inline]{Explain correlation more throughly}
+We obtained the ng20 dataset from here \footnote{\url{http://scikit-learn.org/stable/modules/generated/sklearn.datasets.fetch_20newsgroups.html#sklearn.datasets.fetch_20newsgroups}}.
 
 \paragraph{reuters-21578}
-\footnote{\url{http://www.nltk.org/book/ch02.html#reuters-corpus}}
-\todo[inline]{Documents came from Reuters newswire in 1987.}
+This dataset has been collected and published by Carnegie Group, Inc. and Reuters, Ltd.
+
+The class distribution of the reuters-21578 dataset is highly skewed, ie. the number of instances per class is not the same for all classes. 
+
+
+We obtained the reuters-21578 dataset from here
+\footnote{\url{http://www.nltk.org/book/ch02.html#reuters-corpus}}.
+
 
 \paragraph{r8}
 This dataset is a subset of the \textit{reuters-21578} dataset.

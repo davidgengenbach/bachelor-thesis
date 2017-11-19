@@ -138,6 +138,7 @@ def get_results(folder=None, use_already_loaded=True, results_directory=RESULTS_
                 result['words'] = 'concepts'
         elif 'dummy' in result_file:
             result['type'] = 'dummy'
+            result['words'] = 'dummy'
         else:
             result['type'] = 'text'
             result['words'] = ['all' for x in result['params']]

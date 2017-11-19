@@ -1,21 +1,96 @@
-\todo[inline]{Lay groundwork for the later description of the problem}
+In this chapter we will introduce the notations and concepts we will use in subsequent sections.
+
 \todo[inline]{Introductions to used classifiers, concepts}
 \todo[inline]{Concretize the problem and its notation}
 
 \labelsubsection{Classification Task}{subsec:classification_task}
-\todo[inline]{Supervised vs. unsupervised}
+Classification in machine learning is the task of automatically assigning classes, or labels, to datapoints.
+Given a dataset $D = \{(x_1, y_1), (x_2, y_2), \ldots, (x_n, y_n) \} \subseteq X \times Y$ of $n$ items where $(x_i, y_i)$ are dataset instances, the supervised classification task is to create a classifier which predicts a label $y' \in Y$ for a given $x \in X$.
+In this work, the labels $Y$ of the dataset are denoted with $Y_d = (y_1, y_2, \ldots, y_n )=$, the predicted labels are denoted as $Y'_d = (y'_1, y'_2, \ldots, y'_n )$.
+When the number of classes $|Y|$ is 2, the classification task is also called binary classification. When $|Y$ is greater than 2, the classification is called multiclass classification.
+In our case, the datapoints $x_i$ will be texts or graphs, therefor our task is called text and graph classification respectively.
+
+\begin{figure}[ht]
+\centering
+\begin{tabular}{llll}
+ & Notation & Definition & \\
+\toprule
+Datapoint & $x$ & $x \in X$
+\\
+Label & $y$ & $y \in Y$
+\\
+Real and predicted label of $x_i$ & $y_i$, $y'_i$ &  $y_i, y'_i \in Y$
+\\
+Instance & d_i & $(x_i, y_i) \in X \times Y$
+\\
+Dataset & $D$ & $\{(x_1, y_1), \ldots, (x_n, y_n) \} \subseteq X \times Y$ & 
+\\
+\end{tabular}
+\caption{Classification notation.}
+\end{figure}
+
+The performance of a classifier is evaluated by comparing the predicted labels $y'_i$ for all datapoints $x_i$ with the real label $y_i$ in the dataset.
+There are several metrics for evaluating the performance of a classifier.
+The metrics we use in this work are summarized in Figure \ref{fig:classification_metrics}.
+
+\begin{figure}[ht]
+\centering
+\renewcommand*{\arraystretch}{2.1}
+\begin{tabular}{llll}
+ & Notation & Definition & \\
+\toprule
+True positives of $y$ &
+$TP_y$ &
+$\displaystyle |\{i | y'_i = y, y'_i = y_i \}|$ &
+\\
+False positives of $y$ &
+$FP_y$ &
+$\displaystyle |\{i | y'_i = y, y_i \neq y \}|$ &
+\\
+True negatives of $y$ &
+$TN_y$ &
+$\displaystyle |\{i | y'_i \neq y, y_i \neq y\}|$ &
+\\
+False negatives of $y$ &
+$FN_y$ &
+$\displaystyle |\{i | y'_i \neq y, y_i = y\}|$ &
+\\
+\midrule
+Accuracy &
+$A$ &
+$\displaystyle \frac{\sum\nolimits_{y \in Y} TP_y}{|D|}$ &
+\\
+Precision of $y$ &
+$Pr_y$ &
+$\displaystyle \frac{TP_y}{TP_y + FP_y} $ &
+$Pr_{\text{macro}} = \displaystyle \frac{\sum\nolimits_{y \in Y} Pr_y}{|Y|}$
+\\
+Recall of $y$ &
+$R_y$ &
+$\displaystyle \frac{TP_y}{TP_y + FN_y}$ &
+$R_{\text{macro}} = \displaystyle \frac{\sum\nolimits_{y \in Y} R_y}{|Y|}$
+\\
+F1 score of $y$ &
+$F1_y$ &
+$\displaystyle 2 \cdot \frac{Pr_y \cdot R_y}{Pr_y + R_y}$ &
+$F1_{\text{macro}} = \displaystyle \frac{\sum\nolimits_{y \in Y} F1_y}{|Y|}$
+\\
+\end{tabular}
+\caption{Classification performance metric notation. As performance metrics, we will us accuracy, macro precision, macro recall and the macro F1 score. The macro version of a metric takes into account how many elements there are in each class which is helpful for skewed datasets, ie. where the number of instances per label is not distributed uniformly per label.}\label{fig:classification_metrics}
+\end{figure}
+
 
 \labelsubsection{Texts}{subsec:texts}
 \todo[inline]{Mention approaches to represent text}
 
 \labelsubsection{Graphs}{subsec:graphs}
-A (labeled) graph is a triple $G = (V, E, \pi)$, where $V$ is the set of vertices or nodes, $E \subseteq V \times V$ are the edges and $\pi: V \to X$ is a labeling function which assigns a label to a given vertex.
+A labeled graph is a triple $G = (V, E, \pi)$, where $V$ is the set of vertices or nodes, $E \subseteq V \times V$ are the edges and $\pi: V \to X$ is a labeling function which assigns a label to a given vertex.
 
 A graph is called undirected when $\forall (v_1, v_2) \in E: (v_2, v_1) \in E$, otherwise it is called directed.
 
-A graph $G'=(V', E', \pi)$ is called a subgraph of the graph $G = (V, E, \pi)$ when $V' \subseteq V$, $E' \subseteq E$ and $\forall (v, v') \in V': v \in V' \land v' \in V'$.
+A graph $G'=(V', E', \pi)$ is called a subgraph of graph $G = (V, E, \pi)$ when $V' \subseteq V$, $E' \subseteq E$ and $\forall (v, v') \in V': v \in V' \land v' \in V'$.
 
-The neighbours $n(v)$ of a node $v$ are defined as the set $n(v) = \{v' | (v, v') \in E \}$.
+The (outgoing) neighbours $n(v)$ of a node $v$ are defined as the set $n(v) = \{v' | (v, v') \in E \}$.
 
 \paragraph{Walks and Paths}
 A walk on a graph is a (finite) sequence of edges, $w = (e_1, \cdots, e_n)$ with the constraint that $\forall 0 < i < n: \forall e_i = (v_1, v_2) \in w: \exists v_3: e_{i + 1} = (v_2, v_3)$. The length of the walk is $n$.
@@ -58,13 +133,13 @@ $d_{istance}(v, v')$ & Shortest path length between $v$ and $v'$ \\
 $c_{all}(G)$ & Set of all connected components of $G$ \\
 $c(v)$ & Connected component of $v$ \\
 \end{tabular}
+\caption{Graph notation.}
 \end{figure}
 
 \subsubsection{Concept Map}
 A concept map is a (directed) graph where the nodes are concepts.
-Concepts are tokens in a text.
-Concepts consist of one or more words.
-A directed edge between two concepts show that these concepts are related to each other. The edges can have labels, too.
+Concepts are important tokens in the text and consist of one or more words of the underlying text.
+An edge between two concepts show that these concepts are related to each other. Edges can have labels also.
 For an example of a concept map, see Figure \ref{fig:concept_map}.
 
 \begin{figure}[ht]
@@ -78,44 +153,45 @@ Concept maps are useful for visualizing concepts and their relation to each othe
 Concept maps can be used to quickly explore a given topic and immediately see connections between concepts.
 Through the degree of a concept, one can also infer the relative importance of that concept in the underlying text.
 
-By combining different texts of the same topic, one can also create a concept map for that topic.
-The concepts are not confined to a single text in this case.
+By combining different texts of the same topic, one can also create a concept map for the whole topic.
+In this case, the concepts are not confined to a single text.
 
-The visualization with concept maps of one or more individual texts therefor enables the non-linear exploration of multiple texts of a topic.
+The visualization with concept maps of one or more individual texts therefor enables the non-linear exploration of multiple texts of a topic at the same time.
 
-Because the concepts in a concept map often contain only a small subset of the text, concept maps also summarize the underlying text.
+Since the concepts in a concept map often contain only a small subset of the text, concept maps also summarize the underlying text.
 Only relevant concepts and their relation to each other are captured, making concept maps interesting for (multi-document) text summarization.
 
 In Chapter \ref{sec:implementation} we introduce the concept map extraction implementation we used and further explain the steps in creating the concept maps.
 
-\todo[inline]{"Capture important concepts and the structure of texts (spanning over whole text)"}
-
 \subsubsection{Co-Occurrence Graph}
-A co-occurrence graph, or graph-of-words, is generated from a text by creating a (undirected) graph with the words of the underlying text as nodes.
-There is an edge between two nodes if their words co-occur in the text.
+A co-occurrence graph, or graph-of-words, is generated from a text by creating a (directed) graph with all the words of the underlying text as nodes.
+There is an edge between two nodes if the labels of the source and target node co-occur in the text.
 Two words co-occur when the distance between the words in the text is below a given threshold, the window size.
+Co-occurrence graphs can have edge weights corresponding to the counts of the co-occurrence of the words in the text.
 
 Figure \ref{fig:cooccurrence_graphs} shows examples of co-occurrence graphs with different windows sizes.
 
 \begin{figure}[ht]%
     \centering
-    \subfloat[Window size: 1]{{\includegraphics[width=0.3\textwidth]{assets/figures/cooccurrence_graph_1.pdf} }}%
-    \subfloat[Window size: 2]{{\includegraphics[width=0.3\textwidth]{assets/figures/cooccurrence_graph_2.pdf} }}%
-    \subfloat[Window size: 3]{{\includegraphics[width=0.3\textwidth]{assets/figures/cooccurrence_graph_3.pdf} }}%
-    \caption{Example for co-occurrence graphs. Generated from the sentence: ``Quotation is a serviceable substitute for wit". With increasing window size the number of edges and therefor the connectedness of the co-occurrence graph also increases.}%
+    \subfloat[Window size: 1]{{\includegraphics[width=0.3\textwidth]{assets/figures/cooccurrence/window_size_1.pdf} }}%
+    \subfloat[Window size: 2]{{\includegraphics[width=0.3\textwidth]{assets/figures/cooccurrence/window_size_2.pdf} }}%
+    \subfloat[Window size: 6]{{\includegraphics[width=0.3\textwidth]{assets/figures/cooccurrence/window_size_6.pdf} }}%
+    \caption{Example for co-occurrence graphs. Generated from the sentence: ``Quotation is a serviceable substitute for wit". With increasing window size, the number of edges and therefor the connectedness of the co-occurrence graph also increases.}%
     \label{fig:cooccurrence_graphs}%
 \end{figure}
 
 Since co-occurrence graphs not only contain the words of the underlying text but also their co-occurrence, they capture not only the content of the text but also the relation between words of the text.
-Therefor they contain structural information about the text as well.
-
-\todo[inline]{Co-occurrence graphs can have edge weights corresponding to the number of occurrences of a co-occurrence of words. One can derive the number of occurrences of the label by summing up the edge weights of edges of a node}
+Therefor they contain structural information about the text.
+Because of their similarity to concept maps, we will use co-occurrence maps as a baseline for the graph classification.
+It has to be noted that this comparison is not entirely fair since co-occurrence graphs contain all words of the text and there is only a small loss of information.
+The concept maps we extracted on the other hand have a far greater compression factor as we will see, ie. they summarize the content more.
+For our comparison, we will also not use the edge weights since concept maps do not have edge weights.
 
 \labelsubsection{Graph Kernel}{subsec:graph_kernel}
 In most cases, texts and graphs are not of fixed size.
-However, most classification algorithms can only operate on fixed size vectors.
+However, most classification algorithms operate on fixed size vectors.
 Fortunately, there are several approaches to overcome this problem.
-One of these approaches are so-called kernels.
+One of the approaches to nevertheless classify non-fixed size objects are so-called kernels.
 
 A kernel is a function $k$ which returns a measure of similarity between two objects:
 \begin{equation*}
@@ -125,17 +201,19 @@ k: X \times X \rightarrow \mathbb{Q}
 A kernel function has to be:
 \begin{itemize}
     \item{\textit{symmetric}: $k(x, x') = k(x', x)$}
-    \item{\textit{non-negative definite}: \dots}
+    \item{\textit{non-negative definite}: $\forall x, x': k(x, x') \geq 0$}
 \end{itemize}
 
-An interesting property of kernels is that they can be combined easily with symmetric operations, eg. by adding or multiplicating the results of two kernel functions, $k_1(x, x')$ and $k_2(x, x')$:
+An interesting property of kernels is that they can be combined easily with symmetric operations, eg. by adding or multiplicating the results of two kernel functions, $k_1$ and $k_2$:
+
 \begin{equation*}
-k_{combined}(x, x') = k_1(x, x') * k_2(x, x')
+k_{combined}(x, x') = k_1(x, x') \cdot k_2(x, x')
 \end{equation*}
+
 One can easily confirm that when $k_1$ and $k_2$ are valid kernels, $k_{combined}$ is also a valid kernel.
 This property enables composite kernels to capture multiple means of similarity in one metric.
 
-For example, a simple kernel on two numbers (or vectors) is $k(x, x') = | x * x' |$, where $| \cdot |$ is the absolute value (or a norm).
+For example, a simple kernel on two numbers (or vectors) is $k(x, x') = | x \cdot x' |$, where $| \cdot |$ is the absolute value (or a norm).
 Another example of a kernel between strings is $k(s, s') = \delta(s = s')$, where $\delta(\cdot)$ is the Kronecker delta. This kernel returns 1 if the two given strings are the same, and 0 if they are different.
 Note that both these kernels are indeed valid.
 
@@ -143,9 +221,11 @@ Kernel functions can be used in kernel methods for classification and other task
 Prominent examples of kernel methods are the SVM, kernelized PCA and Gaussian Processes.
 
 For a subset of kernels, one can also create explicit feature vectors for a given object. In this case, the kernel can be written as an inner product on two fixed-size vectors:
+
 \begin{equation*}
     k(X, X') = \langle \phi(X), \phi(X') \rangle
 \end{equation*}
+
 Here, $\phi(X)$ returns a fixed-size vector representation of the object $X$ and is the main part of the kernel.
 This $\phi(X)$ can then be used in all vector-based classification algorithms, not only kernel methods.
 An example for such a kernel is the string kernel which counts the number of occurrences of words in a given text, then creates a vector representation by giving each word an index in the vector and setting this index to the number of occurrences of that word. The inner product of two of these vector representations then create a kernel.
@@ -156,6 +236,7 @@ Graph kernels that measure the similarity of two graphs are related to the isomo
 The graph isomorphism test returns whether two graphs are structurally the same.
 In this test, the labels of the vertices and edges are ignored. Otherwise the task would be far easier since one could simply compare the labels and edges of the graphs - when they are both exactly the same, the graphs are the same.
 Instead, in the graph isomorphism test one has to find two mappings: one bijective mapping $\psi_{V}: V_1 \mapsto V_2$ from the vertices of the first graph to the vertices of the second graph and another bijective mapping $\psi_{E}: E_1 \mapsto E_2$ with the constraint:
+
 \begin{equation*}
     \forall e = (v_s, v_t) \in E_1:
     \exists e' = (v'_s, v'_t) \in E_2:
@@ -165,7 +246,6 @@ Instead, in the graph isomorphism test one has to find two mappings: one bijecti
     \land
     \psi_{V}(v_t) = v'_t
 \end{equation*}
-
 
 \todo[inline]{Explain constraints for the mapping}
 If such a mapping exists, the two graphs are called isomorphic.
@@ -208,7 +288,7 @@ The scope of a graph kernel can therefor also vary widely from only capturing na
 \paragraph{Simple Equality Graph Kernel}
 This graph kernel simply compares the nodes and edges of the two graphs and returns whether they are exactly the same:
 \begin{equation*}
-    k(G_1, G_2) = \delta(V_{G_1} = V_{G_2}) * \delta(E_{G_1} = E_{G_2})
+    k(G_1, G_2) = \delta(V_{G_1} = V_{G_2}) \cdot \delta(E_{G_1} = E_{G_2})
 \end{equation*}
 This kernel takes both structure and content of the graphs into account. Note that there is no partial similarity. The co-domain of $k$ is $\{0, 1\}$, returning 1 when the graphs are exactly the same and 0 otherwise.
 While this is an exact, simple and fast algorithm, in most cases it is not of great use since it depends on exact matches.

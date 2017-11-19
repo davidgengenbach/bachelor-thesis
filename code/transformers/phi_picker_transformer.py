@@ -4,7 +4,7 @@ from scipy import sparse
 
 class PhiPickerTransformer(sklearn.base.BaseEstimator, sklearn.base.TransformerMixin):
 
-    def __init__(self, return_iteration=0, transpose=False, use_zeroth = True):
+    def __init__(self, return_iteration=0, transpose=False, use_zeroth=False):
 
         assert return_iteration == 'stacked' or return_iteration >= -1
 

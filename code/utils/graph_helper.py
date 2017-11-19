@@ -45,7 +45,15 @@ def convert_dataset_to_co_occurence_graph_dataset(X, Y, min_length=2, n_jobs=4, 
     return graphs, Y
 
 
-def get_all_node_labels(graphs, as_sorted_list=True):
+def get_all_node_labels(graphs):
+    labels = []
+    for graph in graphs:
+        assert isinstance(graph, nx.Graph)
+        labels += graph.nodes()
+    return labels
+
+
+def get_all_node_labels_uniq(graphs, as_sorted_list=True):
     """Returns all unique labels in a list of graphs.
 
     Args:

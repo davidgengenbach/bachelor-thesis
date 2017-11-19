@@ -51,7 +51,7 @@ def process_dataset(dataset_name, pre_trained_embedding, args):
     all_labels = set()
     for graph_cache_file in used_graphs:
         X, _ = dataset_helper.get_dataset_cached(graph_cache_file)
-        all_labels |= graph_helper.get_all_node_labels(X, as_sorted_list = False)
+        all_labels |= graph_helper.get_all_node_labels_uniq(X, as_sorted_list = False)
 
     LOGGER.info('{:15} - Resolving embeddings'.format(dataset_name))
     embeddings_pre_trained, not_found_pre_trained_coreferenced, not_found_trained, not_found_pre_trained, lookup, similar_els = embeddings.get_embeddings_for_labels_with_lookup(
