@@ -10,7 +10,7 @@ import scipy.sparse
 from joblib import Parallel, delayed
 from sklearn.model_selection import train_test_split
 from sklearn.utils import shuffle
-from utils import filename_utils
+from utils import filename_utils, graph_helper
 from preprocessing import preprocessing
 import spacy
 
@@ -253,15 +253,15 @@ def get_all_cached_datasets(cache_path = CACHE_PATH):
     return sorted(glob(cache_path + '/*.npy'))
 
 
-def get_all_cached_graph_datasets(dataset_name = None, cache_path = CACHE_PATH):
+def get_all_cached_graph_datasets(dataset_name = None, graph_type = None, cache_path = CACHE_PATH):
     def graph_dataset_filter(cache_file):
         filename = filename_utils.get_filename_only(cache_file)
         is_graph_dataset = filename.startswith('dataset_graph')
         is_not_relabeled = '_relabeled' not in filename
         is_not_gram_or_phi = 'gram' not in filename and 'phi' not in filename
         is_in_dataset = not dataset_name or dataset_name == filename_utils.get_dataset_from_filename(filename)
-
-        return np.all([is_graph_dataset, is_not_relabeled, is_not_gram_or_phi, is_in_dataset])
+        is_right_graph_type = not graph_type or graph_type == graph_helper.get_graph_type_from_filename(cache_file)
+        return np.all([is_graph_dataset, is_not_relabeled, is_not_gram_or_phi, is_in_dataset, is_right_graph_type])
 
     return [x for x in get_all_cached_datasets(cache_path) if graph_dataset_filter(x)]
 

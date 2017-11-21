@@ -185,7 +185,38 @@ The permutation test tests whether the observed difference of the performances o
 The test only returns a probability for observing a given performance difference. The test does not give a definite answer whether the difference was due to chance.
 When the probability of observing the difference by chance is below a given threshold, we say that the test shows that the approaches really differ in their performance.
 
+Following is an example of a permutation test.
+
+\paragraph{Example}
+In this example we will use the permutation test to test whether the 
+  performances of two given classifiers, Model A and B, differ in a non-random way.
+In Figure \ref{fig:example_permutation_test} we depicted the steps in the permutation test. 
+In our example, the hypothesis is that Model A has a lower performance than Model B.
+For this example we chose accuracy as the score metric.
+To calculate the accuracy, we need the true labels, \textbf{\subref{fig:permutation_test_true}}, of the dataset.
+In \textbf{\subref{fig:permutation_test_model_predictions}} we see the predicted labels of the two models and the accuracy as a score beneath them. 
+We also see the difference in the scores.
+In \textbf{\subref{fig:permutation_test_model_predictions}} we also see that Model A has a lower score than Model B.
+This lower score could be due to chance and not because Model B is fundamentally better than Model A.
+To test our hypothesis more throughly we now execute the permutation test.
+In the first step, \textbf{\subref{fig:permutation_test_samples}}, we generate $n$ samples by interchanging the predictions of the two models randomly.
+Here, we depicted three randomly selected samples from the $n$ generated samples.
+To generate a sample, we switch the predictions of Model A and B for every document with a probability of 0.5.
+The switch of two predictions is marked with a red arrow in our depiction.
+In the optimal case, one could generate all possible permutations of the predictions, ie. generate all possible samples.
+Unfortunately this is often not an option due to the sheer number of possibilities. That said, generating a large number of samples also gives a good basis for judgment.
+Next, we calculate the accuracy scores for both models for each of the samples and also calculate the difference between these scores.
+In \textbf{\subref{fig:permutation_test_distribution}} we see the histogram of score differences in the samples.
+The red lines mark the initially observed difference between the models A and B (also it's negative).
+In the last step, we gather these differences and count the number of samples, $n_{higher}$, where the absolute difference between the models is smaller than the score difference of the original predictions of Model A and B.
+$n_{higher}$ divided by the total number of generated samples, $n$, is then the frequency of samples, $f_{higher} = \frac{n_{higher}}{n}$, where the score difference was higher when randomly exchanging the predictions compared to the original observed score difference.
+$f_{higher}$ gives an intuition about the likelihood of observing the difference between the scores of Model A and B.
+In the histogram of observed differences \textbf{\subref{fig:permutation_test_distribution}} this $f_{higher}$ corresponds to the ratio between the area of elements in the blue surface to total area of the histogram.
+In our example, $f_{higher}$ is 0.135, meaning that the probability to observe the score difference we see between the two models is 13.5\% when randomly exchanging the predictions of the two models.
+This is far too high to accept the hypothesis on ground of these predictions.
+
 \todo[inline]{What confidence interval did we choose?}
+\todo[inline]{\url{https://stats.stackexchange.com/questions/104040/resampling-simulation-methods-monte-carlo-bootstrapping-jackknifing-cross}}
 
 \begin{figure}[ht]
   \subfloat[True labels]{\includegraphics[width=0.19\textwidth]{assets/figures/permutation_test/true_labels.pdf}\label{fig:permutation_test_true}}
@@ -195,36 +226,10 @@ When the probability of observing the difference by chance is below a given thre
   \subfloat[Samples]{\includegraphics[width=0.51\textwidth]{assets/figures/permutation_test/samples.pdf}\label{fig:permutation_test_samples}}
   \\
   \subfloat[Observed differences in sample scores]{\includegraphics[width=1\textwidth]{assets/figures/permutation_test/distribution.pdf}\label{fig:permutation_test_distribution}}
-  \caption{
-  Permutation test example.
-  A significance test is most often used to test whether a hypothesis is true with a given confidence.
-  In this example we use the permutation test to test whether the 
-  performance of two given classifiers, Model A and Model B, differs in a non-random way. Our hypothesis is that Model A has a lower performance than Model B, ie. it has a lower score.
-  For this example we chose accuracy as the score metric. 
-  To calculate the accuracy, we need the true labels, \textbf{\subref{fig:permutation_test_true}}, of the dataset.
-  In \textbf{\subref{fig:permutation_test_model_predictions}} we see the predicted labels of the two models and the accuracy as a score beneath them. 
-  We also see the difference in the scores.
-  In \textbf{\subref{fig:permutation_test_model_predictions}} we also see that Model A has a lower score than Model B.
-  This lower score could be due to chance and not because Model B is fundamentally better than Model A.
-  To test our hypothesis more throughly we now execute the permutation test.
-  In the first step, \textbf{\subref{fig:permutation_test_samples}}, we generate $n$ samples by interchanging the predictions of the two models randomly.
-  Here, we depicted three randomly selected samples from the $n$ generated samples.
-  To generate a sample, we switch the predictions of Model A and B for every document with a probability of 0.5.
-  The switch of two predictions is marked with a red arrow in our depiction.
-  In the optimal case, one could generate all possible permutations of the predictions, ie. generate all possible samples.
-  Unfortunately this is often not an option due to the sheer number of possibilities. That said, generating a large number of samples also gives a good basis for judgment.
-  Next, we calculate the accuracy scores for both models for each of the samples and also calculate the difference between these scores.
-  In \textbf{\subref{fig:permutation_test_distribution}} we see the histogram of score differences in the samples.
-  The red lines mark the initially observed difference between the models A and B (also it's negative).
-  In the last step, we gather these differences and count the number of samples, $n_{higher}$, where the absolute difference between the models is smaller than the score difference of the original predictions of Model A and B.
-  $n_{higher}$ divided by the total number of generated samples, $n$, is then the frequency of samples, $f_{higher} = \frac{n_{higher}}{n}$, where the score difference was higher when randomly exchanging the predictions compared to the original observed score difference.
-  $f_{higher}$ gives an intuition about the likelihood of observing the difference between the scores of Model A and B.
-  In the histogram of observed differences \textbf{\subref{fig:permutation_test_distribution}} this $f_{higher}$ corresponds to the ratio between the area of elements in the blue surface to total area of the histogram.
-  In our example, $f_{higher}$ is 0.135, meaning that the probability to observe the score difference we see between the two models is 13.5\% when randomly exchanging the predictions of the two models.
-  This is far too high to accept the hypothesis on ground of these predictions.}
+  \caption{Permutation test example. A significance test is most often used to test whether a hypothesis is true with a given confidence.}
+  \label{fig:example_permutation_test}
 \end{figure}
 
-\todo[inline]{\url{https://stats.stackexchange.com/questions/104040/resampling-simulation-methods-monte-carlo-bootstrapping-jackknifing-cross}}
 
 \labelsubsection{Implementation}{sec:implementation}
 For the implementation of all these experiments, we used mostly Python.

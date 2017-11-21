@@ -1,3 +1,27 @@
+## 21.11.2017
+- Looked at recurring concepts in concept maps per dataset
+    - How many concepts appear only once in whole dataset?
+    - Compare to co-occurrence
+- Other ToDos
+    - Remove concepts only occurring once
+    - Find corpus with long texts
+        - TED talk transcripts?
+            - How to obtain labels? 
+                - From tags?
+    - Gather results for binarized CountVectorizer vs un-binarized (= frequencies)
+    - Gather more results on node weighting with WL
+    - Find explanation for lower performance when combining features
+        - Regularization with l1
+            - Quantify difference
+    - Create significance tests for models?
+        - Which ones?
+    - Precisely define experiments for each subquestion
+    - Test more normalization on graph features
+    - Find differences in datasets
+        - How many labels are unused in test phase
+        - Compression factor of highest-phi-index/#vertices
+        - When does WL converge for co-occurrence and concept maps
+
 ## 26.10.2017
 - Slides about goals/results/observations
     - max 5 slides

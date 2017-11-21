@@ -9,10 +9,15 @@ import numpy as np
 import itertools
 import os
 import argparse
-from glob import glob
 from utils import time_utils, git_utils
 
 DATASET_FOLDER = 'data/datasets'
+
+def flatten_array(arr) -> list:
+    flattened = []
+    for x in arr:
+        flattened += list(x)
+    return flattened
 
 def print_script_args_and_info(args):
     print('Starting:\n\t{}'.format(time_utils.get_time_formatted()))
