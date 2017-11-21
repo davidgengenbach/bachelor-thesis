@@ -7,36 +7,8 @@ from utils.logger import LOGGER
 from utils.remove_coefs_from_results import remove_coefs_from_results
 import os
 from transformers.pipelines import pipeline_helper
+from .import task_helper
 from .task_helper import ExperimentTask
-from transformers.pipelines.classifiers import get_classifier_params
-
-
-def get_precomputed_subset(K, indices1, indices2=None):
-    if not indices2:
-        indices2 = indices1
-    indices = np.meshgrid(indices1, indices2, indexing='ij')
-    return np.array(K)[indices]
-
-
-def train_test_split(X, Y, test_size: float = 0.15, random_state: int = 42, is_precomputed: bool = False):
-    def train_test_split(*Xs, Y=None):
-        return sklearn.model_selection.train_test_split(*Xs, stratify=Y, test_size=test_size, random_state=random_state)
-
-    if is_precomputed:
-        # Cut the precomputed gram matrix into a train/test split...
-        num_elements = X.shape[0]
-        indices = list(range(num_elements))
-        # ... by first splitting the dataset into train/test indices
-        X_train_i, X_test_i = train_test_split(indices, Y=Y)
-        # ... then cut the corresponding elements from the gram matrix
-        X_train, Y_train = get_precomputed_subset(X, X_train_i), np.array(Y)[X_train_i]
-        X_test, Y_test = get_precomputed_subset(X, X_test_i, X_train_i), np.array(Y)[X_test_i]
-    else:
-        indices = list(range(len(X)))
-        X_train, X_test, Y_train, Y_test, X_train_i, X_test_i = train_test_split(X, Y, indices, Y=Y)
-
-    return X_train, X_test, Y_train, Y_test, X_train_i, X_test_i
-
 
 def run_classification_task(task: ExperimentTask, cfo: ClassificationOptions):
     args = locals()
@@ -51,8 +23,7 @@ def run_classification_task(task: ExperimentTask, cfo: ClassificationOptions):
     is_dummy = 'classifier__strategy' in param_grid and 'cl assifier__C' not in param_grid
 
     # Merge param_grid with classifiers
-    classifier_params = get_classifier_params()
-    param_grid = dict(classifier_params, **param_grid)
+    param_grid = task_helper.add_classifier_to_params(param_grid)
     # Remove "voided" params
     param_grid = {k: v for k, v in param_grid.items() if v is not None}
 
@@ -118,3 +89,31 @@ def run_classification_task(task: ExperimentTask, cfo: ClassificationOptions):
         remove_coefs_from_results(gscv_result.cv_results_)
 
     results_helper.save_results(gscv_result.cv_results_, result_file, args)
+
+
+
+def get_precomputed_subset(K, indices1, indices2=None):
+    if not indices2:
+        indices2 = indices1
+    indices = np.meshgrid(indices1, indices2, indexing='ij')
+    return np.array(K)[indices]
+
+
+def train_test_split(X, Y, test_size: float = 0.15, random_state: int = 42, is_precomputed: bool = False):
+    def train_test_split(*Xs, Y=None):
+        return sklearn.model_selection.train_test_split(*Xs, stratify=Y, test_size=test_size, random_state=random_state)
+
+    if is_precomputed:
+        # Cut the precomputed gram matrix into a train/test split...
+        num_elements = X.shape[0]
+        indices = list(range(num_elements))
+        # ... by first splitting the dataset into train/test indices
+        X_train_i, X_test_i = train_test_split(indices, Y=Y)
+        # ... then cut the corresponding elements from the gram matrix
+        X_train, Y_train = get_precomputed_subset(X, X_train_i), np.array(Y)[X_train_i]
+        X_test, Y_test = get_precomputed_subset(X, X_test_i, X_train_i), np.array(Y)[X_test_i]
+    else:
+        indices = list(range(len(X)))
+        X_train, X_test, Y_train, Y_test, X_train_i, X_test_i = train_test_split(X, Y, indices, Y=Y)
+
+    return X_train, X_test, Y_train, Y_test, X_train_i, X_test_i

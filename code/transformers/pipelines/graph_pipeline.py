@@ -4,11 +4,12 @@ from transformers.tuple_selector import TupleSelector
 from transformers.phi_picker_transformer import PhiPickerTransformer
 from transformers.fast_wl_graph_kernel_transformer import FastWLGraphKernelTransformer
 
+from utils import graph_metrics
 from . import pipeline_helper
 
 
-def get_params(reduced = False):
-    fast_wl_estimator, fast_wl_params = get_fast_wl_params(reduced = reduced)
+def get_params(reduced=False, with_node_weights=False):
+    fast_wl_estimator, fast_wl_params = get_fast_wl_params(reduced=reduced, with_node_metrics=with_node_weights)
 
     pipeline = sklearn.pipeline.Pipeline([
         ('feature_extraction', fast_wl_estimator),
@@ -54,22 +55,31 @@ def get_combined_params(text_reduced=True, graph_reduced=True):
     return pipeline, params
 
 
-def get_fast_wl_params(reduced = False):
+def get_fast_wl_params(reduced=False, with_node_metrics=False):
     pipeline = sklearn.pipeline.Pipeline([
         ('fast_wl', FastWLGraphKernelTransformer()),
         ('phi_picker', PhiPickerTransformer()),
     ])
 
     params = dict(
-        fast_wl__h=[5],
+        fast_wl__h=[10],
         fast_wl__phi_dim=[None],
-        fast_wl__round_to_decimals=[-1, 10],
+        fast_wl__round_to_decimals=[10],
+        fast_wl__node_weight_function=[
+            None,
+            graph_metrics.nxgraph_degrees_metric,
+            graph_metrics.nxgraph_pagerank_metric
+        ],
         phi_picker__use_zeroth=[False],
         phi_picker__return_iteration=['stacked']
     )
 
     if reduced:
         params['fast_wl__round_to_decimals'] = [10]
+        params['fast_wl__node_weight_function'] = [None]
+
+    if not with_node_metrics:
+        params['fast_wl__node_weight_function'] = [None]
 
     return pipeline, params
 

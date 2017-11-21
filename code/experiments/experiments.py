@@ -17,7 +17,8 @@ def get_tasks() -> list:
         get_task_graph_content_only,
         get_task_graph_structure_only,
         get_task_combined,
-        get_task_graphs
+        get_task_graphs,
+        get_task_graph_node_weights
     ]
 
     tasks = []
@@ -45,6 +46,16 @@ def get_task_dummy(dataset_name: str) -> ExperimentTask:
 
         tasks.append(ExperimentTask('dummy_{}'.format(strategy), dataset_name, process))
     return tasks
+
+
+def get_task_graph_node_weights(graph_cache_file) -> ExperimentTask:
+    def process() -> tuple:
+        X, Y = dataset_helper.get_dataset_cached(graph_cache_file)
+        X = graph_helper.get_graphs_only(X)
+        estimator, params = task_helper.get_graph_estimator_and_params(X, Y, with_node_weights=True)
+        return ClassificationData(X, Y, estimator, params)
+
+    return ExperimentTask('graph_node_weights', get_filename_only(graph_cache_file), process)
 
 
 def get_task_graph_content_only(graph_cache_file) -> ExperimentTask:

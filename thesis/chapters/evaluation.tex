@@ -55,6 +55,8 @@ Nevertheless, it is an interesting baseline for graph-based text-classification.
 \subquestion{How does the classification performance with concept maps compare to non-structural, text-based approaches?}{question:comparison_text}
 Here we test the classification performance of graph-based classification directly with the performance of text-only approaches.
 
+\subquestion{How different are the datasets and how does it affect the classification performance?}{question:dataset_diversity}
+
 \subquestion{How useful are the concept maps combined with text classification?}{question:comparison_combined}
 When concept maps indeed have a structure that is useful for classification and which is not captured by text-only approaches, the classification performance should increase when combining graph- and text based approaches.
 We test the performance of the combined text- and graph features by concatenating the vectors of both approaches and then training a classifier with these vectors.
@@ -149,18 +151,18 @@ It consists of the 8 most frequent classes of the \textit{reuters-21578} dataset
 \begin{figure}[ht]
 \centering
 \begin{tabular}{lrrrr}
-{} &  \# docs &  \# classes &  median \#words/doc &  \#uniq. words/\#words \\
+{} &  \# classes &  \# docs &  median \#words/doc &  \#uniq. words/\#words \\
 \midrule
-ling-spam       & 18846 & 20 & 277 & 0.20 \\
-ng20            & 2893 & 2 & 79 & 0.22 \\
-reuters-21578   & 18846 & 20 & 94 & 0.07 \\
-review\_polarity & 13328 & 90 & 589 & 0.16 \\
-rotten\_imdb     & 2000 & 2 & 19 & 0.34 \\
-tagmynews       & 10000 & 2 & 24 & 0.11 \\
-webkb           & 32600 & 7 & 158 & 0.15 \\
+ling-spam       & 2 & 2893 & 277 & 0.20 \\
+ng20            & 20 & 18846 & 79 & 0.07 \\
+reuters-21578   & 90 & 13328 & 94 & 0.07 \\
+review\_polarity & 2 & 2000 & 589 & 0.16 \\
+rotten\_imdb     & 2 & 10000 & 19 & 0.34 \\
+tagmynews       & 7 & 32600 & 24 & 0.11 \\
+webkb           & 7 & 8274 & 158 & 0.15 \\
 \bottomrule
 \end{tabular}
-\caption{Dataset statistics}
+\caption{Dataset statistics.}
 \end{figure}
 
 \labelsubsection{Methods}{subsec:methods}
@@ -220,7 +222,7 @@ When the probability of observing the difference by chance is below a given thre
   In the histogram of observed differences \textbf{\subref{fig:permutation_test_distribution}} this $f_{higher}$ corresponds to the ratio between the area of elements in the blue surface to total area of the histogram.
   In our example, $f_{higher}$ is 0.135, meaning that the probability to observe the score difference we see between the two models is 13.5\% when randomly exchanging the predictions of the two models.
   This is far too high to accept the hypothesis on ground of these predictions.}
-\end{figure*}
+\end{figure}
 
 \todo[inline]{\url{https://stats.stackexchange.com/questions/104040/resampling-simulation-methods-monte-carlo-bootstrapping-jackknifing-cross}}
 

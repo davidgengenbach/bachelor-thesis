@@ -1,4 +1,5 @@
 import sklearn
+import sklearn.preprocessing
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from transformers.simple_preprocessing_transformer import SimplePreProcessingTransformer
 
@@ -18,6 +19,7 @@ def get_params(reduced = False):
         vectorizer__ngram_range=[(1, 1), (1, 2)],
         vectorizer__binary=[True, False],
         preprocessing=[SimplePreProcessingTransformer()],
+        scaler=[sklearn.preprocessing.MaxAbsScaler()]
     )
 
     if reduced:

@@ -23,7 +23,7 @@ So, concept maps do not only have few nodes but also a relatively low number of 
 This is most likely due to the small length of the underlying texts.
 The shortness of the text results in a lower number of occurrences of some concept in the text, ie. most of the concepts occur only once in a text.
 
-\todo[inline]{Add statistics about # of occurrences of concepts in graphs}
+\todo[inline]{Add statistics about \# of occurrences of concepts in graphs}
 
 Another hint for the un-connectedness of concept maps is the number of connected components.
 In Figure \ref{fig:percentage_more_than_one_connected_component} we can see that most of the graphs have more than one connected component. Together with the observation of the low number of nodes per graph, this also implies the low connectedness of concept maps.
@@ -138,6 +138,9 @@ This is most likely due to the high compression factor of both concept maps and 
 \label{fig:results_cmap_vs_text}
 \end{figure}
 
+\subquestionref{question:dataset_diversity}
+\todo[inline]{WL sparsity per dataset}
+
 \subquestionref{question:comparison_combined}
 As we have seen in the results of the last section, text-based approaches outperform graph-only approaches.
 In this section we investigate how and whether the graph-based approaches improve the classification score when combined with text-based approaches.
@@ -145,6 +148,13 @@ In Figure \ref{fig:results_comparison_combined} we see the classification scores
 One observation is that the relative performance of the combined approach to the text-only approach greatly varies per dataset.
 
 \todo[inline]{SVM trained on combined, coefficients}
+\todo[inline]{Analysis of coefficients}
+
+
+\begin{figure}[ht]
+\centering\includegraphics[width=0.6\linewidth]{assets/figures/approach.pdf}
+\caption{Histogram of SVM coefficients trained on combined features}
+\end{figure}
 
 \begin{figure}[ht]
 \centering

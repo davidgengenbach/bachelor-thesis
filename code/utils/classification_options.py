@@ -1,5 +1,3 @@
-
-
 class ClassificationOptions(object):
     def __init__(
             self,

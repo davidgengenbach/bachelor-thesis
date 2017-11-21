@@ -6,7 +6,7 @@ In this chapter we will introduce the notations and concepts we will use in subs
 \labelsubsection{Classification Task}{subsec:classification_task}
 Classification in machine learning is the task of automatically assigning classes, or labels, to datapoints.
 Given a dataset $D = \{(x_1, y_1), (x_2, y_2), \ldots, (x_n, y_n) \} \subseteq X \times Y$ of $n$ items where $(x_i, y_i)$ are dataset instances, the supervised classification task is to create a classifier which predicts a label $y' \in Y$ for a given $x \in X$.
-In this work, the labels $Y$ of the dataset are denoted with $Y_d = (y_1, y_2, \ldots, y_n )=$, the predicted labels are denoted as $Y'_d = (y'_1, y'_2, \ldots, y'_n )$.
+In this work, the labels $Y$ of the dataset are denoted with $Y_d = (y_1, y_2, \ldots, y_n )$, the predicted labels are denoted as $Y'_d = (y'_1, y'_2, \ldots, y'_n )$.
 When the number of classes $|Y|$ is 2, the classification task is also called binary classification. When $|Y$ is greater than 2, the classification is called multiclass classification.
 In our case, the datapoints $x_i$ will be texts or graphs, therefor our task is called text and graph classification respectively.
 
@@ -370,7 +370,7 @@ In Figure \ref{fig:wl_example} we show an example of one WL iteration with label
   In this case, the similarity before the iteration would be $\langle \phi(G_1), \phi(G_2) \rangle = \langle [1, 1, 1, 1, 0, 0, 0, 0], [1, 1, 1, 1, 0, 0, 0, 0] \rangle = 4$. After the relabeling, the value of the inner product is $2$.
   Before doing the WL iteration, the inner product on the feature maps simply returns the number of common labels. After the first iteration, the neighbourhood of each node and therefor the structure of the graph is also reflected in the feature map - resulting in a lower similarity in out example.
   Please note that these feature vectors are specific to these two graphs and their labels. The dimension of the vector corresponds to the sum of the number of vertices in the two graphs.}\label{fig:wl_example}
-\end{figure*}
+\end{figure}
 
 \subsubsection{Kernel Methods and Kernel trick}
 We have seen that a kernel can be used to calculate a measure of similarity between two objects, eg. graphs.
