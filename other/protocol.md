@@ -1,3 +1,7 @@
+## 22.11.2017
+- Added other fast_wl implementation to cross-test results
+
+
 ## 21.11.2017
 - Looked at recurring concepts in concept maps per dataset
     - How many concepts appear only once in whole dataset?
@@ -21,6 +25,36 @@
         - How many labels are unused in test phase
         - Compression factor of highest-phi-index/#vertices
         - When does WL converge for co-occurrence and concept maps
+
+
+## 20.11.2017
+- Created more statistics about datasets
+- Visualized SVM coefficients of combined features
+- Looked for more datasets with long texts
+
+
+# 19.11.2017
+- Searched for longer datasets
+
+
+# 18.11.2017
+- Co-Occurrence fix
+- Searched for longer datasets
+- Cleanup
+
+
+# 17.11.2017
+- Tested more C combinations for SVM
+- Added early stopping to fast_wl
+- Rewriting code to use nested cross-validation more easily
+- Cleanup
+
+
+# 16.11.2017
+- Added node weights to WL
+    - pagerank
+    - degrees
+- Started rewriting pipeline code
 
 ## 26.10.2017
 - Slides about goals/results/observations
