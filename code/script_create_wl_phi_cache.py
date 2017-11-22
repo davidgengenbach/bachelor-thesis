@@ -55,7 +55,7 @@ def process_graph_cache_file(graph_cache_file, args):
                 metric_name = metric.__name__ if metric else 'none'
                 phi_graph_cache_file = phi_graph_cache_file_.replace('.npy', '.{}.{}.npy'.format(metric_name, 'same_labels' if same_label else 'original_labels'))
 
-                if os.path.exists(phi_graph_cache_file):
+                if not args.force and os.path.exists(phi_graph_cache_file):
                     continue
 
                 # Lazy load dataset
@@ -65,8 +65,14 @@ def process_graph_cache_file(graph_cache_file, args):
                     X_tuple = graph_helper.convert_graphs_to_adjs_tuples(X, copy=True)
                     adjs, labels = zip(*X_tuple)
 
+
+                if same_label:
+                    _labels = [[1] * (len(l)) for l in labels]
+                else:
+                    _labels = labels
+
                 node_weight_factors = graph_metrics.get_node_weights_for_nxgraphs(X, metric)
-                phi_list = fast_fast_wl.transform(adjs, labels, h=args.wl_h, node_weight_factors=node_weight_factors)
+                phi_list = fast_fast_wl.transform(adjs, _labels, h=args.wl_h, node_weight_factors=node_weight_factors)
                 with open(phi_graph_cache_file, 'wb') as f:
                     pickle.dump((phi_list, Y), f)
     except Exception as e:

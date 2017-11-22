@@ -8,7 +8,7 @@ def transform(
         labels,
         h=2,
         rounding_factor=10,
-        labels_dtype=np.uint64,
+        labels_dtype=np.float64,
         node_weight_factors=None,
         use_early_stopping=True
 ):
@@ -36,11 +36,6 @@ def transform(
         for x in node_weight_factors:
             assert np.all([isinstance(y, (int, float)) for y in x])
 
-    if rounding_factor == -1:
-        _rounding_factor = 1
-    else:
-        _rounding_factor = np.power(10, rounding_factor)
-
     def phi_list_to_sparse(phis):
         rows = []
         cols = []
@@ -58,7 +53,7 @@ def transform(
         return phi
 
     def get_signatures(adj, labels):
-        return ((labels + adj * log_primes[labels]) * _rounding_factor).astype(labels_dtype)
+        return np.around((labels + adj * log_primes[labels]), decimals=rounding_factor).astype(labels_dtype)
 
     highest_labels = [-1]
 

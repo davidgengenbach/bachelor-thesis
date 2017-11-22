@@ -4,7 +4,7 @@ from scipy import sparse
 
 class PhiPickerTransformer(sklearn.base.BaseEstimator, sklearn.base.TransformerMixin):
 
-    def __init__(self, return_iteration=0, transpose=False, use_zeroth=False):
+    def __init__(self, return_iteration='stacked', transpose=False, use_zeroth=False):
 
         assert return_iteration == 'stacked' or return_iteration >= -1
 
@@ -18,13 +18,15 @@ class PhiPickerTransformer(sklearn.base.BaseEstimator, sklearn.base.TransformerM
     def transform(self, X, y=None, **fit_params):
         self.ensure_phi_iteration(X)
 
+        if not self.use_zeroth:
+            X = X[1:]
+
         if self.return_iteration == 'stacked':
-            target = scipy.sparse.hstack(X if self.use_zeroth else X[1:])
+            target = scipy.sparse.hstack(X)
         else:
             target = X[self.return_iteration]
 
         self.shape = target.shape
-
         return target.T if self.transpose else target
 
 
