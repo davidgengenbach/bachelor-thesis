@@ -17,10 +17,8 @@ class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Tran
         assert len(X)
         X, node_weight_factors = _retrieve_node_weights_and_convert_graphs(X, node_weight_function=self.node_weight_function)
 
-        # Remove empty graphs
-        X = [x for x in X if x is not None]
         self.hashed_x = hash_dataset(X)
-
+        print(X, node_weight_factors)
         phi_list, label_lookups, label_counters = fast_wl.transform(
             X,
             h=self.h,
@@ -79,7 +77,7 @@ def get_node_weight_factors(X, metric=None):
 
     out = [metric(x) for x in X]
     if isinstance(out[0], dict):
-        out = [[int(val) for key, val in sorted(val.items(), key=lambda x: x[0])] for val in out]
+        out = [[int(val) for key, val in sorted(val.items(), key=lambda x: x[0])] if len(val.keys()) else [1] for val in out]
 
     return out
 
