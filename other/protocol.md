@@ -1,5 +1,36 @@
 ## 22.11.2017
 - Added other fast_wl implementation to cross-test results
+- Search for larger dataset
+    - Constraints
+        - High quality content (= most likely no user generated comments)
+            - Technical (?) with recurring concepts
+        - Long texts per doc
+            - over 1000 words
+    - Candidates
+        - TED talk transcripts
+            - Problem: no labels, but tags
+                - Tags could be merged by co-occurrence
+                - Non-frequent tags are removed
+        - Movie transcripts or subtitles
+            - Example
+                - http://www.imsdb.com/all%20scripts/
+                - http://www.simplyscripts.com/
+                - https://sfy.ru/
+                - https://github.com/agonzalezro/python-opensubtitles
+            - Genre as labels
+            - Problem: Parsing
+            - Problem: most likely no coherent
+        - The New York Times Annotated Corpus
+            - https://catalog.ldc.upenn.edu/ldc2008t19
+            - https://catalog.ldc.upenn.edu/docs/LDC2008T19/new_york_times_annotated_corpus.pdf
+            - Stats
+                - 1,855,658 documents
+                - January 01, 1987 and June 19, 2007
+            - No explicit word count per document given
+                - ... but most likely is very high since they are articles
+            - Problem: costs money ($150-300)
+                - ... but seems to be a good dataset
+        - Papers
 
 
 ## 21.11.2017
