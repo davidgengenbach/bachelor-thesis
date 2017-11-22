@@ -105,7 +105,7 @@ def transform(
         add_labels_to_phi(phi, idx, labels)
 
     if round_signatures_to_decimals == -1:
-        # 10^-1 = 1
+        # 10^-1 = 0.1
         rounding_factor = 1
     else:
         rounding_factor = np.power(10, round_signatures_to_decimals)

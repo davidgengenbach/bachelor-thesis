@@ -146,14 +146,23 @@ def get_graphs_from_folder(folder, ext='gml', undirected=False, verbose=False):
     return X, Y
 
 
-def convert_adjs_tuples_to_graphs(X):
+def convert_adjs_tuples_to_graphs(X, copy=False):
     if not isinstance(X[0], tuple):
         return
+
+    if copy:
+        X_ = []
+    else:
+        X_ = X
 
     for idx, (adj, labels) in enumerate(X):
         g = nx.from_scipy_sparse_matrix(adj)
         nx.relabel_nodes(g, {idx: label for idx, label in enumerate(labels)}, copy=False)
-        X[idx] = g
+        if copy:
+            X_.append(g)
+        else:
+            X[idx] = g
+    return X_
 
 
 def convert_graphs_to_adjs_tuples(X, copy=False) -> typing.Iterable:
@@ -177,7 +186,7 @@ def convert_graphs_to_adjs_tuples(X, copy=False) -> typing.Iterable:
         if (isinstance(graph, np.ndarray) or isinstance(graph, tuple)) and isinstance(graph[0], nx.Graph):
             graph = graph[0]
 
-        nodes = graph.nodes()
+        nodes = sorted(graph.nodes())
 
         if len(nodes) == 0 or nx.number_of_edges(graph) == 0:
             out = (lil_matrix(1, 1), ['no_label'])

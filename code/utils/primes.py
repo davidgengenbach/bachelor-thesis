@@ -42,11 +42,10 @@ def get_highest_prime_range():
     highest_prime_end = max(list(CACHE.keys()))
     return CACHE[highest_prime_end]
 
-
-def get_log_primes(range_start, range_end):
+def get_log_primes(range_start = None, range_end = None):
     load_cache()
 
-    cached_prime_range = [range_end_cached for range_end_cached in sorted(list(CACHE.keys())) if range_end_cached >= range_end]
+    cached_prime_range = [range_end_cached for range_end_cached in sorted(list(CACHE.keys())) if not range_end or range_end_cached >= range_end]
 
     if len(cached_prime_range):
         return CACHE[cached_prime_range[-1]]
