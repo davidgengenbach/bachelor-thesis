@@ -44,8 +44,10 @@ def get_graph_estimator_and_params(X, Y=None, reduced=False, with_node_weights=F
     if isinstance(X[0], nx.Graph):
         X_ = graph_helper.convert_graphs_to_adjs_tuples(X, copy=True)
 
+
     estimator, params = graph_pipeline.get_params(reduced=reduced, with_node_weights=with_node_weights)
 
+    assert isinstance(X_[0], tuple) and isinstance(X_[0][1], list)
     num_vertices = get_num_vertices(X_)
     graph_pipeline.add_num_vertices_to_fast_wl_params(params, num_vertices)
     return estimator, params

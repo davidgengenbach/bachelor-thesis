@@ -1,3 +1,19 @@
+## 23.11.2017
+- Extensions to WL?
+    - Node weights as factors to WL
+        - PageRank or degrees as factors to multiply the fields in WL with
+        - Intuition
+            - With greater iterations, exact matches of large neighbourhoods are difficult, so...
+            - ... prioritize such matches by mulitiplicating with the degree or importance under PageRank
+    - Ignore label position
+        - Normal WL: given some node, create new label with (label(current_node) + sorted([label(node) for node in neighbours(current_node)]))
+        - Without label position: sorted([label(node) for node in neighbours(current_node) + label(current_node)]
+    - "Residual WL"
+        - Not thought through
+        - Remove labels from last iteration
+            - the features of iteration I only take nodes that are I hops away into account
+
+
 ## 22.11.2017
 - Added other fast_wl implementation to cross-test results
 - Search for larger dataset

@@ -47,7 +47,6 @@ def transform(
         # Use this?
         #np.fill_diagonal(adj, 1)
         adjacency_matrices[idx] = adj
-
     # Relabel the graphs, mapping the string labels to unique IDs (ints)
     label_lookup, label_counter, graph_labels = relabel_graphs(graphs, label_counter = label_counters[0], label_lookup = label_lookups[0], labels_dtype = labels_dtype, append = append_to_labels)
 
@@ -123,10 +122,10 @@ def transform(
         # ... go over all graphs
         for idx, (labels, adjacency_matrix) in enumerate(zip(graph_labels, adjacency_matrices)):
             # ... generate the signatures (see paper) for each graph
-            signatures = (labels + adjacency_matrix * log_primes[labels] * rounding_factor).astype(labels_dtype)
+            signatures = np.around((labels + adjacency_matrix * log_primes[labels]), round_signatures_to_decimals).astype(np.float64)
 
             if ignore_label_order:
-                signatures -= labels
+                signatures -= (labels * rounding_factor)
 
             # ... add missing signatures to the label lookup
             for signature in signatures:

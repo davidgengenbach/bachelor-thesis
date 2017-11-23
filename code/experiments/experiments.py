@@ -5,10 +5,11 @@ from utils.filename_utils import get_filename_only
 from . import task_helper
 from .task_helper import ExperimentTask, ClassificationData
 import sklearn
+import typing
 from sklearn import dummy, model_selection, preprocessing, pipeline
 
 
-def get_tasks() -> list:
+def get_tasks() -> typing.List[ExperimentTask]:
     graph_cache_files = dataset_helper.get_all_cached_graph_datasets()
     gram_cache_files = dataset_helper.get_all_gram_datasets()
     datasets = dataset_helper.get_all_available_dataset_names()
@@ -27,7 +28,6 @@ def get_tasks() -> list:
     tasks += task_helper.get_tasks([get_task_dummy], datasets)
     tasks += task_helper.get_tasks([get_task_text], datasets)
     tasks += task_helper.get_tasks([get_gram_task], gram_cache_files)
-
     return tasks
 
 
@@ -111,8 +111,9 @@ def get_task_combined(graph_cache_file: str) -> ExperimentTask:
 def get_task_graphs(graph_cache_file: str) -> ExperimentTask:
     def process() -> tuple:
         X, Y = dataset_helper.get_dataset_cached(graph_cache_file)
-        graph_helper.convert_graphs_to_adjs_tuples(X, copy=False)
+        X = graph_helper.get_graphs_only(X)
         estimator, params = task_helper.get_graph_estimator_and_params(X, Y)
+        params['feature_extraction__fast_wl__ignore_label_order'] = [True, False]
         return ClassificationData(X, Y, estimator, params)
 
     return ExperimentTask('graph', get_filename_only(graph_cache_file), process)
