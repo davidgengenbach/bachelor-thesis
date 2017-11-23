@@ -1,15 +1,10 @@
 #!/usr/bin/env python3
 """Converts a dataset for concept-graph extraction."""
 import codecs
-import importlib
 import json
 import os
-import pickle
-import re
 import sys
 from collections import defaultdict
-from time import time
-import numpy as np
 from preprocessing import preprocessing
 from utils import git_utils, time_utils, dataset_helper
 
@@ -72,7 +67,7 @@ def process(dataset_name, out_folder, train_size, random_state_for_shuffle, one_
     print('#Docs: {}'.format(len(X)))
     
     if preprocess:
-        X = preprocessing.concept_map_preprocessing(X)
+        X = [preprocessing.preprocess(x) for x in X]
     
     if shuffle:
         data_train_X, data_test_X, data_train_Y, data_test_Y = dataset_helper.split_dataset(X, Y, random_state_for_shuffle = random_state_for_shuffle, train_size = train_size)

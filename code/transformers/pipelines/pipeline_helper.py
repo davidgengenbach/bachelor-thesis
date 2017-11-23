@@ -37,3 +37,14 @@ def remove_complex_types(params):
         v = [v_ if not is_complex_type(v_) else type(v_).__name__ for v_ in v]
         out[k] = v
     return out
+
+
+def remove_complex_types_simple(params):
+    out = {}
+    for k, v in params.items():
+        def is_complex_type(x):
+            return not isinstance(x, (int, float, str, bool, tuple))
+
+        v = v if not is_complex_type(v) else type(v).__name__
+        out[k] = v
+    return out

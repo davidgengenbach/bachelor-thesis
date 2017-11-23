@@ -10,5 +10,5 @@ class SimplePreProcessingTransformer(sklearn.base.BaseEstimator, sklearn.base.Tr
         return self
 
     def transform(self, X, y=None, **fit_params):
-        return [preprocessing.preprocess__(d) for d in X]
+        return [preprocessing.preprocess(d) for d in X]
 

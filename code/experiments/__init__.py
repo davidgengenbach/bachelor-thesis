@@ -30,6 +30,6 @@ def get_filtered_tasks(task_type=None, dataset=None, graph_type_filter:str=None,
 
 
 def _ensure_is_container(a) -> typing.List:
-    if not isinstance(a, typing.List):
+    if a is not None and not isinstance(a, typing.List):
         return [a]
     return a

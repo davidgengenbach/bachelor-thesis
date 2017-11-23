@@ -113,7 +113,7 @@ def get_task_graphs(graph_cache_file: str) -> ExperimentTask:
         X, Y = dataset_helper.get_dataset_cached(graph_cache_file)
         X = graph_helper.get_graphs_only(X)
         estimator, params = task_helper.get_graph_estimator_and_params(X, Y)
-        params['feature_extraction__fast_wl__ignore_label_order'] = [True, False]
+        #params['feature_extraction__fast_wl__ignore_label_order'] = [True, False]
         return ClassificationData(X, Y, estimator, params)
 
     return ExperimentTask('graph', get_filename_only(graph_cache_file), process)

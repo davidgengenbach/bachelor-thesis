@@ -1,4 +1,32 @@
 ## 23.11.2017
+- Feedback von Karsten
+    - Mehr konzeptuelle Fragen
+        - zB. was ist mit Multilabels
+- Reworked pre-processing
+- Tested
+    - WL with ignore_label_position=true
+        - ignore_label_position seems to be slightly better (1-2%)
+    - Tried to further increase combined performance
+        - Test more C parameters
+        - Test l1 regularization
+            - Need to optimize primal not dual problem
+                - This is a constraint for l1 regularization with sci-kit learn
+            - Performance is decreasing dramatically (~20%)
+    - Looked at coefs from classifier at combined features case
+        - Problem: with SVM regularization
+            - l1 with dual=true is not possible
+            - l2 with dual=False is possible
+                - ... but performance is far worse than with dual=True
+            - Solution:
+                - Use other classifier like perceptron, SGD, ...
+                - ... that also uses coefficients that are a indicator for the importance of a feature
+        - Different regularizations
+            - l1
+                - 
+            - 2
+        - Sum of text-/graph-features 50/50
+            - But: graph features are most likely more sparse
+        - Graph feature coefs are distributed nearly uniformly across iterations
 - Extensions to WL?
     - Node weights as factors to WL
         - PageRank or degrees as factors to multiply the fields in WL with
@@ -8,11 +36,12 @@
     - Ignore label position
         - Normal WL: given some node, create new label with (label(current_node) + sorted([label(node) for node in neighbours(current_node)]))
         - Without label position: sorted([label(node) for node in neighbours(current_node) + label(current_node)]
+        - How similar is this to orderless n-grams?
+            - ie. counting sets of labels per node
     - "Residual WL"
         - Not thought through
         - Remove labels from last iteration
             - the features of iteration I only take nodes that are I hops away into account
-
 
 ## 22.11.2017
 - Added other fast_wl implementation to cross-test results
@@ -22,6 +51,7 @@
             - Technical (?) with recurring concepts
         - Long texts per doc
             - over 1000 words
+        - Concatenate text with each other, generate and look at resulting CMs 
     - Candidates
         - TED talk transcripts
             - Problem: no labels, but tags

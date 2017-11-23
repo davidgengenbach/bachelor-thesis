@@ -40,6 +40,7 @@ replacements = [
     ('param_features__fast_wl_pipeline__feature_extraction__', ''),
     ('param_features__text__', ''),
     ('features__text__vectorizer__', ''),
+    ('vectorizer__vectorizer', 'vectorizer'),
     ('param_', '')
 ]
 

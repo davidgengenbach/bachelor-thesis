@@ -38,7 +38,8 @@ def process_dataset(dataset, args):
     #X, Y = X[:1], Y[:1]
 
     print('dataset: {:15} - preprocessing'.format(dataset))
-    X_preprocessed = preprocessing.preprocess_text_spacy(X, n_jobs = args.n_jobs_coo, only_nouns=False, min_length=args.min_length, concat = False)
+    X = [preprocessing.preprocess(t).lower() for t in X]
+    X_preprocessed = preprocessing.preprocess_text_spacy(X, n_jobs=args.n_jobs_coo, only_nouns=False, min_length=args.min_length, concat = False)
     
     for window_size in range(args.window_size_start, args.window_size_end):
         for only_nouns in [False, True]:

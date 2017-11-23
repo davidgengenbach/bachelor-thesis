@@ -42,11 +42,14 @@ def transform(
 
     # Remove weight information (not needed for this WL kernel)
     for idx, adj in enumerate(adjacency_matrices):
+        if ignore_label_order:
+            adj = adj.tolil()
+            adj_dim = list(range(adj.shape[0]))
+            adj[adj_dim, adj_dim] = 1
         adj = adj.tocsr()
         adj.data = np.where(adj.data > 1, 0, 1)
-        # Use this?
-        #np.fill_diagonal(adj, 1)
         adjacency_matrices[idx] = adj
+
     # Relabel the graphs, mapping the string labels to unique IDs (ints)
     label_lookup, label_counter, graph_labels = relabel_graphs(graphs, label_counter = label_counters[0], label_lookup = label_lookups[0], labels_dtype = labels_dtype, append = append_to_labels)
 
