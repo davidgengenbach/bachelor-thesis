@@ -20,9 +20,6 @@ def get_args():
     parser.add_argument('--random_state_for_shuffle',
                         type=int,
                         default=42)
-    parser.add_argument('--max_elements',
-                        type=int,
-                        default=-1)
     parser.add_argument('--concat_train_instances',
                         action='store_true')
     parser.add_argument('--dataset_name',
@@ -30,14 +27,9 @@ def get_args():
                         default='ng20')
     parser.add_argument('--one_document_per_folder',
                         action='store_true')
-    parser.add_argument('--rename',
-                        action='store_true')
     parser.add_argument('--out_folder',
                         type=str,
-                        default='data/datasets-prepared')
-    parser.add_argument('--dataset_folder',
-                        type=str,
-                        default='data/datasets')
+                        default='data/datasets_prepared')
     parser.add_argument('--shuffle',
                         action='store_true')
     parser.add_argument('--preprocess',
@@ -54,23 +46,22 @@ def main():
     process(**args, args=args)
 
 
-def process(dataset_name, out_folder, train_size, random_state_for_shuffle, one_document_per_folder, rename, max_elements, dataset_folder, force, args, concat_train_instances, shuffle, preprocess):
-
+def process(dataset_name, out_folder, train_size, random_state_for_shuffle, one_document_per_folder, force, args, concat_train_instances, shuffle, preprocess):
     out_folder = os.path.join(out_folder, dataset_name)
 
     if not force and os.path.isdir(out_folder):
         print('Outfolder existing! Aborting ({})'.format(out_folder))
         sys.exit(1)
 
-    X, Y = dataset_helper.get_dataset(dataset_name, dataset_folder)
-    
+    X, Y = dataset_helper.get_dataset(dataset_name)
+
     print('#Docs: {}'.format(len(X)))
-    
+
     if preprocess:
         X = [preprocessing.preprocess(x) for x in X]
-    
+
     if shuffle:
-        data_train_X, data_test_X, data_train_Y, data_test_Y = dataset_helper.split_dataset(X, Y, random_state_for_shuffle = random_state_for_shuffle, train_size = train_size)
+        data_train_X, data_test_X, data_train_Y, data_test_Y = dataset_helper.split_dataset(X, Y, random_state_for_shuffle=random_state_for_shuffle, train_size=train_size)
     else:
         data_train_X, data_test_X, data_train_Y, data_test_Y = X, [], Y, []
 
@@ -123,7 +114,7 @@ def process(dataset_name, out_folder, train_size, random_state_for_shuffle, one_
             'timestamp': time_utils.get_time_formatted(),
             'unix_timestamp': time_utils.get_timestamp(),
             'git_commit': str(git_utils.get_current_commit())
-        }, f, indent=4, sort_keys = True)
+        }, f, indent=4, sort_keys=True)
 
 
 if __name__ == '__main__':

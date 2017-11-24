@@ -42,6 +42,14 @@
         - Not thought through
         - Remove labels from last iteration
             - the features of iteration I only take nodes that are I hops away into account
+- Idea
+    - To show correlation between classes eg. in ng20
+        - ... vectorize text, eg. BoW
+        - ... create embeddings with tSNE
+        - ... plot
+- Searched new, long datasets
+    - imsdb
+        - Create single labels from multi label by clustering
 
 ## 22.11.2017
 - Added other fast_wl implementation to cross-test results
