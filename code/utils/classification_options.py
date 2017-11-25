@@ -38,9 +38,14 @@ class ClassificationOptions(object):
             assert getattr(self, key) == val
 
     @classmethod
-    def from_argparse_options(cls, args):
+    def from_dict(cls, args: dict):
+        assert isinstance(args, dict)
         opts = cls()
-        for k, v in vars(args).items():
+        for k, v in args.items():
             if hasattr(opts, k):
                 setattr(opts, k, v)
         return opts
+
+    @classmethod
+    def from_argparse_options(cls, args):
+        return cls.from_dict(vars(args))

@@ -1,3 +1,55 @@
+## 25.11.2017
+- Added experiments pipeline
+    - Experiments can be defined with yaml files
+        - (nearly) all parameters can be defined
+- Observations/Ideas
+    - Gram matrix reduces information of each object to N numbers where N is the number of objects in the dataset
+        - ... but size increases approximately by factor 3
+- How to use the multi-word labels of concept maps?
+    - Approaches
+        - Split multi-word labels, create nodes and add original edges to new word nodes
+            - This will increase the graph size
+            - ... but also make exact matches far more difficult in later iterations
+- Look at sparsity of text- vs. graph-features
+    - Hypothesis
+        - WL graph features are more sparse than text features
+    - Experiment
+        - ng20, concept maps WL feature sparsity vs. text feature sparsity
+            - sum(all_graph_features) / sum(all_text_features) = 0.57
+            - ie. graph features are more sparse than text features
+            - that must be taken into account when looking at the contribution of graph features when combining text- and graph features
+- Datasets with long texts
+    - Gutenberg dataset
+        - https://web.eecs.umich.edu/~lahiri/gutenberg_dataset.html
+        - Problem
+            - Mostly belletristic texts?
+            - so, no technical texts, most likely no recurring and mineable concepts/relations
+    - Textbooks?
+        - http://bookboon.com/en
+        - http://www.openculture.com/free_textbooks
+        - http://textbookrevolution.org/index.php/Main_Page
+        - http://www.freebookspot.es/
+        - http://manybooks.net/
+        - https://www.getfreeebooks.com/
+        - http://freecomputerbooks.com/
+        - http://www.freetechbooks.com/
+        - http://www.onlineprogrammingbooks.com/
+        - https://www.bookyards.com/en/categories
+        - http://onlinebooks.library.upenn.edu/subjects.html
+            - Problem: difficult to crawl since different formats
+        - http://www.baen.com/catalog/category/view/s/free-library/id/2012
+        - http://www.ebooklobby.com/
+    - Wikipedia
+        - http://linguatools.org/tools/corpora/wikipedia-monolingual-corpora/
+            - Very big (english 4,25GB)
+    - Scientific papers
+        - 
+
+
+## 24.11.2017
+- Worked at imsdb dataset
+
+
 ## 23.11.2017
 - Feedback von Karsten
     - Mehr konzeptuelle Fragen
@@ -50,6 +102,7 @@
 - Searched new, long datasets
     - imsdb
         - Create single labels from multi label by clustering
+
 
 ## 22.11.2017
 - Added other fast_wl implementation to cross-test results

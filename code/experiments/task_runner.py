@@ -11,10 +11,9 @@ from . import task_helper
 from .task_helper import ExperimentTask
 
 
-def run_classification_task(task: ExperimentTask, cfo: ClassificationOptions):
+def run_classification_task(task: ExperimentTask, cfo: ClassificationOptions, experiment_config: dict):
     args = cfo
-
-    result_filename_tmpl = filename_utils.get_result_filename_for_task(task)
+    result_filename_tmpl = filename_utils.get_result_filename_for_task(task, experiment_config=experiment_config)
     result_file = '{}/{}'.format(cfo.results_folder, result_filename_tmpl)
     predictions_file = '{}/{}'.format(cfo.predictions_folder, result_filename_tmpl)
 
@@ -29,8 +28,19 @@ def run_classification_task(task: ExperimentTask, cfo: ClassificationOptions):
     # This is also a heuristic
     is_dummy = 'classifier__strategy' in param_grid and 'classifier__C' not in param_grid
 
+    experiment_params = dict()
+    if experiment_config:
+        assert task.type in experiment_config['params_per_type']
+        experiment_params = pipeline_helper.flatten_nested_params(experiment_config['params_per_type'][task.type])
+
+    param_grid = pipeline_helper.flatten_nested_params(param_grid)
+
     # Merge param_grid with classifiers
     param_grid = task_helper.add_classifier_to_params(param_grid)
+
+    # Overwrite default param_grid with the parameters specified in experiment_config
+    param_grid = dict(param_grid, **experiment_params)
+
     # Remove "voided" params
     param_grid = {k: v for k, v in param_grid.items() if v is not None}
 

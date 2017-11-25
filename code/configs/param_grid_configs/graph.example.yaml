@@ -1,0 +1,25 @@
+# Task type
+experiment_name:
+  'Some name'
+limit_dataset:
+  - ling-spam
+params_per_type:
+    graph:
+      feature_extraction:
+        fast_wl:
+          h:
+          - 10
+          node_weight_function:
+          - ~
+          - nxgraph_degrees_metric
+          - nxgraph_pagerank_metric
+          round_to_decimals:
+          - 10
+        phi_picker:
+          return_iteration:
+          - stacked
+          use_zeroth:
+          - false
+          - true
+      normalizer:
+      - ~

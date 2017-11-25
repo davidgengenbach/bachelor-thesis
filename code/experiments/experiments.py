@@ -25,8 +25,7 @@ def get_tasks() -> typing.List[ExperimentTask]:
     tasks = []
 
     tasks += task_helper.get_tasks(graph_task_fns, graph_cache_files)
-    tasks += task_helper.get_tasks([get_task_dummy], datasets)
-    tasks += task_helper.get_tasks([get_task_text], datasets)
+    tasks += task_helper.get_tasks([get_task_dummy, get_task_text], datasets)
     tasks += task_helper.get_tasks([get_gram_task], gram_cache_files)
     return tasks
 
@@ -41,7 +40,14 @@ def get_task_dummy(dataset_name: str) -> ExperimentTask:
         def process():
             X, Y = dataset_helper.get_dataset(dataset_name)
             estimator = sklearn.pipeline.Pipeline([('vectorizer', vectorizer), ('classifier', None)])
-            params = dict(classifier=dummy_classifier, classifier__strategy=[strategy], classifier__C = None, classifier__max_iter = None, classifier__tol = None)
+            params = dict(
+                classifier=dummy_classifier,
+                classifier__strategy=[strategy],
+                classifier__C=None,
+                classifier__max_iter=None,
+                classifier__tol=None,
+                classifier__class_weight=None
+            )
             return ClassificationData(X, Y, estimator, params)
 
         tasks.append(ExperimentTask('dummy_{}'.format(strategy), dataset_name, process))
@@ -102,7 +108,7 @@ def get_task_combined(graph_cache_file: str) -> ExperimentTask:
 
         estimator, params = graph_pipeline.get_combined_params(text_reduced=True)
         graph_pipeline.add_num_vertices_to_fast_wl_params(params, num_vertices=num_vertices)
-        params = dict(params, **dict(classifier__C = [1e-3, 1e-2, 1e-1, 1]))
+        params = dict(params, **dict(classifier__C=[1e-3, 1e-2, 1e-1, 1]))
         return ClassificationData(X, Y, estimator, params)
 
     return ExperimentTask('graph_combined', get_filename_only(graph_cache_file), process)
@@ -113,7 +119,7 @@ def get_task_graphs(graph_cache_file: str) -> ExperimentTask:
         X, Y = dataset_helper.get_dataset_cached(graph_cache_file)
         X = graph_helper.get_graphs_only(X)
         estimator, params = task_helper.get_graph_estimator_and_params(X, Y)
-        #params['feature_extraction__fast_wl__ignore_label_order'] = [True, False]
+        # params['feature_extraction__fast_wl__ignore_label_order'] = [True, False]
         return ClassificationData(X, Y, estimator, params)
 
     return ExperimentTask('graph', get_filename_only(graph_cache_file), process)
@@ -123,7 +129,11 @@ def get_gram_task(gram_cache_file) -> ExperimentTask:
     def process() -> tuple:
         K, Y = dataset_helper.get_dataset_cached(gram_cache_file, check_validity=False)
         estimator = sklearn.pipeline.Pipeline([('classifier', None)])
-        params = dict(classifier=[sklearn.svm.SVC(kernel='precomputed', class_weight='balanced')])
+        params = dict(
+            classifier=[sklearn.svm.SVC()],
+            classifier__kernel='precomputed',
+            classifier__class_weight='balanced'
+        )
         return ClassificationData(K, Y, estimator, params)
 
     return ExperimentTask('graph_gram', get_filename_only(gram_cache_file), process)

@@ -42,8 +42,10 @@ def get_cooccurrence_words_from_filename(filename):
     return match[0][1]
 
 
-def get_result_filename_for_task(task):
+def get_result_filename_for_task(task, experiment_config:dict=None):
     dataset = get_dataset_from_filename(task.name, ignore_subtype=False)
+    file = remove_file_extension(get_filename_only(task.name))
+    experiment_name = experiment_config.get('experiment_name', None) if experiment_config else None
 
     parts = [
         'result_',
@@ -51,7 +53,10 @@ def get_result_filename_for_task(task):
         task.type
     ]
 
-    file = remove_file_extension(get_filename_only(task.name))
+    if experiment_name:
+        parts.insert(1, experiment_name)
+        parts.insert(1, 'experiment')
+
     if dataset != file:
         parts.append(file)
 

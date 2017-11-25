@@ -1,0 +1,175 @@
+experiment_name: All
+limit_dataset:
+- cade-ana
+- imsdb
+- ling-spam
+- mini20-ana
+- ng20
+- ng20-ana
+- r52-ana
+- r8
+- r8-ana
+- reuters-21578
+- review_polarity
+- rotten_imdb
+- small
+- tagmynews
+- webkb
+- webkb-ana
+params_per_type:
+  dummy_most_frequent:
+    classifier:
+      C: null
+      class_weight: null
+      max_iter: null
+      strategy:
+      - uniform
+      tol: null
+  dummy_stratified:
+    classifier:
+      C: null
+      class_weight: null
+      max_iter: null
+      strategy:
+      - uniform
+      tol: null
+  dummy_uniform:
+    classifier:
+      C: null
+      class_weight: null
+      max_iter: null
+      strategy:
+      - uniform
+      tol: null
+  graph:
+    feature_extraction:
+      fast_wl:
+        h:
+        - 10
+        node_weight_function:
+        - NoneType
+        phi_dim:
+        - 58670
+        round_to_decimals:
+        - 10
+      phi_picker:
+        return_iteration:
+        - stacked
+        use_zeroth:
+        - false
+    normalizer:
+    - MaxAbsScaler
+  graph_combined:
+    classifier:
+      C:
+      - 0.001
+      - 0.01
+      - 0.1
+      - 1
+    features:
+      fast_wl_pipeline:
+        feature_extraction:
+          feature_extraction:
+            fast_wl:
+              h:
+              - 10
+              node_weight_function:
+              - NoneType
+              phi_dim:
+              - 58670
+              round_to_decimals:
+              - 10
+            phi_picker:
+              return_iteration:
+              - stacked
+              use_zeroth:
+              - false
+          normalizer:
+          - MaxAbsScaler
+      text:
+        vectorizer:
+          preprocessing:
+          - SimplePreProcessingTransformer
+          scaler:
+          - MaxAbsScaler
+          vectorizer:
+            binary:
+            - true
+            - false
+            ngram_range:
+            - !!python/tuple
+              - 1
+              - 1
+  graph_content_only:
+    graph_to_text:
+      use_edges:
+      - true
+      - false
+    preprocessing:
+    - SimplePreProcessingTransformer
+    scaler:
+    - MaxAbsScaler
+    vectorizer:
+      binary:
+      - true
+      - false
+      ngram_range:
+      - &id001 !!python/tuple
+        - 1
+        - 1
+      - &id002 !!python/tuple
+        - 1
+        - 2
+  graph_gram:
+    classifier:
+    - SVC
+  graph_node_weights:
+    feature_extraction:
+      fast_wl:
+        h:
+        - 10
+        node_weight_function:
+        - NoneType
+        - function
+        - function
+        phi_dim:
+        - 58670
+        round_to_decimals:
+        - 10
+      phi_picker:
+        return_iteration:
+        - stacked
+        use_zeroth:
+        - false
+    normalizer:
+    - MaxAbsScaler
+  graph_structure_only:
+    feature_extraction:
+      fast_wl:
+        h:
+        - 10
+        node_weight_function:
+        - NoneType
+        phi_dim:
+        - 58670
+        round_to_decimals:
+        - 10
+      phi_picker:
+        return_iteration:
+        - stacked
+        use_zeroth:
+        - false
+    normalizer:
+    - MaxAbsScaler
+  text:
+    preprocessing:
+    - SimplePreProcessingTransformer
+    scaler:
+    - MaxAbsScaler
+    vectorizer:
+      binary:
+      - true
+      - false
+      ngram_range:
+      - *id001
+      - *id002

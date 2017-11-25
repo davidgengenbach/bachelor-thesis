@@ -14,7 +14,7 @@ from utils.classification_options import ClassificationOptions
 
 import experiments
 from experiments.task_helper import ExperimentTask
-from experiments import task_runner
+from experiments import task_runner, experiment_helper
 
 
 def get_args():
@@ -24,6 +24,7 @@ def get_args():
     )
 
     parser.add_argument('--config', is_config_file=True)
+    parser.add_argument('--experiment_config', type=str, default=None)
 
     # Options
     parser.add_argument('--n_jobs', type=int, default=1)
@@ -36,19 +37,11 @@ def get_args():
     # Options for Classifier and CV
     parser.add_argument('--scoring', type=str, nargs='+', default=['precision_macro', 'recall_macro', 'accuracy', 'f1_macro'])
     parser.add_argument('--refit', type=str, default='f1_macro')
-    parser.add_argument('--max_iter', type=int, default=2500)
-    parser.add_argument('--tol', type=int, default=6e-4, help='Tolerance for stopping criteria')
     parser.add_argument('--n_splits', type=int, default=3)
     parser.add_argument('--random_state', type=int, default=42)
     parser.add_argument('--create_predictions', type=helper.argparse_str2bool, nargs='?', const=True, default=True)
     parser.add_argument('--prediction_test_size', type=float, default=0.15)
     parser.add_argument('--keep_coefs', action='store_true')
-
-    # FastWL options
-    #parser.add_argument('--wl_round_to_decimal', nargs='+', type=int, default=[-1, 0, 5, 10])
-    parser.add_argument('--wl_round_to_decimal', nargs='+', type=int, default=[-1, 7])
-    parser.add_argument('--wl_iterations', nargs='+', type=int, default=[5])
-    parser.add_argument('--wl_phi_picker_iterations', nargs='+', default=[0, 4, 'stacked'])
 
     # Task filters
     parser.add_argument('--task_name_filter', type=str, default=None)
@@ -59,8 +52,7 @@ def get_args():
         'ling-spam',
         'reuters-21578',
         'webkb',
-        #'webkb-ana',
-        #'ng20-ana'
+        'review_polarity'
     ])
 
     args = parser.parse_args()
@@ -73,29 +65,37 @@ def main():
 
     helper.print_script_args_and_info(args)
 
+    if args.experiment_config:
+        experiment_config = experiment_helper.get_experiment_config(args.experiment_config)
+    else:
+        experiment_config = None
+
     create_results_dir(args)
 
     classification_options: ClassificationOptions = ClassificationOptions.from_argparse_options(args)
 
     tasks: typing.List[ExperimentTask] = experiments.get_all_tasks()
 
-    start_tasks(args, tasks, classification_options)
+    start_tasks(args, tasks, classification_options, experiment_config)
 
 
-def start_tasks(args, all_tasks: typing.List[ExperimentTask], classification_options: ClassificationOptions):
+def start_tasks(args, all_tasks: typing.List[ExperimentTask], classification_options: ClassificationOptions, experiment_config: dict):
+    filtered_task_types = experiment_config['params_per_type'].keys() if experiment_config else None
+    limit_dataset = experiment_config.get('limit_dataset', args.limit_dataset) if experiment_config else args.limit_dataset
 
     def should_process_task(task: ExperimentTask):
         # Dataset filter
-        is_filtered_by_dataset = args.limit_dataset and filename_utils.get_dataset_from_filename(task.name) not in args.limit_dataset
+        is_filtered_by_dataset = limit_dataset and filename_utils.get_dataset_from_filename(task.name) not in limit_dataset
 
         # Task type filters
         is_filtered_by_include_filter = (args.task_type_include_filter and task.type not in args.task_type_include_filter)
         is_filtered_by_exclude_filter = (args.task_type_exclude_filter and task.type in args.task_type_exclude_filter)
 
         is_filtered_by_name_filter = (args.task_name_filter and args.task_name_filter not in task.name)
+        is_filtered_by_param_options = (filtered_task_types and task.type not in filtered_task_types)
 
         # Do not process tasks that have already been calculated (unless args.force == True)
-        created_files = ['{}/{}'.format(args.results_folder, filename_utils.get_result_filename_for_task(task))]
+        created_files = ['{}/{}'.format(args.results_folder, filename_utils.get_result_filename_for_task(task, experiment_config))]
         is_filtered_by_file_exists = (not args.force and np.any([os.path.exists(file) for file in created_files]))
 
         should_process = not np.any([
@@ -103,7 +103,8 @@ def start_tasks(args, all_tasks: typing.List[ExperimentTask], classification_opt
             is_filtered_by_include_filter,
             is_filtered_by_name_filter,
             is_filtered_by_file_exists,
-            is_filtered_by_exclude_filter
+            is_filtered_by_exclude_filter,
+            is_filtered_by_param_options
         ])
 
         return should_process
@@ -147,7 +148,7 @@ def start_tasks(args, all_tasks: typing.List[ExperimentTask], classification_opt
         start_time = time()
         print_task('Started')
         try:
-            task_runner.run_classification_task(t, classification_options)
+            task_runner.run_classification_task(t, classification_options, experiment_config)
             gc.collect()
         except Exception as e:
             print_task('Error: {}'.format(e))
