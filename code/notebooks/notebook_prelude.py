@@ -12,7 +12,7 @@ from PIL import Image
 from preprocessing import preprocessing
 from sklearn import dummy
 from sklearn import metrics, pipeline, preprocessing, svm
-from transformers.pipelines import text_pipeline
+from transformers.pipelines import *
 from transformers.fast_wl_graph_kernel_transformer import FastWLGraphKernelTransformer
 from transformers.nx_graph_to_tuple_transformer import NxGraphToTupleTransformer
 from transformers.tuple_selector import TupleSelector
@@ -40,8 +40,9 @@ import warnings
 import psutil
 import matplotlib.style as style
 from pprint import pprint
-
 from utils.graph_helper import TYPE_COOCCURRENCE, TYPE_CONCEPT_MAP, GRAPH_TYPES
+import experiments
+from experiments import experiment_helper
 
 EXPORT_DPI = 100
 EXPORT_FIG_SIZE = (8, 4)
@@ -88,3 +89,12 @@ def save_fig(fig, filename_without_ext, folder = IMAGE_FOLDER, extensions = ['pn
     for ext in extensions:
         filename = '{}/{}.{}'.format(folder, filename_without_ext, ext)
         fig.savefig(filename)
+
+
+DATASETS = dataset_helper.get_all_available_dataset_names()
+for dataset in DATASETS:
+    globals()['DATASET_' + dataset.upper().replace('-', '_')] = dataset
+
+TASK_TYPES = experiments.get_all_task_types()
+for task_type in TASK_TYPES:
+    globals()['TASK_TYPE_{}'.format(task_type.upper())] = task_type

@@ -1,8 +1,11 @@
 # Task type
 experiment_name:
-  'some_name'
-limit_dataset:
-  - ling-spam
+  'ignore_label_test'
+limit_graph_type:
+  - concept-map
+  - cooccurrence
+ #limit_dataset:
+#  - ling-spam
 params_per_type:
     graph:
       feature_extraction:
@@ -20,6 +23,5 @@ params_per_type:
           - stacked
           use_zeroth:
           - false
-          - true
       normalizer:
-      - ~
+      - MaxAbsScaler

@@ -2,7 +2,7 @@ from . import experiments
 from .task_helper import ExperimentTask
 import typing
 from utils import filename_utils, graph_helper
-
+import collections
 
 def get_all_tasks() -> typing.List[ExperimentTask]:
     tasks = []
@@ -27,6 +27,14 @@ def get_filtered_tasks(task_type=None, dataset=None, graph_type_filter:str=None,
         (not task_name_filter or task_name_filter in t.name) and
         (not graph_type_filter or graph_type_filter == graph_helper.get_graph_type_from_filename(t.name))
     ]
+
+
+def get_task_type_counts():
+    return collections.Counter(get_all_task_types(as_set=False))
+
+def get_all_task_types(as_set=True):
+    types = [x.type for x in get_all_tasks()]
+    return set(types) if as_set else types
 
 
 def _ensure_is_container(a) -> typing.List:

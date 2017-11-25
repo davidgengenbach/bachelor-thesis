@@ -1,0 +1,101 @@
+experiment_name: 'graph_combined'
+limit_dataset:
+- ling-spam
+- ng20
+#- reuters-21578
+- review_polarity
+- rotten_imdb
+- tagmynews
+#- webkb
+params_per_type:
+  dummy_most_frequent:
+    classifier:
+      strategy:
+      - most_frequent
+  graph:
+    classifier:
+      C:
+      - 0.001
+      - 0.01
+      #- 0.1
+      - 1
+    feature_extraction:
+      fast_wl:
+        h:
+        - 10
+        node_weight_function:
+        - ~
+      phi_picker:
+        return_iteration:
+        - stacked
+        use_zeroth:
+        - false
+    normalizer:
+    - MaxAbsScaler
+  text:
+    classifier:
+      C:
+      - 0.001
+      - 0.01
+      #- 0.1
+      - 1
+    preprocessing:
+    - SimplePreProcessingTransformer
+    scaler:
+    - MaxAbsScaler
+    vectorizer:
+      VAL_:
+      - CountVectorizer
+      - TfidfVectorizer
+      binary:
+      - true
+      - false
+      ngram_range:
+      - !!python/tuple
+        - 1
+        - 1
+      - !!python/tuple
+        - 1
+        - 2
+  graph_combined:
+    classifier:
+      C:
+      - 0.001
+      - 0.01
+      #- 0.1
+      - 1
+    features:
+      fast_wl_pipeline:
+        feature_extraction:
+          feature_extraction:
+            fast_wl:
+              h:
+              - 10
+              node_weight_function:
+              - ~
+              round_to_decimals:
+              - 10
+            phi_picker:
+              return_iteration:
+              - stacked
+              use_zeroth:
+              - false
+          normalizer:
+          - MaxAbsScaler
+      text:
+        vectorizer:
+          preprocessing:
+          - SimplePreProcessingTransformer
+          scaler:
+          - MaxAbsScaler
+          vectorizer:
+            VAL_:
+            - CountVectorizer
+            - TfidfVectorizer
+            binary:
+            - true
+            - false
+            ngram_range:
+            - !!python/tuple
+              - 1
+              - 1

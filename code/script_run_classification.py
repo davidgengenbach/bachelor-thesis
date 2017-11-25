@@ -8,6 +8,7 @@ from time import time
 import numpy as np
 import gc
 
+from utils import graph_helper
 from utils.logger import LOGGER
 from utils import filename_utils, time_utils, helper
 from utils.classification_options import ClassificationOptions
@@ -68,7 +69,7 @@ def main():
     if args.experiment_config:
         experiment_config = experiment_helper.get_experiment_config(args.experiment_config)
     else:
-        experiment_config = None
+        experiment_config = {}
 
     create_results_dir(args)
 
@@ -81,7 +82,13 @@ def main():
 
 def start_tasks(args, all_tasks: typing.List[ExperimentTask], classification_options: ClassificationOptions, experiment_config: dict):
     filtered_task_types = experiment_config['params_per_type'].keys() if experiment_config else None
-    limit_dataset = experiment_config.get('limit_dataset', args.limit_dataset) if experiment_config else args.limit_dataset
+
+    if experiment_config.get('limit_dataset', None) is not None:
+        limit_dataset = experiment_config['limit_dataset']
+    else:
+        limit_dataset = args.limit_dataset
+
+    limit_graph_type = experiment_config.get('limit_graph_type', None)
 
     def should_process_task(task: ExperimentTask):
         # Dataset filter
@@ -93,12 +100,15 @@ def start_tasks(args, all_tasks: typing.List[ExperimentTask], classification_opt
 
         is_filtered_by_name_filter = (args.task_name_filter and args.task_name_filter not in task.name)
         is_filtered_by_param_options = (filtered_task_types and task.type not in filtered_task_types)
+        is_filtered_by_graph_type = (limit_graph_type and graph_helper.get_graph_type_from_filename(task.name) not in limit_graph_type)
+
 
         # Do not process tasks that have already been calculated (unless args.force == True)
         created_files = ['{}/{}'.format(args.results_folder, filename_utils.get_result_filename_for_task(task, experiment_config))]
         is_filtered_by_file_exists = (not args.force and np.any([os.path.exists(file) for file in created_files]))
 
         should_process = not np.any([
+            is_filtered_by_graph_type,
             is_filtered_by_dataset,
             is_filtered_by_include_filter,
             is_filtered_by_name_filter,

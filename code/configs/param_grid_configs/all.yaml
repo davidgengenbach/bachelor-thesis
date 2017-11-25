@@ -20,6 +20,8 @@ params_per_type:
   dummy_most_frequent:
     classifier:
       C: null
+      VAL_:
+      - DummyClassifier
       class_weight: null
       max_iter: null
       strategy:
@@ -28,6 +30,8 @@ params_per_type:
   dummy_stratified:
     classifier:
       C: null
+      VAL_:
+      - DummyClassifier
       class_weight: null
       max_iter: null
       strategy:
@@ -36,6 +40,8 @@ params_per_type:
   dummy_uniform:
     classifier:
       C: null
+      VAL_:
+      - DummyClassifier
       class_weight: null
       max_iter: null
       strategy:
@@ -93,6 +99,8 @@ params_per_type:
           scaler:
           - MaxAbsScaler
           vectorizer:
+            VAL_:
+            - CountVectorizer
             binary:
             - true
             - false
@@ -110,6 +118,9 @@ params_per_type:
     scaler:
     - MaxAbsScaler
     vectorizer:
+      VAL_:
+      - CountVectorizer
+      - TfidfVectorizer
       binary:
       - true
       - false
@@ -167,6 +178,9 @@ params_per_type:
     scaler:
     - MaxAbsScaler
     vectorizer:
+      VAL_:
+      - CountVectorizer
+      - TfidfVectorizer
       binary:
       - true
       - false

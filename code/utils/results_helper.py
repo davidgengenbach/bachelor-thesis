@@ -34,14 +34,17 @@ def remove_transformer_classes(d):
             if isinstance(val, dict):
                 remove_transformer_classes(val)
 
-
 replacements = [
-    ('param_feature_extraction__', ''),
-    ('param_features__fast_wl_pipeline__feature_extraction__', ''),
-    ('param_features__text__', ''),
-    ('features__text__vectorizer__', ''),
-    ('vectorizer__vectorizer', 'vectorizer'),
-    ('param_', '')
+    ('param_', ''),
+    ('features__fast_wl_pipeline__feature_extraction__feature_extraction__', 'graph__'),
+    ('normalizer', ''),
+    ('preprocessing', 'text__preprocessing'),
+    ('features__fast_wl_pipeline__feature_extraction__normalizer', 'graph__normalizer'),
+    ('feature_extraction__fast_wl__', 'graph__fast_wl__'),
+    ('feature_extraction__phi_picker__', 'graph__phi_picker__'),
+    ('features__text__vectorizer__', 'text__'),
+    ('graph_to_text__use_edges', 'graph__graph_to_text__use_edges'),
+    ('vectorizer', 'text__vectorizer')
 ]
 
 
@@ -49,7 +52,8 @@ def clean_result_keys(el: dict)->dict:
     results = {}
     for key, val in el.items():
         for search, replace in replacements:
-            key = key.replace(search, replace)
+            if key.startswith(search):
+                key = key.replace(search, replace)
         results[key] = val
     return results
 
@@ -74,7 +78,7 @@ def get_kernel_from_filename(filename:str)->str:
 
     return '_'.join(parts)
 
-def get_results(folder=None, use_already_loaded=True, results_directory=RESULTS_DIR, log_progress=True, exclude_filter = None, filter_out_non_complete_datasets = True, remove_split_cols = True, remove_rank_cols = True, remove_fit_time_cols = True):
+def get_results(folder=None, use_already_loaded=False, results_directory=RESULTS_DIR, log_progress=True, exclude_filter = None, filter_out_non_complete_datasets = 4, remove_split_cols = True, remove_rank_cols = True, remove_fit_time_cols = True, filter_out_experiment=None):
     global _DF_ALL, _RESULT_CACHE
 
     if not use_already_loaded:
@@ -87,6 +91,9 @@ def get_results(folder=None, use_already_loaded=True, results_directory=RESULTS_
 
     # Get all result files (pickled)
     result_files = get_result_filenames_from_folder(folder)
+
+    if filter_out_experiment:
+        result_files = [x for x in result_files if 'experiment__{}'.format(filter_out_experiment) in x]
 
     data_ = []
     for result_file in helper.log_progress(result_files) if log_progress else result_files:
@@ -105,7 +112,6 @@ def get_results(folder=None, use_already_loaded=True, results_directory=RESULTS_
         remove_transformer_classes(result_data)
 
         result_file = result_file.split('/')[-1]
-
         result = result_data if 'params' in result_data else result_data['results']
 
         assert 'params' in result
@@ -114,7 +120,7 @@ def get_results(folder=None, use_already_loaded=True, results_directory=RESULTS_
         for idx, el in enumerate(result['params']):
             result['params'][idx] = clean_result_keys(el)
 
-        is_graph_dataset = '_graph_' in result_file
+        is_graph_dataset = '_graph__dataset' in result_file or 'graph_combined__dataset' in result_file
         result['combined'] = 'combined' in result_file
         result['kernel'] = 'unknown'
 
@@ -126,6 +132,9 @@ def get_results(folder=None, use_already_loaded=True, results_directory=RESULTS_
             result['same_label'] = 'same_label' in result_file
 
             result['kernel'] = get_kernel_from_filename(result_file)
+
+            if 'graph__fast_wl_node_weight_function' in result:
+                result['graph__fast_wl_node_weight_function'] = ['none' if x is None else x.__name__ for x in result.get('graph__fast_wl_node_weight_function')]
 
             is_relabeled = 'relabeled' in result_file
             result['relabeled'] = is_relabeled
@@ -149,7 +158,6 @@ def get_results(folder=None, use_already_loaded=True, results_directory=RESULTS_
             result['type'] = 'text'
             result['words'] = ['all' for x in result['params']]
 
-        result['classifier'] = [x['classifier'] if 'classifier' in x else None for x in result['params']]
         result['is_ana'] = '-ana' in result_file
 
         if dataset_name.endswith('-single') or dataset_name.endswith('-ana'):
@@ -160,8 +168,6 @@ def get_results(folder=None, use_already_loaded=True, results_directory=RESULTS_
 
         data_.append(result)
 
-
-
     for d in data_:
         result_df = pd.DataFrame(d)
         _DF_ALL = result_df if _DF_ALL is None else _DF_ALL.append(result_df)
@@ -171,7 +177,7 @@ def get_results(folder=None, use_already_loaded=True, results_directory=RESULTS_
 
     if filter_out_non_complete_datasets:
         # Only keep datasets where there are all three types (text, co-occurrence and concept-graph) of results
-        df_all = _DF_ALL.groupby('dataset').filter(lambda x: len(x.type.value_counts()) == 4).reset_index(drop=True)
+        df_all = _DF_ALL.groupby('dataset').filter(lambda x: len(x.type.value_counts()) == filter_out_non_complete_datasets).reset_index(drop=True)
     else:
         df_all = _DF_ALL
 
@@ -188,6 +194,8 @@ def get_results(folder=None, use_already_loaded=True, results_directory=RESULTS_
     columns = df_all.columns.tolist()
     for c in prio_columns + low_prio_columns:
         columns.remove(c)
+
+    #df_all = df_all.fillna(value = 'none')
 
     return df_all.reset_index(drop=True)[prio_columns + columns + low_prio_columns]#.set_index('filename')
 

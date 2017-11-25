@@ -26,7 +26,7 @@ def run_classification_task(task: ExperimentTask, cfo: ClassificationOptions, ex
     is_precomputed = isinstance(X, np.ndarray) and X.shape[0] == X.shape[1]
 
     # This is also a heuristic
-    is_dummy = 'classifier__strategy' in param_grid and 'classifier__C' not in param_grid
+    is_dummy = 'classifier__strategy' in param_grid
 
     experiment_params = dict()
     if experiment_config:
@@ -44,6 +44,7 @@ def run_classification_task(task: ExperimentTask, cfo: ClassificationOptions, ex
     # Remove "voided" params
     param_grid = {k: v for k, v in param_grid.items() if v is not None}
 
+    param_grid = {k: [x() if isinstance(x, type) else x for x in v] for k, v in param_grid.items()}
     LOGGER.info('ParamGrid: {}\n\n'.format(pipeline_helper.remove_complex_types(param_grid)))
 
     X_train, Y_train, X_test, Y_test, train_i, test_i = X, Y, [], [], range(len(X)), []
@@ -90,9 +91,7 @@ def run_classification_task(task: ExperimentTask, cfo: ClassificationOptions, ex
         else:
             try:
                 # Retrain the best classifier and get prediction on validation set
-                best_classifier = sklearn.base.clone(gscv_result.best_estimator_)
-                best_classifier.fit(X_train, Y_train)
-                Y_test_pred = best_classifier.predict(X_test)
+                Y_test_pred = gscv_result.best_estimator_.predict(X_test)
 
                 results_helper.save_results({
                     'results': {
