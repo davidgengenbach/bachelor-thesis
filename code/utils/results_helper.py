@@ -94,7 +94,7 @@ def get_results(folder=None, use_already_loaded=False, results_directory=RESULTS
 
     if filter_out_experiment:
         result_files = [x for x in result_files if 'result___{}'.format(filter_out_experiment) in x]
-    print(result_files)
+
     data_ = []
     for result_file in helper.log_progress(result_files) if log_progress else result_files:
         if exclude_filter and exclude_filter in result_file: continue

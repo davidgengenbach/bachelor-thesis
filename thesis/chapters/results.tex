@@ -162,7 +162,10 @@ The interpretability of this approach would be far lower since both graph- and t
 
 In Figure \ref{fig:results_comparison_combined} we see the classification scores for the combined features for both co-occurrence graphs and concept maps.
 
-As we see, the performance is not 
+\todo[inline]{This is not true anymore. Classification performance on test set is different!}
+As we see, the performance of the combined approached compared the text-only approach is comparable.
+With some datasets, the combined approach is slightly better than the text-only approach. Especially for the ng20 dataset, we see an improvement of ca. 3\% over the text-only approach.
+To test whether this difference in performance is due to chance, we used the permutation test, 
 
 To better understand the performance when combined text- and graph features, we also trained a one-layer neural network with the combined features and after training, we looked at the weights in the first layer.
 The weights, or coefficients, are an indicator for the importance of a input feature.
@@ -227,6 +230,39 @@ webkb
 \end{figure}
 
 \labelsubsection{Related And Intermediate Observations}{subsec:related_and_intermediate_observation}
+
 \todo[inline]{Sparsity of feature vectors}
 \todo[inline]{Complexity of approach}
 \todo[inline]{Usefulness of WL to get feeling for graph connectedness, uniqueness of structure, uniqueness of labels}
+
+\subsubsection{Weisfeiler-Lehman extension: node weights and iteration weights}
+With increasing iterations $h$ of the Weisfeiler-Lehman algorithm, the exact matches of the subtrees of height $h$ become much more improbable.
+In iteration 0, the Weisfeiler-Lehman only counts the number of node labels in the graphs, for iteration 1 it takes the immediate neighbourhood of the nodes into account, for iteration 2 is takes the neighbourhood of the neighbourhood into account and so on.
+So, with \textbf{(1)} higher iterations, the probability of having an exact match decreases.
+
+Another difficulty arises for nodes with a high number of neighbours. \textbf{(2)} The probability of an exact match also decreases with a higher degree.
+
+These two difficulties, \textbf{(1)} the increased difficulty of a match with higher iterations and \textbf{(2)} the increased difficulty of a match for nodes with higher degrees, are not addressed when using Weisfeiler-Lehman in its plain version. Both difficulties are neither encoded in the features maps nor when creating the gram matrix.
+
+As a possible solution for these difficulties, we propose an extension to the plain Weisfeiler-Lehman algorithm.
+Our first extension augments the WL algorithm by adding node weights.
+For each of the nodes in all graphs, we first calculate node weights which encode the importance of that node or difficulty of getting an exact match in WL.
+An example of such node weights would be the node degree or node weights extracted with PageRank.
+The node degree is an interesting metric for node weights since it actually encodes the size of the neighbourhood of a node and therefor could possibly address problem \textbf{(2)}.
+\todo[inline]{Explain how to actually use the node weights.}
+\todo[inline]{Remark that the node weights could be seen as an additional metric of frequency: nodes with a higher degree have been in the text more frequently.}
+
+Our other extension to the WL algorithm addresses problem \textbf{(1)}, the difficulty of having a match when the iteration increases.
+To solve this difficulty, we propose weighting the features of each iteration.
+The feature maps of WL consist of the concatenated feature maps for each iteration.
+For this extension, we propose weighting the feature maps of each iteration $h$ by a factor given by a function $f(h)$.
+So, for a feature map, $\phi(G)$, of a graph $G$ for $h=2$ iterations, the feature map can be decomposed into the feature maps of each of the two $h$ iterations:
+\begin{equation*}
+\phi(G)=(\phi_{h=1}(G), \phi_{h=2}(G))
+\end{equation*}
+We now propose to weight the individual feature maps by the factor determined by function $f(h)$, so:
+\begin{equation*}
+\phi_{f}(G)=(f(1) \cdot \phi_{h=1}(G), f(2) \cdot \phi_{h=2}(G))
+\end{equation*}
+So, basically the function $f(h)$ works as a decaying factor to decreasing iterations $h$.
+When the function $f(h)$ increasing (steigend?), the increasing importance with higher iterations is encoded into the resulting feature map $\phi_f(G)$.

@@ -1,5 +1,6 @@
 import yaml
 import os
+from transformers import fast_wl_graph_kernel_transformer
 from transformers.simple_preprocessing_transformer import SimplePreProcessingTransformer
 from transformers.pipelines import pipeline_helper
 import experiments
@@ -19,6 +20,8 @@ EXPERIMENT_CONFIG_ALL = EXPERIMENT_CONFIG_FOLDER + '/all.yaml'
 PLACEHOLDER_LIST = dict(
     nxgraph_degrees_metric=graph_metrics.nxgraph_degrees_metric,
     nxgraph_pagerank_metric=graph_metrics.nxgraph_pagerank_metric,
+    iteration_weight_function=fast_wl_graph_kernel_transformer.iteration_weight_function,
+    iteration_weight_function_exponential=fast_wl_graph_kernel_transformer.iteration_weight_function_exponential,
     SimplePreProcessingTransformer=SimplePreProcessingTransformer,
     MaxAbsScaler=sklearn.preprocessing.MaxAbsScaler,
     SVC=sklearn.svm.SVC,

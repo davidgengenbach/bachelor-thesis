@@ -14,10 +14,14 @@ params_per_type:
         - 10
         node_weight_function:
         - ~
-        - nxgraph_pagerank_metric
+        #- nxgraph_pagerank_metric
         - nxgraph_degrees_metric
         round_to_decimals:
         - 10
+        node_weight_iteration_weight_function:
+        - ~
+        - iteration_weight_function
+        - iteration_weight_function_exponential
       phi_picker:
         return_iteration:
         - stacked

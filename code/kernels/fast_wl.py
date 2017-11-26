@@ -27,7 +27,8 @@ def transform(
         ignore_label_order = False,
         node_weight_factors = None,
         use_early_stopping = True,
-        fill_up_missing_iterations = False
+        fill_up_missing_iterations = False,
+        node_weight_iteration_weight_function=None
     ) -> tuple:
     assert len(graphs)
 
@@ -75,9 +76,11 @@ def transform(
     if node_weight_factors is not None:
         node_weight_factors = [np.array(x, dtype=object) for x in node_weight_factors]
 
-    def add_labels_to_phi(phi: scipy.sparse.spmatrix, graph_idx: int, labels: typing.Iterable):
+    def add_labels_to_phi(phi: scipy.sparse.spmatrix, graph_idx: int, labels: typing.Iterable, iteration: int):
         if node_weight_factors is not None:
             factor = node_weight_factors[graph_idx]
+            if node_weight_iteration_weight_function:
+                factor *= node_weight_iteration_weight_function(iteration)
         else:
             factor = 1
 
@@ -104,7 +107,7 @@ def transform(
     phi = used_matrix_type(phi_shape, dtype=phi_dtype)
 
     for idx, labels in enumerate(graph_labels):
-        add_labels_to_phi(phi, idx, labels)
+        add_labels_to_phi(phi, idx, labels, 0)
 
     if round_signatures_to_decimals == -1:
         # 10^-1 = 0.1
@@ -142,7 +145,7 @@ def transform(
             new_labels = np.array([label_lookup[signature] for signature in signatures], dtype = labels_dtype)
             graph_labels[idx] = new_labels
 
-            add_labels_to_phi(phi, idx, new_labels)
+            add_labels_to_phi(phi, idx, new_labels, i)
 
 
         # ... save phi

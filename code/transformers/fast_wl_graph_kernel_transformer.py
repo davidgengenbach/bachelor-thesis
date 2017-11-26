@@ -2,16 +2,29 @@ import sklearn
 
 from kernels import fast_wl
 from utils import graph_helper
+import numpy as np
+
+def iteration_weight_function_exponential(iteration:int):
+    return int(np.ceil(
+        (np.exp((iteration - 1))) + 1
+    ))
+
+def iteration_weight_function(iteration:int):
+    return iteration + 1
+
+def iteration_weight_constant(iteration: int, constant:int=1):
+    return constant
 
 
 class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.TransformerMixin):
-    def __init__(self, h=1, phi_dim=None, round_to_decimals=10, ignore_label_order=False, node_weight_function=None, use_early_stopping=True):
+    def __init__(self, h=1, phi_dim=None, round_to_decimals=10, ignore_label_order=False, node_weight_function=None, node_weight_iteration_weight_function=iteration_weight_constant, use_early_stopping=True):
         self.h = h
         self.phi_dim = phi_dim
         self.round_to_decimals = round_to_decimals
         self.ignore_label_order = ignore_label_order
         self.node_weight_function = node_weight_function
         self.use_early_stopping = use_early_stopping
+        self.node_weight_iteration_weight_function = node_weight_iteration_weight_function
 
     def fit(self, X, y=None, **fit_params):
         assert len(X)
@@ -25,7 +38,8 @@ class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Tran
             round_signatures_to_decimals=self.round_to_decimals,
             ignore_label_order=self.ignore_label_order,
             node_weight_factors=node_weight_factors,
-            use_early_stopping=self.use_early_stopping
+            use_early_stopping=self.use_early_stopping,
+            node_weight_iteration_weight_function=self.node_weight_iteration_weight_function
         )
 
         self.phi_list = [x.T for x in phi_list]
@@ -58,6 +72,7 @@ class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Tran
             # Also give the label lookups/counters from training
             label_lookups=[dict(l) for l in self.label_lookups],
             label_counters=self.label_counters,
+            node_weight_iteration_weight_function=self.node_weight_iteration_weight_function
         )
 
         phi_list = [x.T for x in phi_list]
