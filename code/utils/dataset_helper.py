@@ -87,7 +87,7 @@ def get_dataset_spacy(dataset_name, use_cached=True, cache_path=CACHE_PATH, pipe
     return X, Y
 
 
-def get_gml_graph_dataset(dataset_name, use_cached=True, graphs_folder=GRAPHS_FOLDER, graph_type='concept-map', cache_folder=CACHE_PATH):
+def get_gml_graph_dataset(dataset_name, use_cached=True, graphs_folder=GRAPHS_FOLDER, graph_type='concept_map', cache_folder=CACHE_PATH):
     """Retrieves the gml dataset.
     TODO: The caching could be done with a decorator.
 

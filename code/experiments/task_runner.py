@@ -16,6 +16,7 @@ def run_classification_task(task: ExperimentTask, cfo: ClassificationOptions, ex
     result_filename_tmpl = filename_utils.get_result_filename_for_task(task, experiment_config=experiment_config)
     result_file = '{}/{}'.format(cfo.results_folder, result_filename_tmpl)
     predictions_file = '{}/{}'.format(cfo.predictions_folder, result_filename_tmpl)
+    classifier_file = '{}/{}'.format(cfo.classifier_folder, result_filename_tmpl)
 
     if not cfo.force and os.path.exists(result_file):
         return
@@ -84,6 +85,12 @@ def run_classification_task(task: ExperimentTask, cfo: ClassificationOptions, ex
     )
 
     gscv_result = gscv.fit(X_train, Y_train)
+
+    if cfo.save_best_clf:
+        best_estimator = gscv_result.best_estimator_
+        results_helper.save_results({
+            'classifier': best_estimator
+        }, classifier_file, args)
 
     if not is_dummy and cfo.create_predictions:
         if not len(X_test):

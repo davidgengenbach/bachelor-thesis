@@ -4,6 +4,7 @@ class ClassificationOptions(object):
             create_predictions: bool = True,
             force: bool = False,
             keep_coefs: bool = False,
+            save_best_clf: bool = True,
             n_jobs: int = 1,
             n_splits: int = 3,
             prediction_test_size: float = 0.15,
@@ -12,6 +13,7 @@ class ClassificationOptions(object):
             scoring=['precision_macro', 'recall_macro', 'accuracy', 'f1_macro'],
             results_folder: str = 'data/results',
             predictions_folder: str = 'data/results/predictions',
+            classifier_folder: str = 'data/results/classifier',
             verbose: int = 11
     ):
         l = locals()
@@ -27,13 +29,13 @@ class ClassificationOptions(object):
         self.results_folder = results_folder
         self.predictions_folder = predictions_folder
         self.verbose = verbose
+        self.save_best_clf = save_best_clf
+        self.classifier_folder = classifier_folder
 
         # This is just to ensure that all parameters have really been assigned to 'self'
         # (to avoid copy-paste errors)
         for key, val in l.items():
-            if key == 'self':
-                continue
-
+            if key == 'self': continue
             assert hasattr(self, key)
             assert getattr(self, key) == val
 

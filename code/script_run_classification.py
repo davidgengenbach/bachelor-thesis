@@ -33,7 +33,9 @@ def get_args():
     parser.add_argument('--dry_run', action='store_true', help='Do not classify. Only show description, tasks, ...')
     parser.add_argument('--results_folder', type=str, default='data/results')
     parser.add_argument('--predictions_folder', type=str, default='data/results/predictions')
+    parser.add_argument('--classifier_folder', type=str, default='data/results/classifier')
     parser.add_argument('--force', action='store_true', help='Overwrite already calculated results')
+
 
     # Options for Classifier and CV
     parser.add_argument('--scoring', type=str, nargs='+', default=['precision_macro', 'recall_macro', 'accuracy', 'f1_macro'])
@@ -41,6 +43,7 @@ def get_args():
     parser.add_argument('--n_splits', type=int, default=3)
     parser.add_argument('--random_state', type=int, default=42)
     parser.add_argument('--create_predictions', type=helper.argparse_str2bool, nargs='?', const=True, default=True)
+    parser.add_argument('--save_best_clf', type=helper.argparse_str2bool, nargs='?', const=True, default=True)
     parser.add_argument('--prediction_test_size', type=float, default=0.15)
     parser.add_argument('--keep_coefs', action='store_true')
 
@@ -171,8 +174,8 @@ def start_tasks(args, all_tasks: typing.List[ExperimentTask], classification_opt
 
 
 def create_results_dir(args):
-    os.makedirs(args.results_folder, exist_ok=True)
-    os.makedirs(args.predictions_folder, exist_ok=True)
+    for folder in [args.classifier_folder, args.results_folder, args.predictions_folder]:
+        os.makedirs(folder, exist_ok=True)
 
 
 if __name__ == '__main__':
