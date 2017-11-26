@@ -1,3 +1,4 @@
+from utils.constants import *
 import importlib
 import os
 import pickle
@@ -14,13 +15,7 @@ from utils import filename_utils, graph_helper
 from preprocessing import preprocessing
 import spacy
 
-DATASETS_LIMITED = ['ng20', 'reuters-21578', 'webkb', 'ling-spam']
-
 PATH_TO_HERE = os.path.dirname(os.path.abspath(__file__))
-DATASET_FOLDER = 'data/datasets'
-GRAPHS_FOLDER = 'data/graphs'
-CACHE_PATH = 'data/CACHE'
-
 
 def get_dataset_cached(cache_file, check_validity=True):
     assert os.path.exists(cache_file), 'Could not find cache_file: {}'.format(cache_file)
@@ -119,6 +114,20 @@ def get_gml_graph_dataset(dataset_name, use_cached=True, graphs_folder=GRAPHS_FO
         with open(cache_npy, 'wb') as f:
             pickle.dump((X, Y), f)
     return X, Y
+
+def get_concept_map_combined_dataset_for_dataset(dataset:str):
+    concept_map_cache_file = get_all_cached_graph_datasets(dataset, graph_type=TYPE_CONCEPT_MAP)
+    assert len(concept_map_cache_file) == 1
+    concept_map_cache_file = concept_map_cache_file[0]
+    X_combined, Y = graph_helper.get_combined_text_graph_dataset(concept_map_cache_file)
+    assert len(X_combined) == len(Y)
+    return X_combined, Y
+
+def get_text_dataset_filtered_by_concept_map(dataset:str):
+    X_combined, Y = get_concept_map_combined_dataset_for_dataset(dataset)
+    X_text = [text for (_, text, _) in X_combined]
+    assert isinstance(X_text[0], str)
+    return X_text, Y
 
 
 def get_subset_with_most_frequent_classes(X, Y, num_classes_to_keep=2, use_numpy=False):

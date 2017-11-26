@@ -4,8 +4,8 @@ KEEP_OLD="$1"
 
 SERVER='pe'
 SYNC_SERVER=""
-RSYNC_EXCLUDE="--exclude predictions/"
-#RSYNC_EXCLUDE=""
+RSYNC_EXCLUDE="--exclude predictions/ --exclude classifier/"
+RSYNC_EXCLUDE="--exclude classifier"
 
 cd data/results
 

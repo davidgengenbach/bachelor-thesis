@@ -1,4 +1,3 @@
-experiment_name: 'graph_combined'
 limit_dataset:
 - ling-spam
 - ng20

@@ -1,3 +1,5 @@
+from utils.constants import *
+
 import typing
 from glob import glob
 import collections
@@ -10,11 +12,6 @@ import numpy as np
 
 from preprocessing import preprocessing
 from utils import cooccurrence, filename_utils, dataset_helper
-
-TYPE_COOCCURRENCE = 'cooccurrence'
-TYPE_CONCEPT_MAP = 'concept_map'
-
-GRAPH_TYPES = [TYPE_COOCCURRENCE, TYPE_CONCEPT_MAP]
 
 
 def get_graph_type_from_filename(x):

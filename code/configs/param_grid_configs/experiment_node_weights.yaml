@@ -1,28 +1,21 @@
-experiment_name: 'node_weights'
 limit_dataset:
 - ling-spam
-- ng20
+#- ng20
 #- reuters-21578
 - review_polarity
 - rotten_imdb
-- tagmynews
-#- webkb
+#- tagmynews
+- webkb
 params_per_type:
   graph_node_weights:
-    classifier:
-      C:
-      - 0.001
-      - 0.01
-      - 0.1
-      - 1
     feature_extraction:
       fast_wl:
         h:
         - 10
         node_weight_function:
         - ~
-        - nxgraph_degrees_metric
         - nxgraph_pagerank_metric
+        - nxgraph_degrees_metric
         round_to_decimals:
         - 10
       phi_picker:

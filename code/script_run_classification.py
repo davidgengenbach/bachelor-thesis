@@ -103,7 +103,7 @@ def start_tasks(args, all_tasks: typing.List[ExperimentTask], classification_opt
 
         is_filtered_by_name_filter = (args.task_name_filter and args.task_name_filter not in task.name)
         is_filtered_by_param_options = (filtered_task_types and task.type not in filtered_task_types)
-        is_filtered_by_graph_type = (limit_graph_type and graph_helper.get_graph_type_from_filename(task.name) not in limit_graph_type)
+        is_filtered_by_graph_type = (limit_graph_type and graph_helper.get_graph_type_from_filename(task.name) not in [None] + limit_graph_type)
 
 
         # Do not process tasks that have already been calculated (unless args.force == True)

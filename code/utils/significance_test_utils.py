@@ -79,3 +79,19 @@ def plot_randomzation_test_distribution(result: Result, metric: MetricFunction=f
     plt.show()
     plt.close(fig)
     return fig, ax
+
+def plot_randomization_test_distribution_(diffs, global_diff, num_trails='NOT_SET', p=None, metric_name: str='NOT_SET', ax=None):
+    # Plot data
+    if not ax:
+        _, ax = plt.subplots()
+
+    fig = ax.get_figure()
+
+    df = pd.DataFrame({'metric': diffs})
+    df.metric.plot(kind='hist', bins=100, ax=ax, title='Metric: {}, p={:.4f}, #trails={}, diff={:.4f}'.format(metric_name, p, num_trails, global_diff))
+
+    for x, color in [(global_diff, 'red'), (-global_diff, 'red'), (diffs.mean(), 'green')]:
+        ax.axvline(x, color=color)
+
+    fig.tight_layout()
+    return fig, ax

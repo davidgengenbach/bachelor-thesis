@@ -89,7 +89,7 @@ def get_task_graph_structure_only(graph_cache_file) -> ExperimentTask:
 
 def get_task_text(dataset_name: str) -> ExperimentTask:
     def process() -> tuple:
-        X, Y = dataset_helper.get_dataset(dataset_name)
+        X, Y = dataset_helper.get_text_dataset_filtered_by_concept_map(dataset_name)
         estimator, params = text_pipeline.get_params(reduced=False)
         return ClassificationData(X, Y, estimator, params)
 

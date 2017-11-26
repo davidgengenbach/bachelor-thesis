@@ -153,8 +153,21 @@ This is most likely due to the high compression factor of both concept maps and 
 \subquestionref{question:comparison_combined}
 As we have seen in the results of the last section, text-based approaches outperform graph-only approaches.
 In this section we investigate how and whether the graph-based approaches improve the classification score when combined with text-based approaches.
+
+For the text features we vectorized the text with a bag-of-words approach. We also tried features with tfidf.
+For the graph features we used the Weisfeiler-Lehman algorithm since it is able to create feature map $\phi(G)$ for the graphs.
+These feature maps can easily be concatenated with the text features.
+For other graph kernels where an explicit feature map $\phi(G)$ can not be calculated, in order to combine graph- and text features, we would have had to create a combined kernel that takes into account both text- and graph features and returns a gram matrix for both of them.
+The interpretability of this approach would be far lower since both graph- and text-features would be merged without being able to distinguish the relative importance of the text- and graph features after creating the gram matrix.
+
 In Figure \ref{fig:results_comparison_combined} we see the classification scores for the combined features for both co-occurrence graphs and concept maps.
-One observation is that the relative performance of the combined approach to the text-only approach greatly varies per dataset.
+
+As we see, the performance is not 
+
+To better understand the performance when combined text- and graph features, we also trained a one-layer neural network with the combined features and after training, we looked at the weights in the first layer.
+The weights, or coefficients, are an indicator for the importance of a input feature.
+Thus we can look at the weights for the text features and compare them to the weights for the graph features.
+This gives an insight into the relative importance of text- and graph features.
 
 \todo[inline]{SVM trained on combined, coefficients}
 \todo[inline]{Analysis of coefficients}

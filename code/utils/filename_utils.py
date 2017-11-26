@@ -55,7 +55,6 @@ def get_result_filename_for_task(task, experiment_config:dict=None):
 
     if experiment_name:
         parts.insert(1, experiment_name)
-        parts.insert(1, 'experiment')
 
     if dataset != file:
         parts.append(file)

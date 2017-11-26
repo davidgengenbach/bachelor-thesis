@@ -93,8 +93,8 @@ def get_results(folder=None, use_already_loaded=False, results_directory=RESULTS
     result_files = get_result_filenames_from_folder(folder)
 
     if filter_out_experiment:
-        result_files = [x for x in result_files if 'experiment__{}'.format(filter_out_experiment) in x]
-
+        result_files = [x for x in result_files if 'result___{}'.format(filter_out_experiment) in x]
+    print(result_files)
     data_ = []
     for result_file in helper.log_progress(result_files) if log_progress else result_files:
         if exclude_filter and exclude_filter in result_file: continue
@@ -123,10 +123,9 @@ def get_results(folder=None, use_already_loaded=False, results_directory=RESULTS
         for idx, el in enumerate(result['params']):
             result['params'][idx] = clean_result_keys(el)
 
-        is_graph_dataset = '_graph__dataset' in result_file or 'graph_combined__dataset' in result_file
+        is_graph_dataset = '_graph__dataset' in result_file or 'graph_combined__dataset' in result_file or '__graph_node_weights__dataset_' in result_file
         result['combined'] = 'graph_combined__dataset_' in result_file
         result['kernel'] = 'unknown'
-
         if is_graph_dataset:
             is_cooccurrence_dataset = 'cooccurrence' in result_file
 
@@ -135,9 +134,8 @@ def get_results(folder=None, use_already_loaded=False, results_directory=RESULTS
             result['same_label'] = 'same_label' in result_file
 
             result['kernel'] = get_kernel_from_filename(result_file)
-
-            if 'graph__fast_wl_node_weight_function' in result:
-                result['graph__fast_wl_node_weight_function'] = ['none' if x is None else x.__name__ for x in result.get('graph__fast_wl_node_weight_function')]
+            if 'graph__fast_wl__node_weight_function' in result:
+                result['graph__fast_wl__node_weight_function'] = ['none' if x is None else x.__name__ for x in result.get('graph__fast_wl__node_weight_function')]
 
             is_relabeled = 'relabeled' in result_file
             result['relabeled'] = is_relabeled
@@ -233,13 +231,16 @@ def get_result_for_prediction(prediction_filename):
     with open(results_filename, 'rb') as f:
         return pickle.load(f)
 
-def get_predictions(folder: str=None) -> typing.Generator:
+def get_predictions(folder: str=None, filenames: str=None) -> typing.Generator:
     if not folder:
         folder = get_result_folders()[-1]
 
     prediction_folder = '{}/predictions'.format(folder)
 
     for prediction_file in glob('{}/*.npy'.format(prediction_folder)):
+        p_filename = prediction_file.split('/')[-1]
+        if filenames and p_filename not in filenames: continue
+
         with open(prediction_file, 'rb') as f:
             prediction = pickle.load(f)
         yield prediction_file, prediction

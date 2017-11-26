@@ -40,7 +40,7 @@ import warnings
 import psutil
 import matplotlib.style as style
 from pprint import pprint
-from utils.graph_helper import TYPE_COOCCURRENCE, TYPE_CONCEPT_MAP, GRAPH_TYPES
+from utils.graph_helper import *
 import experiments
 from experiments import experiment_helper
 

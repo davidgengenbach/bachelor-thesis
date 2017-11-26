@@ -10,7 +10,7 @@ import sklearn.preprocessing
 import sklearn.feature_extraction.text
 from glob import glob
 
-NEEDED_FIELDS = ['experiment_name', 'params_per_type']
+NEEDED_FIELDS = ['params_per_type']
 
 EXPERIMENT_CONFIG_FOLDER = 'configs/param_grid_configs'
 EXPERIMENT_CONFIG_ALL = EXPERIMENT_CONFIG_FOLDER + '/all.yaml'
@@ -26,6 +26,7 @@ PLACEHOLDER_LIST = dict(
     TfidfVectorizer=sklearn.feature_extraction.text.TfidfVectorizer,
 )
 
+
 def get_experiment_config(file: str = EXPERIMENT_CONFIG_ALL) -> dict:
     assert os.path.exists(file)
 
@@ -35,20 +36,24 @@ def get_experiment_config(file: str = EXPERIMENT_CONFIG_ALL) -> dict:
     for field in NEEDED_FIELDS:
         assert field in experiment_options, 'Missing field: {}'.format(field)
 
-    experiment_name = experiment_options['experiment_name']
-
     task_type_params = {}
     for task_type, params in experiment_options['params_per_type'].items():
         flattened_params = pipeline_helper.flatten_nested_params(params)
         task_type_params[task_type] = replace_placeholders(flattened_params)
 
-    limit_dataset = experiment_options.get('limit_dataset', None)
+    experiment_name = experiment_options.get('experiment_name', None)
+    filename = file.split('/')[-1]
+
+    # Use filename as experiment_name if not explicit experiment_name is given
+    if not experiment_name:
+        experiment_name = filename.rsplit('.', 1)[0]
 
     return dict(
         experiment_name=experiment_name,
         params_per_type=task_type_params,
-        limit_dataset=limit_dataset,
-        limit_graph_type=experiment_options.get('limit_graph_type', None)
+        limit_dataset=experiment_options.get('limit_dataset', None),
+        limit_graph_type=experiment_options.get('limit_graph_type', None),
+        filename=filename
     )
 
 
@@ -130,6 +135,6 @@ def get_all_param_grid_config_files(folder=EXPERIMENT_CONFIG_FOLDER):
     return out
 
 def get_experiment_config_for(experiment_name:str, folder=EXPERIMENT_CONFIG_FOLDER):
-    file = '{}/experiment_{}.yaml'.format(folder, experiment_name)
+    file = '{}/{}.yaml'.format(folder, experiment_name)
     assert os.path.exists(file)
     return get_experiment_config(file)

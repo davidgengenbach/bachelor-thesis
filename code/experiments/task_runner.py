@@ -88,9 +88,13 @@ def run_classification_task(task: ExperimentTask, cfo: ClassificationOptions, ex
 
     if cfo.save_best_clf:
         best_estimator = gscv_result.best_estimator_
-        results_helper.save_results({
-            'classifier': best_estimator
-        }, classifier_file, args)
+        try:
+            results_helper.save_results({
+                'classifier': best_estimator
+            }, classifier_file, args)
+        except Exception as e:
+            LOGGER.warning('Error while saving best estimator: {}'.format(e))
+            LOGGER.exception(e)
 
     if not is_dummy and cfo.create_predictions:
         if not len(X_test):
