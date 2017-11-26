@@ -112,6 +112,9 @@ def get_results(folder=None, use_already_loaded=False, results_directory=RESULTS
         remove_transformer_classes(result_data)
 
         result_file = result_file.split('/')[-1]
+        info = {}
+        if 'results' in result_data:
+            info = {'info__' + k: v for k,v in result_data.get('meta_data', result_data).items() if k != 'results'}
         result = result_data if 'params' in result_data else result_data['results']
 
         assert 'params' in result
@@ -121,7 +124,7 @@ def get_results(folder=None, use_already_loaded=False, results_directory=RESULTS
             result['params'][idx] = clean_result_keys(el)
 
         is_graph_dataset = '_graph__dataset' in result_file or 'graph_combined__dataset' in result_file
-        result['combined'] = 'combined' in result_file
+        result['combined'] = 'graph_combined__dataset_' in result_file
         result['kernel'] = 'unknown'
 
         if is_graph_dataset:
@@ -165,6 +168,9 @@ def get_results(folder=None, use_already_loaded=False, results_directory=RESULTS
 
         result['filename'] = result_file
         result['dataset'] = dataset_name
+
+        for k, v in info.items():
+            result[k] = [v] * len(result['params'])
 
         data_.append(result)
 
