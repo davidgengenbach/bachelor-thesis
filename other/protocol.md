@@ -1,3 +1,12 @@
+## 26.11.2017
+- Thesis
+    - Added paragraph about WL extension
+- Code
+    - Cleanup
+    - Added more experiments
+    - Save best classifier away
+
+
 ## 25.11.2017
 - Added experiments pipeline
     - Experiments can be defined with yaml files

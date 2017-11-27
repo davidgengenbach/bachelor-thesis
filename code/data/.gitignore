@@ -1,6 +1,5 @@
 graphs
-datasets-prepared
-datasets-prepared.bck
+datasets_prepared
 embeddings/**/*.txt
 embeddings/**/*.bin
 embeddings/**/*.npy
