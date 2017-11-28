@@ -6,6 +6,8 @@ limit_dataset:
 #- rotten_imdb
 #- tagmynews
 #- webkb
+limit_graph_type:
+- concept_map
 params_per_type:
   graph_combined:
     classifier:
@@ -17,6 +19,13 @@ params_per_type:
     features:
       fast_wl_pipeline:
         feature_extraction:
+          graph_preprocessing:
+            VAL_:
+            - GraphMultiWordLabelSplitter
+            remove_old_composite_labels:
+            - true
+            add_self_links:
+            - false
           feature_extraction:
             fast_wl:
               h:
@@ -29,13 +38,6 @@ params_per_type:
               return_iteration:
               - stacked
               use_zeroth:
-              - false
-            graph_preprocessing:
-              VAL_:
-              - GraphMultiWordLabelSplitter
-              remove_old_composite_labels:
-              - true
-              add_self_links:
               - false
           normalizer:
           - MaxAbsScaler
