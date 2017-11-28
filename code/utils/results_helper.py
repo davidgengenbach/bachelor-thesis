@@ -129,7 +129,7 @@ def get_results(folder=None, use_already_loaded=False, results_directory=RESULTS
         for idx, el in enumerate(result['params']):
             result['params'][idx] = clean_result_keys(el)
 
-        is_graph_dataset = '_graph__dataset' in result_file or 'graph_combined__dataset' in result_file or '__graph_node_weights__dataset_' in result_file
+        is_graph_dataset = '_graph__dataset' in result_file or 'graph_combined__dataset' in result_file or '__graph_node_weights__dataset_' in result_file or 'graph_cooccurrence' in result_file or '__graph_structure_only__' in result_file
         result['combined'] = 'graph_combined__dataset_' in result_file
         result['kernel'] = 'unknown'
         if is_graph_dataset:
