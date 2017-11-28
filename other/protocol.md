@@ -6,8 +6,18 @@
             - Remove stopwords?
             - Keep directionality?
             - Keep edge labels?
+        - Tests
+            - Split labels vs. non-split
+                - Far better performance with splitted labels!
+            - Combined graph+text features with splitted vs non-splitted
+                - No performance improvement
 - Ideas
     - Quantify probability of matches per WL iteration
+        - Steps
+            - Look at feature maps of WL iterations
+            - ... create dot products
+            - ... compare the results for each WL iterations (sum)
+        - The sums of dot products of feature maps corresponds to the number of matches
 
 
 ## 27.11.2017
