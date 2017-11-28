@@ -62,7 +62,4 @@ class GraphMultiWordLabelSplitter(sklearn.base.BaseEstimator, sklearn.base.Trans
         return X_
 
     def get_stopwords(self):
-        stopwords_ = set()
-        if self.remove_stopwords:
-            stopwords_ = set(stopwords.words('english')) | set([',', 'one', 'two'])
-        return stopwords_
+        return set(stopwords.words('english')) | set([',', 'one', 'two', '-']) if self.remove_stopwords else set()
