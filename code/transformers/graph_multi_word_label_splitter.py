@@ -25,7 +25,7 @@ class GraphMultiWordLabelSplitter(sklearn.base.BaseEstimator, sklearn.base.Trans
 
         for graph in X_:
             nodes = sorted(graph.nodes())
-            nodes_split = [(x, x.split()) for x in nodes]
+            nodes_split = [(x, str(x).split()) for x in nodes]
             nodes_split = [(x, x_split) for x, x_split in nodes_split if len(x_split) > 1]
             mapping = {x: x_split for x, x_split in nodes_split}
             edges = graph.edges(data=True)
