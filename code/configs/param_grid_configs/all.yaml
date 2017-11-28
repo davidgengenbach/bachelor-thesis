@@ -1,4 +1,3 @@
-experiment_name: All
 limit_dataset:
 - cade-ana
 - imsdb
@@ -14,8 +13,12 @@ limit_dataset:
 - rotten_imdb
 - small
 - tagmynews
+- ted_talks
 - webkb
 - webkb-ana
+limit_graph_type:
+- cooccurrence
+- concept_map
 params_per_type:
   dummy_most_frequent:
     classifier:
@@ -63,6 +66,8 @@ params_per_type:
         - stacked
         use_zeroth:
         - false
+    graph_preprocessing:
+    - NoneType
     normalizer:
     - MaxAbsScaler
   graph_combined:
@@ -90,6 +95,8 @@ params_per_type:
               - stacked
               use_zeroth:
               - false
+          graph_preprocessing:
+          - NoneType
           normalizer:
           - MaxAbsScaler
       text:
@@ -152,6 +159,8 @@ params_per_type:
         - stacked
         use_zeroth:
         - false
+    graph_preprocessing:
+    - NoneType
     normalizer:
     - MaxAbsScaler
   graph_structure_only:
@@ -170,6 +179,8 @@ params_per_type:
         - stacked
         use_zeroth:
         - false
+    graph_preprocessing:
+    - NoneType
     normalizer:
     - MaxAbsScaler
   text:

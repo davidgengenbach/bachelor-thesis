@@ -2,6 +2,7 @@ import yaml
 import os
 from transformers import fast_wl_graph_kernel_transformer
 from transformers.simple_preprocessing_transformer import SimplePreProcessingTransformer
+from transformers.graph_multi_word_label_splitter import GraphMultiWordLabelSplitter
 from transformers.pipelines import pipeline_helper
 import experiments
 from experiments import task_helper
@@ -10,6 +11,7 @@ import sklearn
 import sklearn.preprocessing
 import sklearn.feature_extraction.text
 from glob import glob
+from utils import constants
 
 NEEDED_FIELDS = ['params_per_type']
 
@@ -27,6 +29,7 @@ PLACEHOLDER_LIST = dict(
     SVC=sklearn.svm.SVC,
     CountVectorizer=sklearn.feature_extraction.text.CountVectorizer,
     TfidfVectorizer=sklearn.feature_extraction.text.TfidfVectorizer,
+    GraphMultiWordLabelSplitter=GraphMultiWordLabelSplitter
 )
 
 
@@ -107,7 +110,7 @@ def save_experiment_params_as_experiment_config(file: str = EXPERIMENT_CONFIG_AL
 
     with open(file, 'w') as f:
         yaml.dump(dict(
-            experiment_name='All',
+            limit_graph_type=constants.GRAPH_TYPES,
             limit_dataset=datasets,
             params_per_type=task_type_params
         ), f, default_flow_style=False)

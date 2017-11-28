@@ -1,3 +1,24 @@
+## 28.11.2017
+- Code
+    - Splitting multi-word labels into separate nodes
+        - Questions
+            - Add self links?
+            - Remove stopwords?
+            - Keep directionality?
+            - Keep edge labels?
+- Ideas
+    - Quantify probability of matches per WL iteration
+
+
+## 27.11.2017
+- Code
+    - Started concept map creation for datasets with new preprocessing
+    - Created ted_talks dataset
+        - Clustering of tags
+- Thesis
+    - Wrote paragraph about Tobias' code for concept map extraction
+
+
 ## 26.11.2017
 - Thesis
     - Added paragraph about WL extension

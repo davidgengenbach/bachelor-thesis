@@ -12,6 +12,7 @@ def get_params(reduced=False, with_node_weights=False):
     fast_wl_estimator, fast_wl_params = get_fast_wl_params(reduced=reduced, with_node_metrics=with_node_weights)
 
     pipeline = sklearn.pipeline.Pipeline([
+        ('graph_preprocessing', None),
         ('feature_extraction', fast_wl_estimator),
         ('normalizer', None),
         ('classifier', None)
@@ -19,6 +20,7 @@ def get_params(reduced=False, with_node_weights=False):
 
     params = pipeline_helper.flatten_nested_params(dict(
         feature_extraction=fast_wl_params,
+        graph_preprocessing=[None],
         normalizer=[sklearn.preprocessing.MaxAbsScaler()]
     ))
 

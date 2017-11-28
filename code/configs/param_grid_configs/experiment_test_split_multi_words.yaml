@@ -1,0 +1,35 @@
+limit_dataset:
+#- ling-spam
+#- ng20
+#- reuters-21578
+- review_polarity
+#- rotten_imdb
+#- tagmynews
+#- webkb
+limit_graph_type:
+- concept_map
+params_per_type:
+  graph:
+    feature_extraction:
+      fast_wl:
+        h:
+        - 10
+        node_weight_function:
+        - ~
+        round_to_decimals:
+        - 10
+      phi_picker:
+        return_iteration:
+        - stacked
+        use_zeroth:
+        - false
+    graph_preprocessing:
+      VAL_:
+      - GraphMultiWordLabelSplitter
+      remove_old_composite_labels:
+      - true
+      add_self_links:
+      - true
+      - false
+    normalizer:
+    - MaxAbsScaler

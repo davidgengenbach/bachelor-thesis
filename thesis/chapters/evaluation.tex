@@ -93,6 +93,7 @@ To compare the performance of concept maps with other graphs, we generated co-oc
 We also evaluated the performance of co-occurrence graphs where only nouns are retained to mimic the compression factor of concept maps.
 
 For the extraction of the concept maps from the text, we used the implementation by Falke \cite{Falke2017}.
+An explanation of the steps to create the concept maps is given in \ref{sec:implementation}.
 
 \begin{figure}[ht]
 \centering\includegraphics[width=0.6\linewidth]{assets/figures/approach.pdf}
@@ -236,3 +237,16 @@ This is far too high to accept the hypothesis on ground of these predictions.
 For the implementation of all these experiments, we used mostly Python.
 \todo[inline]{Scikit-learn, networkx, \dots}
 \todo[inline]{Code by Tobias to extract concept maps}
+
+\subsubsection{Concept Map Extraction}
+We used the code \footnote{\url{https://github.com/UKPLab/ijcnlp2017-cmaps}} provided by Falke \cite{Falke2017} to create the concept maps.
+In this section we will briefly describe the steps the code performs. For a more detailed explanation, see \cite{Falke2017}.
+
+The input to the concept map extraction algorithm is a single text document. The output is a single concept maps for this text document.
+
+First, the algorithm extracts concepts and their relations to each other.
+This is done by extracting binary relations from the text. A binary relation consists of three parts: two concepts and the relation between them. An example for a binary relations is ``David likes something", here ``David" and ``something`` are the concepts and ``likes" the relation them. Note that the binary relation is directed, eg. ``Something likes David" is not the same binary relation as ``David likes something."
+Also, a concept can consist of multiple words, eg. for ``David likes something else.", the concepts would be ``David" and ``something else".
+The extracted concepts are later used as the nodes, and the relation between them as the edges between concepts.
+
+Then, the extracted relations get filtered so that only concepts are kept which contains at least one noun and which consist of less words than some a given threshold (here 10 words). This filtering is done to ensure the brevity and usefulness of the concepts.

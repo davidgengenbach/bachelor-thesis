@@ -82,7 +82,7 @@ def get_dataset_spacy(dataset_name, use_cached=True, cache_path=CACHE_PATH, pipe
     return X, Y
 
 
-def get_gml_graph_dataset(dataset_name, use_cached=True, graphs_folder=GRAPHS_FOLDER, graph_type='concept_map', cache_folder=CACHE_PATH):
+def get_gml_graph_dataset(dataset_name, use_cached=True, graphs_folder=GRAPHS_FOLDER, graph_type='concept_map', cache_npy:str=None):
     """Retrieves the gml dataset.
     TODO: The caching could be done with a decorator.
 
@@ -101,13 +101,15 @@ def get_gml_graph_dataset(dataset_name, use_cached=True, graphs_folder=GRAPHS_FO
         dataset_name = dataset_name.replace(graphs_folder + '/', '')
 
     graph_folder = os.path.join(graphs_folder, dataset_name)
-    cache_npy = os.path.join(CACHE_PATH, 'dataset_graph_{}_{}.npy'.format(graph_type, dataset_name))
+
+    if not cache_npy:
+        cache_npy = os.path.join(CACHE_PATH, 'dataset_graph_{}_{}.npy'.format(graph_type, dataset_name))
 
     if use_cached and os.path.exists(cache_npy):
         with open(cache_npy, 'rb') as f:
             X, Y = pickle.load(f)
     else:
-        X, Y = graph_helper.get_graphs_from_folder(graph_folder, undirected=True)
+        X, Y = graph_helper.get_graphs_from_folder(graph_folder, undirected=False)
         # Test dataset validity before saving it
         test_dataset_validity(X, Y)
 

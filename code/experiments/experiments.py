@@ -1,7 +1,7 @@
 from transformers.graph_to_text_transformer import GraphToTextTransformer
 from transformers.pipelines import text_pipeline, graph_pipeline
-from utils import dataset_helper, graph_helper
-from utils.filename_utils import get_filename_only
+from utils import dataset_helper, graph_helper, constants
+from utils.filename_utils import get_filename_only, get_dataset_from_filename
 from . import task_helper
 from .task_helper import ExperimentTask, ClassificationData
 import sklearn
@@ -13,6 +13,10 @@ def get_tasks() -> typing.List[ExperimentTask]:
     graph_cache_files = dataset_helper.get_all_cached_graph_datasets()
     gram_cache_files = dataset_helper.get_all_gram_datasets()
     datasets = dataset_helper.get_all_available_dataset_names()
+
+    cmap_cache_files = dataset_helper.get_all_cached_graph_datasets(graph_type=constants.TYPE_CONCEPT_MAP)
+    cmap_datasets = [get_dataset_from_filename(x) for x in cmap_cache_files]
+    datasets = [x for x in datasets if x in cmap_datasets]
 
     graph_task_fns = [
         get_task_graph_content_only,
