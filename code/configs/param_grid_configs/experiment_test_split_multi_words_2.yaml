@@ -1,6 +1,6 @@
 limit_dataset:
 #- ling-spam
-#- ng20
+- ng20
 #- reuters-21578
 - review_polarity
 - rotten_imdb
