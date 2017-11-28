@@ -17,7 +17,7 @@ def iteration_weight_constant(iteration: int, constant:int=1):
 
 
 class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.TransformerMixin):
-    def __init__(self, h=1, phi_dim=None, round_to_decimals=10, ignore_label_order=False, node_weight_function=None, node_weight_iteration_weight_function=iteration_weight_constant, use_early_stopping=True):
+    def __init__(self, h=1, phi_dim=None, round_to_decimals=10, ignore_label_order=False, node_weight_function=None, node_weight_iteration_weight_function=iteration_weight_constant, use_early_stopping=True, same_label=False):
         self.h = h
         self.phi_dim = phi_dim
         self.round_to_decimals = round_to_decimals
@@ -25,12 +25,14 @@ class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Tran
         self.node_weight_function = node_weight_function
         self.use_early_stopping = use_early_stopping
         self.node_weight_iteration_weight_function = node_weight_iteration_weight_function
+        self.same_label = same_label
 
     def fit(self, X, y=None, **fit_params):
         assert len(X)
-        X, node_weight_factors = _retrieve_node_weights_and_convert_graphs(X, node_weight_function=self.node_weight_function)
+        X, node_weight_factors = _retrieve_node_weights_and_convert_graphs(X, node_weight_function=self.node_weight_function, same_label=self.same_label)
 
         self.hashed_x = hash_dataset(X)
+
         phi_list, label_lookups, label_counters = fast_wl.transform(
             X,
             h=self.h,
@@ -51,7 +53,7 @@ class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Tran
 
     def transform(self, X, y=None, **fit_params):
         assert len(X)
-        X, node_weight_factors = _retrieve_node_weights_and_convert_graphs(X, node_weight_function=self.node_weight_function)
+        X, node_weight_factors = _retrieve_node_weights_and_convert_graphs(X, node_weight_function=self.node_weight_function, same_label=self.same_label)
 
         # Use already computed phi_list if the given X is the same as in fit()
         if self.hashed_x == hash_dataset(X):
@@ -96,8 +98,12 @@ def get_node_weight_factors(X, metric=None):
     return out
 
 
-def _retrieve_node_weights_and_convert_graphs(X, node_weight_function=None):
+def _retrieve_node_weights_and_convert_graphs(X, node_weight_function=None, same_label=False):
     X = graph_helper.get_graphs_only(X)
     node_weight_factors = get_node_weight_factors(X, metric=node_weight_function)
     X = graph_helper.convert_graphs_to_adjs_tuples(X, copy=True)
+
+    if same_label:
+        X = [(adj, ['dummy'] * len(labels)) for adj, labels in X]
+
     return X, node_weight_factors

@@ -65,6 +65,7 @@ def get_fast_wl_params(reduced=False, with_node_metrics=False):
 
     params = dict(
         fast_wl__h=[10],
+        fast_wl__same_label=[False],
         fast_wl__phi_dim=[None],
         fast_wl__round_to_decimals=[10],
         fast_wl__node_weight_function=[

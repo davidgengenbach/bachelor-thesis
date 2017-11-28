@@ -61,6 +61,8 @@ params_per_type:
         - 58670
         round_to_decimals:
         - 10
+        same_label:
+        - false
       phi_picker:
         return_iteration:
         - stacked
@@ -90,6 +92,8 @@ params_per_type:
               - 58670
               round_to_decimals:
               - 10
+              same_label:
+              - false
             phi_picker:
               return_iteration:
               - stacked
@@ -154,6 +158,8 @@ params_per_type:
         - 58670
         round_to_decimals:
         - 10
+        same_label:
+        - false
       phi_picker:
         return_iteration:
         - stacked
@@ -174,6 +180,8 @@ params_per_type:
         - 58670
         round_to_decimals:
         - 10
+        same_label:
+        - false
       phi_picker:
         return_iteration:
         - stacked

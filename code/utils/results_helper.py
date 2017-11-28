@@ -237,13 +237,15 @@ def get_result_for_prediction(prediction_filename):
     with open(results_filename, 'rb') as f:
         return pickle.load(f)
 
-def get_predictions(folder: str=None, filenames: str=None) -> typing.Generator:
+def get_predictions_files(folder: str=None):
     if not folder:
         folder = get_result_folders()[-1]
 
     prediction_folder = '{}/predictions'.format(folder)
+    return glob('{}/*.npy'.format(prediction_folder))
 
-    for prediction_file in glob('{}/*.npy'.format(prediction_folder)):
+def get_predictions(folder: str=None, filenames: str=None) -> typing.Generator:
+    for prediction_file in get_predictions_files(folder):
         p_filename = prediction_file.split('/')[-1]
         if filenames and p_filename not in filenames: continue
 

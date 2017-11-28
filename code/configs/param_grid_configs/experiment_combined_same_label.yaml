@@ -1,5 +1,5 @@
 limit_dataset:
-- ling-spam
+#- ling-spam
 - ng20
 #- reuters-21578
 #- review_polarity
@@ -12,20 +12,13 @@ params_per_type:
   graph_combined:
     classifier:
       C:
-      #- 0.001
+      - 0.001
       - 0.01
       #- 0.1
       - 1
     features:
       fast_wl_pipeline:
         feature_extraction:
-          graph_preprocessing:
-            VAL_:
-            - GraphMultiWordLabelSplitter
-            remove_old_composite_labels:
-            - true
-            add_self_links:
-            - false
           feature_extraction:
             fast_wl:
               h:
@@ -34,6 +27,8 @@ params_per_type:
               - ~
               round_to_decimals:
               - 10
+              same_label:
+              - true
             phi_picker:
               return_iteration:
               - stacked
