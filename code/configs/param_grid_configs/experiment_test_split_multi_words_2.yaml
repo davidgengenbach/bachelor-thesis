@@ -3,7 +3,7 @@ limit_dataset:
 #- ng20
 #- reuters-21578
 - review_polarity
-#- rotten_imdb
+- rotten_imdb
 #- tagmynews
 #- webkb
 limit_graph_type:
