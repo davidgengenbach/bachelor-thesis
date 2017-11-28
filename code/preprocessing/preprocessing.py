@@ -58,7 +58,13 @@ def concept_map_preprocessing(X):
     return [preprocess(x) for x in X]
 
 
-def preprocess_text_spacy(texts, min_length=-1, concat=True, n_jobs=2, batch_size=100, only_nouns=True, lemma_=False):
+def preprocess_text_spacy(
+        texts,
+        min_length=-1,
+        n_jobs=1,
+        batch_size=100,
+        only_nouns=True
+    ):
     """Preprocesses text by
     - only keeping the NOUNs
     - only keeping the words that are longer than min_length (optional)
@@ -73,6 +79,8 @@ def preprocess_text_spacy(texts, min_length=-1, concat=True, n_jobs=2, batch_siz
         list of str: the pre-processed text
     """
 
+    texts = [preprocess(t) for t in texts]
+
     res = [
         [
             word for word in doc if
@@ -83,10 +91,8 @@ def preprocess_text_spacy(texts, min_length=-1, concat=True, n_jobs=2, batch_siz
         ]
         for doc in get_spacy_parse(texts, batch_size=batch_size, n_threads=n_jobs)
     ]
-    if concat:
-        return [" ".join([word.lemma_ if lemma_ else word.text for word in doc] for doc in res)]
-    else:
-        return res
+
+    return res
 
 
 def to_tokens(text):

@@ -1,18 +1,14 @@
 import collections
 
-import numpy as np
 import pandas as pd
 
-from relabeling import embeddings
-from utils import dataset_helper
 
-
-def get_most_similar_labels(labels, lookup_embeddings, topn=1):
+def get_most_similar_labels(labels: list, lookup_embeddings, topn=1) -> dict:
     """Retrieves the most similar labels for a given list of labels.
 
     Args:
         labels (list(str)): the labels
-        lookup_embeddings (models.keyedvectors.KeyedVectors): the embeddings that should be 
+        lookup_embeddings (models.keyedvectors.KeyedVectors):
         topn (int, optional): determines how many similar labels should be returned for a given label
 
     Returns:
@@ -23,10 +19,7 @@ def get_most_similar_labels(labels, lookup_embeddings, topn=1):
         }
     """
     results = {}
-    num_labels = len(labels)
     for idx, label in enumerate(labels):
-        if (num_labels >= 10 and idx % int(num_labels / 10) == 0) or idx == num_labels - 1:
-            print('Progress: {:>3}%'.format(int(100 * idx / num_labels)))
         if label in lookup_embeddings:
             results[label] = lookup_embeddings.similar_by_word(label, topn=topn)
     return results

@@ -159,7 +159,7 @@ def get_dataset_subset_with_most_frequent_classes(dataset_name, num_classes_to_k
     return get_subset_with_most_frequent_classes(X, Y, num_classes_to_keep=num_classes_to_keep)
 
 
-def get_all_available_dataset_names(dataset_folder=DATASET_FOLDER):
+def get_all_available_dataset_names(dataset_folder=DATASET_FOLDER, limit_datasets=None):
     """Searches for available datasets.
 
     Args:
@@ -175,6 +175,10 @@ def get_all_available_dataset_names(dataset_folder=DATASET_FOLDER):
         x.replace('/dataset.py', '').replace('dataset_', '').replace('.py', '').replace('/', '.').split('.')[-1]
         for x in datasets
     ]
+
+    if limit_datasets is not None:
+        dataset_folders = [x for x in dataset_folders if x in limit_datasets]
+
     return sorted(dataset_folders)
 
 

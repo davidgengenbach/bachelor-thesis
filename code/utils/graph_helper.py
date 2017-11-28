@@ -32,12 +32,12 @@ def add_shortest_path_edges(graph, cutoff=2):
 
 def convert_dataset_to_co_occurence_graph_dataset(X, Y, min_length=2, n_jobs=4, only_nouns=False, lemma_=False, preprocess=True, **cooccurrence_kwargs):
     if preprocess:
-        X = preprocessing.preprocess_text_spacy(X, min_length=min_length, concat=False, only_nouns=only_nouns)
+        X = preprocessing.preprocess_text_spacy(X, min_length=min_length, only_nouns=only_nouns)
+
     if lemma_:
         X = [[word.lemma_ for word in doc] for doc in X]
 
     mats = Parallel(n_jobs=n_jobs)(delayed(cooccurrence.get_coocurrence_matrix)(text, **cooccurrence_kwargs) for text in X)
-
     graphs = Parallel(n_jobs=n_jobs)(delayed(convert_from_numpy_to_nx)(*mat) for mat in mats)
     return graphs, Y
 
@@ -109,7 +109,7 @@ def get_graphs_from_folder(folder, ext='gml', undirected=False, verbose=False):
     def extract_y_and_id(file_path):
         filename = file_path.rsplit('/', 1)[1]
 
-        if 'fullgraph' in filename:
+        if '.graph' in filename:
             # Like: data/graphs/ling-spam-single_v2/all/no_spam_0000/fullgraph.graph
             t = file_path.rsplit('/', 2)[1]
         else:
@@ -346,8 +346,9 @@ def warmup_graph_cache(graphs_folder='data/graphs', use_cached=False):
 
 def get_graphs_only(X) -> list:
     assert len(X)
-    if isinstance(X[0], nx.Graph) or (isinstance(X[0], tuple) and not isinstance(X[0][1], str)):
+    if isinstance(X[0], nx.Graph) or ((isinstance(X[0], tuple) and not isinstance(X[0][1], str))):
         return X
     assert isinstance(X[0], tuple)
     X_ = [x for x, _ in X]
+    assert isinstance(X_[0], nx.Graph)
     return X_

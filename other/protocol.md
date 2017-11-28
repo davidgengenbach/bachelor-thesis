@@ -11,6 +11,7 @@
                 - Far better performance with splitted labels!
             - Combined graph+text features with splitted vs non-splitted
                 - No performance improvement
+    - Added same_label parameter to fast_wl
 - Ideas
     - Quantify probability of matches per WL iteration
         - Steps

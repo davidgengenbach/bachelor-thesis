@@ -5,7 +5,7 @@ import pickle
 from joblib import delayed, Parallel
 
 from relabeling import embeddings, coreference
-from utils import dataset_helper, graph_helper
+from utils import dataset_helper, graph_helper, constants
 from utils.logger import LOGGER
 
 
@@ -24,34 +24,38 @@ def get_args():
     return args
 
 
+def main():
+    args = get_args()
+
+    LOGGER.info('Loading pre-trained embedding')
+    pre_trained_embedding = embeddings.get_embedding_model(
+        args.pre_trained_embedding, binary=False, first_line_header=True, with_gensim=True)
+
+    LOGGER.info('Starting to process datasets')
+    Parallel(n_jobs=args.n_jobs)(delayed(process_dataset)(dataset_name, pre_trained_embedding, args) for dataset_name in dataset_helper.get_all_available_dataset_names(limit_datasets=args.limit_dataset))
+    LOGGER.info('Finished')
+
+
 def process_dataset(dataset_name, pre_trained_embedding, args):
-    if args.limit_dataset and dataset_name not in args.limit_dataset:
-        return
-
     LOGGER.info('{:15} - Start'.format(dataset_name))
-
     LOGGER.info('{:15} - Retrieving trained embedding'.format(dataset_name))
-
     trained_embedding = dataset_helper.get_w2v_embedding_for_dataset(dataset_name)
 
-    graphs = dataset_helper.get_all_cached_graph_datasets(dataset_name)
-    all_words_graphs = [g for g in graphs if 'all' in g]
-    gml_graphs = [g for g in graphs if 'gml' in g]
-    used_graphs  = []
-    if len(all_words_graphs):
-        used_graphs.append(all_words_graphs[0])
-    if len(gml_graphs):
-        used_graphs.append(gml_graphs[0])
+    cmap_cache_files = dataset_helper.get_all_cached_graph_datasets(dataset_name=dataset_name, graph_type=constants.TYPE_CONCEPT_MAP)
 
-    if not len(used_graphs):
-        LOGGER.info('{:15} - no graphs found. Aborting'.format(dataset_name))
+    coo_cache_files = [x for x in dataset_helper.get_all_cached_graph_datasets(dataset_name=dataset_name, graph_type=constants.TYPE_COOCCURRENCE) if 'all' in x]
+
+    if not len(cmap_cache_files) or not len(coo_cache_files):
         return
+
+    used_graphs = [cmap_cache_files[0], coo_cache_files[0]]
 
     LOGGER.info('{:15} - Retrieving dataset'.format(dataset_name))
     all_labels = set()
     for graph_cache_file in used_graphs:
         X, _ = dataset_helper.get_dataset_cached(graph_cache_file)
-        all_labels |= graph_helper.get_all_node_labels_uniq(X, as_sorted_list = False)
+        X = graph_helper.get_graphs_only(X)
+        all_labels |= graph_helper.get_all_node_labels_uniq(X, as_sorted_list=False)
 
     LOGGER.info('{:15} - Resolving embeddings'.format(dataset_name))
     embeddings_pre_trained, not_found_pre_trained_coreferenced, not_found_trained, not_found_pre_trained, lookup, similar_els = embeddings.get_embeddings_for_labels_with_lookup(
@@ -64,11 +68,11 @@ def process_dataset(dataset_name, pre_trained_embedding, args):
 
     embedding_file = '{}/{}.w2v.txt'.format(args.embeddings_result_folder, dataset_name)
     embeddings.save_embedding_dict(embeddings_pre_trained, embedding_file)
-    embeddings_pre_trained = embeddings.load_word2vec_format(fname = embedding_file, binary = False)
+    embeddings_pre_trained = embeddings.load_word2vec_format(fname=embedding_file, binary=False)
 
     LOGGER.info('{:15} - Co-reference resolution'.format(dataset_name))
     max_topn = max(args.topn)
-    
+
     similar_labels = coreference.get_most_similar_labels(all_labels, embeddings_pre_trained, max_topn)
 
     for topn in args.topn:
@@ -82,16 +86,6 @@ def process_dataset(dataset_name, pre_trained_embedding, args):
                 pickle.dump(new_lookup, f)
     LOGGER.info('{:15} - Finished'.format(dataset_name))
 
-def main():
-    args = get_args()
-
-    LOGGER.info('Loading pre-trained embedding')
-    pre_trained_embedding = embeddings.get_embedding_model(
-        args.pre_trained_embedding, binary=False, first_line_header=True, with_gensim=True)
-
-    LOGGER.info('Starting to process datasets')
-    Parallel(n_jobs=args.n_jobs)(delayed(process_dataset)(dataset_name, pre_trained_embedding, args) for dataset_name in dataset_helper.get_all_available_dataset_names())
-    LOGGER.info('Finished')
 
 if __name__ == '__main__':
     main()
