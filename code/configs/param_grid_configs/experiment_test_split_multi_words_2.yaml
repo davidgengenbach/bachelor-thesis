@@ -22,7 +22,8 @@ params_per_type:
         return_iteration:
         - stacked
         use_zeroth:
-        - false
+        - True
+        - False
     graph_preprocessing: ~
     normalizer:
     - MaxAbsScaler

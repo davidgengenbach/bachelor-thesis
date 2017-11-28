@@ -78,7 +78,7 @@ def get_kernel_from_filename(filename:str)->str:
 
     return '_'.join(parts)
 
-def get_results(folder=None, use_already_loaded=False, results_directory=RESULTS_DIR, log_progress=True, exclude_filter = None, filter_out_non_complete_datasets = 4, remove_split_cols = True, remove_rank_cols = True, remove_fit_time_cols = True, filter_out_experiment=None):
+def get_results(folder=None, use_already_loaded=False, results_directory=RESULTS_DIR, log_progress=True, exclude_filter = None, filter_out_non_complete_datasets = 4, remove_split_cols = True, remove_rank_cols = True, remove_fit_time_cols = True, filter_out_experiment=None, ignore_experiments=True):
     global _DF_ALL, _RESULT_CACHE
 
     if not use_already_loaded:
@@ -94,6 +94,9 @@ def get_results(folder=None, use_already_loaded=False, results_directory=RESULTS
 
     if filter_out_experiment:
         result_files = [x for x in result_files if 'result___{}'.format(filter_out_experiment) in x]
+
+    if ignore_experiments and not filter_out_experiment:
+        result_files = [x for x in result_files if 'experiment_' not in x]
 
     data_ = []
     for result_file in helper.log_progress(result_files) if log_progress else result_files:
