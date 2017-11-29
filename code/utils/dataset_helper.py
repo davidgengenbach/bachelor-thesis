@@ -232,7 +232,10 @@ def get_all_datasets(dataset_folder=DATASET_FOLDER, **kwargs):
 
 def get_w2v_embedding_for_dataset(dataset_name, embedding_folder='data/embeddings/trained'):
     embedding_file = os.path.join(embedding_folder, dataset_name + '.npy')
-    assert os.path.exists(embedding_file)
+
+    if not os.path.exists(embedding_file):
+        raise FileNotFoundError('{}'.format(embedding_file))
+
     with open(embedding_file, 'rb') as f:
         return pickle.load(f)
 

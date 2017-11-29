@@ -17,12 +17,11 @@ def merge_lookups(*lookups):
     return root_lookup
 
 
-def get_embedding_model(w2v_file, binary = False, first_line_header = True, with_gensim = False):
+def get_embedding_model(w2v_file, binary = False, first_line_header = True, with_gensim = False, datatype=np.float64):
     import gensim
     if binary or with_gensim:
         embeddings = gensim.models.KeyedVectors.load_word2vec_format(w2v_file, binary=binary)
     else:
-        embeddings = {}
         with open(w2v_file) as f:
             if first_line_header:
                 first_line = f.readline()
@@ -47,6 +46,7 @@ def get_embeddings_for_labels(labels, embedding, check_most_similar = False, res
     assert not check_most_similar or lookup_embedding is not None
     not_found, embeddings, lookup, similar_els = [], {}, {}, {}
 
+    embedding_size = lookup_embedding.syn0.shape[1]
     for label in labels:
         label = str(label).lower()
         is_composite = label.count(' ') > 0
@@ -56,15 +56,12 @@ def get_embeddings_for_labels(labels, embedding, check_most_similar = False, res
         elif check_most_similar and (label in lookup_embedding or (solve_composite_labels and is_composite)):
             if solve_composite_labels and label.count(' ') > 0:
                 label_parts = label.split(' ')
-                composite_vector = None
+                composite_vector = np.zeros(embedding_size, dtype=np.float128)
                 for label_part in label_parts:
                     if label_part in lookup_embedding:
                         embedding_ = lookup_embedding[label_part]
-                        if composite_vector is None:
-                            composite_vector = embedding_
-                        else:
-                            composite_vector += embedding_
-                if composite_vector is not None:
+                        composite_vector += embedding_
+                if len(composite_vector.nonzero()[0]):
                     most_similar = lookup_embedding.similar_by_vector(composite_vector, topn = topn)
                 else:
                     most_similar = []

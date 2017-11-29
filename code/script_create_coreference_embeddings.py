@@ -15,7 +15,7 @@ def get_args():
     parser.add_argument('--n_jobs', type=int, default=1)
     parser.add_argument('--pre_trained_embedding', type=str, default='data/embeddings/glove/glove.6B.50d.w2v.txt')
     parser.add_argument('--embeddings_result_folder', type=str, default='data/embeddings/graph-embeddings')
-    parser.add_argument('--limit_dataset', nargs='+', type=str, default=['ng20', 'ling-spam', 'reuters-21578', 'webkb'])
+    parser.add_argument('--limit_dataset', nargs='+', type=str, default=None)
     parser.add_argument('--merge_threshold', nargs='+', type=float, default=[0.5, 0.7, 0.9])
     parser.add_argument('--topn', nargs='+', type=int, default=[1])
     parser.add_argument('--force', action='store_true')
@@ -39,7 +39,12 @@ def main():
 def process_dataset(dataset_name, pre_trained_embedding, args):
     LOGGER.info('{:15} - Start'.format(dataset_name))
     LOGGER.info('{:15} - Retrieving trained embedding'.format(dataset_name))
-    trained_embedding = dataset_helper.get_w2v_embedding_for_dataset(dataset_name)
+
+    try:
+        trained_embedding = dataset_helper.get_w2v_embedding_for_dataset(dataset_name)
+    except FileNotFoundError as e:
+        LOGGER.exception(e)
+        return
 
     cmap_cache_files = dataset_helper.get_all_cached_graph_datasets(dataset_name=dataset_name, graph_type=constants.TYPE_CONCEPT_MAP)
 

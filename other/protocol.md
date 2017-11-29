@@ -1,3 +1,17 @@
+## 29.11.2017
+- Code
+    - ted_talks dataset
+        - Created co-occurrence graphs
+        - Tried converting multi-labels to single-labels
+    - created w2v embeddings for relabeling
+- Ideas
+    - Full-text datasets
+        - PubMed
+            - Only citations
+            - http://compbio.ucdenver.edu/ccp/corpora/obtaining.shtml
+        - https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-13-207
+        - http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0039464
+
 ## 28.11.2017
 - Code
     - Splitting multi-word labels into separate nodes
