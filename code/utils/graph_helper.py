@@ -37,6 +37,9 @@ def convert_dataset_to_co_occurence_graph_dataset(X, Y, min_length=2, n_jobs=4, 
     if lemma_:
         X = [[word.lemma_ for word in doc] for doc in X]
 
+    # Convert to list of list of words
+    X = [[word.text for word in doc] for doc in X]
+
     mats = Parallel(n_jobs=n_jobs)(delayed(cooccurrence.get_coocurrence_matrix)(text, **cooccurrence_kwargs) for text in X)
     graphs = Parallel(n_jobs=n_jobs)(delayed(convert_from_numpy_to_nx)(*mat) for mat in mats)
     return graphs, Y
