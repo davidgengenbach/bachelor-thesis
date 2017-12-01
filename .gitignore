@@ -14,6 +14,7 @@ other/unused
 thesis/test/
 thesis/*.pdf
 thesis/*.xml
+thesis/main.synctex.gz
 *.fmt
 *.bbl
 *.blg
