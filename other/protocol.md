@@ -1,3 +1,17 @@
+## 01.12.2017
+- Code
+	- Fixed latex code
+- Thesis
+	- Wrote section for "Deep Graph Kernel" paper (related work)
+
+
+## 30.11.2017
+- Laptop charger died
+	- Had to setup new laptop
+- Started concept map extraction for more datasets
+- Code cleanup
+
+
 ## 29.11.2017
 - Code
     - ted_talks dataset
@@ -98,7 +112,6 @@
         - http://linguatools.org/tools/corpora/wikipedia-monolingual-corpora/
             - Very big (english 4,25GB)
     - Scientific papers
-        - 
 
 
 ## 24.11.2017
@@ -129,8 +142,7 @@
                 - ... that also uses coefficients that are a indicator for the importance of a feature
         - Different regularizations
             - l1
-                - 
-            - 2
+            - l2
         - Sum of text-/graph-features 50/50
             - But: graph features are most likely more sparse
         - Graph feature coefs are distributed nearly uniformly across iterations
