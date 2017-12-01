@@ -7,6 +7,16 @@ from glob import glob
 from utils import dataset_helper, helper
 
 
+def get_args():
+    import argparse
+    parser = argparse.ArgumentParser(description='Convert gml graphs to cache file (X, Y)')
+    parser.add_argument('--graphs_folder', type=str, default='data/graphs')
+    parser.add_argument('--use_cached', action='store_true', default=False)
+    parser.add_argument('--suffix', type=str, default='')
+    args = parser.parse_args()
+    return args
+
+
 def main():
     args = get_args()
     helper.print_script_args_and_info(args)
@@ -20,21 +30,12 @@ def main():
             X, Y = dataset_helper.get_gml_graph_dataset(
                 dataset_name=graph_dataset_name,
                 graphs_folder=args.graphs_folder,
-                use_cached=args.use_cached
+                use_cached=args.use_cached,
+                suffix=args.suffix
             )
         except Exception as e:
             traceback.print_exc()
             print('Error:', e)
-
-
-def get_args():
-    import argparse
-    parser = argparse.ArgumentParser(description='Convert gml graphs to cache file (X, Y)')
-    parser.add_argument('--graphs_folder', type=str, help="help", default='data/graphs')
-    parser.add_argument('--cache_folder', type=str, help="help", default=dataset_helper.CACHE_PATH)
-    parser.add_argument('--use_cached', help="help", action='store_true', default=False)
-    args = parser.parse_args()
-    return args
 
 
 if __name__ == '__main__':

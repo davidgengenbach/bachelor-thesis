@@ -51,13 +51,7 @@ def get_args():
     parser.add_argument('--task_name_filter', type=str, default=None)
     parser.add_argument('--task_type_include_filter', type=str, nargs='+', default=None)
     parser.add_argument('--task_type_exclude_filter', type=str, nargs='+', default=None)
-    parser.add_argument('--limit_dataset', nargs='+', type=str, default=[
-        'ng20',
-        'ling-spam',
-        'reuters-21578',
-        'webkb',
-        'review_polarity'
-    ])
+    parser.add_argument('--limit_dataset', nargs='+', type=str, default=None)
 
     args = parser.parse_args()
     return args

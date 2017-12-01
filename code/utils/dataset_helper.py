@@ -82,7 +82,7 @@ def get_dataset_spacy(dataset_name, use_cached=True, cache_path=CACHE_PATH, pipe
     return X, Y
 
 
-def get_gml_graph_dataset(dataset_name, use_cached=True, graphs_folder=GRAPHS_FOLDER, graph_type='concept_map', cache_npy:str=None):
+def get_gml_graph_dataset(dataset_name, use_cached=True, graphs_folder=GRAPHS_FOLDER, graph_type='concept_map', cache_npy:str=None, suffix: str=''):
     """Retrieves the gml dataset.
     TODO: The caching could be done with a decorator.
 
@@ -103,7 +103,7 @@ def get_gml_graph_dataset(dataset_name, use_cached=True, graphs_folder=GRAPHS_FO
     graph_folder = os.path.join(graphs_folder, dataset_name)
 
     if not cache_npy:
-        cache_npy = os.path.join(CACHE_PATH, 'dataset_graph_{}_{}.npy'.format(graph_type, dataset_name))
+        cache_npy = os.path.join(CACHE_PATH, 'dataset_graph_{}_{}{}.npy'.format(graph_type, dataset_name, suffix))
 
     if use_cached and os.path.exists(cache_npy):
         with open(cache_npy, 'rb') as f:

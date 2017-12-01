@@ -12,8 +12,8 @@ In our case, the datapoints $x_i$ will be texts or graphs, therefor our task is 
 
 \begin{figure}[ht]
 \centering
-\begin{tabular}{llll}
- & Notation & Definition & \\
+\begin{tabular}{lll}
+ & Notation & Definition \\
 \toprule
 Datapoint & $x$ & $x \in X$
 \\
@@ -21,10 +21,9 @@ Label & $y$ & $y \in Y$
 \\
 Real and predicted label of $x_i$ & $y_i$, $y'_i$ &  $y_i, y'_i \in Y$
 \\
-Instance & d_i & $(x_i, y_i) \in X \times Y$
+Instance & $d_i$ & $(x_i, y_i) \in X \times Y$
 \\
-Dataset & $D$ & $\{(x_1, y_1), \ldots, (x_n, y_n) \} \subseteq X \times Y$ & 
-\\
+Dataset & $D$ & $\{(x_1, y_1), \ldots, (x_n, y_n) \} \subseteq X \times Y$ 
 \end{tabular}
 \caption{Classification notation.}
 \end{figure}
@@ -353,7 +352,7 @@ One example of such an extension reduces the space requirement of the algorithm 
 
 In Figure \ref{fig:wl_example} we show an example of one WL iteration with label compression.
 
-\todo[inline]{Explain and mention ``fast_wl"}
+\todo[inline]{Explain and mention ``fast\_wl"}
 \todo[inline]{How?}
 \todo[inline]{Mention complexity}
 \todo[inline]{Explain extensions/modifications we actually used: fast\_wl, label compression, ...}
@@ -376,17 +375,20 @@ In Figure \ref{fig:wl_example} we show an example of one WL iteration with label
 We have seen that a kernel can be used to calculate a measure of similarity between two objects, eg. graphs.
 Some kernels can be expressed as an inner product $k(X, X') = \langle \phi(X), \phi(X') \rangle$ on two (implicit) vector representations of the objects $X$ and $X'$.
 In this case, the vector representations $\phi(X)$ can be used in conventional classification algorithms.
-Yet, calculating these representations is not always possible or feasible since the dimension of such a representation is quite high and most often very sparse.
+Yet, calculating these representations is not always possible or feasible since the dimension of such a representation is quite high.
 There is another approach for classification (and regression), the aforementioned kernel methods.
 Kernel methods operate directly with the kernel values and do not use the implicit feature representations $\phi(X)$.
 Instead, kernel methods use the similarities $k(X, X')$ directly.
-Therefor kernel methods can be used with kernels where no implicit feature representation $\phi(X)$ can be calculated or where calculating $\phi(X)$ is not feasible.
 
 One popular example of a kernel method is the Support Vector Machine, or SVM.
-The SVM is actually able to use either vector representations of the elements in the dataset or the pairwise similarities, the gram matrix, between them.
+The SVM is able to use both vector representations of the elements in the dataset or the pairwise similarities, the gram matrix, between them.
 At training time, the gram matrix $A$ of all objects in the training set, $d_{train} = \{X_1, X_2, \ldots, X_n\}$, is calculated.
-This gram matrix $A$ and the corresponding labels then get fed into the SVM which optimizes its parameters.
-\todo[inline]{Prediction time?}
+This gram matrix $A$ and the corresponding classes then get fed into the SVM which fits its parameter to them.
+After training, to predict the label for a given instance $X_{test}$, the pairwise similarities of t$X_{test}$ and all training examples is calculated, resulting in a vector $v = (k(X_{test}, X_1), k(X_{test}, X_2), \ldots, k(X_{test}, X\_n))$.
+This vector $v$ is then fed into the SVM which predicts the label for $X_{test}$.
+Note that this kernel method approach does not use explicit feature maps of the instances, only their pairwise similarities.
+The feature that the explicit feature map $\phi$ must not be computed in order is also sometimes called kernel trick.
+\todo[inline]{This must be explained more thoroughly! In the current form it is not right, also!}
 
 
 \labelsubsection{Graph Kernel Based Text Classification}{subsec:graph_kernel_based_text_classification}
@@ -434,11 +436,42 @@ This work is the first real evaluation of graph-based classification with a high
 \paragraph{``Concept Graph Preserving Semantic Relationship for Biomedical Text Categorization" \cite{Gulrandhe2015}}
 Graphs: extracted keywords/concepts (POS tagger, only nouns), mapping of concepts to UMLS database, extraction of relationship between them.
 
-Nodes are get 4 different weight components: tf, idf, connectivity, #connected components.
+Nodes are get 4 different weight components: tf, idf, connectivity, \#connected components.
 
 Kernel: number of shared edges
 
 No results
 
 \paragraph{``Deep Graph Kernels" \cite{Yanardag2015}}
-\todo[inline]{Embeddings for graphs}
+In this paper, the authors introduce an extension for existing kernels for which the explicit feature map $\phi$ can be calculated.
+When calculating the kernel
+\begin{equation*}
+k(G, G') = \phi^T(G) \cdot \phi(G')
+\end{equation*}
+they add a weighting matrix $M$
+\begin{equation*}
+k(G, G') = \phi^T(G) \cdot M \cdot \phi(G')
+\end{equation*}
+
+The intuition here is that each vector entry of $\phi(G)$ corresponds to the count of some substructure of $G$ and that these substructures are not independent of each other, ie. they can be similar to each other.
+Yet when calculating the plain kernel only exact matches of substructures in the two graphs are considered.
+For instances, suppose substructure $g_1$ is similar to another substructure $g_2$ and substructure $g_1$ is only present in $G$ and not in $G'$, conversely substructure $g_2$ is only present in $G'$ and not in $G$.
+Suppose some kernel $k$ would construct $\phi_k(G)$ by counting the occurrences of $g_1$ and $g_2$, so $\phi_k(G) = (n_{g_1}(G), n_{g_2}(G))$ where $n_{g_i}(G)$ counts the occurrence of substructure $g_i$ in $G$.
+In the above example, $\phi_k(G_1) = (1, 0)$ and $\phi_k(G_2) = (0, 1)$. When calculating $k(G, G') = \phi_k^T(G) \cdot \phi_k(G') $ the similarity under the kernel would equal 0, therefore ignoring the similarity of substructure $g_1$ and $g_2$.
+The proposed extension to the kernel aims to address this issue by using embeddings for the substructures to identify the similarity of substructures and then allowing ``partial" instead of only exact matches.
+In the above example, the new $\phi_{new}(G)$ would not be $(1, 0)$ but $(1, i)$ and $\phi_{new}(G') = (i, 1)$ with some $i > 0$.
+In our example, the aforementioned matrix $M$ would be
+\begin{align*}
+M = \begin{bmatrix}
+1 & i \\
+i & 1
+\end{bmatrix}
+\end{align*}
+
+In this case, when calculating the kernel for these two graphs, the similarity would be $(1, 0)^T \cdot M \cdot (0, 1) = (1, 0)^T \cdot (i, 1) = i$ instead of $(0, 1)^T \cdot (1, 0) = 0$.
+So, the augmented kernel between these graphs would actually capture the similarity of substructures instead of only using exact matches of them.
+
+The authors then introduce two ways to create the matrix $M$ for a kernel, namely by creating it by hand using a measure of similarity between the substructures or by learning the embeddings with an approach similar to the \textit{word2vec} algorithm.
+In both cases, the matrix $M$ aims to encode the similarities of the substructures.
+
+The authors report an improvement of classification scores for several real-world datasets, comparing the scores of the plain version of a kernel with their augmented version.

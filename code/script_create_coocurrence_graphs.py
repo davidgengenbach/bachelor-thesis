@@ -20,7 +20,7 @@ def get_args():
     parser.add_argument('--window_size_end', type=int, default=4)
     parser.add_argument('--lemmatize', action = 'store_true')
     parser.add_argument('--force', action = 'store_true')
-    parser.add_argument('--limit_dataset', type=str, default = None)
+    parser.add_argument('--limit_dataset', nargs='+', type=str, default=None)
     args = parser.parse_args()
     return args
 
@@ -30,10 +30,9 @@ def main():
 
     helper.print_script_args_and_info(args)
 
-    Parallel(n_jobs=args.n_jobs)(delayed(process_dataset)(dataset_name, args) for dataset_name in dataset_helper.get_all_available_dataset_names())
+    Parallel(n_jobs=args.n_jobs)(delayed(process_dataset)(dataset_name, args) for dataset_name in dataset_helper.get_all_available_dataset_names(limit_datasets=args.limit_dataset))
 
 def process_dataset(dataset, args):
-    if args.limit_dataset and dataset != args.limit_dataset: return
     X, Y = dataset_helper.get_dataset(dataset)
     #X, Y = X[:1], Y[:1]
 

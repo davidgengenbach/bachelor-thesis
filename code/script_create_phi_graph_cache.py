@@ -32,7 +32,7 @@ def get_args():
     parser.add_argument('--disable_spgk', action='store_true')
     parser.add_argument('--disable_simple_set_matching_kernel', action='store_true')
     parser.add_argument('--disable_relabeling', action='store_true')
-    parser.add_argument('--limit_dataset', nargs='+', type=str, default=['ng20', 'ling-spam', 'reuters-21578', 'webkb'], dest='limit_dataset')
+    parser.add_argument('--limit_dataset', nargs='+', type=str, default=None)
     parser.add_argument('--spgk_depth', nargs='+', type=int, default=[1])
     parser.add_argument('--lookup_path', type=str, default='data/embeddings/graph-embeddings')
     parser.add_argument('--include_filter', type=str, default=None)
@@ -47,7 +47,7 @@ def main():
     Parallel(n_jobs=args.n_jobs)(delayed(process_graph_cache_file)(graph_cache_file, args) for graph_cache_file in dataset_helper.get_all_cached_graph_datasets())
 
 
-def sort(*Xs, by):
+def sort(*Xs, by=None):
     indices = np.argsort(by)
     return [np.array(x)[indices] for x in Xs]
 
@@ -69,6 +69,7 @@ def process_graph_cache_file(graph_cache_file, args):
     try:
         phi_graph_cache_file = graph_cache_file.replace('.npy', '.phi.npy')
         X_graphs, Y = dataset_helper.get_dataset_cached(graph_cache_file)
+        X_graphs = graph_helper.get_graphs_only(X_graphs)
 
         #X_graphs_walk_added = copy.deepcopy(X_graphs)
 
@@ -80,7 +81,6 @@ def process_graph_cache_file(graph_cache_file, args):
 
             if args.wl_sort_classes:
                 X_, Y_ = sort(X_, Y_, by = Y_)
-
             X_ = tuple_trans.transform(X_)
             # Without relabeling
             used_phi_graph_cache_file = phi_graph_cache_file
@@ -109,8 +109,6 @@ def process_graph_cache_file(graph_cache_file, args):
                 fast_wl_trans.fit(X_)
                 with open(used_phi_graph_cache_file , 'wb') as f:
                     pickle.dump((fast_wl_trans.phi_list, Y_), f)
-
-            fast_wl_trans.set_params(should_cast=False)
 
             # All nodes get same label
             if args.force or not os.path.exists(phi_same_label_graph_cache_file):
