@@ -1,9 +1,27 @@
 import numpy as np
 import sklearn
 
+
 def remove_coefs(clf):
     found = False
-    for x in ['coef_', 'class_log_prior_', 'intercept_', 'feature_log_prob_', 'class_count_', 'feature_count_', 'vocabulary_', 'idf_', 'stop_words_', '_tfidf', 'scale_', 'max_abs_']:
+    for x in [
+        '_tfidf',
+        'class_count_',
+        'class_log_prior_',
+        'coef_',
+        'dual_coef_',
+        'feature_count_',
+        'feature_log_prob_',
+        'idf_',
+        'intercept_',
+        'max_abs_',
+        'n_support_',
+        'scale_',
+        'stop_words_',
+        'support_',
+        'support_vectors_',
+        'vocabulary_',
+    ]:
         try:
             setattr(clf, x, None)
             found = True
@@ -11,6 +29,7 @@ def remove_coefs(clf):
             pass
 
     return found
+
 
 def remove_coefs_from_results(results):
     found = False

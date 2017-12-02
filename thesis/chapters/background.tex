@@ -248,7 +248,7 @@ Instead, in the graph isomorphism test one has to find two mappings: one bijecti
 
 \todo{Explain constraints for the mapping}
 If such a mapping exists, the two graphs are called isomorphic.
-While the complexity of the graph isomorphism test is not known yet, it is suspected to lie in P or maybe is also NP-complete.
+While the complexity of the graph isomorphism test is not known yet, it is suspected to lie in P or it may be NP-complete.
 
 \todo{This potentially super-polynomial complexity has grave consequences for a graph kernel.}
 \todo{Namely?}
@@ -462,6 +462,41 @@ Nodes are get 4 different weight components: tf, idf, connectivity, \#connected 
 Kernel: number of shared edges
 
 No results
+
+
+\paragraph{``Text classification using Semantic Information and Graph Kernels" \cite{???}}
+In this paper, the text classification task is also converted into a graph classification task.
+The authors create a graph of the underlying text by extracting so-called \underline{D}iscourse \underline{R}epresentation \underline{S}tructures, or DRS, which capture the semantic relationships in the sentences of the underlying text.
+A DRS consists of two parts, namely a set discourse referents, or entities, and conditions on these entities.
+The example given in the paper constructs the DRS for the sentence ``He throws the ball", which results in the DRS with the entities $\{\text{He}, \text{ball}, \text{throws}\}$ which get renamed to $\{x1, x2, x3\}$.
+The conditions then define the meaning or relationship of the items. In the given example the DRS conditions are $\{\text{male}(x1), \text{ball}(x2), \text{throws}(x3), \text{event}(x3), \text{agent}(x3, x1), \text{patient}(x3, x2)\}$.
+
+\todo{How to cite this example?}
+
+To construct a graph from the extracted DRS', the entities become vertices and the conditions become edges between them.
+A unary condition on a vertex, for instance $\text{male}(x1)$, becomes a loop for the node $x1$.
+Conditions on two entities become directed edges, going from the entity of the first argument to the second condition argument, for example the condition $\text{agent}(x3, x1)$ creates a node from $x3$ to $x1$.
+This results in a graph which captures the semantic relationship between the entities of the underlying graph.
+Note that edge node labels, or entities, are not as important as the edges , or conditions, between them.
+This is accounted for in the kernel the authors use in the next step.
+Also note, that the process of creating a DRS graph for a given text is independent of other texts and can easily be parallized.
+
+After constructing DRS graphs for all texts in the dataset, the authors use a variant of a random-walk kernel, customized to capture the importance of the edges instead of the nodes.
+In the plain random-walk kernel, random walks are done on the two graphs, $G$ and $G'$ and the counts of equal random walks are counted, resulting in a measure of similarity between these two graphs. The higher the count of equal random walks, the higher the similarity.
+The equality of two walks is determined by comparing the labels of the visited nodes.
+In the case of DRS graphs, this would not yield a good kernel since the labels of the nodes are placeholders, ie. two vertices with the same label, for example $x1$, can correspond to totally different entities.
+So, the standard definition of walk equality can not be used in the case of DRS graphs.
+Instead, the authors introduce an approach which, for a given node $v_1$ of graph $G$, returns an ``equal" node $v_2$ in graph $G'$ that has similar edge \textbf{labels}.
+This enables the random-walk graph kernel to ``merge" nodes with different node labels, that is placeholder like $x1$, on the two graphs, thus enabling random walks with meaningful node equality in the case of the DRS graphs.
+After extracting the gram matrix of the DRS graphs with this extended random-walk graph kernel, the authors then use a SVM to evaluate their approach on the \textit{reuters-21578} dataset.
+They use only a subset of 50 texts in the five most frequent classes of the dataset as their corpus. Then they create the DRS graphs for these texts and randomly select 25 of each class to create a gram matrix.
+This gram matrix then gets used to train a one-versus-one SVM classifier. So, they do binary classification and present the results of the performance of the pairs of the 5 classes they considered.
+The authors explain the reason for this small number of considered documents and classes by mentioning the runtime complexity of their approach, most notably the runtime complexity of the random-walk kernel.
+They also acknowledge that they do not provide baseline results or comparisons between different approaches to text-classification or results with other graph kernels.
+
+That said, this work is also similar to our approach in the sense that they also use graphs representations of texts to classify.
+
+\todo{Maybe create similar kernel which does link prediction by defining edge equality through similar source/destination node labels?}
 
 \paragraph{``Deep Graph Kernels" \cite{Yanardag2015}}
 In this paper, the authors introduce an extension for existing kernels for which the explicit feature map $\phi$ can be calculated.

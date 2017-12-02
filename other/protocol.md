@@ -1,3 +1,10 @@
+## 02.12.2017
+- Thesis
+    - Wrote section for related paper "Text classification using Semantic Information and Graph Kernels"
+        - DRS graphs
+        - custom node equality function for random-walk graph kernel
+
+
 ## 01.12.2017
 - Code
 	- Fixed latex code

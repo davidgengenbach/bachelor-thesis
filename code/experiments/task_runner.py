@@ -86,22 +86,6 @@ def run_classification_task(task: ExperimentTask, cfo: ClassificationOptions, ex
 
     gscv_result = gscv.fit(X_train, Y_train)
 
-    if cfo.save_best_clf:
-        best_estimator = gscv_result.best_estimator_
-        try:
-            results_helper.save_results({
-                'classifier': best_estimator
-            }, classifier_file, args)
-        except Exception as e:
-            LOGGER.warning('Error while saving best estimator: {}'.format(e))
-            LOGGER.exception(e)
-
-
-    if not cfo.keep_coefs:
-        remove_coefs_from_results(gscv_result.cv_results_)
-
-    results_helper.save_results(gscv_result.cv_results_, result_file, args)
-
     if not is_dummy and cfo.create_predictions:
         if not len(X_test):
             LOGGER.warning('Validation set for prediction has no items')
@@ -122,6 +106,20 @@ def run_classification_task(task: ExperimentTask, cfo: ClassificationOptions, ex
                 LOGGER.warning('Error while trying to retrain best classifier')
                 LOGGER.exception(e)
 
+    if cfo.save_best_clf:
+        best_estimator = gscv_result.best_estimator_
+        try:
+            results_helper.save_results({
+                'classifier': best_estimator
+            }, classifier_file, args)
+        except Exception as e:
+            LOGGER.warning('Error while saving best estimator: {}'.format(e))
+            LOGGER.exception(e)
+
+    if not cfo.keep_coefs:
+        remove_coefs_from_results(gscv_result.cv_results_)
+
+    results_helper.save_results(gscv_result.cv_results_, result_file, args)
 
 
 def train_test_split(X, Y, test_size: float = 0.15, random_state: int = 42, is_precomputed: bool = False):
