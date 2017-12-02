@@ -2,11 +2,11 @@
 In the next paragraphs we will investigate the questions we posed in the previous chapter.
 After that, we will gather the findings to these questions to form an judgment of the validity of our hypothesis.
 
-\todo[inline]{Observations + possible explanations}
-\todo[inline]{How do the results relate to hypothesis?}
-\todo[inline]{Error analysis}
-\todo[inline]{Comparison between text n-grams and concept maps/co-occurrence graphs}
-\todo[inline]{Look at concepts used in concept maps: frequency in whole corpus, ...}
+\todo{Observations + possible explanations}
+\todo{How do the results relate to hypothesis?}
+\todo{Error analysis}
+\todo{Comparison between text n-grams and concept maps/co-occurrence graphs}
+\todo{Look at concepts used in concept maps: frequency in whole corpus, ...}
 
 \subquestionref{question:structure_diversity}
 To investigate whether concept maps are useful for text classification, we first look at the structure of concept maps.
@@ -23,7 +23,7 @@ So, concept maps do not only have few nodes but also a relatively low number of 
 This is most likely due to the small length of the underlying texts.
 The shortness of the text results in a lower number of occurrences of some concept in the text, ie. most of the concepts occur only once in a text.
 
-\todo[inline]{Add statistics about \# of occurrences of concepts in graphs}
+\todo{Add statistics about \# of occurrences of concepts in graphs}
 
 Another hint for the un-connectedness of concept maps is the number of connected components.
 In Figure \ref{fig:percentage_more_than_one_connected_component} we can see that most of the graphs have more than one connected component. Together with the observation of the low number of nodes per graph, this also implies the low connectedness of concept maps.
@@ -119,8 +119,8 @@ webkb & concept map &  0.472472 &  0.162010 &  0.222296 \\
 
 \subquestionref{question:comparison_coo}
 
-\todo[inline]{Co-occurrence:"Text kernel" performs nearly as well as normal text}
-\todo[inline]{Co-occurrence: only minor decrease (1\%) in performance when only using nouns}
+\todo{Co-occurrence:"Text kernel" performs nearly as well as normal text}
+\todo{Co-occurrence: only minor decrease (1\%) in performance when only using nouns}
 \begin{figure}[ht]
 \centering
 \begin{tabular}{lrrr}
@@ -148,7 +148,7 @@ This is most likely due to the high compression factor of both concept maps and 
 \end{figure}
 
 \subquestionref{question:dataset_diversity}
-\todo[inline]{WL sparsity per dataset}
+\todo{WL sparsity per dataset}
 
 \subquestionref{question:comparison_combined}
 As we have seen in the results of the last section, text-based approaches outperform graph-only approaches.
@@ -162,7 +162,7 @@ The interpretability of this approach would be far lower since both graph- and t
 
 In Figure \ref{fig:results_comparison_combined} we see the classification scores for the combined features for both co-occurrence graphs and concept maps.
 
-\todo[inline]{This is not true anymore. Classification performance on test set is different!}
+\todo{This is not true anymore. Classification performance on test set is different!}
 As we see, the performance of the combined approached compared the text-only approach is comparable.
 With some datasets, the combined approach is slightly better than the text-only approach. Especially for the ng20 dataset, we see an improvement of ca. 3\% over the text-only approach.
 To test whether this difference in performance is due to chance, we used the permutation test, 
@@ -172,8 +172,8 @@ The weights, or coefficients, are an indicator for the importance of a input fea
 Thus we can look at the weights for the text features and compare them to the weights for the graph features.
 This gives an insight into the relative importance of text- and graph features.
 
-\todo[inline]{SVM trained on combined, coefficients}
-\todo[inline]{Analysis of coefficients}
+\todo{SVM trained on combined, coefficients}
+\todo{Analysis of coefficients}
 
 
 \begin{figure}[ht]
@@ -231,9 +231,9 @@ webkb
 
 \labelsubsection{Related And Intermediate Observations}{subsec:related_and_intermediate_observation}
 
-\todo[inline]{Sparsity of feature vectors}
-\todo[inline]{Complexity of approach}
-\todo[inline]{Usefulness of WL to get feeling for graph connectedness, uniqueness of structure, uniqueness of labels}
+\todo{Sparsity of feature vectors}
+\todo{Complexity of approach}
+\todo{Usefulness of WL to get feeling for graph connectedness, uniqueness of structure, uniqueness of labels}
 
 \subsubsection{Weisfeiler-Lehman extension: node weights and iteration weights}
 With increasing iterations $h$ of the Weisfeiler-Lehman algorithm, the exact matches of the subtrees of height $h$ become much more improbable.
@@ -249,8 +249,8 @@ Our first extension augments the WL algorithm by adding node weights.
 For each of the nodes in all graphs, we first calculate node weights which encode the importance of that node or difficulty of getting an exact match in WL.
 An example of such node weights would be the node degree or node weights extracted with PageRank.
 The node degree is an interesting metric for node weights since it actually encodes the size of the neighbourhood of a node and therefor could possibly address problem \textbf{(2)}.
-\todo[inline]{Explain how to actually use the node weights.}
-\todo[inline]{Remark that the node weights could be seen as an additional metric of frequency: nodes with a higher degree have been in the text more frequently.}
+\todo{Explain how to actually use the node weights.}
+\todo{Remark that the node weights could be seen as an additional metric of frequency: nodes with a higher degree have been in the text more frequently.}
 
 Our other extension to the WL algorithm addresses problem \textbf{(1)}, the difficulty of having a match when the iteration increases.
 To solve this difficulty, we propose weighting the features of each iteration.

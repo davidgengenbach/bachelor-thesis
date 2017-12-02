@@ -1,14 +1,14 @@
 In this chapter we will introduce the notations and concepts we will use in subsequent sections.
 
-\todo[inline]{Introductions to used classifiers, concepts}
-\todo[inline]{Concretize the problem and its notation}
+\todo{Introductions to used classifiers, concepts}
+\todo{Concretize the problem and its notation}
 
 \labelsubsection{Classification Task}{subsec:classification_task}
 Classification in machine learning is the task of automatically assigning classes, or labels, to datapoints.
 Given a dataset $D = \{(x_1, y_1), (x_2, y_2), \ldots, (x_n, y_n) \} \subseteq X \times Y$ of $n$ items where $(x_i, y_i)$ are dataset instances, the supervised classification task is to create a classifier which predicts a label $y' \in Y$ for a given $x \in X$.
 In this work, the labels $Y$ of the dataset are denoted with $Y_d = (y_1, y_2, \ldots, y_n )$, the predicted labels are denoted as $Y'_d = (y'_1, y'_2, \ldots, y'_n )$.
 When the number of classes $|Y|$ is 2, the classification task is also called binary classification. When $|Y$ is greater than 2, the classification is called multiclass classification.
-In our case, the datapoints $x_i$ will be texts or graphs, therefor our task is called text and graph classification respectively.
+In our case, the datapoints $x_i$ will be texts or graphs, therefore our task is called text and graph classification respectively.
 
 \begin{figure}[ht]
 \centering
@@ -80,7 +80,7 @@ $F1_{\text{macro}} = \displaystyle \frac{\sum\nolimits_{y \in Y} F1_y}{|Y|}$
 
 
 \labelsubsection{Texts}{subsec:texts}
-\todo[inline]{Mention approaches to represent text}
+\todo{Mention approaches to represent text}
 
 \labelsubsection{Graphs}{subsec:graphs}
 A labeled graph is a triple $G = (V, E, \pi)$, where $V$ is the set of vertices or nodes, $E \subseteq V \times V$ are the edges and $\pi: V \to X$ is a labeling function which assigns a label to a given vertex.
@@ -246,17 +246,17 @@ Instead, in the graph isomorphism test one has to find two mappings: one bijecti
     \psi_{V}(v_t) = v'_t
 \end{equation*}
 
-\todo[inline]{Explain constraints for the mapping}
+\todo{Explain constraints for the mapping}
 If such a mapping exists, the two graphs are called isomorphic.
 While the complexity of the graph isomorphism test is not known yet, it is suspected to lie in P or maybe is also NP-complete.
 
-\todo[inline]{This potentially super-polynomial complexity has grave consequences for a graph kernel.}
-\todo[inline]{Namely?}
+\todo{This potentially super-polynomial complexity has grave consequences for a graph kernel.}
+\todo{Namely?}
 
-\todo[inline]{Creating a graph kernel is always a trade-off}
-\todo[inline]{Kernels can be combined!}
-\todo[inline]{Explain when $\phi$ can be constructed (Mercer's theorem: ``an implicitly defined function $\varphi$  exists whenever the space $\mathcal{X}$ can be equipped with a suitable measure ensuring the function $k$ satisfies Mercer's condition.")}
-\todo[inline]{Mention that functions that do not satisfy Mercer's condition and are not non-negative definite can nevertheless perform quite good in real world applications}
+\todo{Creating a graph kernel is always a trade-off}
+\todo{Kernels can be combined!}
+\todo{Explain when $\phi$ can be constructed (Mercer's theorem: ``an implicitly defined function $\varphi$  exists whenever the space $\mathcal{X}$ can be equipped with a suitable measure ensuring the function $k$ satisfies Mercer's condition.")}
+\todo{Mention that functions that do not satisfy Mercer's condition and are not non-negative definite can nevertheless perform quite good in real world applications}
 
 \paragraph{Gram matrix}
 A gram, or kernel matrix, for a given kernel is a matrix $A$ for a set of objects, $D = (x_1, x_2, \ldots, x_n)$
@@ -281,7 +281,7 @@ So, any of the algorithms we will introduce in the next section can be combined 
 As we will also see in this next section, graph kernels can be quite diverse and capture different information of the objects they are operating on.
 The scope of a graph kernel can therefor also vary widely from only capturing narrow aspects of the graph to actually capturing the complete graph structure and content.
 
-\todo[inline]{Mention linearization of graphs?}
+\todo{Mention linearization of graphs?}
 
 \subsubsection{Examples}
 \paragraph{Simple Equality Graph Kernel}
@@ -314,7 +314,7 @@ k_{simple\_structure}(G_1, G_2) = \langle \phi(G_1), \phi(G_1) \rangle
 with $\phi(G) = (n_{triangle}(G), n_{rectangle}(G))^T$. Here, $n_{triangle}$ is the number of the triangle subgraphs in $G$ and $n_{rectangle}$ the number of rectangle subgraphs in $G$.
 This graph kernel is an example of a kernel where the explicit feature map $\phi(G)$ can be computed directly and completely independent of other graphs.
 
-\todo[inline]{This kernel actually is quite similar to a real-world kernel named graphlet kernel. In the graphlet kernel, the sub-structures are not triangles and rectangles, but graphlets.}
+\todo{This kernel actually is quite similar to a real-world kernel named graphlet kernel. In the graphlet kernel, the sub-structures are not triangles and rectangles, but graphlets.}
 
 \paragraph{Random Walk Graph Kernel}
 This kernel does random walks on both graphs and returns the number of matching random walks between the two graphs:
@@ -344,7 +344,7 @@ In the next iteration, the label of a node than encodes the neighbourhood of the
 
 The Weisfeiler-Lehman graph kernel has been to shown to achieve state-of-the-art performance on several datasets and applications.
 
-\todo[inline]{Complexity? $\mathcal{O}(hm)$, where $h$ is the number of iterations and $m$ is the number of edges in the dataset.}
+\todo{Complexity? $\mathcal{O}(hm)$, where $h$ is the number of iterations and $m$ is the number of edges in the dataset.}
 
 It has to be noted that the Weisfeiler-Lehman does not use edge labels by default, but can be extended to do so.
 There are also several other extensions to the Weisfeiler-Lehman kernel in the literature.
@@ -352,12 +352,12 @@ One example of such an extension reduces the space requirement of the algorithm 
 
 In Figure \ref{fig:wl_example} we show an example of one WL iteration with label compression.
 
-\todo[inline]{Explain and mention ``fast\_wl"}
-\todo[inline]{How?}
-\todo[inline]{Mention complexity}
-\todo[inline]{Explain extensions/modifications we actually used: fast\_wl, label compression, ...}
-\todo[inline]{Mention possibility to create $\phi(G)$ feature map directly (not possible with label-compression)}
-\todo[inline]{Mention that WL can be used as a graph isomorphism test - but it fails on certain types of graphs, ie. it reports a isomorphism between graphs that are not the same}
+\todo{Explain and mention ``fast\_wl"}
+\todo{How?}
+\todo{Mention complexity}
+\todo{Explain extensions/modifications we actually used: fast\_wl, label compression, ...}
+\todo{Mention possibility to create $\phi(G)$ feature map directly (not possible with label-compression)}
+\todo{Mention that WL can be used as a graph isomorphism test - but it fails on certain types of graphs, ie. it reports a isomorphism between graphs that are not the same}
 
 \begin{figure}[ht]
   \subfloat[Initial graphs]{\includegraphics[width=0.32\textwidth]{assets/figures/wl_example/wl_iteration_0.pdf}\label{fig:wl_example_0}}
@@ -381,25 +381,27 @@ Kernel methods operate directly with the kernel values and do not use the implic
 Instead, kernel methods use the similarities $k(X, X')$ directly.
 
 One popular example of a kernel method is the Support Vector Machine, or SVM.
-The SVM is able to use both vector representations of the elements in the dataset or the pairwise similarities, the gram matrix, between them.
+The SVM is able to use both vector representations of elements in the dataset or the pairwise similarities, the gram matrix, between them.
 At training time, the gram matrix $A$ of all objects in the training set, $d_{train} = \{X_1, X_2, \ldots, X_n\}$, is calculated.
-This gram matrix $A$ and the corresponding classes then get fed into the SVM which fits its parameter to them.
-After training, to predict the label for a given instance $X_{test}$, the pairwise similarities of t$X_{test}$ and all training examples is calculated, resulting in a vector $v = (k(X_{test}, X_1), k(X_{test}, X_2), \ldots, k(X_{test}, X\_n))$.
+This gram matrix $A$ and the corresponding classes then get fed into the SVM which fits its coefficients to them.
+After training, to predict the label for a given instance $X_{test}$, the pairwise similarities of t$X_{test}$ and all training examples are calculated, resulting in a vector $v = (k(X_{test}, X_1), k(X_{test}, X_2), \ldots, k(X_{test}, X\_n))$.
 This vector $v$ is then fed into the SVM which predicts the label for $X_{test}$.
 Note that this kernel method approach does not use explicit feature maps of the instances, only their pairwise similarities.
-The feature that the explicit feature map $\phi$ must not be computed in order is also sometimes called kernel trick.
-\todo[inline]{This must be explained more thoroughly! In the current form it is not right, also!}
+This feature of not needing to calculate the explicit feature map $\phi$ is called kernel trick.
+It enables linear models, such as the SVM, to solve non-linear separable problems.
+
+In our work, we will use both the kernelized version of the SVM, ie. learning with a gram matrix, as well as the version using an explicit feature map $\phi$.
 
 
 \labelsubsection{Graph Kernel Based Text Classification}{subsec:graph_kernel_based_text_classification}
 In this section, we will introduce related work and briefly recap the history of the field.
 
-\todo[inline]{How did the field evolve?}
-\todo[inline]{Hint related tasks}
-\todo[inline]{What is the most related work, how do they differ from our approach}
-\todo[inline]{Relate the other work to the new approach and work out their differences/results}
-\todo[inline]{Other approaches to graph classification}
-\todo[inline]{Mention other graphs}
+\todo{How did the field evolve?}
+\todo{Hint related tasks}
+\todo{What is the most related work, how do they differ from our approach}
+\todo{Relate the other work to the new approach and work out their differences/results}
+\todo{Other approaches to graph classification}
+\todo{Mention other graphs}
 
 \paragraph{``Shortest-Path Graph Kernels for Document Similarity" \cite{Nikolentzos2017a}}
 The most similar and recent work to our approach that we found was \cite{Nikolentzos2017a}. In this work, the authors first create co-occurrence graphs out of the text. Next, they create the gram matrix for the graphs with their own graph kernel and use a SVM to classify them.
@@ -419,19 +421,38 @@ The shortest path sub-kernel works as follows:
     \item{Count the number of same edges in the both graphs: when two edges are the same, add the product of their edge weights to the similarity}
 \end{enumerate}
 
-\todo[inline]{Mention that they did NOT perform experiments to differentiate the performance of the subkernels! My guess is that most of the performance comes from the simple-set matching subkernel.}
-\todo[inline]{Note that the shortest-path sub-kernel does not actually add a lot of performance?}
-\todo[inline]{Why is this approach different to ours? Co-occurrence vs. concept map}
+\todo{Mention that they did NOT perform experiments to differentiate the performance of the subkernels! My guess is that most of the performance comes from the simple-set matching subkernel.}
+\todo{Note that the shortest-path sub-kernel does not actually add a lot of performance?}
+\todo{Why is this approach different to ours? Co-occurrence vs. concept map}
 
 \paragraph{``Text Categorization as a Graph Classification Problem" \cite{Rousseau2015a}}
 In this paper, the authors generate co-occurrence graphs out of different text classification datasets.
 To classify the graphs, they introduce their own graph kernel which is also an instance of the aforementioned kernels that count the number of occurrences of sub-structures.
-Here, they first calculate the k-core (or main core) of the graphs, then do most-frequent subgraph mining on the graphs.
+In this case, the sub-structures this kernel counts are frequent subgraphs, ie. subgraphs that occur frequently in the graphs of the dataset.
+To get a set of most-frequent subgraphs in the dataset, they develop their own approach, using depth-first search and a labelling function for graphs that enables finding frequent subgraphs efficiently.
+After extracting the sub-graphs from the dataset this way, they only retain subgraphs which occur more often in the dataset than some defined parameter, the support value.
+This significantly reduces the number of considered sub-graphs since most subgraphs occur quite infrequently.
+This extension is indeed needed since the number of possible sub-graphs grows super-linear with the number of nodes/edges and can render the subsequent counting of the sub-graphs in the dataset infeasible.
+Also, considering all possible subgraphs in all graphs in the dataset would not only require significant computational resources but would also result in sparse feature vectors since most sub-graphs occur infrequently.
+This, in turn, would harden the classifier training problem.
 
-This work is the first real evaluation of graph-based classification with a high number of graphs/unique nodes/...
+As another measure to lower the runtime complexity of their algorithm, they also first extract the main core of each co-occurrence graph and only extract sub-graphs from them, not from the whole graphs.
+A $k$-core is a subgraph $G_k$ of graph $G$ where all vertices have a degree greater or equal to $k$. The main core of a graph is the $k$-core with the highest possible $k$.
+Thus the main core is the most connected subgraph of graph $G$, which includes only the most ``important" vertices and their edges to each other.
 
-\todo[inline]{Only using the most-important subgraph of a graph (main core) does not greatly damage prediction accuracy, but substantially reduces compute time}
-\todo[inline]{How does this approach differ from ours? In this case, the authors use graphs with duplicate labels. The subgraph mining is not that relevant and useful in our case. This is because in our cases, the graphs are quite small.}
+So, after extracting the main-core of each co-occurrence graph and determining the set of most-frequent sub-graphs in the dataset, they count the occurrences of the most-frequent sub-graphs for each graph in the dataset.
+This results in feature maps $\phi_i$ which contain the counts of each most-frequent sub-graph per co-occurrence graph.
+These feature vectors together with the labels are then used to train a SVM and are used to subsequently predict new instances by creating their feature maps and then predicting the label with this trained SVM.
+
+The authors evaluated the classification performance of their approach on several datasets, namely the WebKB corpus, a subset of the reuters-21578 corpus (named R8), the ling-spam dataset and a corpus of Amazon reviews.
+In our work, we also use these and other datasets. In later sections, we will introduce then more thoroughly.
+
+In the paper, the authors argue that only retaining the main-core does not greatly damage the classification performance, yet it significantly reduces the compute time.
+They also stress the importance of choosing an adequate support value for the sub-graph mining, mentioning the trade-off between performance and considered features. The process of choosing an adequate support value can be done unsupervised and gets treated similar to hyperparameter tuning of, for example, SVM hyperparameters.
+
+This paper is quite similar to our approach since it also poses the text classification task as a graph classification task. Yet, they consider only one type of graph, the co-occurrence graph of the underlying texts.
+Also, they do not evaluate the effect of combining text- and graph features.
+That said, they provide interesting comparisons of text- and graph based approaches, pointing out the similarity of n-grams with the relationships which are captured in co-occurrence graphs.
 
 \paragraph{``Concept Graph Preserving Semantic Relationship for Biomedical Text Categorization" \cite{Gulrandhe2015}}
 Graphs: extracted keywords/concepts (POS tagger, only nouns), mapping of concepts to UMLS database, extraction of relationship between them.
@@ -475,3 +496,6 @@ The authors then introduce two ways to create the matrix $M$ for a kernel, namel
 In both cases, the matrix $M$ aims to encode the similarities of the substructures.
 
 The authors report an improvement of classification scores for several real-world datasets, comparing the scores of the plain version of a kernel with their augmented version.
+
+
+\todo{How does this approach differ from ours?}

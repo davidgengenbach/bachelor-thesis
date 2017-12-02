@@ -16,6 +16,7 @@ _DF_ALL = None
 
 RESULTS_DIR = 'data/results'
 
+
 def remove_transformer_classes(d):
     def get_typename(val):
         return type(val).__name__
@@ -34,6 +35,7 @@ def remove_transformer_classes(d):
             if isinstance(val, dict):
                 remove_transformer_classes(val)
 
+
 replacements = [
     ('param_', ''),
     ('features__fast_wl_pipeline__feature_extraction__feature_extraction__', 'graph__'),
@@ -48,7 +50,7 @@ replacements = [
 ]
 
 
-def clean_result_keys(el: dict)->dict:
+def clean_result_keys(el: dict) -> dict:
     results = {}
     for key, val in el.items():
         for search, replace in replacements:
@@ -58,7 +60,7 @@ def clean_result_keys(el: dict)->dict:
     return results
 
 
-def get_kernel_from_filename(filename:str)->str:
+def get_kernel_from_filename(filename: str) -> str:
     for kernel in ['spgk', 'wl', 'tfidf']:
         if kernel in filename:
             return kernel
@@ -78,7 +80,8 @@ def get_kernel_from_filename(filename:str)->str:
 
     return '_'.join(parts)
 
-def get_results(folder=None, use_already_loaded=False, results_directory=RESULTS_DIR, log_progress=True, exclude_filter = None, filter_out_non_complete_datasets = 4, remove_split_cols = True, remove_rank_cols = True, remove_fit_time_cols = True, filter_out_experiment=None, ignore_experiments=True, only_load_dataset=None):
+
+def get_results(folder=None, use_already_loaded=False, results_directory=RESULTS_DIR, log_progress=True, exclude_filter=None, filter_out_non_complete_datasets=4, remove_split_cols=True, remove_rank_cols=True, remove_fit_time_cols=True, filter_out_experiment=None, ignore_experiments=True, only_load_dataset=None):
     global _DF_ALL, _RESULT_CACHE
 
     if not use_already_loaded:
@@ -120,7 +123,7 @@ def get_results(folder=None, use_already_loaded=False, results_directory=RESULTS
         result_file = result_file.split('/')[-1]
         info = {}
         if 'results' in result_data:
-            info = {'info__' + k: v for k,v in result_data.get('meta_data', result_data).items() if k != 'results'}
+            info = {'info__' + k: v for k, v in result_data.get('meta_data', result_data).items() if k != 'results'}
         result = result_data if 'params' in result_data else result_data['results']
 
         assert 'params' in result
@@ -194,9 +197,9 @@ def get_results(folder=None, use_already_loaded=False, results_directory=RESULTS
     # Remove cols
     df_all = df_all[[
         x for x in df_all.columns.tolist() if
-            (not remove_split_cols or not re.match(r'^split\d', x)) and
-            (not remove_fit_time_cols or not re.match(r'_time$', x)) and
-            (not remove_rank_cols or not re.match(r'rank_', x))
+        (not remove_split_cols or not re.match(r'^split\d', x)) and
+        (not remove_fit_time_cols or not re.match(r'_time$', x)) and
+        (not remove_rank_cols or not re.match(r'rank_', x))
     ]]
 
     prio_columns = ['dataset', 'type', 'combined']
@@ -205,9 +208,9 @@ def get_results(folder=None, use_already_loaded=False, results_directory=RESULTS
     for c in prio_columns + low_prio_columns:
         columns.remove(c)
 
-    #df_all = df_all.fillna(value = 'none')
+    # df_all = df_all.fillna(value = 'none')
 
-    return df_all.reset_index(drop=True)[prio_columns + columns + low_prio_columns]#.set_index('filename')
+    return df_all.reset_index(drop=True)[prio_columns + columns + low_prio_columns]  # .set_index('filename')
 
 
 def get_result_folder_df(results_directory=RESULTS_DIR):
@@ -230,6 +233,7 @@ def get_result_folders(results_directory=RESULTS_DIR):
 def get_result_filenames_from_folder(folder):
     return glob('{}/*.npy'.format(folder))
 
+
 def get_result_for_prediction(prediction_filename):
     results_filename = prediction_filename.replace('/predictions', '')
     if not os.path.exists(results_filename): return None
@@ -237,14 +241,27 @@ def get_result_for_prediction(prediction_filename):
     with open(results_filename, 'rb') as f:
         return pickle.load(f)
 
-def get_predictions_files(folder: str=None):
+
+def get_predictions_files(folder: str = None):
     if not folder:
         folder = get_result_folders()[-1]
 
     prediction_folder = '{}/predictions'.format(folder)
     return glob('{}/*.npy'.format(prediction_folder))
 
-def get_predictions(folder: str=None, filenames: str=None) -> typing.Generator:
+
+def get_predictions(folder: str = None, filenames: typing.Collection = None) -> typing.Generator:
+    '''
+    Returns the predictions (filename: str, prediction: dict) for a given result folder (or the most frequent, if the given folder is none).
+
+
+    Args:
+        folder: the result folder to be considered. If None is given, the most recent folder is used.
+        filenames: a filter for considered filenames. If None is given, all files are returned.
+
+    Returns:
+        A generator of tuples (filename, prediction)
+    '''
     for prediction_file in get_predictions_files(folder):
         p_filename = prediction_file.split('/')[-1]
         if filenames and p_filename not in filenames: continue
@@ -254,12 +271,12 @@ def get_predictions(folder: str=None, filenames: str=None) -> typing.Generator:
         yield prediction_file, prediction
 
 
-def save_results(gscv_result, filename, info = None, remove_coefs=True):
+def save_results(gscv_result, filename, info=None, remove_coefs=True):
     if remove_coefs:
         remove_coefs_from_results(gscv_result)
 
     dump_pickle_file(info, filename, dict(
-        results=gscv_result
+            results=gscv_result
     ))
 
 
@@ -272,9 +289,9 @@ def dump_pickle_file(args, filename: str, data: dict, add_meta: bool = True):
 
 def get_metadata(args, other=None) -> dict:
     return dict(
-        git_commit=str(git_utils.get_current_commit()),
-        timestamp=time_utils.get_timestamp(),
-        timestamp_readable=time_utils.get_time_formatted(),
-        args=args,
-        other=other
+            git_commit=str(git_utils.get_current_commit()),
+            timestamp=time_utils.get_timestamp(),
+            timestamp_readable=time_utils.get_time_formatted(),
+            args=args,
+            other=other
     )

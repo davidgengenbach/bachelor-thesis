@@ -1,0 +1,24 @@
+limit_dataset:
+- ling-spam
+- r8
+- webkb
+params_per_type:
+  text:
+    preprocessing:
+    - SimplePreProcessingTransformer
+    scaler:
+    - MaxAbsScaler
+    vectorizer:
+      VAL_:
+      - CountVectorizer
+      - TfidfVectorizer
+      binary:
+      - true
+      - false
+      ngram_range:
+        - !!python/tuple
+          - 1
+          - 1
+        - !!python/tuple
+          - 1
+          - 2

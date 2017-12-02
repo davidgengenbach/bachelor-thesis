@@ -3,6 +3,19 @@
 	- Fixed latex code
 - Thesis
 	- Wrote section for "Deep Graph Kernel" paper (related work)
+		- Find similarities in substructures
+		- ... create similarity matrix and multiply phi feature map when calculating the kernel
+		- k(G, G') = phi(G)^T * M * phi(G')
+			- M = similarity matrix of substructures counted in phi feature map
+	- Read "Text classification as a graph classification" paper, again
+		- Frequent subgraph mining
+		- Co-occurrence graphs
+		- "Long-distance n-grams"
+		- Support value
+			- number of times a subgraph appears in dataset
+- Ideas
+	- Concept map multi-label lemmatization
+		- Lemmatize the single labels after splitting to increase match probability
 
 
 ## 30.11.2017

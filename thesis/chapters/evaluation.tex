@@ -1,12 +1,12 @@
-\todo[inline]{Explain the used metrics and how they relate to hypothesis}
-\todo[inline]{Introduce the baselines, explain how they relate to the hypothesis, why they - are chosen, how they differ}
-\todo[inline]{Explain methodology, why the chosen metric really captures the problem at - hand}
-\todo[inline]{Work out differences of graph types, find similarities across datasets}
-\todo[inline]{Provide the questions that are relevant for the hypothesis}
-\todo[inline]{Answer these questions through metrics/results}
+\todo{Explain the used metrics and how they relate to hypothesis}
+\todo{Introduce the baselines, explain how they relate to the hypothesis, why they - are chosen, how they differ}
+\todo{Explain methodology, why the chosen metric really captures the problem at - hand}
+\todo{Work out differences of graph types, find similarities across datasets}
+\todo{Provide the questions that are relevant for the hypothesis}
+\todo{Answer these questions through metrics/results}
 
-\todo[inline]{What is the best kernel for concept map classification?}
-\todo[inline]{Extensions to WL?}
+\todo{What is the best kernel for concept map classification?}
+\todo{Extensions to WL?}
 
 
 In order to test the hypothesis, we first derive a number of questions from the hypothesis.
@@ -16,10 +16,10 @@ Nevertheless, co-occurrence graphs capture the words of a text completely.
 In the next chapter, we will give the results to the questions we posed in this chapter and also discuss their significance to the hypothesis.
 
 \labelsubsection{Experiments}{subsec:experiments}
-\todo[inline]{Test the hypothesis}
-\todo[inline]{Tables with results}
-\todo[inline]{Mention difficulties and possible solutions}
-\todo[inline]{Add runtime analysis}
+\todo{Test the hypothesis}
+\todo{Tables with results}
+\todo{Mention difficulties and possible solutions}
+\todo{Add runtime analysis}
 
 \subquestion{How diverse is the structure of the concept maps?}{question:structure_diversity}
 When the structure of the graphs is mostly homogeneous or the structural differences are not distinct between graphs of different classes, the structure by itself will most likely not contribute to the classification performance.
@@ -46,7 +46,7 @@ For the structure-and-content kernel, we use the plain Weisfeiler-Lehman graph k
 We added this extension to give additional weight to label matches of nodes with a greater number of neighbours, ie. higher degree, since matches with a greater neighbourhood are far less often.
 Instead of the degree, one could also use another metric like PageRank and using the resulting node weights.
 
-\todo[inline]{Using node weights is a trade-off: giving the nodes more weight when they are more connect implies that words that occur often have a high importance!}
+\todo{Using node weights is a trade-off: giving the nodes more weight when they are more connect implies that words that occur often have a high importance!}
 
 \subquestion{How does the classification results of co-occurrence graphs compare to concept maps?}{question:comparison_coo}
 For this question, we compare the classification results for concept maps and co-occurrence graphs. As noted before, this comparison is slightly unfair since co-occurrence graphs have far more content than concept maps.
@@ -99,11 +99,11 @@ An explanation of the steps to create the concept maps is given in \ref{sec:impl
 \centering\includegraphics[width=0.6\linewidth]{assets/figures/approach.pdf}
 \caption{Graph kernel based classification pipeline.}
 \end{figure}
-\todo[inline]{Add diagram for gram-matrix based classification.}
+\todo{Add diagram for gram-matrix based classification.}
 
 \labelsubsection{Datasets}{subsec:datasets}
-\todo[inline]{A script to download all datasets is also provided alongside the other code}
-\todo[inline]{What actually is different per dataset? Why these datasets?}
+\todo{A script to download all datasets is also provided alongside the other code}
+\todo{What actually is different per dataset? Why these datasets?}
 
 \paragraph{ling-spam}
 The Ling-Spam dataset was created by Ion Androutsopoulos et al. \cite{Androutsopoulos2000}.
@@ -118,7 +118,7 @@ The 20 Newsgroup corpus \cite{Lang} consists of posts from an internet forum. Ea
 For this dataset, as an additional pre-processing step, we remove the headers and footers from the documents.
 
 While the classes are nearly evenly distributed, some classes are highly correlated. This adds an additional difficulty to the task.
-\todo[inline]{Cite!}
+\todo{Cite!}
 
 We obtained the ng20 dataset from here \footnote{\url{http://scikit-learn.org/stable/modules/generated/sklearn.datasets.fetch\_20newsgroups.html\#sklearn.datasets.fetch_20newsgroups}}.
 
@@ -175,7 +175,7 @@ The split is done as follows: 85\% for train- and validation set together and 15
 We then use stratified k-fold cross-validation to further split the train- and validation set. In our case, we used $k = 3$, meaning that $\frac{2}{3}$ of the dataset is used for training, and the rest for validation.
 The stratification ensures that the class distribution in the train set is (nearly) the same as in the validation set.
 
-\todo[inline]{Hold-out set!}
+\todo{Hold-out set!}
 
 \subsubsection{Metrics}
 We evaluated a number of metrics for each classification task, namely: 
@@ -217,8 +217,8 @@ In the histogram of observed differences Figure \ref{fig:example_permutation_tes
 In our example, $f_{higher}$ is 0.135, meaning that the probability to observe the score difference we see between the two models is 13.5\% when randomly exchanging the predictions of the two models.
 This is far too high to accept the hypothesis on ground of these predictions.
 
-\todo[inline]{What confidence interval did we choose?}
-\todo[inline]{\url{https://stats.stackexchange.com/questions/104040/resampling-simulation-methods-monte-carlo-bootstrapping-jackknifing-cross}}
+\todo{What confidence interval did we choose?}
+\todo{\url{https://stats.stackexchange.com/questions/104040/resampling-simulation-methods-monte-carlo-bootstrapping-jackknifing-cross}}
 
 \begin{figure}[ht]
   \subfloat[True labels]{\includegraphics[width=0.19\textwidth]{assets/figures/permutation_test/true_labels.pdf}\label{fig:permutation_test_true}}
@@ -235,8 +235,8 @@ This is far too high to accept the hypothesis on ground of these predictions.
 
 \labelsubsection{Implementation}{sec:implementation}
 For the implementation of all these experiments, we used mostly Python.
-\todo[inline]{Scikit-learn, networkx, \dots}
-\todo[inline]{Code by Tobias to extract concept maps}
+\todo{Scikit-learn, networkx, \dots}
+\todo{Code by Tobias to extract concept maps}
 
 \subsubsection{Concept Map Extraction}
 We used the code \footnote{\url{https://github.com/UKPLab/ijcnlp2017-cmaps}} provided by Falke \cite{Falke2017} to create the concept maps.
