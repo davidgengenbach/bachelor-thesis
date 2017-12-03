@@ -1,3 +1,10 @@
+## 03.12.2017
+- Thesis
+    - Little cleanup
+- Code
+    - Improved README and bootstrap scripts (to install dependencies, download datasets, ...)
+
+
 ## 02.12.2017
 - Thesis
     - Wrote section for related paper "Text classification using Semantic Information and Graph Kernels"
