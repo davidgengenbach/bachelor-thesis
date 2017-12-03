@@ -4,11 +4,10 @@ In this chapter we will introduce the notations and concepts we will use in subs
 \todo{Concretize the problem and its notation}
 
 \labelsubsection{Classification Task}{subsec:classification_task}
-Classification in machine learning is the task of automatically assigning classes, or labels, to datapoints.
+Classification in machine learning is the task of automatically assigning classes, or labels, to given datapoints.
 Given a dataset $D = \{(x_1, y_1), (x_2, y_2), \ldots, (x_n, y_n) \} \subseteq X \times Y$ of $n$ items where $(x_i, y_i)$ are dataset instances, the supervised classification task is to create a classifier which predicts a label $y' \in Y$ for a given $x \in X$.
 In this work, the labels $Y$ of the dataset are denoted with $Y_d = (y_1, y_2, \ldots, y_n )$, the predicted labels are denoted as $Y'_d = (y'_1, y'_2, \ldots, y'_n )$.
-When the number of classes $|Y|$ is 2, the classification task is also called binary classification. When $|Y$ is greater than 2, the classification is called multiclass classification.
-In our case, the datapoints $x_i$ will be texts or graphs, therefore our task is called text and graph classification respectively.
+When the number of classes $|Y|$ is 2, the classification task is also called binary classification. When $|Y|$ is greater than 2, the classification is called multi-class classification.
 
 \begin{figure}[ht]
 \centering
@@ -28,9 +27,9 @@ Dataset & $D$ & $\{(x_1, y_1), \ldots, (x_n, y_n) \} \subseteq X \times Y$
 \caption{Classification notation.}
 \end{figure}
 
-The performance of a classifier is evaluated by comparing the predicted labels $y'_i$ for all datapoints $x_i$ with the real label $y_i$ in the dataset.
+The performance of a classifier is evaluated by comparing the predicted labels $y'_i$ for datapoints $x_i$ with the real label $y_i$ in the dataset.
 There are several metrics for evaluating the performance of a classifier.
-The metrics we use in this work are summarized in Figure \ref{fig:classification_metrics}.
+The classification metrics we use in this work are summarized in Figure \ref{fig:classification_metrics}.
 
 \begin{figure}[ht]
 \centering
@@ -83,10 +82,8 @@ $F1_{\text{macro}} = \displaystyle \frac{\sum\nolimits_{y \in Y} F1_y}{|Y|}$
 \todo{Mention approaches to represent text}
 
 \labelsubsection{Graphs}{subsec:graphs}
-A labeled graph is a triple $G = (V, E, \pi)$, where $V$ is the set of vertices or nodes, $E \subseteq V \times V$ are the edges and $\pi: V \to X$ is a labeling function which assigns a label to a given vertex.
-
-A graph is called undirected when $\forall (v_1, v_2) \in E: (v_2, v_1) \in E$, otherwise it is called directed.
-
+A labelled graph is a triple $G = (V, E, \pi)$, where $V$ is the set of vertices or nodes, $E \subseteq V \times V$ are the edges and $\pi: V \to X$ is a labelling function which assigns a label to a given vertex. 
+A graph is called undirected when $\forall (v_1, v_2) \in E: (v_2, v_1) \in E$, otherwise it is called directed. 
 A graph $G'=(V', E', \pi)$ is called a subgraph of graph $G = (V, E, \pi)$ when $V' \subseteq V$, $E' \subseteq E$ and $\forall (v, v') \in V': v \in V' \land v' \in V'$.
 
 The (outgoing) neighbours $n(v)$ of a node $v$ are defined as the set $n(v) = \{v' | (v, v') \in E \}$.

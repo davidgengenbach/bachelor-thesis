@@ -45,9 +45,28 @@ The main hypothesis of this work is:
 Concept maps capture structural information about the underlying text. Mining this structural information in the context of text-classification leads to an improved classification score.
 \end{quote}
 
-There are a great number of approaches for text classification, a lot of them based on counting the words of a text and comparing word frequencies with the frequencies in other texts in the dataset.
+There are a great number of approaches for text classification, a lot of them based on counting the words of a text and learning a classifier with these frequencies and labels.
+Yet, these word-count based approaches often do not take the semantic or syntax of sentences into account, ie. text-based approaches often do not leverage the structure and meaning of sentences.
+A partial solution for this issue is solved by augmenting single-word counts with n-grams counts.
+N-grams are sequences of length $n$ of consecutive words in the text, therefore they capture word dependency and word order.
+Text-based approaches are widely used and achieve high performance both in compute time and classification scores.
 
-\todo{Why could graph classification be useful? Why not only use non-structural data for classification? What are the disadvantages of non-structural representations?}
+In this work, we explore how concept maps, and other graph representations like co-occurrence graphs, can improve classification scores.
+We choose concept maps as the preferred graph representation since they are specially created to capture important concepts and their relation to each other, therefore maybe also capturing the semantic of the underlying text.
+In the next sections, we will further explain graph representations and related concept. 
+We will also gain a better insight into the potential usefulness of concept maps in the context of text classification.
+
+\todo{Maybe someday concept maps will prevail and classification of graphs will become more important}
+\todo{``text analysis, text categorization, information extraction,    and summarization"}
 
 \labelsubsection{Thesis Structure}{subsec:thesis_structure}
-\todo{Explain our approach, why we structured it like this}
+In the next section, \fullref{sec:background}, we will introduce the concepts used in the rest of this work.
+We also offer an overview over related work and the history of the field of text- and graph based classification.
+
+In section \fullref{sec:evaluation}, we further describe our hypothesis and outline questions regarding it. This section also covers the methodology and experiments we use to answer these questions.
+
+Next, in section \fullref{sec:results}, we then provide the results to the questions we pose in the preceding chapter, interpreting them in the context of our hypothesis.
+Here, we also provide other observations regarding our approach.
+
+Finally, in section \fullref{sec:conclusions}, we gather the results of the previous section into a more high-level picture.
+We close with finishing remarks regarding possible further work and interpret our results in the context of previous work.

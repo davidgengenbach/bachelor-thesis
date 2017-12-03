@@ -7,7 +7,8 @@ import spacy
 from joblib import delayed, Parallel
 
 from preprocessing import preprocessing
-from utils import dataset_helper, graph_helper, helper
+from utils import dataset_helper, graph_helper, helper, time_utils
+from time import time
 
 
 def get_args():
@@ -27,48 +28,56 @@ def get_args():
 
 def main():
     args = get_args()
-
+    start_time = time()
     helper.print_script_args_and_info(args)
 
     Parallel(n_jobs=args.n_jobs)(delayed(process_dataset)(dataset_name, args) for dataset_name in dataset_helper.get_all_available_dataset_names(limit_datasets=args.limit_dataset))
 
-def process_dataset(dataset, args):
-    X, Y = dataset_helper.get_dataset(dataset)
-    #X, Y = X[:1], Y[:1]
+    print('Finished (time={})'.format(time_utils.seconds_to_human_readable(time() - start_time)))
 
-    print('dataset: {:15} - preprocessing'.format(dataset))
-    X = [preprocessing.preprocess(t).lower() for t in X]
+def process_dataset(dataset, args):
+    start_time = time()
+    X, Y = dataset_helper.get_dataset(dataset)
+
+    min_length = args.min_length
+    lemmatize = args.lemmatize
+
+    def doc_filter(doc):
+        if not only_nouns and min_length == -1:
+            return doc
+        return [word for word in doc if (not only_nouns or word.pos == spacy.parts_of_speech.NOUN) and (word.text.strip() != '') and (min_length == -1 or len(word) >= args.min_length)]
+
     X_preprocessed = preprocessing.preprocess_text_spacy(X, n_jobs=args.n_jobs_coo)
     
     for window_size in range(args.window_size_start, args.window_size_end):
-        for lemmatize in set([False, args.lemmatize]):
+        for lemmatize in set([False, lemmatize]):
             for only_nouns in [False, True]:
-                cache_file = dataset_helper.CACHE_PATH + '/dataset_graph_cooccurrence_{}_{}_{}_{}.npy'.format(window_size, 'only-nouns' if only_nouns else 'all', 'lemmatized' if lemmatize else 'un-lemmatized', dataset)
+                cache_file = '{}/dataset_graph_cooccurrence_{}_{}_{}_{}.npy'.format(
+                        dataset_helper.CACHE_PATH,
+                        window_size,
+                        'only-nouns' if only_nouns else 'all',
+                        'lemmatized' if lemmatize else 'un-lemmatized',
+                        dataset
+                )
 
                 if not args.force and os.path.exists(cache_file):
-                    print('dataset: {:15} - cache file exists'.format(dataset, cache_file))
                     continue
 
-                print('dataset: {:15} - window_size={}, only_nouns={:<6} ({})'.format(dataset, window_size,  only_nouns, cache_file))
+                X_filtered = [doc_filter(doc) for doc in X_preprocessed]
 
-                X_filtered = X_preprocessed
+                if lemmatize:
+                    X_filtered = [[word.lemma_ for word in doc] for doc in X_filtered]
 
-                if only_nouns:
-                    X_filtered = [[word for word in doc if (word.pos == spacy.parts_of_speech.NOUN) and (word.text.strip() != '')] for doc in X_preprocessed]
-
-                X_processed, Y_processed = graph_helper.convert_dataset_to_co_occurence_graph_dataset(
+                X_processed = graph_helper.convert_dataset_to_co_occurence_graph_dataset(
                     X_filtered,
-                    Y,
-                    only_nouns = only_nouns,
-                    min_length = args.min_length,
                     window_size = window_size,
-                    n_jobs = args.n_jobs_coo,
-                    preprocess = False,
-                    lemma_ = lemmatize
+                    n_jobs = args.n_jobs_coo
                 )
 
                 with open(cache_file, 'wb') as f:
-                    pickle.dump((X_processed, Y_processed), f)
+                    pickle.dump((X_processed, Y), f)
+
+    print('{:30} Finished (time={})'.format(dataset, time_utils.seconds_to_human_readable(start_time - time())))
 
 
 if __name__ == '__main__':

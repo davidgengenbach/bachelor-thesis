@@ -1,6 +1,6 @@
 \labelsubsection{Results and Observations}{subsec:results_and_observations}
-In the next paragraphs we will investigate the questions we posed in the previous chapter.
-After that, we will gather the findings to these questions to form an judgment of the validity of our hypothesis.
+In the next sections we will investigate the questions we posed in the previous chapter.
+After that, we will gather our findings to form an judgement of the validity of our hypothesis.
 
 \todo{Observations + possible explanations}
 \todo{How do the results relate to hypothesis?}
@@ -11,18 +11,40 @@ After that, we will gather the findings to these questions to form an judgment o
 \subquestionref{question:structure_diversity}
 To investigate whether concept maps are useful for text classification, we first look at the structure of concept maps.
 Our hypothesis especially highlights the structure of the concept maps since it is one of the main differences to other text representation.
-Finding out whether the structure of concept maps are heterogeneous is therefor a first crucial step.
+Finding out whether the structure of concept maps is heterogeneous therefore is a first crucial step.
 
 In Figure \ref{fig:graph_statistics}, we gathered metrics about the connectedness of concept maps and co-occurrence graphs with window size 1 for comparison.
 One thing that immediately becomes apparent is the compression factor of the concept maps: on average, only approximately 8\% of the original text-content is retained in the concept maps.
 This compression is useful for tasks like text summarization where only important concepts should be kept from the underlying text.
 
-One consequence of this compression can be seen when looking at the connectedness of the concept maps.
-On average, concept maps have only 1.36 edges per node. The minimum number of edges per node is 1 since we removed all unconnected nodes.
-So, concept maps do not only have few nodes but also a relatively low number of edges between them.
+One consequence of the compression can be seen when looking at the connectedness of the concept maps.
+On average, concept maps only have 1.36 edges per node. The minimum number of edges per node is 1 since we removed all unconnected nodes.
+So, concept maps do not only have few nodes, because of the compression, but also a relatively low number of edges between them.
 This is most likely due to the small length of the underlying texts.
 The shortness of the text results in a lower number of occurrences of some concept in the text, ie. most of the concepts occur only once in a text.
+To address this issue, we then searched for a dataset with longer texts per document.
 
+\begin{figure}[ht]
+	\centering
+	\begin{tabular}{lcccccc}
+		{} &  \multicolumn{2}{c}{\#nodes/\#words} &  \multicolumn{2}{c}{\#edges/\#nodes} & \multicolumn{2}{c}{\#nodes/graph} \\
+		{} & concept map &  co-occurrence & concept map & co-occurrence & concept map & co-occurrence\\
+		\midrule
+		ling-spam       & 0.05 & 0.23 & 1.32 & 2.86 & 45.95 & 4.11 \\
+		ng20            & 0.05 & 0.18 & 1.38 & 2.71 & 584.63 & 87.52 \\
+		reuters-21578   & 0.09 & 0.21 & 1.46 & 2.86 & 63.07 & 13.20 \\
+		review\_polarity & 0.08 & 0.20 & 1.42 & 2.67 & 50.36 & 10.55 \\
+		rotten\_imdb     & 0.09 & 0.30 & 1.22 & 1.70 & 52.09 & 11.23 \\
+		tagmynews       & 0.13 & 0.37 & 1.30 & 1.81 & 52.74 & 13.25 \\
+		webkb           & 0.05 & 0.22 & 1.39 & 3.01 & 55.69 & 5.36 \\
+		\midrule
+		\O{}            & 0.08 & 0.24 & 1.36 & 2.52 & 129.22 & 20.75 \\
+		\bottomrule
+	\end{tabular}
+	\caption{Graph statistics. \textit{\#words} is the number of words in the whole text dataset. The \textit{\#edges/\#nodes} metric is for the co-occurrence graphs with a window size of 1. The \textit{\#nodes/\#words} metric is a compression factor. Note that, on average, the concept maps have a compression factor of 8\% compared to the 24\% of the co-occurrence graph. This means that co-occurrence graphs have approximately three times more content than concept maps. The \textit{\#edges/\#nodes} metric is an indicator for the connectedness of the graphs. Because we remove nodes which have no edge to other nodes, the \textit{\#edges/\#nodes} metric captures the average degree of the nodes. Looking at that metric we also see that, on average, the co-occurrence graphs with window size 1 have roughly twice as much edges per node as concept maps.}\label{fig:graph_statistics}
+\end{figure}
+
+\todo{New dataset! Statistics}
 \todo{Add statistics about \# of occurrences of concepts in graphs}
 
 Another hint for the un-connectedness of concept maps is the number of connected components.
@@ -33,26 +55,6 @@ In Figure \ref{fig:graph_examples} shows examples of concept maps and co-occurre
 
 \begin{figure}[ht]
 \centering
-\begin{tabular}{lcccccc}
-{} &  \multicolumn{2}{c}{\#nodes/\#words} &  \multicolumn{2}{c}{\#edges/\#nodes} & \multicolumn{2}{c}{\#nodes/graph} \\
-{} & concept map &  co-occurrence & concept map & co-occurrence & concept map & co-occurrence\\
-\midrule
-ling-spam       & 0.05 & 0.23 & 1.32 & 2.86 & 45.95 & 4.11 \\
-ng20            & 0.05 & 0.18 & 1.38 & 2.71 & 584.63 & 87.52 \\
-reuters-21578   & 0.09 & 0.21 & 1.46 & 2.86 & 63.07 & 13.20 \\
-review\_polarity & 0.08 & 0.20 & 1.42 & 2.67 & 50.36 & 10.55 \\
-rotten\_imdb     & 0.09 & 0.30 & 1.22 & 1.70 & 52.09 & 11.23 \\
-tagmynews       & 0.13 & 0.37 & 1.30 & 1.81 & 52.74 & 13.25 \\
-webkb           & 0.05 & 0.22 & 1.39 & 3.01 & 55.69 & 5.36 \\
-\midrule
-\O{}            & 0.08 & 0.24 & 1.36 & 2.52 & 129.22 & 20.75 \\
-\bottomrule
-\end{tabular}
-\caption{Graph statistics. \textit{\#words} is the number of words in the whole text dataset. The \textit{\#edges/\#nodes} metric is for the co-occurrence graphs with a window size of 1. The \textit{\#nodes/\#words} metric is a compression factor. Note that, on average, the concept maps have a compression factor of 8\% compared to the 24\% of the co-occurrence graph. This means that co-occurrence graphs have approximately three times more content than concept maps. The \textit{\#edges/\#nodes} metric is an indicator for the connectedness of the graphs. Because we remove nodes which have no edge to other nodes, the \textit{\#edges/\#nodes} metric captures the average degree of the nodes. Looking at that metric we also see that, on average, the co-occurrence graphs with window size 1 have roughly twice as much edges per node as concept maps.}\label{fig:graph_statistics}
-\end{figure}
-
-\begin{figure}[ht]
-\centering
 \centering\includegraphics[width=1\linewidth]{assets/figures/percentage_more_than_one_connected_component.pdf}
 \caption{Percentage of graphs with more than one connected component. TODO: This can also be put into a table!}\label{fig:percentage_more_than_one_connected_component}
 \end{figure}
@@ -60,7 +62,7 @@ webkb           & 0.05 & 0.22 & 1.39 & 3.01 & 55.69 & 5.36 \\
 \begin{figure}[ht]
 \centering
 \includegraphics[width=0.8\linewidth]{assets/figures/hist-connected-components-ling-spam-CMap.pdf}
-\caption{Histogram of connected components per concept map. Dataset: ling-spam.}\label{fig:histogram_connected_components}
+\caption{Histogram of connected components per concept map. From \textit{ling-spam} dataset.}\label{fig:histogram_connected_components}
 \end{figure}
 
 \begin{figure}[ht]
@@ -78,7 +80,7 @@ webkb           & 0.05 & 0.22 & 1.39 & 3.01 & 55.69 & 5.36 \\
 
 The co-occurrence graphs also have a simple structure.
 Co-occurrence graphs are always connected, ie. the number of connected components is 1, or 0 in the case of an empty graph.
-When the window size is 1, the graph is similar to a path, meaning that most of the nodes have a degree $< 2$. With increasing window size, the graph gets more connected.
+When the window size is 1, the graph is similar to a path, meaning that most of the nodes have a degree $< 2$. With increasing window size, the graph also gets more connected.
 
 \subquestionref{question:importance_structure}
 After investigating the structure of concept maps, we now aim to quantify the importance of the structure compared to the content.
@@ -94,6 +96,8 @@ For \textbf{(b)} (structure only), we use a modified version of the Weisfeiler-L
 After executing WL on the graphs, we obtain the feature maps which get subsequently get fed into a SVM also.
 
 For \textbf{(c)} (structure and content combined), we use the Weisfeiler-Lehman that takes both structure and content into account.
+
+In Table \ref{fig:table-results-structure-vs-content} we report the results obtained from these experiments.
 
 \begin{figure}[ht]
 \centering
@@ -114,8 +118,13 @@ webkb & concept map &  0.472472 &  0.162010 &  0.222296 \\
           & cooccurrence &  0.714741 &  0.170633 &  0.472485 \\
 \bottomrule
 \end{tabular}
-\caption{Comparison of linearized graph with CountVectorizer and results of WL}
+\caption{Comparison of linearized graph with CountVectorizer and results of WL}\label{fig:table-results-structure-vs-content}
 \end{figure}
+
+\todo{Interpret results!}
+\todo{Ratio between (a), (b) to (c). Why is combined less good?}
+\todo{Why do we not use the zero-th iteration, ie. counting the plain labels?}
+
 
 \subquestionref{question:comparison_coo}
 
@@ -137,8 +146,8 @@ webkb           &  0.2763 &  0.5082 &  0.5438 \\
 \end{figure}
 
 \subquestionref{question:comparison_text}
-As one can see in Figure \ref{fig:results_cmap_vs_text}, the text-only approaches outperform graph-only approaches by a high margin.
-This is most likely due to the high compression factor of both concept maps and co-occurrence graphs.
+As one can see in Figure \ref{fig:results_cmap_vs_text}, the text-only- outperform graph-only approaches by a high margin.
+This is most likely due to the high compression factor of concept maps and co-occurrence graphs.
 
 \begin{figure}[ht]
 \centering
@@ -235,7 +244,7 @@ webkb
 \todo{Complexity of approach}
 \todo{Usefulness of WL to get feeling for graph connectedness, uniqueness of structure, uniqueness of labels}
 
-\subsubsection{Weisfeiler-Lehman extension: node weights and iteration weights}
+\subsubsection{Weisfeiler-Lehman extension}
 With increasing iterations $h$ of the Weisfeiler-Lehman algorithm, the exact matches of the subtrees of height $h$ become much more improbable.
 In iteration 0, the Weisfeiler-Lehman only counts the number of node labels in the graphs, for iteration 1 it takes the immediate neighbourhood of the nodes into account, for iteration 2 is takes the neighbourhood of the neighbourhood into account and so on.
 So, with \textbf{(1)} higher iterations, the probability of having an exact match decreases.
@@ -245,10 +254,11 @@ Another difficulty arises for nodes with a high number of neighbours. \textbf{(2
 These two difficulties, \textbf{(1)} the increased difficulty of a match with higher iterations and \textbf{(2)} the increased difficulty of a match for nodes with higher degrees, are not addressed when using Weisfeiler-Lehman in its plain version. Both difficulties are neither encoded in the features maps nor when creating the gram matrix.
 
 As a possible solution for these difficulties, we propose an extension to the plain Weisfeiler-Lehman algorithm.
-Our first extension augments the WL algorithm by adding node weights.
-For each of the nodes in all graphs, we first calculate node weights which encode the importance of that node or difficulty of getting an exact match in WL.
-An example of such node weights would be the node degree or node weights extracted with PageRank.
-The node degree is an interesting metric for node weights since it actually encodes the size of the neighbourhood of a node and therefor could possibly address problem \textbf{(2)}.
+Our extension augments the WL algorithm by adding node weights.
+For each of the nodes in all graphs, we first calculate node weights which encode the importance of the nodes or the difficulty of getting an exact match in WL.
+An example of such node weights are the node degree or node weights extracted with PageRank.
+The node degree is an interesting metric for node weights since it actually encodes the size of the immediate neighbourhood of a node and therefore could possibly address both problem \textbf{(1)} and \textbf{(2)}.
+
 \todo{Explain how to actually use the node weights.}
 \todo{Remark that the node weights could be seen as an additional metric of frequency: nodes with a higher degree have been in the text more frequently.}
 
@@ -266,3 +276,5 @@ We now propose to weight the individual feature maps by the factor determined by
 \end{equation*}
 So, basically the function $f(h)$ works as a decaying factor to decreasing iterations $h$.
 When the function $f(h)$ increasing (steigend?), the increasing importance with higher iterations is encoded into the resulting feature map $\phi_f(G)$.
+
+\todo{This is NOT a solution when feature-scaling is done.}

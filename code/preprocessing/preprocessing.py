@@ -28,7 +28,13 @@ def get_spacy_parse(texts, batch_size=100, n_threads=1):
 
 
 def preprocess(t):
-    fns = [remove_non_alphanum, remove_non_printable, number_to_placeholder, ana_preprocessing]
+    fns = [
+        remove_non_alphanum,
+        remove_non_printable,
+        number_to_placeholder,
+        ana_preprocessing
+    ]
+
     for fn in fns:
         t = fn(t)
     return t
@@ -54,45 +60,23 @@ def ana_preprocessing(text, lower_case=False, keep_newlines=False):
     return text
 
 
-def concept_map_preprocessing(X):
-    return [preprocess(x) for x in X]
-
-
 def preprocess_text_spacy(
         texts,
-        min_length=-1,
         n_jobs=1,
-        batch_size=100,
-        only_nouns=True
-    ):
-    """Preprocesses text by
-    - only keeping the NOUNs
-    - only keeping the words that are longer than min_length (optional)
+        batch_size=100
+):
+    """Preprocesses text by first using the default preprocess function (removing newlines etc.) then parse using spacy.
 
     Args:
         texts (list of str): list of texts
-        min_length (int, optional): the minimum length a word must have (-1 means disabling this filter)
         n_jobs (int, optional): how many threads should be used
         batch_size (int, optional): how many texts should be done per thread
 
     Returns:
         list of str: the pre-processed text
     """
-
     texts = [preprocess(t) for t in texts]
-
-    res = [
-        [
-            word for word in doc if
-            (
-                (not only_nouns or word.pos_ == 'NOUN') and
-                (min_length == -1 or len(word.text) > min_length)
-            )
-        ]
-        for doc in get_spacy_parse(texts, batch_size=batch_size, n_threads=n_jobs)
-    ]
-
-    return res
+    return get_spacy_parse(texts, batch_size=batch_size, n_threads=n_jobs)
 
 
 def to_tokens(text):
@@ -125,4 +109,3 @@ def number_to_placeholder(text):
 
 def remove_non_alphanum(text):
     return ALPHA_NUM_REGEX.sub(' ', text)
-

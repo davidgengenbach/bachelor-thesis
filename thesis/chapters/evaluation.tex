@@ -67,13 +67,15 @@ We also compare the results with both text-only and graph-only approaches.
 Before creating the vector representations of the text documents or the creation of the co-occurrence graphs and concept maps, we first pre-process the plain text by
 
 \begin{itemize}
-\item{lowercasing the text,}
+\item{lower-casing the text,}
 \item{removing non-printable characters,}
-\item{replacing numbers with a \textit{NUMBER} placeholder,}
+\item{replacing numbers with \textit{NUMBER} placeholders,}
 \item{replacing tabs and newlines with a space,}
-\item{and normalizifng the whitespace (eg. replacing multiple spaces with a single space)}
+\item{and normalizing the whitespace (eg. replacing multiple spaces with a single space)}
 \end{itemize}
 These pre-processing steps are similar to the pre-processing done in \cite{Cachopo2007}.
+
+\todo{Provide example of preprocessing}
 
 For the co-occurrence graphs, we also optionally filtered out the non-nouns to increase the compression and thus achieve more comparability to concept maps.
 
@@ -104,23 +106,23 @@ An explanation of the steps to create the concept maps is given in \ref{sec:impl
 \labelsubsection{Datasets}{subsec:datasets}
 \todo{A script to download all datasets is also provided alongside the other code}
 \todo{What actually is different per dataset? Why these datasets?}
+\todo{Add examples for each dataset?}
 
 \paragraph{ling-spam}
-The Ling-Spam dataset was created by Ion Androutsopoulos et al. \cite{Androutsopoulos2000}.
-The corpus contains the texts that are categorized as ``spam" and ``no spam".
-One thing to note is that the classification scores with standard methods are quite high by default, so most likely there is substantial increase in performance to be expected.
+The Ling-Spam dataset was created by Ion Androutsopoulos et al. in  \cite{Androutsopoulos2000}.
+The corpus contains email texts which are categorized as ``spam" and ``no spam".
+One thing to note is that the classification scores with standard methods are quite high by default, so most likely no substantial increase in performance is to be expected.
 
 For this work, we used the version which can be downloaded from here \footnote{\url{http://csmining.org/index.php/ling-spam-datasets.html}}.
 
 
 \paragraph{ng20}
-The 20 Newsgroup corpus \cite{Lang} consists of posts from an internet forum. Each post is labeled with one of 20 different classes, corresponding to the topic it have been posted on. The texts are mostly informal and consist of discussions between users of the forum.
+The 20 Newsgroup corpus consists of posts from an internet forum and was introduced in \cite{Lang}. Each post is labelled with one of 20 different classes, corresponding to the topic it have been posted on. The texts are mostly informal and consist of discussions between users of the forum.
 For this dataset, as an additional pre-processing step, we remove the headers and footers from the documents.
 
-While the classes are nearly evenly distributed, some classes are highly correlated. This adds an additional difficulty to the task.
-\todo{Cite!}
+While the classes are nearly evenly distributed, some classes are highly correlated\footnote{\url{http://qwone.com/~jason/20Newsgroups/}}, ie. instances of one class A are very similar to the texts from another class B. This adds an additional difficulty to the task.
 
-We obtained the ng20 dataset from here \footnote{\url{http://scikit-learn.org/stable/modules/generated/sklearn.datasets.fetch\_20newsgroups.html\#sklearn.datasets.fetch_20newsgroups}}.
+We obtained the ng20 corpus from here\footnote{\url{http://scikit-learn.org/stable/modules/generated/sklearn.datasets.fetch\_20newsgroups.html\#sklearn.datasets.fetch_20newsgroups}}.
 
 \paragraph{reuters-21578}
 This dataset has been collected and published by Carnegie Group, Inc. and Reuters, Ltd.
@@ -234,7 +236,8 @@ This is far too high to accept the hypothesis on ground of these predictions.
 
 
 \labelsubsection{Implementation}{sec:implementation}
-For the implementation of all these experiments, we used mostly Python.
+We mostly used Python to implement most of the code required to run the experiments.
+The code and instructions on how set-up the experiments can be found on GitHub \footnote{\url{https://github.com/davidgengenbach/bachelor-thesis}}.
 \todo{Scikit-learn, networkx, \dots}
 \todo{Code by Tobias to extract concept maps}
 
@@ -249,4 +252,4 @@ This is done by extracting binary relations from the text. A binary relation con
 Also, a concept can consist of multiple words, eg. for ``David likes something else.", the concepts would be ``David" and ``something else".
 The extracted concepts are later used as the nodes, and the relation between them as the edges between concepts.
 
-Then, the extracted relations get filtered so that only concepts are kept which contains at least one noun and which consist of less words than some a given threshold (here 10 words). This filtering is done to ensure the brevity and usefulness of the concepts.
+Then, the extracted relations get filtered so that only concepts are kept which contains at least one noun and which consist of fewer words than some a given threshold, here 10 words. This filtering is done to ensure the brevity and usefulness of the concepts.

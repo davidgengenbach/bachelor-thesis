@@ -1,5 +1,7 @@
 \presetkeys{todonotes}{inline}{}
 
+\newcommand*{\fullref}[1]{\hyperref[{#1}]{\textit{\nameref*{#1}}}}
+
 \newcommand{\red}[1]{
     \textcolor{red}{#1}
 }
@@ -21,6 +23,7 @@
 \newcommand{\labelsectioninclude}[3]{%
     \labelsection{#1}{#2}%
     \input{#3}%
+    \newpage%
 }
 
 \newcommand{\labelsubsection}[2]{%
