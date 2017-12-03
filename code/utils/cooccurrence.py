@@ -5,11 +5,10 @@ from scipy.sparse import lil_matrix
 from nltk.tokenize import word_tokenize
 
 
-def get_coocurrence_matrix(text, window_size=2, only_forward_window=False, keep_whitespace=False):
+def get_coocurrence_matrix(text, window_size=2, only_forward_window=False, ignored_words=set()):
     words = _get_text_as_words(text)
 
-    if not keep_whitespace:
-        words = [word for word in words if word.strip() != '']
+    words = [word for word in words if word not in ignored_words and word.strip() != '']
 
     word2id, id2word = words_to_dict(words)
     num_words = len(word2id.keys())

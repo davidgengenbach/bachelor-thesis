@@ -76,7 +76,7 @@ def preprocess_text_spacy(
         list of str: the pre-processed text
     """
     texts = [preprocess(t) for t in texts]
-    return get_spacy_parse(texts, batch_size=batch_size, n_threads=n_jobs)
+    return list(get_spacy_parse(texts, batch_size=batch_size, n_threads=n_jobs))
 
 
 def to_tokens(text):

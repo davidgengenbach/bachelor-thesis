@@ -1,17 +1,26 @@
 ## 03.12.2017
 - Thesis
     - Cleanup
-    - Ideas/ToDos
+    - Idea/ToDo
     	- Add score per graph size analysis we did before
-    - !!! IMPORTANT !!!
-    	- Do not forget to add standard deviations to results!
+	    - **IMPORTANT**
+	    	- Do not forget to add standard deviations to results!
 - Code
     - Improved README and bootstrap scripts (to install dependencies, download datasets, ...)
     - Added statistics about WL similarities per iteration
+    - Idea/ToDo
+    	- Problem: some concepts only occur once per dataset, no chance of match
+    		- Solution: remove these concepts
+    		- Solution: relabel with similar label
+    			- Split multi-word concepts
+    				- ... find embeddings for single words
+    				- ... add them up
+    				- ... find similar label
+ 
 
 ## 02.12.2017
 - Thesis
-    - Wrote section for related paper "Text classification using Semantic Information and Graph Kernels"
+    - Wrote section for related paper _"Text classification using Semantic Information and Graph Kernels"_
         - DRS graphs
         - custom node equality function for random-walk graph kernel
 
