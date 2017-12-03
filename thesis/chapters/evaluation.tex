@@ -109,11 +109,11 @@ An explanation of the steps to create the concept maps is given in \ref{sec:impl
 \todo{Add examples for each dataset?}
 
 \paragraph{ling-spam}
-The Ling-Spam dataset was created by Ion Androutsopoulos et al. in  \cite{Androutsopoulos2000}.
+The Ling-Spam dataset was created and introduced by Androutsopoulos et al. in  \cite{Androutsopoulos2000}.
 The corpus contains email texts which are categorized as ``spam" and ``no spam".
 One thing to note is that the classification scores with standard methods are quite high by default, so most likely no substantial increase in performance is to be expected.
 
-For this work, we used the version which can be downloaded from here \footnote{\url{http://csmining.org/index.php/ling-spam-datasets.html}}.
+We obtained a copy of the corpus from here \footnote{\url{http://csmining.org/index.php/ling-spam-datasets.html}}.
 
 
 \paragraph{ng20}
@@ -125,14 +125,9 @@ While the classes are nearly evenly distributed, some classes are highly correla
 We obtained the ng20 corpus from here\footnote{\url{http://scikit-learn.org/stable/modules/generated/sklearn.datasets.fetch\_20newsgroups.html\#sklearn.datasets.fetch_20newsgroups}}.
 
 \paragraph{reuters-21578}
-This dataset has been collected and published by Carnegie Group, Inc. and Reuters, Ltd.
-
-The class distribution of the reuters-21578 dataset is highly skewed, ie. the number of instances per class is not the same for all classes. 
-
-
-We obtained the reuters-21578 dataset from here
-\footnote{\url{http://www.nltk.org/book/ch02.html\#reuters-corpus}}.
-
+This dataset has been collected and published by Carnegie Group and Reuters.
+The class distribution of the \textit{reuters-21578} dataset is highly skewed, ie. the number of instances per class is not the same for all classes. 
+We obtained the \textit{reuters-21578} dataset from here\footnote{\url{http://www.nltk.org/book/ch02.html\#reuters-corpus}}.
 
 \paragraph{r8}
 This dataset is a subset of the \textit{reuters-21578} dataset.
@@ -147,10 +142,16 @@ It consists of the 8 most frequent classes of the \textit{reuters-21578} dataset
 \footnote{\url{http://www.cs.cornell.edu/people/pabo/movie-review-data/rotten\_imdb.tar.gz}}
 
 \paragraph{tagmynews}
-\footnote{\url{http://acube.di.unipi.it/repo/news.gz}}
+This corpus consists of summaries obtained from the RSS feeds of three news sites, \textit{nyt.com}, \textit{usatoday.com}, \textit{reuters.com}.
+The dataset was introduced by 
+\todo{Add paper reference: Daniele Vitale, Paolo Ferragina, and Ugo Scaiella. 2012. Classification of Short Texts by Deploying Topical Annotations.}
+
+We obtained the copy from the authors website \footnote{\url{http://acube.di.unipi.it/repo/news.gz}}.
 
 \paragraph{webkb}
-\footnote{\url{http://www.cs.cmu.edu/afs/cs/project/theo-20/www/data/}}
+This dataset consists of websites which have been downloaded from 4 american universities. It was collected 1977 during the \underline{W}orld \underline{W}ide \underline{K}nowledge \underline{B}ase project by the CMU Text Learning Group.
+The webpages are grouped in seven classes. The distribution of this very skewed, for example with one class having over 3000 instances and another only a little over 100.
+We obtained a copy of this dataset from here\footnote{\url{http://www.cs.cmu.edu/afs/cs/project/theo-20/www/data/}}.
 
 \begin{figure}[ht]
 \centering

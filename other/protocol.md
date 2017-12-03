@@ -1,9 +1,13 @@
 ## 03.12.2017
 - Thesis
-    - Little cleanup
+    - Cleanup
+    - Ideas/ToDos
+    	- Add score per graph size analysis we did before
+    - !!! IMPORTANT !!!
+    	- Do not forget to add standard deviations to results!
 - Code
     - Improved README and bootstrap scripts (to install dependencies, download datasets, ...)
-
+    - Added statistics about WL similarities per iteration
 
 ## 02.12.2017
 - Thesis
@@ -14,7 +18,7 @@
 
 ## 01.12.2017
 - Code
-	- Fixed latex code
+	- Fixed LaTex code
 - Thesis
 	- Wrote section for "Deep Graph Kernel" paper (related work)
 		- Find similarities in substructures
