@@ -1,0 +1,8 @@
+matplotlib
+mechanicalsoup
+numpy
+numpy
+pandas
+requests
+scipy
+seaborn

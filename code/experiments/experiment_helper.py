@@ -95,7 +95,7 @@ def get_all_task_typ_params_flat(task_type_params: dict = None, remove_complex_t
     return clean_params_config
 
 
-def save_experiment_params_as_experiment_config(file: str = constant.EXPERIMENT_CONFIG_ALL):
+def save_experiment_params_as_experiment_config(file: str = constants.EXPERIMENT_CONFIG_ALL):
     folder = file.rsplit('/', 1)[0]
     os.makedirs(folder, exist_ok=True)
 

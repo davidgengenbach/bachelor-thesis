@@ -50,6 +50,7 @@ def plot_confusion_matrix(cm,
                           round_confusion=2,
                           x_rotation=90,
                           show_non_horizontal_percent=True):
+    import plt
     """
     Plots the confusion matrix.
     Taken from: http://scikit-learn.org/stable/auto_examples/model_selection/plot_confusion_matrix.html#sphx-glr-auto-examples-model-selection-plot-confusion-matrix-py

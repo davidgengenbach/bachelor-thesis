@@ -7,6 +7,7 @@ code/code.sublime-*
 code/data/*.bin
 code/tmp/
 other/unused
+other/ted_talks/data/*
 .idea/
 .cache/
 
