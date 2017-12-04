@@ -28,17 +28,17 @@ def main():
     args = get_args()
 
     LOGGER.info('Loading pre-trained embedding')
-    pre_trained_embedding = embeddings.get_embedding_model(
-        args.pre_trained_embedding, binary=False, first_line_header=True, with_gensim=True)
 
     LOGGER.info('Starting to process datasets')
-    Parallel(n_jobs=args.n_jobs)(delayed(process_dataset)(dataset_name, pre_trained_embedding, args) for dataset_name in dataset_helper.get_all_available_dataset_names(limit_datasets=args.limit_dataset))
+    Parallel(n_jobs=args.n_jobs)(delayed(process_dataset)(dataset_name, args) for dataset_name in dataset_helper.get_all_available_dataset_names(limit_datasets=args.limit_dataset))
     LOGGER.info('Finished')
 
 
-def process_dataset(dataset_name, pre_trained_embedding, args):
+def process_dataset(dataset_name, args):
     LOGGER.info('{:15} - Start'.format(dataset_name))
     LOGGER.info('{:15} - Retrieving trained embedding'.format(dataset_name))
+
+    pre_trained_embedding = embeddings.get_embedding_model(args.pre_trained_embedding, binary=False, first_line_header=True, with_gensim=True)
 
     try:
         trained_embedding = dataset_helper.get_w2v_embedding_for_dataset(dataset_name)

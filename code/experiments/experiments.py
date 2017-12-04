@@ -34,7 +34,7 @@ def get_tasks() -> typing.List[ExperimentTask]:
     return tasks
 
 
-def get_task_dummy(dataset_name: str) -> ExperimentTask:
+def get_task_dummy(dataset_name: str) -> typing.Iterable[ExperimentTask]:
     dummy_classifier = [sklearn.dummy.DummyClassifier()]
     dummy_classifier_strategy = ['most_frequent', 'stratified', 'uniform']
     vectorizer = sklearn.feature_extraction.text.CountVectorizer()

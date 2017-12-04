@@ -1,21 +1,26 @@
+## 04.12.2017
+- Code
+- Thesis
+- Ideas
+	
+
 ## 03.12.2017
 - Thesis
     - Cleanup
     - Idea/ToDo
     	- Add score per graph size analysis we did before
-	    - **IMPORTANT**
-	    	- Do not forget to add standard deviations to results!
+	    - **IMPORTANT**: Do not forget to add standard deviations to result tables!
 - Code
     - Improved README and bootstrap scripts (to install dependencies, download datasets, ...)
     - Added statistics about WL similarities per iteration
     - Idea/ToDo
     	- Problem: some concepts only occur once per dataset, no chance of match
-    		- Solution: remove these concepts
-    		- Solution: relabel with similar label
-    			- Split multi-word concepts
-    				- ... find embeddings for single words
-    				- ... add them up
-    				- ... find similar label
+    		- But...
+    			- labels which only occur once in train set, but also in test set, would then not be found
+    		- Possible solutions
+	    		- remove these concepts
+	    		- relabel with similar label
+	    			- we have tried this before but for _all_ labels, not only for the less frequent labels
  
 
 ## 02.12.2017

@@ -1,12 +1,8 @@
 import yaml
 import os
-from transformers import fast_wl_graph_kernel_transformer
-from transformers.simple_preprocessing_transformer import SimplePreProcessingTransformer
-from transformers.graph_multi_word_label_splitter import GraphMultiWordLabelSplitter
-from transformers.remove_single_occurrence_graph_labels import RemoveSingleOccurrenceGraphLabels
+import transformers
 from transformers.pipelines import pipeline_helper
 import experiments
-from experiments import task_helper
 from utils import dataset_helper, graph_metrics
 import sklearn
 import sklearn.preprocessing
@@ -16,26 +12,22 @@ from utils import constants
 
 NEEDED_FIELDS = ['params_per_type']
 
-EXPERIMENT_CONFIG_FOLDER = 'configs/param_grid_configs'
-EXPERIMENT_CONFIG_ALL = EXPERIMENT_CONFIG_FOLDER + '/all.yaml'
-
-
+# These are field values for experiment yaml files that get replaced with their corresponding classe.
+# For example, "SVC" will be replaced with an instance of sklearn.svm.SCV
 PLACEHOLDER_LIST = dict(
     nxgraph_degrees_metric=graph_metrics.nxgraph_degrees_metric,
     nxgraph_pagerank_metric=graph_metrics.nxgraph_pagerank_metric,
-    iteration_weight_function=fast_wl_graph_kernel_transformer.iteration_weight_function,
-    iteration_weight_function_exponential=fast_wl_graph_kernel_transformer.iteration_weight_function_exponential,
-    SimplePreProcessingTransformer=SimplePreProcessingTransformer,
     MaxAbsScaler=sklearn.preprocessing.MaxAbsScaler,
     SVC=sklearn.svm.SVC,
-    CountVectorizer=sklearn.feature_extraction.text.CountVectorizer,
-    TfidfVectorizer=sklearn.feature_extraction.text.TfidfVectorizer,
-    GraphMultiWordLabelSplitter=GraphMultiWordLabelSplitter,
-    RemoveSingleOccurrenceGraphLabels=RemoveSingleOccurrenceGraphLabels
+    iteration_weight_function=transformers.fast_wl_graph_kernel_transformer.iteration_weight_function,
+    iteration_weight_function_exponential=transformers.fast_wl_graph_kernel_transformer.iteration_weight_function_exponential
 )
 
+# Add the names of the own transformers
+PLACEHOLDER_LIST = dict(PLACEHOLDER_LIST, **transformers.TRANSFORMERS)
 
-def get_experiment_config(file: str = EXPERIMENT_CONFIG_ALL) -> dict:
+
+def get_experiment_config(file: str = constants.EXPERIMENT_CONFIG_ALL) -> dict:
     assert os.path.exists(file)
 
     with open(file) as f:
@@ -103,7 +95,7 @@ def get_all_task_typ_params_flat(task_type_params: dict = None, remove_complex_t
     return clean_params_config
 
 
-def save_experiment_params_as_experiment_config(file: str = EXPERIMENT_CONFIG_ALL):
+def save_experiment_params_as_experiment_config(file: str = constant.EXPERIMENT_CONFIG_ALL):
     folder = file.rsplit('/', 1)[0]
     os.makedirs(folder, exist_ok=True)
 
@@ -136,13 +128,13 @@ def replace_placeholders(param_grid, placeholder_list=PLACEHOLDER_LIST):
     return out_param_grid
 
 
-def get_all_param_grid_config_files(folder=EXPERIMENT_CONFIG_FOLDER):
+def get_all_param_grid_config_files(folder=constants.EXPERIMENT_CONFIG_FOLDER):
     out = {}
     for file in glob('{}/*.yaml'.format(folder)):
         out[file] = get_experiment_config(file)
     return out
 
-def get_experiment_config_for(experiment_name:str, folder=EXPERIMENT_CONFIG_FOLDER):
+def get_experiment_config_for(experiment_name:str, folder=constants.EXPERIMENT_CONFIG_FOLDER):
     file = '{}/{}.yaml'.format(folder, experiment_name)
     assert os.path.exists(file)
     return get_experiment_config(file)

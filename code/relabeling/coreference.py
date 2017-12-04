@@ -75,7 +75,7 @@ def create_label_cliques_by_similarity(similar_labels, threshold=1 - 9e-10, look
 
 
 def get_cliques_from_lookup(lookup):
-    cliques = collections.defaultdict(lambda: [])
+    cliques = collections.defaultdict(list)
     for label, clique_num in lookup.items():
         cliques[clique_num].append(label)
     return cliques
