@@ -1,22 +1,37 @@
 import sklearn
 import collections
 import networkx as nx
-from utils import helper
+from utils import helper, graph_helper
 import numpy as np
+from itertools import chain
+import scipy.sparse
 
 
 class RemoveSingleOccurrenceGraphLabels(sklearn.base.BaseEstimator, sklearn.base.TransformerMixin):
-    def __init__(self):
-        pass
+    def __init__(self, copy=True):
+        self.copy = copy
+
+    def fit(self, X, *s):
+        return self
 
     def transform(self, X, y=None, **fit_params):
         assert len(X)
+        X = graph_helper.get_graphs_only(X)
+        if self.copy:
+            X = _copy_graphs(X)
         labels = [_get_labels(x) for x in X]
-        labels_flattened = helper.flatten_array(labels)
-        occurrences = collections.Counter(labels_flattened)
+        occurrences = collections.Counter(chain.from_iterable(labels))
         labels_to_be_removed = [k for k, v in occurrences.items() if v == 1]
         X = [_remove_label(x, labels_to_be_removed) for x in X]
         return X
+
+
+def _copy_graphs(X):
+    is_adj = isinstance(X[0], tuple)
+    if is_adj:
+        return [(adj.copy(), labels[:]) for adj, labels in X]
+    else:
+        return [g.copy() for g in X]
 
 
 def _get_labels(x):
@@ -47,4 +62,4 @@ def _remove_label(g, labels_to_be_removed):
         g.remove_nodes_from(labels_to_be_removed)
         return g
     else:
-        raise Exception('Unkown graph type: {}'.format(g))
+        raise Exception('Unknown graph type: {}'.format(g))

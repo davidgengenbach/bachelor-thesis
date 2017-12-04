@@ -77,7 +77,6 @@ def process_dataset(dataset, args):
                 word_counts = collections.Counter(all_words)
                 ignored_words = set([word for word, count in word_counts.items() if count == 1])
 
-                print(len(word_counts.keys()), len(ignored_words), ignored_words)
                 X_processed = graph_helper.convert_dataset_to_co_occurence_graph_dataset(
                     X_filtered,
                     window_size = window_size,

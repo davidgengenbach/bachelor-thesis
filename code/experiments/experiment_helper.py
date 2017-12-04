@@ -3,6 +3,7 @@ import os
 from transformers import fast_wl_graph_kernel_transformer
 from transformers.simple_preprocessing_transformer import SimplePreProcessingTransformer
 from transformers.graph_multi_word_label_splitter import GraphMultiWordLabelSplitter
+from transformers.remove_single_occurrence_graph_labels import RemoveSingleOccurrenceGraphLabels
 from transformers.pipelines import pipeline_helper
 import experiments
 from experiments import task_helper
@@ -29,7 +30,8 @@ PLACEHOLDER_LIST = dict(
     SVC=sklearn.svm.SVC,
     CountVectorizer=sklearn.feature_extraction.text.CountVectorizer,
     TfidfVectorizer=sklearn.feature_extraction.text.TfidfVectorizer,
-    GraphMultiWordLabelSplitter=GraphMultiWordLabelSplitter
+    GraphMultiWordLabelSplitter=GraphMultiWordLabelSplitter,
+    RemoveSingleOccurrenceGraphLabels=RemoveSingleOccurrenceGraphLabels
 )
 
 

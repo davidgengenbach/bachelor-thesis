@@ -30,15 +30,18 @@ class RemoveSingleOccurrenceGraphLabelsTest(unittest.TestCase):
 
         X = [g1, g2]
         X_new = remover.transform(X)
+        g1_new, g2_new = X_new
 
         self.assertEqual(len(X_new), len(X))
-        for g in X:
+        for g in X_new:
             self.assertIsInstance(g, nx.Graph)
             self.assertTrue(g.has_node(MULTIPLE_LABEL))
             self.assertTrue(g.has_node(MULTIPLE_LABEL_2))
             self.assertEqual(g.number_of_nodes(), 2)
 
-        self.assertFalse(g2.has_node(SINGLE_LABEL))
+        self.assertFalse(g2_new.has_node(SINGLE_LABEL))
+        self.assertListEqual(g1_new.nodes(), g1.nodes())
+        self.assertFalse(g2_new.nodes() == g2.nodes())
 
     def test_single_occurrence_remover_adj_tuple(self):
         g1_labels = [MULTIPLE_LABEL, MULTIPLE_LABEL_2]
