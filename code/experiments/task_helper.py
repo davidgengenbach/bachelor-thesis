@@ -49,7 +49,7 @@ def get_graph_estimator_and_params(X, Y=None, reduced: bool=False, with_node_wei
     estimator, params = graph_pipeline.get_params(reduced=reduced, with_node_weights=with_node_weights)
 
     assert isinstance(X_[0], tuple) and isinstance(X_[0][1], list)
-    num_vertices = get_num_vertices(X_)
+    num_vertices = get_num_vertices(X_) * 5
     graph_pipeline.add_num_vertices_to_fast_wl_params(params, num_vertices)
     return estimator, params
 

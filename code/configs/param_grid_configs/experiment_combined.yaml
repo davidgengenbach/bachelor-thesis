@@ -2,9 +2,10 @@ limit_dataset:
 - ling-spam
 - ng20
 #- reuters-21578
-- review_polarity
-- rotten_imdb
-- tagmynews
+#- review_polarity
+#- rotten_imdb
+#- tagmynews
+- ted_talks
 #- webkb
 params_per_type:
   dummy_most_frequent:
@@ -29,6 +30,7 @@ params_per_type:
         - stacked
         use_zeroth:
         - false
+        - true
     normalizer:
     - MaxAbsScaler
   text:
@@ -79,6 +81,7 @@ params_per_type:
               - stacked
               use_zeroth:
               - false
+              - true
           normalizer:
           - MaxAbsScaler
       text:

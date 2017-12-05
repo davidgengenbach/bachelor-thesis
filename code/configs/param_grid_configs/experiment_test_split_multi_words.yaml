@@ -4,6 +4,7 @@ limit_dataset:
 #- reuters-21578
 - review_polarity
 - rotten_imdb
+- ted_talks
 #- tagmynews
 #- webkb
 limit_graph_type:

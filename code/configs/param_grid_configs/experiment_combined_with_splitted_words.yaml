@@ -1,6 +1,7 @@
 limit_dataset:
 - ling-spam
 - ng20
+- ted_talks
 #- reuters-21578
 #- review_polarity
 #- rotten_imdb
@@ -39,6 +40,7 @@ params_per_type:
               - stacked
               use_zeroth:
               - false
+              - true
           normalizer:
           - MaxAbsScaler
       text:
