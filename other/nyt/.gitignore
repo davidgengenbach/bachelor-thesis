@@ -1,0 +1,7 @@
+*.txt
+*.csv
+*.xml
+*.tgz
+*.tar
+*.tar.gz
+nyt_corpus/

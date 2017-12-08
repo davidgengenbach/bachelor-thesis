@@ -6,47 +6,27 @@ from collections import Counter
 from glob import glob
 
 import numpy as np
-import pandas as pd
 import scipy.sparse
-from joblib import Parallel, delayed
 from sklearn.model_selection import train_test_split
 from sklearn.utils import shuffle
 from utils import filename_utils, graph_helper
-from preprocessing import preprocessing
-import spacy
-
-PATH_TO_HERE = os.path.dirname(os.path.abspath(__file__))
-
-def get_dataset_cached(cache_file, check_validity=True):
-    assert os.path.exists(cache_file), 'Could not find cache_file: {}'.format(cache_file)
-    with open(cache_file, 'rb') as f:
-        res = pickle.load(f)
-    if check_validity:
-        X, Y = res
-        test_dataset_validity(X, Y)
-    return res
 
 
 def get_dataset(dataset_name, use_cached=True, dataset_folder=DATASET_FOLDER, cache_path=CACHE_PATH, cache_file=None):
     """Returns the dataset as a tuple of lists. The first list contains the data, the second the labels
-    TODO: Caching could be done with decorator.
 
     Args:
         dataset_name (str): the name of the dataset
         use_cached (bool, optional): whether to use the cached dataset
         dataset_folder (str, optional): where to search the dataset
         cache_path (str, optional): folder to save the dataset to after fetching it
-        transform_fn (function, optional): gets applied to the dataset before saving it (only when use_cache=False or the dataset_npy does not exist!)
         cache_file (str, optional): used to overwrite the cache-path
 
     Returns:
         tuple(list): two lists, the first the data, the second the labels
     """
 
-    if cache_file:
-        dataset_npy = cache_file
-    else:
-        dataset_npy = os.path.join(cache_path, 'dataset_{}.npy'.format(dataset_name))
+    dataset_npy = cache_file if cache_file else os.path.join(cache_path, 'dataset_{}.npy'.format(dataset_name))
 
     if use_cached and os.path.exists(dataset_npy):
         X, Y = get_dataset_cached(dataset_npy)
@@ -63,61 +43,19 @@ def get_dataset(dataset_name, use_cached=True, dataset_folder=DATASET_FOLDER, ca
     return X, Y
 
 
-def get_dataset_spacy(dataset_name, use_cached=True, cache_path=CACHE_PATH, pipe_kwargs={}):
-    from spacy.tokens.doc import Doc
-    from spacy.vocab import Vocab
+def get_dataset_cached(cache_file, check_validity=True):
+    if not os.path.exists(cache_file):
+        raise FileNotFoundError('Could not find cache_file: {}'.format(cache_file))
 
-    cache_file = '{}/{}.spacy.npy'.format(cache_path, dataset_name)
-    X, Y = get_dataset(dataset_name, cache_path=cache_path)
-    if use_cached and os.path.exists(cache_file):
-        with open(cache_file, 'rb') as f:
-            X, Y = pickle.load(f)
-            X = [Doc(Vocab()).from_bytes(x) for x in X]
-    else:
-        nlp = spacy.load('en')
-        X = list(nlp.pipe(X, **pipe_kwargs))
-        X_b = [x.to_bytes() for x in X]
-        with open(cache_file, 'wb') as f:
-            pickle.dump((X_b, Y), f)
-    return X, Y
-
-
-def get_gml_graph_dataset(dataset_name, use_cached=True, graphs_folder=GRAPHS_FOLDER, graph_type='concept_map', cache_npy:str=None, suffix: str=''):
-    """Retrieves the gml dataset.
-    TODO: The caching could be done with a decorator.
-
-    Args:
-        dataset_name (str): the dataset
-        use_cached (bool, optional): 
-        graphs_folder (str, optional): where to search the gml graphs
-        cache_folder (str, optional): where to cache
-
-    Returns:
-        tuple(list, list): X and Y
-    """
-    from utils import graph_helper
-
-    if graphs_folder in dataset_name:
-        dataset_name = dataset_name.replace(graphs_folder + '/', '')
-
-    graph_folder = os.path.join(graphs_folder, dataset_name)
-
-    if not cache_npy:
-        cache_npy = os.path.join(CACHE_PATH, 'dataset_graph_{}_{}{}.npy'.format(graph_type, dataset_name, suffix))
-
-    if use_cached and os.path.exists(cache_npy):
-        with open(cache_npy, 'rb') as f:
-            X, Y = pickle.load(f)
-    else:
-        X, Y = graph_helper.get_graphs_from_folder(graph_folder, undirected=False)
-        # Test dataset validity before saving it
+    with open(cache_file, 'rb') as f:
+        res = pickle.load(f)
+    if check_validity:
+        X, Y = res
         test_dataset_validity(X, Y)
+    return res
 
-        with open(cache_npy, 'wb') as f:
-            pickle.dump((X, Y), f)
-    return X, Y
 
-def get_concept_map_combined_dataset_for_dataset(dataset:str):
+def get_concept_map_combined_dataset_for_dataset(dataset: str):
     concept_map_cache_file = get_all_cached_graph_datasets(dataset, graph_type=TYPE_CONCEPT_MAP)
     assert len(concept_map_cache_file) == 1
     concept_map_cache_file = concept_map_cache_file[0]
@@ -125,38 +63,12 @@ def get_concept_map_combined_dataset_for_dataset(dataset:str):
     assert len(X_combined) == len(Y)
     return X_combined, Y
 
-def get_text_dataset_filtered_by_concept_map(dataset:str):
+
+def get_text_dataset_filtered_by_concept_map(dataset: str):
     X_combined, Y = get_concept_map_combined_dataset_for_dataset(dataset)
     X_text = [text for (_, text, _) in X_combined]
     assert isinstance(X_text[0], str)
     return X_text, Y
-
-
-def get_subset_with_most_frequent_classes(X, Y, num_classes_to_keep=2, use_numpy=False):
-    most_common_classes = [label for label, count in Counter(Y).most_common(num_classes_to_keep)]
-    if use_numpy:
-        # A little slower
-        indices = np.in1d(Y, most_common_classes)
-        return np.array(X, dtype=str)[indices], np.array(Y, dtype=str)[indices]
-    else:
-        most_common_classes = set(most_common_classes)
-        data = [(text, label) for text, label in zip(X, Y) if label in most_common_classes]
-        return [x[0] for x in data], [x[1] for x in data]
-
-
-def get_dataset_subset_with_most_frequent_classes(dataset_name, num_classes_to_keep=2, get_dataset_kwargs={}):
-    """Given a base dataset, this function returns the num_classes_to_keep classes.
-
-    Args:
-        dataset_name (str): base dataset
-        num_classes_to_keep (int, optional): how many classes should be taken
-        use_numpy (bool, optional): slows down a little
-
-    Returns:
-        tuple(list, list): X and Y, where the dataset only contains data from the most frequent classes
-    """
-    X, Y = get_dataset(dataset_name, **get_dataset_kwargs)
-    return get_subset_with_most_frequent_classes(X, Y, num_classes_to_keep=num_classes_to_keep)
 
 
 def get_all_available_dataset_names(dataset_folder=DATASET_FOLDER, limit_datasets=None):
@@ -194,7 +106,14 @@ def get_all_cached_graph_datasets(dataset_name=None, graph_type=None, cache_path
         is_not_gram_or_phi = 'gram' not in filename and 'phi' not in filename
         is_in_dataset = not dataset_name or dataset_name == filename_utils.get_dataset_from_filename(filename)
         is_right_graph_type = not graph_type or graph_type == graph_helper.get_graph_type_from_filename(cache_file)
-        return np.all([is_graph_dataset, is_not_relabeled, is_not_gram_or_phi, is_in_dataset, is_right_graph_type])
+
+        return np.all([
+            is_graph_dataset,
+            is_not_relabeled,
+            is_not_gram_or_phi,
+            is_in_dataset,
+            is_right_graph_type
+        ])
 
     return [x for x in get_all_cached_datasets(cache_path) if graph_dataset_filter(x)]
 
@@ -207,27 +126,7 @@ def get_all_gram_datasets(dataset_name=None, cache_path=CACHE_PATH):
 def get_all_cached_graph_phi_datasets(dataset_name=None, cache_path=CACHE_PATH):
     if dataset_name:
         dataset_name = dataset_name.replace('-single', '')
-    return [x for x in get_all_cached_datasets(cache_path) if 'phi' in x and (not dataset_name or get_dataset_name_from_graph_cachefile(x) == dataset_name)]
-
-
-def get_dataset_name_from_graph_cachefile(graph_cache_file, replace_single=True):
-    dataset = graph_cache_file.rsplit('.npy')[0].split('/')[-1]
-    dataset = dataset.rsplit('_', 1)[1].replace('.phi', '')
-    if replace_single:
-        dataset = dataset.replace('-single', '')
-    return dataset
-
-
-def get_all_datasets(dataset_folder=DATASET_FOLDER, **kwargs):
-    """Returns a dict with the available datasets as key and the documents as values
-
-    Args:
-        dataset_folder (str, optional): Where to search for datasets
-
-    Returns:
-        dict: Keys are the dataset names, the values is a list of docs like [(topic1, document1], (topic2, document2))]
-    """
-    return {dataset: get_dataset(dataset, **kwargs) for dataset in get_all_available_dataset_names(dataset_folder)}
+    return [x for x in get_all_cached_datasets(cache_path) if 'phi' in x and (not dataset_name or filename_utils.get_dataset_from_filename(x) == dataset_name)]
 
 
 def get_w2v_embedding_for_dataset(dataset_name, embedding_folder='data/embeddings/trained'):
@@ -238,30 +137,6 @@ def get_w2v_embedding_for_dataset(dataset_name, embedding_folder='data/embedding
 
     with open(embedding_file, 'rb') as f:
         return pickle.load(f)
-
-
-def get_dataset_dict(X, Y=None):
-    """Returns a dictionary where the keys are the topics, the values are the documents of that topic. 
-
-    Args:
-        X (list of list of str): The documents
-        Y (list of str): The topics for the topics. len(X) == len(Y). If Y is None, X must be a list of tuples
-
-    Returns:
-        dict: Keys are topics, values are the corresponding docs
-    """
-    if not Y:
-        data = X
-        Y = [x[0] for x in data]
-        X = [x[1] for x in data]
-
-    assert len(X) == len(Y), 'X and Y do not have the same length.'
-    assert len(set(Y)) > 0, 'No classes.'
-
-    topics = {x: [] for x in set(Y)}
-    for clazz, doc in zip(Y, X):
-        topics[clazz].append(doc)
-    return topics
 
 
 def split_dataset(X, Y, train_size=0.8, random_state_for_shuffle=42):
@@ -325,12 +200,69 @@ def get_dataset_module(dataset_folder, dataset_name):
     return dataset_module
 
 
+def get_gml_graph_dataset(dataset_name, use_cached=True, graphs_folder=GRAPHS_FOLDER, graph_type='concept_map', cache_npy: str = None, suffix: str = ''):
+    """Retrieves the gml dataset.
+
+    Args:
+        dataset_name (str): the dataset
+        use_cached (bool, optional):
+        graphs_folder (str, optional): where to search the gml graphs
+
+    Returns:
+        tuple(list, list): X and Y
+    """
+    from utils import graph_helper
+
+    if graphs_folder in dataset_name:
+        dataset_name = dataset_name.replace(graphs_folder + '/', '')
+
+    graph_folder = os.path.join(graphs_folder, dataset_name)
+
+    if not cache_npy:
+        cache_npy = os.path.join(CACHE_PATH, 'dataset_graph_{}_{}{}.npy'.format(graph_type, dataset_name, suffix))
+
+    if use_cached and os.path.exists(cache_npy):
+        with open(cache_npy, 'rb') as f:
+            X, Y = pickle.load(f)
+    else:
+        X, Y = graph_helper.get_graphs_from_folder(graph_folder, undirected=False)
+        # Test dataset validity before saving it
+        test_dataset_validity(X, Y)
+
+        with open(cache_npy, 'wb') as f:
+            pickle.dump((X, Y), f)
+    return X, Y
+
+
+def get_subset_with_most_frequent_classes(X, Y, num_classes_to_keep=2, use_numpy=False):
+    most_common_classes = [label for label, count in Counter(Y).most_common(num_classes_to_keep)]
+    if use_numpy:
+        # A little slower
+        indices = np.in1d(Y, most_common_classes)
+        return np.array(X, dtype=str)[indices], np.array(Y, dtype=str)[indices]
+    else:
+        most_common_classes = set(most_common_classes)
+        data = [(text, label) for text, label in zip(X, Y) if label in most_common_classes]
+        return [x[0] for x in data], [x[1] for x in data]
+
+
+def get_dataset_subset_with_most_frequent_classes(dataset_name: str, num_classes_to_keep: int = 2, get_dataset_kwargs: dict = None) -> tuple:
+    """Given a base dataset, this function returns the num_classes_to_keep classes.
+
+    Args:
+        dataset_name (str): base dataset
+        num_classes_to_keep (int, optional): how many classes should be taken
+
+    Returns:
+        tuple(list, list): X and Y, where the dataset only contains data from the most frequent classes
+    """
+    X, Y = get_dataset(dataset_name, **(get_dataset_kwargs or {}))
+    return get_subset_with_most_frequent_classes(X, Y, num_classes_to_keep=num_classes_to_keep)
+
+
 def test_dataset_validity(X, Y):
     def sparse_matrix_type(a):
-        types = [scipy.sparse.lil_matrix, scipy.sparse.coo_matrix]
-        for t in types:
-            if isinstance(a, t): return True
-        return False
+        return isinstance(a, (scipy.sparse.lil_matrix, scipy.sparse.coo_matrix))
 
     assert isinstance(X, list) or sparse_matrix_type(X), 'X must be a list, it is: {}'.format(type(X))
     assert isinstance(Y, list), 'Y must be a list'
@@ -341,14 +273,3 @@ def test_dataset_validity(X, Y):
         assert len(X) and len(Y), 'Dataset is empty'
         assert len(X) == len(Y), 'X and Y must have same length'
     assert len(set(Y)), 'Y must contain at least one label'
-
-
-def plot_dataset_class_distribution(X, Y, title='Docs per topic', figsize=(14, 8), ax=None, log=True):
-    x_per_topic = get_dataset_dict(X, Y)
-    df_graphs_per_topic = pd.DataFrame([
-        (topic, len(docs)) for topic, docs in x_per_topic.items()],
-        columns=['topic', 'num_docs']
-    ).set_index(['topic']).sort_values(by='num_docs')
-    ax = df_graphs_per_topic.plot.barh(title='Docs per topic', legend=False, figsize=figsize, ax=ax, log=log)
-    ax.set_xlabel('# docs')
-    return ax

@@ -1,8 +1,8 @@
-## 04.12.2017
-- Code
-- Thesis
-- Ideas
-	
+## 06.12.2017
+- Skype call with Tobias
+    - Merge labels of un-frequent concepts
+    - New York Times corpus to concept maps, then classification
+
 
 ## 03.12.2017
 - Thesis
@@ -13,14 +13,14 @@
 - Code
     - Improved README and bootstrap scripts (to install dependencies, download datasets, ...)
     - Added statistics about WL similarities per iteration
-    - Idea/ToDo
-    	- Problem: some concepts only occur once per dataset, no chance of match
-    		- But...
-    			- labels which only occur once in train set, but also in test set, would then not be found
-    		- Possible solutions
-	    		- remove these concepts
-	    		- relabel with similar label
-	    			- we have tried this before but for _all_ labels, not only for the less frequent labels
+- Idea/ToDo
+    - Problem: some concepts only occur once per dataset, no chance of match
+    - But...
+    - labels which only occur once in train set, but also in test set, would then not be found
+    - Possible solutions
+        - remove these concepts
+        - relabel with similar label
+        - we have tried this before but for _all_ labels, not only for the less frequent labels
  
 
 ## 02.12.2017

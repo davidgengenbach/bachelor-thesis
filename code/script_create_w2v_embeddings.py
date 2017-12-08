@@ -34,8 +34,7 @@ def main():
     limited_datasets = args.limit_dataset
     os.makedirs(args.embedding_save_path, exist_ok=True)
 
-    datasets = dataset_helper.get_all_available_dataset_names()
-    datasets = [x for x in datasets if not limited_datasets or x in limited_datasets]
+    datasets = dataset_helper.get_all_available_dataset_names(limited_datasets=limited_datasets)
     Parallel(n_jobs=args.n_jobs)(delayed(process_dataset)(dataset_name, args) for dataset_name in datasets)
 
     LOGGER.info('Finished')
@@ -50,7 +49,6 @@ def process_dataset(dataset_name, args):
         LOGGER.info('{:30} Starting'.format(dataset_name))
 
         X, Y = dataset_helper.get_dataset(dataset_name=dataset_name)
-        X = [preprocessing.preprocess(t) for t in X]
         X = preprocessing.preprocess_text_spacy(X, n_jobs=args.n_jobs_spacy)
         X = [[word.text.lower().strip() for word in doc] for doc in X]
 

@@ -7,6 +7,7 @@ class RelabelGraphsTransformer(sklearn.base.BaseEstimator, sklearn.base.Transfor
         self.lookup = lookup
 
     def fit(self, X, y=None, **fit_params):
+        # TODO: find low-frequency node labels, merge them with other labels
         return self
 
     def transform(self, X, y=None, **fit_params):
