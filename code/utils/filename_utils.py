@@ -8,11 +8,11 @@ def get_dataset_from_filename(filename: str, ignore_subtype = False) -> str:
 
     filename = filename.split('/')[-1]
     candidates = sorted([dataset for dataset in all_datasets if dataset in filename])
-    assert len(candidates) <= 2
+    assert len(candidates) <= 3
     dataset = None
 
     if len(candidates):
-        dataset = sorted(candidates)[0 if ignore_subtype else -1]
+        dataset = sorted(candidates, key=lambda x: len(x))[0 if ignore_subtype else -1]
 
     return dataset
 

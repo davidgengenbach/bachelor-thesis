@@ -2,6 +2,7 @@ limit_dataset:
 - ling-spam
 - ng20
 - ted_talks
+- nyt_small
 #- reuters-21578
 #- review_polarity
 #- rotten_imdb

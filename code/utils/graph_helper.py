@@ -284,7 +284,9 @@ def get_combined_text_graph_dataset(graph_cache_file, use_ana=False) -> typing.T
     X_text, Y_text = dataset_helper.get_dataset(dataset_name + ('-ana' if use_ana else ''))
     X_graph, Y_graph = dataset_helper.get_dataset_cached(graph_cache_file)
 
-    if len(X_graph) == len(X_text): return list(zip(X_graph, X_text, [None] * len(X_graph))), Y_graph
+    # Same length but has ID
+    if len(X_graph) == len(X_text) and (not isinstance(X_graph[0], tuple) or not isinstance(X_graph[0][1], str)):
+        return list(zip(X_graph, X_text, [None] * len(X_graph))), Y_graph
 
     # Get class to class ids mapping
     class_2_id = collections.defaultdict(lambda: [])

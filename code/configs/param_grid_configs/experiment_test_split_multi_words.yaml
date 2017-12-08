@@ -5,6 +5,7 @@ limit_dataset:
 - review_polarity
 - rotten_imdb
 - ted_talks
+- nyt_small
 #- tagmynews
 #- webkb
 limit_graph_type:
