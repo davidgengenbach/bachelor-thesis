@@ -2,6 +2,7 @@ from utils.constants import *
 import importlib
 import os
 import pickle
+import collections
 from collections import Counter
 from glob import glob
 
@@ -258,6 +259,22 @@ def get_dataset_subset_with_most_frequent_classes(dataset_name: str, num_classes
     """
     X, Y = get_dataset(dataset_name, **(get_dataset_kwargs or {}))
     return get_subset_with_most_frequent_classes(X, Y, num_classes_to_keep=num_classes_to_keep)
+
+def get_num_elements_per_class(X, Y, num_per_class: int = 50):
+    per_class = collections.defaultdict(list)
+    for x, y in zip(X, Y):
+        per_class[y].append(x)
+
+    assert np.all(len(x) >= num_per_class for x in per_class.values())
+
+    X_, Y_ = [], []
+    for y, xs in per_class.items():
+        xs_ = np.random.choice(xs, size=num_per_class)
+        Y_ += [y] * len(xs_)
+        X_ += xs_.tolist()
+    assert len(X_) == len(Y_)
+
+    return X_, Y_
 
 
 def test_dataset_validity(X, Y):
