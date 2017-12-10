@@ -260,6 +260,12 @@ def get_dataset_subset_with_most_frequent_classes(dataset_name: str, num_classes
     X, Y = get_dataset(dataset_name, **(get_dataset_kwargs or {}))
     return get_subset_with_most_frequent_classes(X, Y, num_classes_to_keep=num_classes_to_keep)
 
+
+def filter_out_text_with_less_words(X, Y, min_words: int=100):
+    indices = [idx for idx, x in enumerate(X) if len(x.split()) > min_words]
+    return np.array(X)[indices].tolist(), np.array(Y)[indices].tolist()
+
+
 def get_num_elements_per_class(X, Y, num_per_class: int = 50):
     per_class = collections.defaultdict(list)
     for x, y in zip(X, Y):

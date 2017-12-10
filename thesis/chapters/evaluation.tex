@@ -132,13 +132,16 @@ As labels we used the online sections an article has been posted to.
 
 We found this dataset when searching for a corpus consisting of long documents. 
 For our purposes we only used articles with more than 3000 words and from the six most frequent labels.
-Since the extraction of concept maps for documents of this document size takes a long time, we randomly selected 20 documents for each of the six labels, resulting in a dataset of 120 articles.
+Since the extraction of concept maps for documents of this document size takes a long time, we randomly selected 20 documents for each of the six labels, resulting in a dataset of 120 articlesgit git.
 
 We obtained our copy of the dataset from here\footnote{\url{https://catalog.ldc.upenn.edu/LDC2008T19}}.
 
 \paragraph{reuters-21578}
-This dataset has been collected and published by Carnegie Group and Reuters.
-The class distribution of the \textit{reuters-21578} dataset is highly skewed, ie. the number of instances per class is not the same for all classes. 
+This dataset consists of news articles collected and published by Carnegie Group and Reuters.
+ The class distribution of the \textit{reuters-21578} dataset is highly skewed, ie. the number of instances per class is not the same for all classes.
+ Some of the articles have multiple classes assigned. For our purposes, single-label classification, we only used articles with one class.
+ We also only use articles which consist of more than 20 words, so that meaningful concept maps can be created.
+
 We obtained the \textit{reuters-21578} dataset from here\footnote{\url{http://www.nltk.org/book/ch02.html\#reuters-corpus}}.
 
 \paragraph{r8}

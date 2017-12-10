@@ -1,13 +1,9 @@
 limit_dataset:
 - ling-spam
 - ng20
-#- reuters-21578
-#- review_polarity
-#- rotten_imdb
-#- tagmynews
 - ted_talks
 - nyt_small
-#- webkb
+- nyt_middle
 params_per_type:
   dummy_most_frequent:
     classifier:

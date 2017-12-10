@@ -6,6 +6,7 @@ limit_dataset:
 - rotten_imdb
 - ted_talks
 - nyt_small
+- nyt_middle
 #- tagmynews
 #- webkb
 limit_graph_type:
@@ -26,6 +27,13 @@ params_per_type:
         use_zeroth:
         - True
         - False
-    graph_preprocessing: ~
+    graph_preprocessing:
+      VAL_:
+      - GraphMultiWordLabelSplitter
+      remove_old_composite_labels:
+      - true
+      add_self_links:
+      - true
+      - false
     normalizer:
     - MaxAbsScaler

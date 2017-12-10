@@ -1,13 +1,9 @@
 limit_dataset:
-#- ling-spam
+- ling-spam
 - ng20
 - ted_talks
 - nyt_small
-#- reuters-21578
-#- review_polarity
-#- rotten_imdb
-#- tagmynews
-#- webkb
+- nyt_middle
 limit_graph_type:
 - concept_map
 params_per_type:
