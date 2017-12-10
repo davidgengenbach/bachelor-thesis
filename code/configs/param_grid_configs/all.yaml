@@ -5,6 +5,10 @@ limit_dataset:
 - mini20-ana
 - ng20
 - ng20-ana
+- nyt
+- nyt_200
+- nyt_middle
+- nyt_small
 - r52-ana
 - r8
 - r8-ana
@@ -14,6 +18,7 @@ limit_dataset:
 - small
 - tagmynews
 - ted_talks
+- ted_talks_unclassified
 - webkb
 - webkb-ana
 limit_graph_type:
@@ -58,7 +63,7 @@ params_per_type:
         node_weight_function:
         - NoneType
         phi_dim:
-        - 58670
+        - 326445
         round_to_decimals:
         - 10
         same_label:
@@ -89,7 +94,7 @@ params_per_type:
               node_weight_function:
               - NoneType
               phi_dim:
-              - 58670
+              - 65289
               round_to_decimals:
               - 10
               same_label:
@@ -142,9 +147,6 @@ params_per_type:
       - &id002 !!python/tuple
         - 1
         - 2
-  graph_gram:
-    classifier:
-    - SVC
   graph_node_weights:
     feature_extraction:
       fast_wl:
@@ -155,7 +157,7 @@ params_per_type:
         - function
         - function
         phi_dim:
-        - 58670
+        - 326445
         round_to_decimals:
         - 10
         same_label:
@@ -177,7 +179,7 @@ params_per_type:
         node_weight_function:
         - NoneType
         phi_dim:
-        - 58670
+        - 326445
         round_to_decimals:
         - 10
         same_label:

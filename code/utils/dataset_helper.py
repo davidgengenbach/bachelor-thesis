@@ -5,6 +5,7 @@ import pickle
 import collections
 from collections import Counter
 from glob import glob
+import typing
 
 import numpy as np
 import scipy.sparse
@@ -117,6 +118,19 @@ def get_all_cached_graph_datasets(dataset_name=None, graph_type=None, cache_path
         ])
 
     return [x for x in get_all_cached_datasets(cache_path) if graph_dataset_filter(x)]
+
+
+def get_concept_map_for_dataset(dataset_name: str, graphs_only: bool=False):
+    candidates = get_all_cached_graph_datasets(dataset_name, TYPE_CONCEPT_MAP)
+    assert len(candidates)
+    cmap_file = sorted(candidates)[-1]
+    X, Y = get_dataset_cached(cmap_file)
+    if graphs_only:
+        X = graph_helper.get_graphs_only(X)
+    return X, Y
+
+def get_dataset_names_with_concept_map(limit_datasets: typing.Iterable=None):
+    return [x for x in get_all_available_dataset_names(limit_datasets=limit_datasets) if len(get_all_cached_graph_datasets(x, graph_type=TYPE_CONCEPT_MAP))]
 
 
 def get_all_gram_datasets(dataset_name=None, cache_path=CACHE_PATH):

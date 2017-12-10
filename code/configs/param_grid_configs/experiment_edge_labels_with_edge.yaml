@@ -1,0 +1,27 @@
+limit_dataset:
+- ling-spam
+- ng20
+- ted_talks
+- nyt_small
+- nyt_middle
+limit_graph_type:
+#- cooccurrence
+- concept_map
+params_per_type:
+  graph_content_only:
+    graph_to_text:
+      use_edges:
+      - true
+    preprocessing:
+    - SimplePreProcessingTransformer
+    scaler:
+    - MaxAbsScaler
+    vectorizer:
+      VAL_:
+      - CountVectorizer
+      binary:
+      - true
+      ngram_range:
+      - !!python/tuple
+        - 1
+        - 1

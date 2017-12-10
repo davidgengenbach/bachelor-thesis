@@ -41,7 +41,7 @@ To address this issue, we then searched for a dataset with longer texts per docu
 		\O{}            & 0.08 & 0.24 & 1.36 & 2.52 & 129.22 & 20.75 \\
 		\bottomrule
 	\end{tabular}
-	\caption{Graph statistics. \textit{\#words} is the number of words in the whole text dataset. The \textit{\#edges/\#nodes} metric is for the co-occurrence graphs with a window size of 1. The \textit{\#nodes/\#words} metric is a compression factor. Note that, on average, the concept maps have a compression factor of 8\% compared to the 24\% of the co-occurrence graph. This means that co-occurrence graphs have approximately three times more content than concept maps. The \textit{\#edges/\#nodes} metric is an indicator for the connectedness of the graphs. Because we remove nodes which have no edge to other nodes, the \textit{\#edges/\#nodes} metric captures the average degree of the nodes. Looking at that metric we also see that, on average, the co-occurrence graphs with window size 1 have roughly twice as much edges per node as concept maps.}\label{fig:graph_statistics}
+	\caption{Graph statistics. \textit{\#words} is the number of words in the whole text dataset. The metrics for co-occurrence graphs are obtained using a window size of 1. The \textit{\#nodes/\#words} metric corresponds to a compression factor. Note that, on average, the concept maps have a compression factor of 8\% compared to the 24\% of co-occurrence graphs. This means that co-occurrence graphs have approximately three times more node labels than concept maps. The \textit{\#edges/\#nodes} metric is an indicator for the connectedness of the graphs. Because we remove nodes which have no edge to other nodes, the \textit{\#edges/\#nodes} metric captures the average degree of the nodes. Looking at that metric we also see that, on average, the co-occurrence graphs with window size 1 have roughly twice as much edges per node as concept maps.}\label{fig:graph_statistics}
 \end{figure}
 
 \todo{New dataset! Statistics}
@@ -62,13 +62,13 @@ In Figure \ref{fig:graph_examples} shows examples of concept maps and co-occurre
 \begin{figure}[ht]
 \centering
 \includegraphics[width=0.8\linewidth]{assets/figures/hist-connected-components-ling-spam-CMap.pdf}
-\caption{Histogram of connected components per concept map. From \textit{ling-spam} dataset.}\label{fig:histogram_connected_components}
+\caption{Histogram of connected components per concept map. From the \textit{ling-spam} dataset.}\label{fig:histogram_connected_components}
 \end{figure}
 
 \begin{figure}[ht]
 \centering
 \includegraphics[width=0.6\linewidth]{assets/figures/graph-examples.pdf}
-\caption{Graph examples per type. Three examples are shown per type. The number after the co-occurrence graph label signify the window size. The concept map examples all have more than one connected component, while the co-occurrence graphs all have only one. Taken from the \textit{ling-spam} dataset.}\label{fig:graph_examples}
+\caption{Graph examples per type. Three examples are shown per type. The number after the co-occurrence graph label signify the window size. The concept map examples all have more than one connected component, while the co-occurrence graphs all have only one. Taken the \textit{ling-spam} dataset.}\label{fig:graph_examples}
 \end{figure}
 
 \begin{figure}[ht]
@@ -155,6 +155,48 @@ This is most likely due to the high compression factor of concept maps and co-oc
 \caption{Comparison of concept maps with text}
 \label{fig:results_cmap_vs_text}
 \end{figure}
+
+\subquestionref{question:multi_labels}
+As we can see in Figure \ref{?}, most concept map node labels consist of more than one word. 
+
+
+\subquestionref{question:edge_labels}
+In concept maps, an edge label can be combined with the label of its source and target nodes to form a sentence.
+To evaluate how important the edge labels are, we first look at the occurrences of edge labels, ie. how often a unique edge label occurs in the concept maps of a whole dataset.
+In Figure \ref{fig:edge_label_occurrences} we see that, on average, 76\% of all unique edge labels occur only once per dataset.
+
+When looking at the most occurring edge labels per dataset, most of these most-frequent edge labels consist of stopwords or non-descriptive words like ``is", ``has", ``are".
+These most-frequent edge labels, together with the edge labels which occur only once, form the bulk of all edge labels.
+
+As a test for the importance of edge labels, we evaluate \textbf{(a)} a graph kernel which uses the edge labels against \textbf{(b)} a graph kernel which does not use edge labels.
+For both, \textbf{(a)} and \textbf{(b)}, we use a graph kernel which first converts into a set of labels and then counts the number of these labels for each graph.
+For \textbf{(a)} we use the edge labels, for \textbf{(b)} we omit them.
+
+\begin{figure}[ht]
+	\centering
+\begin{tabular}{lrr}
+	dataset &  $ \%_{unique} $ & $ \%_{all}$  \\
+	\midrule
+	ling-spam       & 69 & 27 \\
+	ng20            & 73 & 30 \\
+	nyt\_middle      & 73 & 32 \\
+	nyt\_small       & 78 & 43 \\
+	review\_polarity & 80 & 39 \\
+	rotten\_imdb     & 80 & 47 \\
+	tagmynews       & 75 & 39 \\
+	ted\_talks       & 80 & 39 \\
+	\midrule
+	\O           & 76 & 37 \\
+	\bottomrule
+\end{tabular}
+	\caption{Percentage of concept map edge labels occurring only once in the whole dataset.
+	 $ \%_{unique} $ corresponds to the percentage of edge labels which only occur once to the number of unique labels in the whole dataset, eg. $ \%_{unique} = 50\% $ would mean that 50\% of all unique edge labels occur only once.
+	 $ \%_{all}$ stands for the percentage of edge labels which occur only once to all labels (with duplicates), eg. $ \%_{all} = 50\%$ would mean that 50\% of all edge labels occur only once in the dataset.}\label{fig:edge_label_occurrences}
+\end{figure}
+
+\subquestionref{question:concept_map_size}
+\todo{Examples of concept maps created from varying size texts}
+\todo{Evaluate performance of varying size concept maps}
 
 \subquestionref{question:dataset_diversity}
 \todo{WL sparsity per dataset}

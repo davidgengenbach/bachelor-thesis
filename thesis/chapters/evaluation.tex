@@ -55,6 +55,21 @@ Nevertheless, it is an interesting baseline for graph-based text-classification.
 \subquestion{How does the classification performance with concept maps compare to non-structural, text-based approaches?}{question:comparison_text}
 Here we test the classification performance of graph-based classification directly with the performance of text-only approaches.
 
+\subquestion{How useful are multi-word labels in concept maps?}{question:multi_labels}
+Concept map node labels often consist of more than one word.
+The default approaches we use in this work do not use this fact. 
+For this question we evaluate other approaches which make use of the multi-word labels of concept maps.
+
+\subquestion{How diverse and useful are edge labels in concept maps?}{question:edge_labels}
+Concept maps, in contrast to co-occurrence graphs, have edge labels.
+For this question wee evaluate the importance and role of edge labels in graph classification.
+
+\subquestion{How does the size of concept maps relate to classification performance?}{question:concept_map_size}
+The size of a concept map, ie. the number of nodes and edges, is correlated to the size of its underlying text.
+Also, the number of occurrences of a single concept in a given text is important for the degree of the corresponding node, ie. when a concept occurs only once in a given text, the corresponding node in the concept map will have a low degree.
+On the other hand, when a concept occurs multiple times in a text, the degree of this concept will most likely increase.
+For this question, we investigate this hypothesis and look at concept maps created from texts with varying length.
+
 \subquestion{How different are the datasets and how does it affect the classification performance?}{question:dataset_diversity}
 
 \subquestion{How useful are the concept maps combined with text classification?}{question:comparison_combined}
@@ -74,6 +89,20 @@ Before creating the vector representations of the text documents or the creation
 \item{and normalizing the whitespace (eg. replacing multiple spaces with a single space)}
 \end{itemize}
 These pre-processing steps are similar to the pre-processing done in \cite{Cachopo2007}.
+
+\begin{figure}[ht]
+	\subfloat[Before]{I've heard *unconfirmed* rumours that there is a new Integra being released
+		for '94.
+		
+		Does anybody have any info on this?
+		
+		The local sales people know as much as I can throw them.
+		
+		--Parms.}
+	\hfill
+	\subfloat[After]{i've heard unconfirmed rumours that there is a new integra being released for ' NUMBER. does anybody have any info on this? the local sales people know as much as i can throw them. parms.}
+	\caption{Pre-processing. Example text taken from \textit{ng20} dataset.}\label{fig:todo}
+\end{figure}
 
 \todo{Provide example of preprocessing}
 
@@ -139,8 +168,8 @@ We obtained our copy of the dataset from here\footnote{\url{https://catalog.ldc.
 \paragraph{reuters-21578}
 This dataset consists of news articles collected and published by Carnegie Group and Reuters.
  The class distribution of the \textit{reuters-21578} dataset is highly skewed, ie. the number of instances per class is not the same for all classes.
- Some of the articles have multiple classes assigned. For our purposes, single-label classification, we only used articles with one class.
- We also only use articles which consist of more than 20 words, so that meaningful concept maps can be created.
+ Some of the articles have multiple classes assigned. For our purposes, that is single-label classification, we only used articles with one class.
+ We also only use documents which consist of more than 20 words, so that meaningful concept maps can be created.
 
 We obtained the \textit{reuters-21578} dataset from here\footnote{\url{http://www.nltk.org/book/ch02.html\#reuters-corpus}}.
 
@@ -149,19 +178,21 @@ This dataset is a subset of the \textit{reuters-21578} dataset.
 It consists of the 8 most frequent classes of the \textit{reuters-21578} dataset, ie. the 8 classes with the most documents.
 
 \paragraph{review\_polarity}
-\cite{Pang2004}.
-\footnote{\url{http://www.cs.cornell.edu/people/pabo/movie-review-data/review\_polarity.tar.gz}}
+The \textit{review\_polarity v2} dataset consists of positive and negative reviews for movies by users on a movie .
+One thing to note is that the reviews are sometimes quite short and informal.
+
+The dataset was introduced in \cite{Pang2004}. We obtained our copy from the author's website \footnote{\url{http://www.cs.cornell.edu/people/pabo/movie-review-data/review\_polarity.tar.gz}}.
 
 \paragraph{rotten\_imdb}
-\cite{Pang2004}.
-\footnote{\url{http://www.cs.cornell.edu/people/pabo/movie-review-data/rotten\_imdb.tar.gz}}
+This dataset consists of sentences, each labeled with one of two classes: \textit{subjective} or \textit{objective}.
+Note that this dataset consists of short texts and can therefore be used to evaluate the performance of small concept maps.
+
+The dataset w as introduced in \cite{Pang2004}. We obtained our copy from the author's website\footnote{\url{http://www.cs.cornell.edu/people/pabo/movie-review-data/rotten\_imdb.tar.gz}}.
 
 \paragraph{tagmynews}
-This corpus consists of summaries obtained from the RSS feeds of three news sites, \textit{nyt.com}, \textit{usatoday.com}, \textit{reuters.com}.
-The dataset was introduced by 
-\todo{Add paper reference: Daniele Vitale, Paolo Ferragina, and Ugo Scaiella. 2012. Classification of Short Texts by Deploying Topical Annotations.}
-
-We obtained the copy from the authors website \footnote{\url{http://acube.di.unipi.it/repo/news.gz}}.
+This corpus consists of summaries obtained from the RSS feeds of three news sites, namely \textit{nyt.com}, \textit{usatoday.com} and \textit{reuters.com}.
+The dataset was introduced in \cite{Vitale2012a}.
+We obtained the copy from the author's website\footnote{\url{http://acube.di.unipi.it/repo/news.gz}}.	
 
 \paragraph{webkb}
 This dataset consists of websites which have been downloaded from 4 american universities. It was collected 1977 during the \underline{W}orld \underline{W}ide \underline{K}nowledge \underline{B}ase project by the CMU Text Learning Group.
@@ -263,9 +294,9 @@ In this section we will briefly describe the steps the code performs. For a more
 
 The input to the concept map extraction algorithm is a single text document. The output is a single concept maps for this text document.
 
-First, the algorithm extracts concepts and their relations to each other.
-This is done by extracting binary relations from the text. A binary relation consists of three parts: two concepts and the relation between them. An example for a binary relations is ``David likes something", here ``David" and ``something`` are the concepts and ``likes" the relation them. Note that the binary relation is directed, eg. ``Something likes David" is not the same binary relation as ``David likes something."
+First, the algorithm extracts concepts and their relations to another.
+This is done by extracting binary relations from the text. A binary relation consists of three parts: two concepts and the relation between them. An example for a binary relation is ``David likes something", here ``David" and ``something`` are the concepts and ``likes" the relation them. Note that the binary relation is directed, eg. ``Something likes David" is not the same binary relation as ``David likes something."
 Also, a concept can consist of multiple words, eg. for ``David likes something else.", the concepts would be ``David" and ``something else".
-The extracted concepts are later used as the nodes, and the relation between them as the edges between concepts.
+The extracted concepts are later used as node labels, and the relation between them as the edges between concepts.
 
-Then, the extracted relations get filtered so that only concepts are kept which contains at least one noun and which consist of fewer words than some a given threshold, here 10 words. This filtering is done to ensure the brevity and usefulness of the concepts.
+Next, the extracted relations get filtered so that only concepts are kept which contain at least one noun and which consist of fewer words than some a given threshold, in our case 10 words. This filtering is done to ensure the brevity and usefulness of the concepts.
