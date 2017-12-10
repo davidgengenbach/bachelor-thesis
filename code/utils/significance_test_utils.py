@@ -50,8 +50,16 @@ def randomization_test(y_true: typing.Iterable, y_pred_a: typing.Iterable, y_pre
     return metrics_
 
 
-def get_confidence(diff_global: float, diffs: typing.Iterable, num_trails: int):
-    return (np.sum(np.fabs(diffs) >= np.fabs(diff_global)) + 1) / (num_trails + 1)
+def get_confidence(diff_global: float, diffs: typing.Iterable, num_trails: int, one_tail: bool=False):
+    if one_tail:
+        if diff_global < 0:
+            diff_global = -diff_global
+            diffs = -diffs
+    else:
+        diffs = np.fabs(diffs)
+        diff_global = np.fabs(diff_global)
+
+    return (np.sum(diffs >= diff_global) + 1) / (num_trails + 1)
 
 
 def plot_randomzation_test_distribution(result: Result, metric: MetricFunction=f1, metric_name: str='NOT_SET', num_trails: int=1000):
@@ -73,7 +81,7 @@ def plot_randomzation_test_distribution(result: Result, metric: MetricFunction=f
     df = pd.DataFrame({'metric': diffs})
     df.metric.plot(kind='hist', bins=100, ax=ax, title='Metric: {}, p={:.4f}, #trails={}, diff={:.4f}'.format(metric_name, p, num_trails, diff))
 
-    for x, color in [(diff, 'red'), (-diff, 'red'), (diffs.mean(), 'green')]:
+    for x, color in [(diff, 'red'), (-diff, 'blue'), (diffs.mean(), 'green')]:
         ax.axvline(x, color=color)
 
     plt.show()
@@ -90,7 +98,7 @@ def plot_randomization_test_distribution_(diffs, global_diff, num_trails='NOT_SE
     df = pd.DataFrame({'metric': diffs})
     df.metric.plot(kind='hist', bins=100, ax=ax, title='Metric: {}, p={:.4f}, #trails={}, diff={:.4f}'.format(metric_name, p, num_trails, global_diff))
 
-    for x, color in [(global_diff, 'red'), (-global_diff, 'red'), (diffs.mean(), 'green')]:
+    for x, color in [(global_diff, 'red'), (-global_diff, 'blue'), (diffs.mean(), 'green')]:
         ax.axvline(x, color=color)
 
     fig.tight_layout()
