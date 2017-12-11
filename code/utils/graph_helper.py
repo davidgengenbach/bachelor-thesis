@@ -171,7 +171,7 @@ def convert_graphs_to_adjs_tuples(X, copy=False) -> typing.Iterable:
     if (isinstance(X[0], tuple) or isinstance(X[0], np.ndarray)) and not isinstance(X[0][0], nx.Graph):
         return X
 
-    X_ = []
+    X_ = [] if copy else X
 
     for idx, graph in enumerate(X):
         if (isinstance(graph, np.ndarray) or isinstance(graph, tuple)) and isinstance(graph[0], nx.Graph):

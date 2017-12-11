@@ -66,6 +66,14 @@ In Figure \ref{fig:graph_examples} shows examples of concept maps and co-occurre
 \end{figure}
 
 \begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.9\linewidth]{assets/figures/connected_component_size_comparison.pdf}
+	\caption{Histogram of the size of connected components, ie. the number of nodes per connected component, of concept maps for two datasets. The distribution of the size of connected components varies greatly between different datasets. In this instance, the \textit{ng20} dataset has mostly small connected components while the \textit{ted\_talks} dataset has bigger connected components. This is most likely due to the fact that the \textit{ted\_talks} dataset consists of longer, coherent texts while the \textit{ling-spam} texts are shorter as well as more informal.}
+	\label{fig:histogram_connected_component_size}
+\end{figure}
+
+
+\begin{figure}[ht]
 \centering
 \includegraphics[width=0.6\linewidth]{assets/figures/graph-examples.pdf}
 \caption{Graph examples per type. Three examples are shown per type. The number after the co-occurrence graph label signify the window size. The concept map examples all have more than one connected component, while the co-occurrence graphs all have only one. Taken the \textit{ling-spam} dataset.}\label{fig:graph_examples}
@@ -207,7 +215,7 @@ For \textbf{(a)} we use the edge labels, for \textbf{(b)} we omit them.
 	ted\_talks  & \textbf{0.455} & 0.418 \\
 	\bottomrule
 \end{tabular}
-\caption{Classification results for graph kernel using and not-using edge labels.}\label{fig:edge_label_classification}
+\caption{Classification results for a graph kernel either using or omitting edge labels.}\label{fig:edge_label_classification}
 \end{figure}
 
 As we can see in Figure \ref{fig:edge_label_classification}, omitting or using the edge labels result in comparable performance.
@@ -223,7 +231,30 @@ We compare the classification performance of using the directed versus un-direct
 When using WL with undirected edges, the neighbours $n_v$ of a node $v$ are all nodes $v'$ that are connected by an edge to $v$, or $n_v = \{v' | (v, v') \in E \lor (v', v ) \in E \}$.
 With directed edges, on the other hand, the neighbours $n_v$ of a node $v$ are only nodes $v'$ where there exists a directed edge from $v$ to $v'$, or $n_v = \{v' | (v, v') \in E \}$.
 So, the size of neighbourhoods per node are expected to decrease, since there is an additional constraint to what constitutes a neighbour.
-This results in a variant of the Weisfeiler-Lehman graph kernel which does not 
+
+In Figure \ref{fig:results_directed_vs_undirected} we see the results of using WL with directed and un-directed edges.
+In all datasets, apart from the \textit{ng20} dataset, the directed edges outperform the un-directed approach.
+
+\begin{figure}[ht]
+	\centering
+\begin{tabular}{lrrr}
+	dataset &  un-directed & directed &  difference \\
+	\midrule
+	ling-spam       &  0.6793 &  \textbf{0.7661} &  0.0867 \\
+	ng20            &  \textbf{0.3923} &  0.3728 & -0.0195 \\
+	nyt\_80          &  0.5713 &  \textbf{0.6489} &  0.0776 \\
+	r8              &  0.4240 &  \textbf{0.5445} &  0.1206 \\
+	review\_polarity &  0.5135 & \textbf{ 0.5736 }&  0.0601 \\
+	rotten\_imdb     &  0.5274 &  \textbf{0.5484} &  0.0210 \\
+	tagmynews       &  0.3426 &  \textbf{0.3803} &  0.0377 \\
+	ted\_talks       &  0.1399 &  \textbf{0.1790} &  0.0391 \\
+	\bottomrule
+\end{tabular}
+\caption{Classification results when using directed versus un-directed edges with WL.}\label{fig:results_directed_vs_undirected}
+\end{figure}
+
+This is most likely due to the aforementioned property that the neighbourhoods are smaller with directed edges, making exact matches of neighbourhoods more probable.
+Later on, we will also evaluate whether or how using (un-) directed edges affects the score when combining graph and text features.
 
 \subquestionref{question:concept_map_size}
 In most datasets, longer texts often result in higher classification performance.

@@ -1,25 +1,12 @@
 limit_dataset:
-- cade-ana
-- imsdb
 - ling-spam
-- mini20-ana
 - ng20
-- ng20-ana
-- nyt
-- nyt_200
 - nyt_80
-- r52-ana
 - r8
-- r8-ana
-- reuters-21578
 - review_polarity
 - rotten_imdb
-- small
 - tagmynews
 - ted_talks
-- ted_talks_unclassified
-- webkb
-- webkb-ana
 limit_graph_type:
 - cooccurrence
 - concept_map

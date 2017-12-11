@@ -117,19 +117,19 @@ For the co-occurrence graphs, we also optionally filtered out the non-nouns to i
 \paragraph{Text-based representations}
 For the text classification pipeline, we used two different text vectorization algorithms, namely
 \begin{itemize}
-\item{Bag Of Words (BoW): this algorithm simply gathers all words in the corpus and creates a mapping between words and indices (ids). Then it creates a vector representation for each text so that the i-th vector component is the count of the corresponding word in the text. Ie. $i$ is the index of the word in the mapping.}
-\item{Term-Frequency-Inverse-Document-Frequency (TfIdf): this approach is an extension to BoW. Instead of using only the counts of a word in the text, this approach also incorporates the term frequency and the inverse document frequency of the words into the vector representation.}
+\item{\textit{Bag Of Words} (BoW): this algorithm simply gathers all words in the corpus and creates a mapping between words and consecutive indices. Then it creates a vector representation for each text so that the i-th vector component is the count of the corresponding word in the text. Ie. $i$ is the index of the word in the mapping.}
+\item{\textit{Term-Frequency-Inverse-Document-Frequency} (TfIdf): this approach is an extension to BoW. Instead of using only the counts of a word in the text, this approach also incorporates the term frequency and the inverse document frequency of the words into the vector representation.}
 \end{itemize}
 Both approaches can also be extended by not only utilizing single words (unigrams) but n-grams, too. A word n-gram consists of $n$ words that appear consecutively in the text.
 For example, the sentence ``This is a sentence." has the following 2-grams, or bigrams: $\{ (This, is), (is, a), (a, sentence) \}$.
-For our purposes, we looked at both uni-grams and bi-grams.
+For our purposes, we looked at both unigrams and bigrams.
 Note that word n-grams do not take word inversion into account, ie. the bigram (a, b) is not the same as (b, a).
 
 \paragraph{Graph-based representations}
 To compare the performance of concept maps with other graphs, we generated co-occurrence graphs with window sizes $w \in \{1, 2, 3, 4\}$.
 We also evaluated the performance of co-occurrence graphs where only nouns are retained to mimic the compression factor of concept maps.
 
-For the extraction of the concept maps from the text, we used the implementation by Falke \cite{Falke2017}.
+For the extraction of the concept maps from the text, we used the implementation by Falke, introduced in \cite{Falke2017}.
 An explanation of the steps to create the concept maps is given in \ref{sec:implementation}.
 \todo{Directed edges!}
 
@@ -140,9 +140,11 @@ An explanation of the steps to create the concept maps is given in \ref{sec:impl
 \todo{Add diagram for gram-matrix based classification.}
 
 \labelsubsection{Datasets}{subsec:datasets}
-\todo{A script to download all datasets is also provided alongside the other code}
-\todo{What actually is different per dataset? Why these datasets?}
-\todo{Add examples for each dataset?}
+We chose a number of datasets, ranging from informal texts written by internet users, eg.  the \textit{ng20} internet forum corpus, to more structured texts, eg. the \textit{nyt} corpus.
+The texts of the corpora are also of varying length, enabling us to evaluate the effect of varying concept map sizes.
+
+We provide download links for all the datasets except for the commercial \textit{nyt} dataset.
+A script to download these datasets is also provided alongside the other code.
 
 \paragraph{ling-spam}
 The Ling-Spam dataset was created and introduced by Androutsopoulos et al. in  \cite{Androutsopoulos2000}.
@@ -168,9 +170,12 @@ As labels we used the online sections an article has been posted to.
 
 We found this dataset when searching for a corpus consisting of long documents. 
 For our purposes we only used articles with more than 3000 words and from the six most frequent labels.
-Since the extraction of concept maps for documents of this document size takes a long time, we randomly selected 20 documents for each of the six labels, resulting in a dataset of 120 articlesgit git.
+Since the extraction of concept maps for documents of this document size takes a long time, we randomly selected 200 documents for each of the six labels, resulting in a dataset of 1200 articles.
+Besides the long texts, the other reason we chose this dataset is that it contains high-quality texts.
+The texts of most of other datasets we considered are gathered from posts by internet users and often lack basic punctuation or contain misspellings.
+This missing structure makes the extraction of concept maps harder since they concept map extraction relies on reliable part-of-speech tags which in turn profit from correct spelling and syntax. 
 
-We obtained our copy of the dataset from here\footnote{\url{https://catalog.ldc.upenn.edu/LDC2008T19}}.
+We obtained our copy of the dataset from here\footnote{\url{https://catalog.ldc.upenn.edu/LDC2008T19} (This is a commercial dataset and has to be bought.)}.
 
 \paragraph{reuters-21578}
 This dataset consists of news articles collected and published by Carnegie Group and Reuters.
@@ -185,8 +190,8 @@ This dataset is a subset of the \textit{reuters-21578} dataset.
 It consists of the 8 most frequent classes of the \textit{reuters-21578} dataset, ie. the 8 classes with the most documents.
 
 \paragraph{review\_polarity}
-The \textit{review\_polarity v2} dataset consists of positive and negative reviews for movies by users on a movie .
-One thing to note is that the reviews are sometimes quite short and informal.
+The \textit{review\_polarity v2} dataset consists of positive and negative reviews for movies by users.
+One thing to note is that these reviews are often quite short and informal.
 
 The dataset was introduced in \cite{Pang2004}. We obtained our copy from the author's website \footnote{\url{http://www.cs.cornell.edu/people/pabo/movie-review-data/review\_polarity.tar.gz}}.
 

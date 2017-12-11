@@ -273,6 +273,14 @@ def get_predictions(folder: str = None, filenames: typing.Collection = None) -> 
         yield prediction_file, prediction
 
 
+def get_experiments_by_names(names: list) -> pd.DataFrame:
+    df = pd.DataFrame()
+    for x in names:
+        df_ = get_results(filter_out_experiment=x, filter_out_non_complete_datasets=False)
+        df = df.append(df_)
+    return df
+
+
 def save_results(gscv_result, filename, info=None, remove_coefs=True):
     if remove_coefs:
         remove_coefs_from_results(gscv_result)

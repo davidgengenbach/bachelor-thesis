@@ -95,12 +95,16 @@ def get_all_task_typ_params_flat(task_type_params: dict = None, remove_complex_t
     return clean_params_config
 
 
-def save_experiment_params_as_experiment_config(file: str = constants.EXPERIMENT_CONFIG_ALL):
+def save_experiment_params_as_experiment_config(file: str = constants.EXPERIMENT_CONFIG_ALL, only_with_concept_maps: bool=True):
     folder = file.rsplit('/', 1)[0]
     os.makedirs(folder, exist_ok=True)
 
     task_type_params = get_all_task_typ_params_flat()
-    datasets = dataset_helper.get_all_available_dataset_names()
+
+    if only_with_concept_maps:
+        datasets = dataset_helper.get_dataset_names_with_concept_map()
+    else:
+        datasets = dataset_helper.get_all_available_dataset_names()
 
     with open(file, 'w') as f:
         yaml.dump(dict(
