@@ -1,11 +1,3 @@
-limit_dataset:
-#- ling-spam
-#- ng20
-#- reuters-21578
-- review_polarity
-#- rotten_imdb
-#- tagmynews
-#- webkb
 limit_graph_type:
 - concept_map
 params_per_type:

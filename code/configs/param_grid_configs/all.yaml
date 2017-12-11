@@ -7,8 +7,7 @@ limit_dataset:
 - ng20-ana
 - nyt
 - nyt_200
-- nyt_middle
-- nyt_small
+- nyt_80
 - r52-ana
 - r8
 - r8-ana

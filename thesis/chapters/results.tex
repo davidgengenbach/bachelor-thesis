@@ -215,12 +215,21 @@ For some datasets, omitting the edge label actually improves the classification 
 
 \todo{These facts all indicate that edge labels, while crucial and useful for text-summarization and the subsequent use by a human, seem to have limited use in graph classification.}
 
+\subquestionref{question:directed_vs_undirected}
+The concept maps we extracted have directed edges.
+In this question, we evaluate the usefulness of these two cases.
+We compare the classification performance of using the directed versus un-directed case with the Weisfeiler-Lehman graph kernel.
+
+When using WL with undirected edges, the neighbours $n_v$ of a node $v$ are all nodes $v'$ that are connected by an edge to $v$, or $n_v = \{v' | (v, v') \in E \lor (v', v ) \in E \}$.
+With directed edges, on the other hand, the neighbours $n_v$ of a node $v$ are only nodes $v'$ where there exists a directed edge from $v$ to $v'$, or $n_v = \{v' | (v, v') \in E \}$.
+So, the size of neighbourhoods per node are expected to decrease, since there is an additional constraint to what constitutes a neighbour.
+This results in a variant of the Weisfeiler-Lehman graph kernel which does not 
+
 \subquestionref{question:concept_map_size}
 In most datasets, longer texts often result in higher classification performance.
 So, an interesting question is whether the size of a concept map also correlates with its classification performance, ie. whether ``bigger" graphs in terms of the number of nodes and edges are easier to classify.
 To test this, we classify the graphs with our standard approach, using the Weisfeiler-Lehman graph kernel, then a SVM to classify the feature maps.
 In the next step, we look at the results for different graph sizes, binning them with quantiles, in our case 10 quantiles, or deciles.
-
 
 \begin{figure}[ht]
 	\subfloat[Graphs]{\includegraphics[width=0.49\textwidth]{assets/figures/graph_binning_num_nodes.pdf}\label{fig:todo_1}}

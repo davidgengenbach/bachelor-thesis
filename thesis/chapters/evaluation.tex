@@ -64,6 +64,10 @@ For this question we evaluate other approaches which make use of the multi-word 
 Concept maps, in contrast to co-occurrence graphs, have edge labels.
 For this question wee evaluate the importance and role of edge labels in graph classification.
 
+\subquestion{How does the performance of using the directed edges in concept maps compare to undirected edges?}{question:directed_vs_undirected}
+Concept maps, in contrast to co-occurrence graphs, also have directed edges.
+To test the effect of using directed versus un-directed edges, we evaluate the classification performance for both cases: directed edges and converted to undirected.
+
 \subquestion{How does the size of concept maps relate to classification performance?}{question:concept_map_size}
 The size of a concept map, ie. the number of nodes and edges, is correlated to the size of its underlying text.
 Also, the number of occurrences of a single concept in a given text is important for the degree of the corresponding node, ie. when a concept occurs only once in a given text, the corresponding node in the concept map will have a low degree.
@@ -76,6 +80,8 @@ For this question, we investigate this hypothesis and look at concept maps creat
 When concept maps indeed have a structure that is useful for classification and which is not captured by text-only approaches, the classification performance should increase when combining graph- and text based approaches.
 We test the performance of the combined text- and graph features by concatenating the vectors of both approaches and then training a classifier with these vectors.
 We also compare the results with both text-only and graph-only approaches.
+
+\subquestion{How does the compute time of graph-based- compare to text-based  approaches?}{question:comparison_runtime}
 
 \subsubsection{Baselines}
 \paragraph{Preprocessing}
@@ -120,11 +126,12 @@ For our purposes, we looked at both uni-grams and bi-grams.
 Note that word n-grams do not take word inversion into account, ie. the bigram (a, b) is not the same as (b, a).
 
 \paragraph{Graph-based representations}
-To compare the performance of concept maps with other graphs, we generated co-occurrence graphs with window sizes of $\{1, 2\}$.
+To compare the performance of concept maps with other graphs, we generated co-occurrence graphs with window sizes $w \in \{1, 2, 3, 4\}$.
 We also evaluated the performance of co-occurrence graphs where only nouns are retained to mimic the compression factor of concept maps.
 
 For the extraction of the concept maps from the text, we used the implementation by Falke \cite{Falke2017}.
 An explanation of the steps to create the concept maps is given in \ref{sec:implementation}.
+\todo{Directed edges!}
 
 \begin{figure}[ht]
 \centering\includegraphics[width=0.6\linewidth]{assets/figures/approach.pdf}

@@ -105,7 +105,7 @@ def _retrieve_node_weights_and_convert_graphs(X, node_weight_function=None, same
     if not use_directed:
         X = [nx.Graph(x) for x in X]
         assert not np.any([x.is_directed() for x in X])
-    
+
     node_weight_factors = get_node_weight_factors(X, metric=node_weight_function)
     X = graph_helper.convert_graphs_to_adjs_tuples(X, copy=True)
 

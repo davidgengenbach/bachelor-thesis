@@ -1,12 +1,3 @@
-limit_dataset:
-- ling-spam
-- ng20
-- ted_talks
-- nyt_small
-- nyt_middle
-- nyt_200
-- review_polarity
-- r8
 limit_graph_type:
 - concept_map
 params_per_type:
