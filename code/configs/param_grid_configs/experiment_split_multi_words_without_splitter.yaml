@@ -1,14 +1,14 @@
-limit_dataset:
-#- ling-spam
+
+- ling-spam
 - ng20
-#- reuters-21578
 - review_polarity
 - rotten_imdb
 - ted_talks
 - nyt_small
 - nyt_middle
-#- tagmynews
-#- webkb
+- nyt_200
+- review_polarity
+- r8
 limit_graph_type:
 - concept_map
 params_per_type:

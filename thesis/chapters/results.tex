@@ -165,34 +165,54 @@ In concept maps, an edge label can be combined with the label of its source and 
 To evaluate how important the edge labels are, we first look at the occurrences of edge labels, ie. how often a unique edge label occurs in the concept maps of a whole dataset.
 In Figure \ref{fig:edge_label_occurrences} we see that, on average, 76\% of all unique edge labels occur only once per dataset.
 
+
+\begin{figure}[ht]
+	\centering
+	\begin{tabular}{lrr}
+		dataset &  $ \%_{unique} $ & $ \%_{all}$  \\
+		\midrule
+		ling-spam       & 69 & 27 \\
+		ng20            & 73 & 30 \\
+		nyt\_middle      & 73 & 32 \\
+		nyt\_small       & 78 & 43 \\
+		review\_polarity & 80 & 39 \\
+		rotten\_imdb     & 80 & 47 \\
+		tagmynews       & 75 & 39 \\
+		ted\_talks       & 80 & 39 \\
+		\midrule
+		\O           & 76 & 37 \\
+		\bottomrule
+	\end{tabular}
+	\caption{Percentage of concept map edge labels occurring only once in the whole dataset.
+		$ \%_{unique} $ corresponds to the percentage of edge labels which only occur once to the number of unique labels in the whole dataset, eg. $ \%_{unique} = 50\% $ would mean that 50\% of all unique edge labels occur only once.
+		$ \%_{all}$ stands for the percentage of edge labels which occur only once to all labels (with duplicates), eg. $ \%_{all} = 50\%$ would mean that 50\% of all edge labels occur only once in the dataset.}\label{fig:edge_label_occurrences}
+\end{figure}
+
 When looking at the most occurring edge labels per dataset, most of these most-frequent edge labels consist of stopwords or non-descriptive words like ``is", ``has", ``are".
 These most-frequent edge labels, together with the edge labels which occur only once, form the bulk of all edge labels.
 
 As a test for the importance of edge labels, we evaluate \textbf{(a)} a graph kernel which uses the edge labels against \textbf{(b)} a graph kernel which does not use edge labels.
-For both, \textbf{(a)} and \textbf{(b)}, we use a graph kernel which first converts into a set of labels and then counts the number of these labels for each graph.
+For both, \textbf{(a)} and \textbf{(b)}, we use a graph kernel which first converts the graphs into a set of labels and then counts the number of these labels for each graph.
 For \textbf{(a)} we use the edge labels, for \textbf{(b)} we omit them.
 
 \begin{figure}[ht]
 	\centering
 \begin{tabular}{lrr}
-	dataset &  $ \%_{unique} $ & $ \%_{all}$  \\
+	{} & \multicolumn{2}{c}{edge labels} \\
+	dataset & without & with \\
 	\midrule
-	ling-spam       & 69 & 27 \\
-	ng20            & 73 & 30 \\
-	nyt\_middle      & 73 & 32 \\
-	nyt\_small       & 78 & 43 \\
-	review\_polarity & 80 & 39 \\
-	rotten\_imdb     & 80 & 47 \\
-	tagmynews       & 75 & 39 \\
-	ted\_talks       & 80 & 39 \\
-	\midrule
-	\O           & 76 & 37 \\
+	ling-spam  & 0.926 & \textbf{0.932} \\
+	ng20       & \textbf{0.595} & 0.592 \\
+	nyt\_middle & \textbf{0.795} & 0.793 \\
+	nyt\_small  & 0.720 &\textbf{ 0.740} \\
+	ted\_talks  & \textbf{0.455} & 0.418 \\
 	\bottomrule
 \end{tabular}
-	\caption{Percentage of concept map edge labels occurring only once in the whole dataset.
-	 $ \%_{unique} $ corresponds to the percentage of edge labels which only occur once to the number of unique labels in the whole dataset, eg. $ \%_{unique} = 50\% $ would mean that 50\% of all unique edge labels occur only once.
-	 $ \%_{all}$ stands for the percentage of edge labels which occur only once to all labels (with duplicates), eg. $ \%_{all} = 50\%$ would mean that 50\% of all edge labels occur only once in the dataset.}\label{fig:edge_label_occurrences}
+\caption{Classification results for graph kernel using and not-using edge labels.}\label{fig:edge_label_classification}
 \end{figure}
+
+As we can see in Figure \ref{fig:edge_label_classification}, omitting or using the edge labels results in comparable performance.
+For some datasets omitting the edge label actually improves the classification score.
 
 \subquestionref{question:concept_map_size}
 \todo{Examples of concept maps created from varying size texts}
@@ -256,24 +276,24 @@ webkb           &  0.1132 &  0.0526 \\
    dataset   & &  Concept Map &  Co-Occurrence \\
 \midrule
 ling-spam 
-          & text only & \multicolumn{2}{c}{ 0.966179 }\\
           & graph only &  0.741138 &  0.794719\\
           & combined &  0.986928 &  0.977104\\
+          & text only & \multicolumn{2}{c}{ 0.966179 }\\
 \midrule
 ng20 
-          & text only & \multicolumn{2}{c}{ 0.681245 }\\
           & graph only &  0.263055 &  0.511980\\
           & combined &  0.738239 &  0.690968\\
+          & text only & \multicolumn{2}{c}{ 0.681245 }\\
 \midrule
 reuters-21578 
-          & text only & \multicolumn{2}{c}{ 0.320838 }\\
           & graph only &  0.085752 &  0.229710\\
           & combined &  0.264947 &  0.291086\\
+          & text only & \multicolumn{2}{c}{ 0.320838 }\\
 \midrule
 webkb 
-          & text only & \multicolumn{2}{c}{ 0.702095 }\\
           & graph only &  0.222296 &  0.472485\\
           & combined &  0.722667 &  0.741964\\
+          & text only & \multicolumn{2}{c}{ 0.702095 }\\	
 \bottomrule
 \end{tabular}
 \caption{Comparison of classification using both concept maps and text. TODO: Add standard deviations}%

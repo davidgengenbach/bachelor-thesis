@@ -4,6 +4,9 @@ limit_dataset:
 - ted_talks
 - nyt_small
 - nyt_middle
+- nyt_200
+- review_polarity
+- r8
 params_per_type:
   dummy_most_frequent:
     classifier:
