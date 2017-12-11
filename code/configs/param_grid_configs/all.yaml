@@ -60,6 +60,8 @@ params_per_type:
       fast_wl:
         h:
         - 10
+        ignore_label_order:
+        - false
         node_weight_function:
         - NoneType
         phi_dim:
@@ -67,6 +69,10 @@ params_per_type:
         round_to_decimals:
         - 10
         same_label:
+        - false
+        use_directed:
+        - true
+        use_early_stopping:
         - false
       phi_picker:
         return_iteration:
@@ -91,6 +97,8 @@ params_per_type:
             fast_wl:
               h:
               - 10
+              ignore_label_order:
+              - false
               node_weight_function:
               - NoneType
               phi_dim:
@@ -98,6 +106,10 @@ params_per_type:
               round_to_decimals:
               - 10
               same_label:
+              - false
+              use_directed:
+              - true
+              use_early_stopping:
               - false
             phi_picker:
               return_iteration:
@@ -152,15 +164,21 @@ params_per_type:
       fast_wl:
         h:
         - 10
+        ignore_label_order:
+        - false
         node_weight_function:
+        - function
+        - function
         - NoneType
-        - function
-        - function
         phi_dim:
         - 326445
         round_to_decimals:
         - 10
         same_label:
+        - false
+        use_directed:
+        - true
+        use_early_stopping:
         - false
       phi_picker:
         return_iteration:
@@ -176,6 +194,8 @@ params_per_type:
       fast_wl:
         h:
         - 10
+        ignore_label_order:
+        - false
         node_weight_function:
         - NoneType
         phi_dim:
@@ -183,6 +203,10 @@ params_per_type:
         round_to_decimals:
         - 10
         same_label:
+        - false
+        use_directed:
+        - true
+        use_early_stopping:
         - false
       phi_picker:
         return_iteration:

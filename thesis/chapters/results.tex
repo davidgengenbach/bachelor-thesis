@@ -163,8 +163,7 @@ As we can see in Figure \ref{?}, most concept map node labels consist of more th
 \subquestionref{question:edge_labels}
 In concept maps, an edge label can be combined with the label of its source and target nodes to form a sentence.
 To evaluate how important the edge labels are, we first look at the occurrences of edge labels, ie. how often a unique edge label occurs in the concept maps of a whole dataset.
-In Figure \ref{fig:edge_label_occurrences} we see that, on average, 76\% of all unique edge labels occur only once per dataset.
-
+In Figure \ref{fig:edge_label_occurrences} we see that, on average, 76\% of all unique edge labels occur only once per dataset. For comparison, the percentage of unique words which only occur once in a text, on average, is often well below 50\% for our datasets.
 
 \begin{figure}[ht]
 	\centering
@@ -188,7 +187,7 @@ In Figure \ref{fig:edge_label_occurrences} we see that, on average, 76\% of all 
 		$ \%_{all}$ stands for the percentage of edge labels which occur only once to all labels (with duplicates), eg. $ \%_{all} = 50\%$ would mean that 50\% of all edge labels occur only once in the dataset.}\label{fig:edge_label_occurrences}
 \end{figure}
 
-When looking at the most occurring edge labels per dataset, most of these most-frequent edge labels consist of stopwords or non-descriptive words like ``is", ``has", ``are".
+When examining the most occurring edge labels per dataset, most of these most-frequent edge labels consist of stopwords or non-descriptive words like ``is", ``has", ``are".
 These most-frequent edge labels, together with the edge labels which occur only once, form the bulk of all edge labels.
 
 As a test for the importance of edge labels, we evaluate \textbf{(a)} a graph kernel which uses the edge labels against \textbf{(b)} a graph kernel which does not use edge labels.
@@ -211,12 +210,30 @@ For \textbf{(a)} we use the edge labels, for \textbf{(b)} we omit them.
 \caption{Classification results for graph kernel using and not-using edge labels.}\label{fig:edge_label_classification}
 \end{figure}
 
-As we can see in Figure \ref{fig:edge_label_classification}, omitting or using the edge labels results in comparable performance.
-For some datasets omitting the edge label actually improves the classification score.
+As we can see in Figure \ref{fig:edge_label_classification}, omitting or using the edge labels result in comparable performance.
+For some datasets, omitting the edge label actually improves the classification score.
+
+\todo{These facts all indicate that edge labels, while crucial and useful for text-summarization and the subsequent use by a human, seem to have limited use in graph classification.}
 
 \subquestionref{question:concept_map_size}
-\todo{Examples of concept maps created from varying size texts}
-\todo{Evaluate performance of varying size concept maps}
+In most datasets, longer texts often result in higher classification performance.
+So, an interesting question is whether the size of a concept map also correlates with its classification performance, ie. whether ``bigger" graphs in terms of the number of nodes and edges are easier to classify.
+To test this, we classify the graphs with our standard approach, using the Weisfeiler-Lehman graph kernel, then a SVM to classify the feature maps.
+In the next step, we look at the results for different graph sizes, binning them with quantiles, in our case 10 quantiles, or deciles.
+
+
+\begin{figure}[ht]
+	\subfloat[Graphs]{\includegraphics[width=0.49\textwidth]{assets/figures/graph_binning_num_nodes.pdf}\label{fig:todo_1}}
+	\hfill
+	\subfloat[Text]{\includegraphics[width=0.49\textwidth]{assets/figures/text_binning_num_words.pdf}\label{fig:todo_2}}
+	\caption{Classification performance per graph/text size. The x-axis corresponds to the size of the graph/text, the y-axis for the classification performance for graphs/text of that size. Dataset: \textit{ng20}}\label{fig:graph_size_performance}
+\end{figure}
+
+In Figure \ref{fig:graph_size_performance} we see an example for the \textit{ng20} dataset where we binned the different graph and text sizes and report the classification scores of documents with these sizes.
+For this dataset, the results indicate that classification performance indeed correlates with the number of nodes of the concept map.
+In other datasets, this correlation is not as distinguished.
+\todo{Results for other datasets have to be inserted!}
+
 
 \subquestionref{question:dataset_diversity}
 \todo{WL sparsity per dataset}

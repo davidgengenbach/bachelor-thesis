@@ -3,6 +3,7 @@ import sklearn
 from kernels import fast_wl
 from utils import graph_helper
 import numpy as np
+import networkx as nx
 
 def iteration_weight_function_exponential(iteration:int):
     return int(np.ceil(
@@ -17,7 +18,7 @@ def iteration_weight_constant(iteration: int, constant:int=1):
 
 
 class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.TransformerMixin):
-    def __init__(self, h=1, phi_dim=None, round_to_decimals=10, ignore_label_order=False, node_weight_function=None, node_weight_iteration_weight_function=iteration_weight_constant, use_early_stopping=True, same_label=False):
+    def __init__(self, h=1, phi_dim=None, round_to_decimals=10, ignore_label_order=False, node_weight_function=None, node_weight_iteration_weight_function=iteration_weight_constant, use_early_stopping=True, same_label=False, use_directed=True):
         self.h = h
         self.phi_dim = phi_dim
         self.round_to_decimals = round_to_decimals
@@ -26,10 +27,11 @@ class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Tran
         self.use_early_stopping = use_early_stopping
         self.node_weight_iteration_weight_function = node_weight_iteration_weight_function
         self.same_label = same_label
+        self.use_directed = use_directed
 
     def fit(self, X, y=None, **fit_params):
         assert len(X)
-        X, node_weight_factors = _retrieve_node_weights_and_convert_graphs(X, node_weight_function=self.node_weight_function, same_label=self.same_label)
+        X, node_weight_factors = _retrieve_node_weights_and_convert_graphs(X, node_weight_function=self.node_weight_function, same_label=self.same_label, use_directed=self.use_directed)
 
         self.hashed_x = hash_dataset(X)
 
@@ -53,7 +55,7 @@ class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Tran
 
     def transform(self, X, y=None, **fit_params):
         assert len(X)
-        X, node_weight_factors = _retrieve_node_weights_and_convert_graphs(X, node_weight_function=self.node_weight_function, same_label=self.same_label)
+        X, node_weight_factors = _retrieve_node_weights_and_convert_graphs(X, node_weight_function=self.node_weight_function, same_label=self.same_label, use_directed=self.use_directed)
 
         # Use already computed phi_list if the given X is the same as in fit()
         if self.hashed_x == hash_dataset(X):
@@ -98,8 +100,12 @@ def get_node_weight_factors(X, metric=None):
     return out
 
 
-def _retrieve_node_weights_and_convert_graphs(X, node_weight_function=None, same_label=False):
+def _retrieve_node_weights_and_convert_graphs(X, node_weight_function=None, same_label=False, use_directed=True):
     X = graph_helper.get_graphs_only(X)
+    if not use_directed:
+        X = [nx.Graph(x) for x in X]
+        assert not np.any([x.is_directed() for x in X])
+    
     node_weight_factors = get_node_weight_factors(X, metric=node_weight_function)
     X = graph_helper.convert_graphs_to_adjs_tuples(X, copy=True)
 

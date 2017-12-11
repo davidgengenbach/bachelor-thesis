@@ -65,17 +65,22 @@ def get_fast_wl_params(reduced=False, with_node_metrics=False):
 
     params = dict(
         fast_wl__h=[10],
-        fast_wl__same_label=[False],
+        fast_wl__ignore_label_order=[False],
+        fast_wl__node_weight_function=[
+            graph_metrics.nxgraph_degrees_metric,
+            graph_metrics.nxgraph_pagerank_metric,
+            None
+        ],
         fast_wl__phi_dim=[None],
         fast_wl__round_to_decimals=[10],
-        fast_wl__node_weight_function=[
-            None,
-            graph_metrics.nxgraph_degrees_metric,
-            graph_metrics.nxgraph_pagerank_metric
-        ],
+        fast_wl__same_label=[False],
+        fast_wl__use_directed=[True],
+        fast_wl__use_early_stopping=[False],
+
         phi_picker__use_zeroth=[False],
         phi_picker__return_iteration=['stacked']
     )
+
 
     if reduced:
         params['fast_wl__round_to_decimals'] = [10]

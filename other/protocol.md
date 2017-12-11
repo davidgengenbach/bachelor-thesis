@@ -1,3 +1,39 @@
+## 11.12.2017
+- Code
+    - Added distinction between directed/undirected to concept maps
+- Thesis
+    - Added example of pre-processing
+    - Statistics about edge labels
+    - Cleanup
+
+## 10.12.2017
+- Code
+    - Removed multi-class articles from r8/reuters-21578 dataset
+    - Added distinction between one-tail and two-tail permutation test
+    - Statistics about correlation of graph/text size and classification performance
+    - Statistics about occurrences of edge labels
+- Thesis
+    - Wrote paragraph about reuters-21578 dataset
+    - 
+
+
+## 09.12.2017
+- Code
+    - Gathered more graph statistics
+    - Cleanup
+- Thesis
+    - Added paragraph for nyt dataset
+
+
+## 08.12.2017
+- Code
+    - NYT dataset
+        - Initial exploration
+        - Extracted meta-data, body, ...
+        - Category and word count filter
+    - Cleanup
+
+
 ## 06.12.2017
 - Skype call with Tobias
     - Merge labels of un-frequent concepts

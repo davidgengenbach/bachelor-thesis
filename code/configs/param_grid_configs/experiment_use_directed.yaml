@@ -1,0 +1,40 @@
+limit_dataset:
+- ling-spam
+- ng20
+- ted_talks
+- nyt_small
+- nyt_middle
+- nyt_200
+- review_polarity
+- r8
+limit_graph_type:
+#- cooccurrence
+- concept_map
+params_per_type:
+  graph:
+    feature_extraction:
+      fast_wl:
+        h:
+        - 10
+        ignore_label_order:
+        - false
+        node_weight_function:
+        - ~
+        round_to_decimals:
+        - 10
+        same_label:
+        - false
+        use_directed:
+        - false
+        - true
+        use_early_stopping:
+        - false
+      phi_picker:
+        return_iteration:
+        - stacked
+        use_zeroth:
+        - true
+    graph_preprocessing:
+    - ~
+    normalizer:
+    - MaxAbsScaler
