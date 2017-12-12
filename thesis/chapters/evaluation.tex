@@ -95,22 +95,36 @@ Before creating the vector representations of the text documents or the creation
 \item{and normalizing the whitespace (eg. replacing multiple spaces with a single space)}
 \end{itemize}
 These pre-processing steps are similar to the pre-processing done in \cite{Cachopo2007}.
+An example of pre-processing can be seen in Figure \ref{fig:preprocessing_example}.
 
-\begin{figure}[ht]
-	\subfloat[Before]{I've heard *unconfirmed* rumours that there is a new Integra being released
-		for '94.
+\begin{figure}[ht!]
+	\begin{subfigure}[b]{0.45\linewidth}
 		
-		Does anybody have any info on this?
-		
-		The local sales people know as much as I can throw them.
-		
-		--Parms.}
-	\hfill
-	\subfloat[After]{i've heard unconfirmed rumours that there is a new integra being released for ' NUMBER. does anybody have any info on this? the local sales people know as much as i can throw them. parms.}
-	\caption{Pre-processing. Example text taken from \textit{ng20} dataset.}\label{fig:todo}
+\noindent\fbox{%
+\parbox{\textwidth}{%
+\textsf{I've heard *unconfirmed* rumours that there is a new Integra being released
+	for '94.
+	\\
+	\\
+	Does anybody have any info on this?
+	\\
+	\\
+	The local sales people know as much as I can throw them.
+	\\
+	\\
+	--Parms.}}}
+    \caption{Before}
+    \end{subfigure}
+\hspace{0.5in}
+	\begin{subfigure}[b]{0.45\linewidth}
+\noindent\fbox{%
+\parbox{\textwidth}{%
+\textsf{i've heard unconfirmed rumours that there is a new integra being released for ' NUMBER. does anybody have any info on this? the local sales people know as much as i can throw them. parms.}}}
+\vspace{0.5in}
+    \caption{After}
+    \end{subfigure}
+	\caption{Pre-processing example. Text taken from \textit{ng20} dataset.}\label{fig:preprocessing_example}
 \end{figure}
-
-\todo{Provide example of preprocessing}
 
 For the co-occurrence graphs, we also optionally filtered out the non-nouns to increase the compression and thus achieve more comparability to concept maps.
 
@@ -282,13 +296,27 @@ This is far too high to accept the hypothesis on ground of these predictions.
 \todo{\url{https://stats.stackexchange.com/questions/104040/resampling-simulation-methods-monte-carlo-bootstrapping-jackknifing-cross}}
 
 \begin{figure}[ht]
-  \subfloat[True labels]{\includegraphics[width=0.19\textwidth]{assets/figures/permutation_test/true_labels.pdf}\label{fig:permutation_test_true}}
+  \begin{subfigure}[t]{0.29\linewidth}
+  \centering
+  {\includegraphics[height=2.2in]{assets/figures/permutation_test/true_labels.pdf}\label{fig:permutation_test_true}}
+  \caption{True labels}
+  \end{subfigure}
   \hfill
-  \subfloat[Predictions]{\includegraphics[width=0.17\textwidth]{assets/figures/permutation_test/initial_predictions.pdf}\label{fig:permutation_test_model_predictions}}
+  \begin{subfigure}[t]{.29\linewidth}
+  \centering
+  {\includegraphics[height=2.2in]{assets/figures/permutation_test/initial_predictions.pdf}\label{fig:permutation_test_model_predictions}}
+  \caption{Predictions}
+  \end{subfigure}
   \hfill
-  \subfloat[Samples]{\includegraphics[width=0.51\textwidth]{assets/figures/permutation_test/samples.pdf}\label{fig:permutation_test_samples}}
-  \\
-  \subfloat[Observed differences in sample scores]{\includegraphics[width=1\textwidth]{assets/figures/permutation_test/distribution.pdf}\label{fig:permutation_test_distribution}}
+  \begin{subfigure}[t]{0.40\linewidth}
+  \centering
+  {\includegraphics[height=2.2in]{assets/figures/permutation_test/samples.pdf}\label{fig:permutation_test_samples}}
+  \caption{Samples}
+  \end{subfigure}
+  \begin{subfigure}[t]{\linewidth}
+  {\includegraphics[width=1\textwidth]{assets/figures/permutation_test/distribution.pdf}\label{fig:permutation_test_distribution}}
+  \caption{Observed differences in sample scores}
+  \end{subfigure}
   \caption{Permutation test example. A significance test is most often used to test whether a hypothesis is true with a given confidence.}
   \label{fig:example_permutation_test}
 \end{figure}

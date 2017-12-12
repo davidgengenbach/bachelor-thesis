@@ -301,11 +301,20 @@ def get_combined_text_graph_dataset(graph_cache_file, use_ana=False) -> typing.T
     return X_combined, Y_combined
 
 
-def get_adjs_only(X):
+def get_adjs_only(X, copy=True):
+    X_ = [] if copy else X
+
     if not len(X) or not isinstance(X[0], tuple):
-        return
+        return np.copy(X)
+
     for idx, x in enumerate(X):
-        X[idx] = x[0]
+        adj = x[0]
+        if copy:
+            X_.append(adj)
+        else:
+            X[idx] = adj
+
+    return X_
 
 
 def get_graphs_with_mutag_enzyme_format(folder):

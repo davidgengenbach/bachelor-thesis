@@ -263,9 +263,15 @@ To test this, we classify the graphs with our standard approach, using the Weisf
 In the next step, we look at the results for different graph sizes, binning them with quantiles, in our case 10 quantiles, or deciles.
 
 \begin{figure}[ht]
-	\subfloat[Graphs]{\includegraphics[width=0.49\textwidth]{assets/figures/graph_binning_num_nodes.pdf}\label{fig:todo_1}}
+	\begin{subfigure}[t]{.5\linewidth}
+	{\includegraphics{assets/figures/graph_binning_num_nodes.pdf}\label{fig:todo_1}}
+	\caption{Graphs}
+	\end{subfigure}
 	\hfill
-	\subfloat[Text]{\includegraphics[width=0.49\textwidth]{assets/figures/text_binning_num_words.pdf}\label{fig:todo_2}}
+		\begin{subfigure}[t]{.5\linewidth}
+	{\includegraphics{assets/figures/text_binning_num_words.pdf}\label{fig:todo_2}}
+	\caption{Text}
+	\end{subfigure}
 	\caption{Classification performance per graph/text size. The x-axis corresponds to the size of the graph/text, the y-axis for the classification performance for graphs/text of that size. Dataset: \textit{ng20}}\label{fig:graph_size_performance}
 \end{figure}
 

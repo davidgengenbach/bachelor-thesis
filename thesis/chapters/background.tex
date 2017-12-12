@@ -4,12 +4,13 @@ In this chapter we will introduce the notations and concepts we will use in subs
 \todo{Concretize the problem and its notation}
 
 \labelsubsection{Classification Task}{subsec:classification_task}
-Classification in machine learning is the task of automatically assigning classes, or labels, to given datapoints.
+Classification using machine learning is the task of automatically assigning classes, or labels, to given datapoints.
 Given a dataset $D = \{(x_1, y_1), (x_2, y_2), \ldots, (x_n, y_n) \} \subseteq X \times Y$ of $n$ items where $(x_i, y_i)$ are dataset instances, the supervised classification task is to create a classifier which predicts a label $y' \in Y$ for a given $x \in X$.
 In this work, the labels $Y$ of the dataset are denoted with $Y_d = (y_1, y_2, \ldots, y_n )$, the predicted labels are denoted as $Y'_d = (y'_1, y'_2, \ldots, y'_n )$.
-When the number of classes $|Y|$ is 2, the classification task is also called binary classification. When $|Y|$ is greater than 2, the classification is called multi-class classification.
+When the number of classes $|Y| = 2$, the classification task is called binary classification. For higher $|Y|$ it is called multi-class classification.
+In Figure \ref{table:classification_notation} we summarized the notation used in this work.
 
-\begin{figure}[ht]
+\begin{figure}[ht!]
 \centering
 \begin{tabular}{lll}
  & Notation & Definition \\
@@ -24,10 +25,14 @@ Instance & $d_i$ & $(x_i, y_i) \in X \times Y$
 \\
 Dataset & $D$ & $\{(x_1, y_1), \ldots, (x_n, y_n) \} \subseteq X \times Y$ 
 \end{tabular}
-\caption{Classification notation.}
+\caption{Classification notation.}\label{table:classification_notation}
 \end{figure}
 
-The performance of a classifier is evaluated by comparing the predicted labels $y'_i$ for datapoints $x_i$ with the real label $y_i$ in the dataset.
+To automatically assign the labels in a supervised way, generally a classifier algorithm is used to train a classifier by providing it datapoints and their labels.
+The classifier algorithm then, internally, creates a model of the data and often optimizes internal parameters to fit the data.
+During prediction, that is when wanting to automatically assign a label to a (new) datapoint, the new datapoint is given into the classifier which returns a predicted label.
+
+The performance or score of a classifier is evaluated by comparing the predicted labels $y'_i$ for datapoints $x_i$ with the real label $y_i$ in the dataset.
 There are several metrics for evaluating the performance of a classifier.
 The classification metrics we use in this work are summarized in Figure \ref{fig:classification_metrics}.
 
@@ -77,12 +82,33 @@ $F1_{\text{macro}} = \displaystyle \frac{\sum\nolimits_{y \in Y} F1_y}{|Y|}$
 \caption{Classification performance metric notation. As performance metrics, we will us accuracy, macro precision, macro recall and the macro F1 score. The macro version of a metric takes into account how many elements there are in each class which is helpful for skewed datasets, ie. where the number of instances per label is not distributed uniformly per label.}\label{fig:classification_metrics}
 \end{figure}
 
+In this work, we will mostly use a classifier algorithm called \textit{Support Vector Machine}, or \textit{SVM}.
 
 \labelsubsection{Texts}{subsec:texts}
-\todo{Mention approaches to represent text}
+Text is ubiquitous and the task of automatically processing or classifying text has become more important as the volume of available texts grows daily.
+While text is on of the most prominent representation for information for humans, designing algorithms to automatically parse, ``understand" or classify text bear inherent complexities.
+Language is a highly complex method to convey information. 
+Text often creates its own context, eg. by mentioning some concept in the beginning of the text and only implicitly relating it at the end. Or by using different words to represent the same concept.
+Other difficulties arise due to varying writing styles by different authors.
+Another obvious problem is the ambiguous nature of language, eg. in english the word ``bear" can relate to the animal or a verb.
+Often the meaning of a word is defined by its (immediate) context.
+Manually defining rules or algorithms to remove the ambiguity of language have been shown to be very laborious if not impossible.
+
+These and other difficulties harden the task of processing natural language text.
+Yet, the task of processing text emerges in important real-world applications.
+In text classification, for instance, massive amounts of text make manual assignment of labels virtually impossible, so figuring out automatic approaches to classify text becomes appealing.
+Numerous text processing and classification approaches have been proposed in the literature and have shown good accuracy in real-world scenarios.
+
+Since text is most often of non-fixed size, several fixed-size representations have been proposed and employed to enable machine text processing.
+One common approach to represent texts is by counting all unique words in a text. The counts of the unique words can then be, together with a fixed-size vocabulary, transformed into fixed-size representations of the text.
+With this approach, some information about the text is omitted, namely the sentence structure, word-order, word-dependency to name just a few. 
+So, after transforming a text into this representation, recovering the original text becomes impossible.
+That said, while this representation is quite simple and does not capture all information of the text, when using it in the context of text-classification, these representations actually perform very well.
+Such representations provide an easy-to-implement baseline and starting point for further improvements.
+For example, one extension to this representation does not only use the simple one-word counts but also counts word pairs or consecutive word sequences. These sequences are called $n$-grams, where $n$ stands for the size of such the sequence, eg. $2$-grams consist of 2 words and so on.
 
 \labelsubsection{Graphs}{subsec:graphs}
-A labelled graph is a triple $G = (V, E, \pi)$, where $V$ is the set of vertices or nodes, $E \subseteq V \times V$ are the edges and $\pi: V \to X$ is a labelling function which assigns a label to a given vertex. 
+A labeled graph is a triple $G = (V, E, \pi)$, where $V$ is the set of vertices or nodes, $E \subseteq V \times V$ are the edges and $\pi: V \to X$ is a labelling function which assigns a label to a given vertex. 
 A graph is called undirected when $\forall (v_1, v_2) \in E: (v_2, v_1) \in E$, otherwise it is called directed. 
 A graph $G'=(V', E', \pi)$ is called a subgraph of graph $G = (V, E, \pi)$ when $V' \subseteq V$, $E' \subseteq E$ and $\forall (v, v') \in V': v \in V' \land v' \in V'$.
 
@@ -138,7 +164,7 @@ Concepts are important tokens in the text and consist of one or more words of th
 An edge between two concepts show that these concepts are related to each other. Edges can have labels also.
 For an example of a concept map, see Figure \ref{fig:concept_map}.
 
-\begin{figure}[ht]
+\begin{figure}[ht!]
 \centering
 \includegraphics[width=0.5\linewidth]{assets/figures/concept_map.pdf}
 \caption{Example of a concept map. The nodes are the concepts. The directed edges connect the concepts to each other and have labels. In this example of a concept map, one could recover sentences from this graph, for example ``Caffeine \textit{is} a mild CNS stimulant". Taken and adapted from: \cite{Falke2017}}
@@ -151,39 +177,80 @@ Through the degree of a concept, one can also infer the relative importance of t
 
 By combining different texts of the same topic, one can also create a concept map for the whole topic.
 In this case, the concepts are not confined to a single text.
-
 The visualization with concept maps of one or more individual texts therefor enables the non-linear exploration of multiple texts of a topic at the same time.
 
 Since the concepts in a concept map often contain only a small subset of the text, concept maps also summarize the underlying text.
 Only relevant concepts and their relation to each other are captured, making concept maps interesting for (multi-document) text summarization.
 
+Another interesting property is that concept maps with its directed edges can be ``unrolled" into text again, enabling conventional text-processing.
+Figure \ref{fig:concept_map_linearization} shows an example of such an unrolled concept map.
+
+\begin{figure}[ht!]
+	\centering
+	\begin{subfigure}[b]{.49\linewidth}
+		\centering
+		\includegraphics[height=2.2in]{assets/figures/graph_example_linearization.pdf}
+		\caption{Concept map}
+	\end{subfigure}
+	\begin{subfigure}[b]{.49\linewidth}
+		\centering
+		\noindent\fbox{%
+			\parbox{\textwidth}{%
+				\textsf{concept maps \enspace\textbf{are used in}\enspace text summarization.
+					\\
+					concept maps \enspace\textbf{are created from}\enspace binary relations.
+					\\
+					text summarization \enspace\textbf{tries to capture}\enspace relevant information.
+					\\
+					relevant information \enspace\textbf{is captured in}\enspace concept maps.
+		}}}
+		\vspace{0.7in}
+		\caption{Extracted sentences}
+	\end{subfigure}%
+	\caption{Example of a concept map with its linearized version.
+		The directed edges with their source- and sink vertices get unrolled into sentences.
+		Note that there are as many sentences as there are edges in the original concept map.
+		Linearizing a concept map in such a way enables conventional text-processing approaches, eg. extracting word counts with \textit{BoW} then classifying with a \textit{SVM}.}
+	\label{fig:concept_map_linearization}
+\end{figure}
+
 In Chapter \ref{sec:implementation} we introduce the concept map extraction implementation we used and further explain the steps in creating the concept maps.
 
 \subsubsection{Co-Occurrence Graph}
-A co-occurrence graph, or graph-of-words, is generated from a text by creating a (directed) graph with all the words of the underlying text as nodes.
+A co-occurrence graph, or graph-of-words, is generated from a text by creating a graph with all the words of the underlying text as nodes.
 There is an edge between two nodes if the labels of the source and target node co-occur in the text.
 Two words co-occur when the distance between the words in the text is below a given threshold, the window size.
 Co-occurrence graphs can have edge weights corresponding to the counts of the co-occurrence of the words in the text.
 
 Figure \ref{fig:cooccurrence_graphs} shows examples of co-occurrence graphs with different windows sizes.
 
-\begin{figure}[ht]%
+\begin{figure}[ht!]%
     \centering
-    \subfloat[Window size: 1]{{\includegraphics[width=0.3\textwidth]{assets/figures/cooccurrence/window_size_1.pdf} }}%
-    \subfloat[Window size: 2]{{\includegraphics[width=0.3\textwidth]{assets/figures/cooccurrence/window_size_2.pdf} }}%
-    \subfloat[Window size: 6]{{\includegraphics[width=0.3\textwidth]{assets/figures/cooccurrence/window_size_6.pdf} }}%
+    \begin{subfigure}[t]{0.33\linewidth}{\includegraphics[width=\linewidth]{assets/figures/cooccurrence/window_size_1.pdf}}%
+    \caption{Window size: 1}%
+    \end{subfigure}
+    \begin{subfigure}[t]{0.33\linewidth}{\includegraphics[width=\linewidth]{assets/figures/cooccurrence/window_size_2.pdf}}%
+    \caption{Window size: 2}%
+    \end{subfigure}
+    \begin{subfigure}[t]{0.33\linewidth}{\includegraphics[width=\linewidth]{assets/figures/cooccurrence/window_size_6.pdf}}%
+    \caption{Window size: 6}%
+    \end{subfigure}
     \caption{Example for co-occurrence graphs. Generated from the sentence: ``Quotation is a serviceable substitute for wit". With increasing window size, the number of edges and therefor the connectedness of the co-occurrence graph also increases.}%
     \label{fig:cooccurrence_graphs}%
 \end{figure}
 
 Since co-occurrence graphs not only contain the words of the underlying text but also their co-occurrence, they capture not only the content of the text but also the relation between words of the text.
 Therefor they contain structural information about the text.
+But, given a co-occurrence graph, it is not possible to recover the underlying text since all information about word-order or sentence structure is omitted.
+That said, one could augment co-occurrence graphs by using directed edges and therefor keep the word-order intact.
+Yet, even with this augmentation one can not reconstruct the original text.
+
 Because of their similarity to concept maps, we will use co-occurrence maps as a baseline for the graph classification.
 It has to be noted that this comparison is not entirely fair since co-occurrence graphs contain all words of the text and there is only a small loss of information.
 The concept maps we extracted on the other hand have a far greater compression factor as we will see, ie. they summarize the content more.
 For our comparison, we will also not use the edge weights since concept maps do not have edge weights.
 
-\labelsubsection{Graph Kernel}{subsec:graph_kernel}
+\labelsubsection{Graph Kernels}{subsec:graph_kernel}
 In most cases, texts and graphs are not of fixed size.
 However, most classification algorithms operate on fixed size vectors.
 Fortunately, there are several approaches to overcome this problem.
@@ -269,16 +336,16 @@ The gram matrix is symmetric by definition since the underlying kernel is also s
 
 \paragraph{Graph Kernel Categories}
 Several graph kernels have been proposed in the literature.
-Categories of graph kernels include kernels based on shortest-paths, random-walks and subtree patterns, to name just a few.
+Categories of graph kernels include kernels based on shortest-paths \cite{Hermansson2015, Borgwardt2005, Nikolentzos2017b}, random-walks \cite{Neuhaus2006a} and subtree patterns\cite{ShervashidzeNINOSHERVASHIDZE2011,Douglas2011,Shervashidze2009,Kersting2013}, to name just a few.
 A great number of graph kernels have in common that they first create a decomposition of the graph into sub-structures, for example into subtrees, and then count the occurrences of these sub-structures in the graphs.
-The kernels in this category are sometimes called R-Convolution graph kernels.
+The kernels of this kind are sometimes called R-Convolution graph kernels \cite{Namomsa1965a}.
 In the next section, we introduce some examples of graph kernels to get a feeling for the possibilities and trade-offs that different approaches have.
 As mentioned before, any set of valid kernels can be combined easily to form a composite kernel.
 So, any of the algorithms we will introduce in the next section can be combined and extended using other kernels.
 As we will also see in this next section, graph kernels can be quite diverse and capture different information of the objects they are operating on.
 The scope of a graph kernel can therefor also vary widely from only capturing narrow aspects of the graph to actually capturing the complete graph structure and content.
 
-\todo{Mention linearization of graphs?}
+For a more detailed  overview of graph kernels, \cite{Gartner2003a} contains a survey of current graph kernel approaches.
 
 \subsubsection{Examples}
 \paragraph{Simple Equality Graph Kernel}
@@ -349,7 +416,7 @@ One example of such an extension reduces the space requirement of the algorithm 
 
 In Figure \ref{fig:wl_example} we show an example of one WL iteration with label compression.
 
-\todo{Explain and mention ``fast\_wl"}
+\todo{Explain and mention ``fast\_wl" \cite{Kersting2013}}
 \todo{How?}
 \todo{Mention complexity}
 \todo{Explain extensions/modifications we actually used: fast\_wl, label compression, ...}
@@ -357,11 +424,23 @@ In Figure \ref{fig:wl_example} we show an example of one WL iteration with label
 \todo{Mention that WL can be used as a graph isomorphism test - but it fails on certain types of graphs, ie. it reports a isomorphism between graphs that are not the same}
 
 \begin{figure}[ht]
-  \subfloat[Initial graphs]{\includegraphics[width=0.32\textwidth]{assets/figures/wl_example/wl_iteration_0.pdf}\label{fig:wl_example_0}}
+  
+  \begin{subfigure}[t]{0.3\linewidth}
+  {\includegraphics[width=0.32\textwidth]{assets/figures/wl_example/wl_iteration_0.pdf}\label{fig:wl_example_0}}
+  \caption{Initial graphs}
+  \end{subfigure}
   \hfill
-  \subfloat[After relabeling]{\includegraphics[width=0.32\textwidth]{assets/figures/wl_example/wl_iteration_1_stage_0_recolored}\label{fig:wl_example_1}}
+  
+  \begin{subfigure}[t]{0.3\linewidth}
+  {\includegraphics[width=0.32\textwidth]{assets/figures/wl_example/wl_iteration_1_stage_0_recolored}\label{fig:wl_example_1}}
+  \caption{After relabeling}
+  \end{subfigure}
   \hfill
-  \subfloat[After label compression]{\includegraphics[width=0.32\textwidth]{assets/figures/wl_example/wl_iteration_1_stage_1_compressed.pdf}\label{fig:wl_example_2}}
+  
+  \begin{subfigure}[t]{0.3\linewidth}
+  {\includegraphics[width=0.32\textwidth]{assets/figures/wl_example/wl_iteration_1_stage_1_compressed.pdf}\label{fig:wl_example_2}}
+  \caption{After label compression}
+  \end{subfigure}
   \caption{Weisfeiler Lehman algorithm example. This examples shows one WL iteration with two graphs. The initial graphs are shown in \textbf{(a)}. The first step of the iteration is relabeling the graph vertices by concatenating each node label with its sorted neighbourhood labels. The finished relabeled graph is shown in \textbf{(b)}. As an extension to the plain Weisfeiler-Lehman algorithm, we also show the label compression step where the long labels, consisting of the node label and its neighbourhood labels, get compressed into a smaller label by assigning each unique label a new number. Same labels in different graphs get the same new label. The result of this step is shown in \textbf{(c)}. Under \textbf{(a)} and \textbf{(c)} we also added the feature maps $\phi{}$ for the graphs. Each entry in the vector corresponds to a label. If a vector entry is 1, it means that the corresponding label is present in the given graph. The inner product on the vectors of the graphs is the value of the Weisfeiler-Lehman graph kernel for these two graphs.
   In this case, the similarity before the iteration would be $\langle \phi(G_1), \phi(G_2) \rangle = \langle [1, 1, 1, 1, 0, 0, 0, 0], [1, 1, 1, 1, 0, 0, 0, 0] \rangle = 4$. After the relabeling, the value of the inner product is $2$.
   Before doing the WL iteration, the inner product on the feature maps simply returns the number of common labels. After the first iteration, the neighbourhood of each node and therefor the structure of the graph is also reflected in the feature map - resulting in a lower similarity in out example.

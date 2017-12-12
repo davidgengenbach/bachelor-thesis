@@ -1,6 +1,14 @@
+## 12.12.2017
+- Code
+    - 
+- Thesis
+    - Idea: explain "linearization" of graphs with example
+
+
 ## 11.12.2017
 - Code
     - Added distinction between directed/undirected to concept maps
+    - Re-generated w2v embeddings and coref lookup
 - Thesis
     - Added example of pre-processing
     - Statistics about edge labels

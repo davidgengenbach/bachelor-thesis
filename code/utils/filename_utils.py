@@ -60,3 +60,9 @@ def get_result_filename_for_task(task, experiment_config:dict=None):
         parts.append(file)
 
     return '__'.join(parts) + '.npy'
+
+
+def get_topn_threshold_from_lookupfilename(x):
+    matches = re.findall(r'threshold-(.+?)\.topn-(.+?)\.', x)
+    assert len(matches) == 1
+    return matches[0]

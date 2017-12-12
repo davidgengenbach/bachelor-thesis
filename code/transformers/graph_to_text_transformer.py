@@ -11,6 +11,6 @@ class GraphToTextTransformer(sklearn.base.BaseEstimator, sklearn.base.Transforme
         return self
 
     def transform(self, X, y=None, **fit_params):
-        graph_helper.get_adjs_only(X)
+        X = graph_helper.get_graphs_only(X)
         X = [graph_helper.graph_to_text(g, self.use_edges) for g in X]
         return X

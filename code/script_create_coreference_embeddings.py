@@ -5,7 +5,7 @@ import pickle
 from joblib import delayed, Parallel
 
 from relabeling import embeddings, coreference
-from utils import dataset_helper, graph_helper, constants
+from utils import dataset_helper, graph_helper, constants, helper
 from utils.logger import LOGGER
 
 
@@ -16,8 +16,8 @@ def get_args():
     parser.add_argument('--pre_trained_embedding', type=str, default='data/embeddings/glove/glove.6B.50d.w2v.txt')
     parser.add_argument('--embeddings_result_folder', type=str, default='data/embeddings/graph-embeddings')
     parser.add_argument('--limit_dataset', nargs='+', type=str, default=None)
-    parser.add_argument('--merge_threshold', nargs='+', type=float, default=[0.5, 0.7, 0.9])
-    parser.add_argument('--topn', nargs='+', type=int, default=[1])
+    parser.add_argument('--merge_threshold', nargs='+', type=float, default=[0.5, 0.7, 0.9, 0.99])
+    parser.add_argument('--topn', nargs='+', type=int, default=[1, 2, 5, 10])
     parser.add_argument('--force', action='store_true')
 
     args = parser.parse_args()
@@ -26,6 +26,7 @@ def get_args():
 
 def main():
     args = get_args()
+    helper.print_script_args_and_info(args)
 
     LOGGER.info('Loading pre-trained embedding')
 
