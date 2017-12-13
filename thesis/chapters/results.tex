@@ -48,15 +48,31 @@ To address this issue, we then searched for a dataset with longer texts per docu
 \todo{Add statistics about \# of occurrences of concepts in graphs}
 
 Another hint for the un-connectedness of concept maps is the number of connected components.
-In Figure \ref{fig:percentage_more_than_one_connected_component} we can see that most of the graphs have more than one connected component. Together with the observation of the low number of nodes per graph, this also implies the low connectedness of concept maps.
-In Figure \ref{fig:histogram_connected_components} we also plotted the histogram of the number of connected components per graph.
+In Figure \ref{fig:connected_component_percentage_per_size} we can see that most of the graphs have more than one connected component. Together with the observation of the low number of nodes per graph, this also implies the low connectedness of concept maps.
+In this table we also report the percentage of connected components of size $\{2,3,4\}$ to the total number of connected components.
+The results in this table show that the bulk of concept maps consist of small connected components and are generally quite un-connected. Connected components of size 2 and 3, ie. containing 2 or 3 nodes, make up 80 \% of all connected components.
 
+In Figure \ref{fig:histogram_connected_components} we also plotted an histogram of the number of connected components per graph for \textit{ng20}.
 In Figure \ref{fig:graph_examples} shows examples of concept maps and co-occurrence graphs with different window sizes.
 
 \begin{figure}[ht]
 \centering
-\centering\includegraphics[width=1\linewidth]{assets/figures/percentage_more_than_one_connected_component.pdf}
-\caption{Percentage of graphs with more than one connected component. TODO: This can also be put into a table!}\label{fig:percentage_more_than_one_connected_component}
+\begin{tabular}{lrrrr}
+	{} &  $|s_c|=2$ &  $|s_c|=3$ &  $|s_c|=4$ & $|s_{all}| > 1$ \\
+	\midrule
+	ling-spam       & 63.8 & 19.5 & 6.9 & 89.6 \\
+	ng20            & 65.2 & 19.4 & 6.9 & 72.2 \\
+	nyt\_200         & 61.4 & 19.8 & 7.7 & 100.0 \\
+	r8              & 54.3 & 21.2 & 9.0 & 77.8 \\
+	review\_polarity & 62.0 & 20.4 & 7.5 & 100.0 \\
+	rotten\_imdb     & 66.9 & 23.6 & 6.9 & 19.1 \\
+	tagmynews       & 54.2 & 28.3 & 11.2 & 31.7 \\
+	ted\_talks       & 62.6 & 18.4 & 6.9 & 99.4 \\
+	\midrule
+	\O            & \% 61.3 & \% 21.3 & \% 7.9 & \% 73.7 \\
+	\bottomrule
+\end{tabular}
+\caption{Percentage of connected component size of concept maps per dataset. $|s_c|=n$ corresponds to the size of the connected component and the percentage signifies how many connected component in the whole dataset have this size, eg. when $|s_c|=2$ has a 50\% share it means that 50\% of all connected components in all graphs have the size 2. $|s_{all}| > 1$ stands for the percentage of graphs that consist of more than one connected component, eg. when $|s_{all}| > 1$ is 50\% it means that 50\% of all graphs have more than one connected component.}\label{fig:connected_component_percentage_per_size}
 \end{figure}
 
 \begin{figure}[ht]
@@ -263,13 +279,12 @@ To test this, we classify the graphs with our standard approach, using the Weisf
 In the next step, we look at the results for different graph sizes, binning them with quantiles, in our case 10 quantiles, or deciles.
 
 \begin{figure}[ht]
-	\begin{subfigure}[t]{.5\linewidth}
-	{\includegraphics{assets/figures/graph_binning_num_nodes.pdf}\label{fig:todo_1}}
+	\begin{subfigure}[t]{.5\linewidth}	{\includegraphics[width=\linewidth]{assets/figures/graph_binning_num_nodes.pdf}\label{fig:todo_1}}
 	\caption{Graphs}
 	\end{subfigure}
 	\hfill
 		\begin{subfigure}[t]{.5\linewidth}
-	{\includegraphics{assets/figures/text_binning_num_words.pdf}\label{fig:todo_2}}
+	{\includegraphics[width=\linewidth]{assets/figures/text_binning_num_words.pdf}\label{fig:todo_2}}
 	\caption{Text}
 	\end{subfigure}
 	\caption{Classification performance per graph/text size. The x-axis corresponds to the size of the graph/text, the y-axis for the classification performance for graphs/text of that size. Dataset: \textit{ng20}}\label{fig:graph_size_performance}
@@ -311,7 +326,7 @@ This gives an insight into the relative importance of text- and graph features.
 
 
 \begin{figure}[ht]
-\centering\includegraphics[width=0.6\linewidth]{assets/figures/approach.pdf}
+\centering\missingfigure{}
 \caption{Histogram of SVM coefficients trained on combined features}
 \end{figure}
 

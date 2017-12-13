@@ -279,9 +279,11 @@ This property enables composite kernels to capture multiple means of similarity 
 For example, a simple kernel on two numbers (or vectors) is $k(x, x') = | x \cdot x' |$, where $| \cdot |$ is the absolute value (or a norm).
 Another example of a kernel between strings is $k(s, s') = \delta(s = s')$, where $\delta(\cdot)$ is the Kronecker delta. This kernel returns 1 if the two given strings are the same, and 0 if they are different.
 Note that both these kernels are indeed valid.
+That said, when using kernels in the real world, one can also use non-valid kernel, ie. kernels which are non-symmetric and/or return negative numbers. While such ``kernel" are not strictly valid, they can nevertheless perform good in real-world applications, even better than valid kernels.
 
-Kernel functions can be used in kernel methods for classification and other tasks.
+Kernels can be used in kernel methods for classification and other tasks.
 Prominent examples of kernel methods are the SVM, kernelized PCA and Gaussian Processes.
+Later, we will see an example of such kernel methods.
 
 For a subset of kernels, one can also create explicit feature vectors for a given object. In this case, the kernel can be written as an inner product on two fixed-size vectors:
 
@@ -311,24 +313,24 @@ Instead, in the graph isomorphism test one has to find two mappings: one bijecti
 \end{equation*}
 
 \todo{Explain constraints for the mapping}
+
 If such a mapping exists, the two graphs are called isomorphic.
-While the complexity of the graph isomorphism test is not known yet, it is suspected to lie in P or it may be NP-complete.
-
-\todo{This potentially super-polynomial complexity has grave consequences for a graph kernel.}
-\todo{Namely?}
-
-\todo{Creating a graph kernel is always a trade-off}
-\todo{Kernels can be combined!}
-\todo{Explain when $\phi$ can be constructed (Mercer's theorem: ``an implicitly defined function $\varphi$  exists whenever the space $\mathcal{X}$ can be equipped with a suitable measure ensuring the function $k$ satisfies Mercer's condition.")}
-\todo{Mention that functions that do not satisfy Mercer's condition and are not non-negative definite can nevertheless perform quite good in real world applications}
+While the complexity of the graph isomorphism test is not known yet, it is suspected to lie in P or it may also be NP-complete.
+ 
+One could use the graph isomorphism test, or a variant thereof, to create a graph kernel $k_{isomorphism}$ by returning 1 if the two graphs are isomorphic and 0 otherwise.
+Yet, as we noted before, the runtime of the graph isomorphism test is high and also, in the presented version, does not take edge or node labels into account.
+We will see other examples of graph kernels in the next paragraphs.
+Note that each graph kernel has different strengths and weaknesses, often being subject to a trade-off between accuracy versus compute time.
+So, when choosing a suitable kernel, the importance of each aspect of the graphs, eg. labels or structure, has to be assessed.
 
 \paragraph{Gram matrix}
-A gram, or kernel matrix, for a given kernel is a matrix $A$ for a set of objects, $D = (x_1, x_2, \ldots, x_n)$
-The entries of the gram matrix are the pairwise similarities between all objects in the dataset:
+A gram matrix, or kernel matrix, for a given kernel is a matrix $A$ for a set of objects, $D = (x_1, x_2, \ldots, x_n)$ where the entries are the pairwise similarities between all these objects in the dataset:
 \begin{equation*}
     A_{i,j} = k(x_i, x_j)
 \end{equation*}
-When the $\phi$ for each $x$ is given, one can also construct the gram matrix by stacking these vectors into a matrix $M_{\phi}$ and calculating the product on the transpose
+So, the entry in the $i$-th row and $j$-th column signifies the similarity of $x_i$ and $x_j$ under the given kernel.
+
+When the explicit feature map $\phi(x)$ for each $x$ is given, one can also construct the gram matrix by stacking these vectors into a matrix $M_{\phi}$ and calculating the product on the transpose
 \begin{equation*}
     A = M_{\phi} M_{\phi}^T
 \end{equation*}
@@ -337,15 +339,16 @@ The gram matrix is symmetric by definition since the underlying kernel is also s
 \paragraph{Graph Kernel Categories}
 Several graph kernels have been proposed in the literature.
 Categories of graph kernels include kernels based on shortest-paths \cite{Hermansson2015, Borgwardt2005, Nikolentzos2017b}, random-walks \cite{Neuhaus2006a} and subtree patterns\cite{ShervashidzeNINOSHERVASHIDZE2011,Douglas2011,Shervashidze2009,Kersting2013}, to name just a few.
+
 A great number of graph kernels have in common that they first create a decomposition of the graph into sub-structures, for example into subtrees, and then count the occurrences of these sub-structures in the graphs.
 The kernels of this kind are sometimes called R-Convolution graph kernels \cite{Namomsa1965a}.
-In the next section, we introduce some examples of graph kernels to get a feeling for the possibilities and trade-offs that different approaches have.
+In the next section, we introduce some examples of graph kernels to get a feeling for the possibilities and trade-offs different approaches have.
 As mentioned before, any set of valid kernels can be combined easily to form a composite kernel.
 So, any of the algorithms we will introduce in the next section can be combined and extended using other kernels.
 As we will also see in this next section, graph kernels can be quite diverse and capture different information of the objects they are operating on.
-The scope of a graph kernel can therefor also vary widely from only capturing narrow aspects of the graph to actually capturing the complete graph structure and content.
+The scope of a graph kernel can therefor also vary widely from only capturing narrow aspects of the graph to actually incorporating the complete graph structure and content.
 
-For a more detailed  overview of graph kernels, \cite{Gartner2003a} contains a survey of current graph kernel approaches.
+For a more detailed overview on graph kernels, \cite{Gartner2003a} contains a survey of current graph kernel approaches.
 
 \subsubsection{Examples}
 \paragraph{Simple Equality Graph Kernel}
@@ -377,15 +380,18 @@ k_{simple\_structure}(G_1, G_2) = \langle \phi(G_1), \phi(G_1) \rangle
 \end{equation*}
 with $\phi(G) = (n_{triangle}(G), n_{rectangle}(G))^T$. Here, $n_{triangle}$ is the number of the triangle subgraphs in $G$ and $n_{rectangle}$ the number of rectangle subgraphs in $G$.
 This graph kernel is an example of a kernel where the explicit feature map $\phi(G)$ can be computed directly and completely independent of other graphs.
+It is also an example for a R-convolution kernel.
 
-\todo{This kernel actually is quite similar to a real-world kernel named graphlet kernel. In the graphlet kernel, the sub-structures are not triangles and rectangles, but graphlets.}
+The graphlet kernel is quite similar to this example kernel $k_{simple\_structure}$: instead of counting the number of triangles or rectangles, the graphlet graph kernel counts so-called graphlets.
+
+\todo{Explain graphlets}
 
 \paragraph{Random Walk Graph Kernel}
 This kernel does random walks on both graphs and returns the number of matching random walks between the two graphs:
 \begin{equation*}
     k(G_1, G_2) = |r(G_1, n, l) \cap r(G_2, n, l)|
 \end{equation*}
-where $r(G, n, l)$ is return a set of $n$ random walks of length $l$ on graph $G$.
+where $r(G, n, l)$ returns a set of $n$ random walks of length $l$ on graph $G$.
 This graph kernel takes both structure and content into account.
 
 \paragraph{Weisfeiler-Lehman Graph Kernel}
@@ -406,7 +412,8 @@ So, for each iteration, a node gets the same label as another node if they have 
 For the first iteration, the labels of a node consist of the immediate neighbourhood.
 In the next iteration, the label of a node than encodes the neighbourhood of the neighbourhood, ie. 
 
-The Weisfeiler-Lehman graph kernel has been to shown to achieve state-of-the-art performance on several datasets and applications.
+The Weisfeiler-Lehman graph kernel has been shown to achieve state-of-the-art performance on several datasets and applications.
+It takes into account both content and structure, while also performing good in terms of compute-time.
 
 \todo{Complexity? $\mathcal{O}(hm)$, where $h$ is the number of iterations and $m$ is the number of edges in the dataset.}
 
@@ -416,29 +423,23 @@ One example of such an extension reduces the space requirement of the algorithm 
 
 In Figure \ref{fig:wl_example} we show an example of one WL iteration with label compression.
 
-\todo{Explain and mention ``fast\_wl" \cite{Kersting2013}}
-\todo{How?}
-\todo{Mention complexity}
-\todo{Explain extensions/modifications we actually used: fast\_wl, label compression, ...}
-\todo{Mention possibility to create $\phi(G)$ feature map directly (not possible with label-compression)}
-\todo{Mention that WL can be used as a graph isomorphism test - but it fails on certain types of graphs, ie. it reports a isomorphism between graphs that are not the same}
+In this work we will use a variant of the WL graph kernel called \textit{fast\_wl} which was introduced in \cite{Kersting2013}.
+This variant improves the run-time of the plain Weisfeiler-Lehman kernel by cleverly creating a hash of the neighbourhood to create the new coloring for the graph.
+The results are exactly the same as with the plain Weisfeiler-Lehman kernel yet the calculation of the new labels is significantly faster.
+Our implementation also uses label compression, explained in Figure \ref{fig:wl_example}, to further speed up the calculation and assigning integer indices to the new labels, therefore enabling the creation of explicit feature maps $\phi(G)$.
 
 \begin{figure}[ht]
-  
-  \begin{subfigure}[t]{0.3\linewidth}
-  {\includegraphics[width=0.32\textwidth]{assets/figures/wl_example/wl_iteration_0.pdf}\label{fig:wl_example_0}}
+  \centering
+  \begin{subfigure}[t]{0.33\linewidth}
+  {\includegraphics[width=\linewidth]{assets/figures/wl_example/wl_iteration_0.pdf}\label{fig:wl_example_0}}
   \caption{Initial graphs}
   \end{subfigure}
-  \hfill
-  
-  \begin{subfigure}[t]{0.3\linewidth}
-  {\includegraphics[width=0.32\textwidth]{assets/figures/wl_example/wl_iteration_1_stage_0_recolored}\label{fig:wl_example_1}}
+  \begin{subfigure}[t]{0.33\linewidth}
+  {\includegraphics[width=\linewidth]{assets/figures/wl_example/wl_iteration_1_stage_0_recolored}\label{fig:wl_example_1}}
   \caption{After relabeling}
   \end{subfigure}
-  \hfill
-  
-  \begin{subfigure}[t]{0.3\linewidth}
-  {\includegraphics[width=0.32\textwidth]{assets/figures/wl_example/wl_iteration_1_stage_1_compressed.pdf}\label{fig:wl_example_2}}
+  \begin{subfigure}[t]{0.33\linewidth}
+  {\includegraphics[width=\linewidth]{assets/figures/wl_example/wl_iteration_1_stage_1_compressed.pdf}\label{fig:wl_example_2}}
   \caption{After label compression}
   \end{subfigure}
   \caption{Weisfeiler Lehman algorithm example. This examples shows one WL iteration with two graphs. The initial graphs are shown in \textbf{(a)}. The first step of the iteration is relabeling the graph vertices by concatenating each node label with its sorted neighbourhood labels. The finished relabeled graph is shown in \textbf{(b)}. As an extension to the plain Weisfeiler-Lehman algorithm, we also show the label compression step where the long labels, consisting of the node label and its neighbourhood labels, get compressed into a smaller label by assigning each unique label a new number. Same labels in different graphs get the same new label. The result of this step is shown in \textbf{(c)}. Under \textbf{(a)} and \textbf{(c)} we also added the feature maps $\phi{}$ for the graphs. Each entry in the vector corresponds to a label. If a vector entry is 1, it means that the corresponding label is present in the given graph. The inner product on the vectors of the graphs is the value of the Weisfeiler-Lehman graph kernel for these two graphs.

@@ -1,8 +1,11 @@
 ## 12.12.2017
 - Code
-    - 
+    - Cleanup of embeddings creation
 - Thesis
-    - Idea: explain "linearization" of graphs with example
+    - Added several examples
+        - "Linearization" of graphs
+        - Pre-processing
+    - Added text to several sections
 
 
 ## 11.12.2017
