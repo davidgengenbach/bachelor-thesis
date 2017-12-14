@@ -90,6 +90,24 @@ In Figure \ref{fig:graph_examples} shows examples of concept maps and co-occurre
 
 
 \begin{figure}[ht]
+	\centering
+	\begin{tabular}{lrr}
+		\toprule
+		&  concept-map &  cooccurrence \\
+		\midrule
+		ling-spam       &  0.0897 &  0.0651 \\
+		ng20            &  0.0508 &  0.0457 \\
+		reuters-21578   &  0.0899 &  0.0131 \\
+		review\_polarity &  0.1848 &  0.0323 \\
+		rotten\_imdb     &  0.1731 &  0.0801 \\
+		tagmynews       &  0.1399 &  0.0229 \\
+		webkb           &  0.1132 &  0.0526 \\
+		\bottomrule
+	\end{tabular}\caption{Percentage of concepts that occur only once in the dataset. Per graph type and dataset.}
+\end{figure} 
+
+
+\begin{figure}[ht]
 \centering
 \includegraphics[width=0.6\linewidth]{assets/figures/graph-examples.pdf}
 \caption{Graph examples per type. Three examples are shown per type. The number after the co-occurrence graph label signify the window size. The concept map examples all have more than one connected component, while the co-occurrence graphs all have only one. Taken the \textit{ling-spam} dataset.}\label{fig:graph_examples}
@@ -148,7 +166,6 @@ webkb & concept map &  0.472472 &  0.162010 &  0.222296 \\
 \todo{Interpret results!}
 \todo{Ratio between (a), (b) to (c). Why is combined less good?}
 \todo{Why do we not use the zero-th iteration, ie. counting the plain labels?}
-
 
 \subquestionref{question:comparison_coo}
 
@@ -269,7 +286,8 @@ In all datasets, apart from the \textit{ng20} dataset, the directed edges outper
 \caption{Classification results when using directed versus un-directed edges with WL.}\label{fig:results_directed_vs_undirected}
 \end{figure}
 
-This is most likely due to the aforementioned property that the neighbourhoods are smaller with directed edges, making exact matches of neighbourhoods more probable.
+This is most likely due to the aforementioned property that the neighborhoods are smaller with directed edges, making exact matches of neighborhoods more probable.
+Note that using directed edges in WL could be compared with using n-grams: when the order of words/nodes is fixed in one direction, vertices with no outgoing edges do not have a neighborhood. Thus they are, for all WL iterations, considered to be the same label, ie. they get no new color assigned.
 Later on, we will also evaluate whether or how using (un-) directed edges affects the score when combining graph and text features.
 
 \subquestionref{question:concept_map_size}
@@ -295,10 +313,6 @@ For this dataset, the results indicate that classification performance indeed co
 In other datasets, this correlation is not as distinguished.
 \todo{Results for other datasets have to be inserted!}
 
-
-\subquestionref{question:dataset_diversity}
-\todo{WL sparsity per dataset}
-
 \subquestionref{question:comparison_combined}
 As we have seen in the results of the last section, text-based approaches outperform graph-only approaches.
 In this section we investigate how and whether the graph-based approaches improve the classification score when combined with text-based approaches.
@@ -306,46 +320,64 @@ In this section we investigate how and whether the graph-based approaches improv
 For the text features we vectorized the text with a bag-of-words approach. We also tried features with tfidf.
 For the graph features we used the Weisfeiler-Lehman algorithm since it is able to create feature map $\phi(G)$ for the graphs.
 These feature maps can easily be concatenated with the text features.
-For other graph kernels where an explicit feature map $\phi(G)$ can not be calculated, in order to combine graph- and text features, we would have had to create a combined kernel that takes into account both text- and graph features and returns a gram matrix for both of them.
-The interpretability of this approach would be far lower since both graph- and text-features would be merged without being able to distinguish the relative importance of the text- and graph features after creating the gram matrix.
-
+For other graph kernels where an explicit feature map $\phi(G)$ can not be calculated, in order to combine graph- and text features, we would have needed to create a combined kernel that takes both text- and graph features into account and calculate a gram matrix.
+The interpretability of this approach would be far lower since both graph- and text-features would be merged together in a single number without being able to distinguish the relative importance of the text- and graph features after creating the gram matrix.
 In Figure \ref{fig:results_comparison_combined} we see the classification scores for the combined features for both co-occurrence graphs and concept maps.
 
-\todo{This is not true anymore. Classification performance on test set is different!}
 As we see, the performance of the combined approached compared the text-only approach is comparable.
 With some datasets, the combined approach is slightly better than the text-only approach. Especially for the ng20 dataset, we see an improvement of ca. 3\% over the text-only approach.
-To test whether this difference in performance is due to chance, we used the permutation test, 
+To test whether this difference in performance is due to chance, we used the permutation test
+\todo{Add permutation test result}
 
-To better understand the performance when combined text- and graph features, we also trained a one-layer neural network with the combined features and after training, we looked at the weights in the first layer.
-The weights, or coefficients, are an indicator for the importance of a input feature.
-Thus we can look at the weights for the text features and compare them to the weights for the graph features.
-This gives an insight into the relative importance of text- and graph features.
+To better understand the performance when combining text- and graph features, we also train a one-layer neural network, ie. a \textit{Perceptron}, with the combined features. After training we investigate the weights.
+The weights, or coefficients, for each input feature are an indicator for the importance of that input feature.
+Thus we can look at weights for the text features and compare them to weights for graph features.
+This gives us an insight into the relative importance of text- and graph features.
+In Figure \ref{fig:coefs_example_one_layer} we show an example of an one-layer neural net.
+For our purposes, we do not look at single features, or input neurons, but on a range of features, namely the text and graph feature ranges since, in our case, the text- and graph features are concatenated.
 
-\todo{SVM trained on combined, coefficients}
-\todo{Analysis of coefficients}
-
-
-\begin{figure}[ht]
-\centering\missingfigure{}
-\caption{Histogram of SVM coefficients trained on combined features}
+\begin{figure}[ht!]
+	\centering
+	{\includegraphics[width=0.5\linewidth]{assets/figures/coefs_example.pdf}%
+		\caption{%
+			Example of an one-layer neural net. The numbers on the line from input features to the output are weights.
+			We examine these weights for single features to gain an insight into the importance the neural net assigned to a given feature. Since a feature contributes to all output neurons, we look at the sum of its absolute weights. Eg. for \textit{Feature 1} the sum of the absolute weights would be $|6| + |-4| = 10$ and for \textit{Feature n} it is $|2| + |1| = 3$, which gives us the hint that \textit{Feature 1} might be more important for the classification result than \textit{Feature N}.
+			This analysis presupposes that the feature magnitudes, ie. the values of features, are normalized or - roughly speaking - in the same range on average, eg. \textit{Feature 1} does not take values between $[100, 200]$ while \textit{Feature N} takes values from $[0, 1]$, instead both feature values are roughly in the same range.
+		}%
+		\label{fig:coefs_example_one_layer}}
 \end{figure}
 
+Figure \ref{fig:combined_coefs_l1_l2_regularization} then shows an example of a weight analysis for the \textit{ng20} dataset and for two regularizations, namely \textit{L1} and \textit{L2}.
+
+Both regularization terms are used to discourage ``big" weights, effectively forcing the training algorithm to chose important features to generalize the data instead of over-fitting the data.
+While both \textit{L1} and \textit{L2} regularization discourage big weights, \textit{L1} penalizes small weights harder than \textit{L2}, leading to sparser models.
+Therefore, the selection of important features is enforced more with \textit{L1} regularization.
+We leverage this phenomenon to analyze how important the features, graph and text, are for classification.
+When looking at the absolute sum of the weights of the trained one-layer neural net, we discover that using \textit{L1} regularization results in the text features becoming more important than graph features for classification.
+While the difference of absolute sums of the coefficients does not seem especially high, it has to be noted that graph features are approximately only half as dense as text features.
+Thus the contribution by graph features to the end result is even lower than the neural net coefficients indicate.
+
 \begin{figure}[ht]
-\centering
-\begin{tabular}{lrr}
-\toprule
- &  concept-map &  cooccurrence \\
-\midrule
-ling-spam       &  0.0897 &  0.0651 \\
-ng20            &  0.0508 &  0.0457 \\
-reuters-21578   &  0.0899 &  0.0131 \\
-review\_polarity &  0.1848 &  0.0323 \\
-rotten\_imdb     &  0.1731 &  0.0801 \\
-tagmynews       &  0.1399 &  0.0229 \\
-webkb           &  0.1132 &  0.0526 \\
-\bottomrule
-\end{tabular}\caption{Percentage of concepts that occur only once in the dataset. Per graph type and dataset.}
+	\centering
+	{\includegraphics[width=\linewidth]{assets/figures/combined_coefs_l1_l2_regularization.pdf}%
+		\caption{%
+			Histogram of the trained one-layer neural net weights. The neural net was trained on the concatenated graph- and text features.
+			Higher values indicate higher importance.
+			\textit{Graph (All)} stands for th sum of all graph feature weights, while the \textit{Graph $N$} stand for the individual Weisfeiler-Lehman iterations.
+			Higher iterations of WL take a bigger neighbourhood into account.
+			Dataset: \textit{ng20}.
+		}%
+		\label{fig:combined_coefs_l1_l2_regularization}}
 \end{figure}
+
+Another interesting result of this weight analysis is the importance the neural net assigns to the different Weisfeiler-Lehman iterations. In our example, we chose $h = 5$ as our WL iterations. The higher the iteration, the bigger the neighborhood that is considered by WL.
+When looking at the importance of the first iteration and \textit{L1} regularization, \textit{Graph 1} in Figure \ref{fig:combined_coefs_l1_l2_regularization}, we see that while the neural net nearly discourages all higher WL iterations by assigning low weights, it assigns higher importance to the first iteration of WL, $941$ versus $15$.
+The first iteration of WL takes only the immediate neighborhood into account, therefore matches are far more probable than matches in higher iterations.
+In our example in Figure \ref{fig:combined_coefs_l1_l2_regularization}, \textit{L1}- outperformed \textit{L2} regularization by a high margin, approximately 7\% difference in the \textit{F1} macro score.
+Yet it has to be noted that no hyperparameter tuning was performed and only a simple train-/test split was used.
+
+\todo{Cite where it is said that l1 regularization produces sparse features}
+
 
 \begin{figure}[ht]
 \centering
@@ -379,7 +411,6 @@ webkb
 \end{figure}
 
 \labelsubsection{Related And Intermediate Observations}{subsec:related_and_intermediate_observation}
-
 \todo{Sparsity of feature vectors}
 \todo{Complexity of approach}
 \todo{Usefulness of WL to get feeling for graph connectedness, uniqueness of structure, uniqueness of labels}

@@ -159,8 +159,8 @@ $c(v)$ & Connected component of $v$ \\
 \end{figure}
 
 \subsubsection{Concept Map}
-A concept map is a (directed) graph where the nodes are concepts.
-Concepts are important tokens in the text and consist of one or more words of the underlying text.
+A concept map is a directed graph where the nodes are concepts. In our case, the concept maps are automatically constructed from text, yet it is also possible to create them manually.
+In our work, concepts are important tokens in the text and consist of one or more words of the underlying text.
 An edge between two concepts show that these concepts are related to each other. Edges can have labels also.
 For an example of a concept map, see Figure \ref{fig:concept_map}.
 
@@ -172,7 +172,7 @@ For an example of a concept map, see Figure \ref{fig:concept_map}.
 \end{figure}
 
 Concept maps are useful for visualizing concepts and their relation to each other.
-Concept maps can be used to quickly explore a given topic and immediately see connections between concepts.
+Concept maps can be used to quickly explore a given topic and immediately see connections between concepts visually.
 Through the degree of a concept, one can also infer the relative importance of that concept in the underlying text.
 
 By combining different texts of the same topic, one can also create a concept map for the whole topic.
@@ -182,7 +182,7 @@ The visualization with concept maps of one or more individual texts therefor ena
 Since the concepts in a concept map often contain only a small subset of the text, concept maps also summarize the underlying text.
 Only relevant concepts and their relation to each other are captured, making concept maps interesting for (multi-document) text summarization.
 
-Another interesting property is that concept maps with its directed edges can be ``unrolled" into text again, enabling conventional text-processing.
+Another interesting property is of concept maps with its directed edges is that they can be ``unrolled" into text again, enabling conventional text-processing.
 Figure \ref{fig:concept_map_linearization} shows an example of such an unrolled concept map.
 
 \begin{figure}[ht!]
@@ -214,7 +214,12 @@ Figure \ref{fig:concept_map_linearization} shows an example of such an unrolled 
 	\label{fig:concept_map_linearization}
 \end{figure}
 
-In Chapter \ref{sec:implementation} we introduce the concept map extraction implementation we used and further explain the steps in creating the concept maps.
+While text is currently arguably the most common medium for information storage, due to the rise of more interactive information mediums, eg. computers, concept maps might become more important in the future.
+There are several advantages of concept maps over text, being more structured and visual being one of them.
+Concept maps can be extended easily by adding new nodes/edges to the concept map or augmenting it with new information\cite{Canas2008} by adding text, links or images to nodes.
+Concept maps therefore have the potential to become a crucial part in the context of learning, both  for children and adults.
+
+In Chapter \ref{sec:implementation} we introduce the concept map extraction implementation we use and further explain the steps in creating the concept maps automatically from given texts.
 
 \subsubsection{Co-Occurrence Graph}
 A co-occurrence graph, or graph-of-words, is generated from a text by creating a graph with all the words of the underlying text as nodes.
@@ -469,16 +474,18 @@ It enables linear models, such as the SVM, to solve non-linear separable problem
 
 In our work, we will use both the kernelized version of the SVM, ie. learning with a gram matrix, as well as the version using an explicit feature map $\phi$.
 
-
 \labelsubsection{Graph Kernel Based Text Classification}{subsec:graph_kernel_based_text_classification}
 In this section, we will introduce related work and briefly recap the history of the field.
+In our work, we convert the task of classifying text into the problem of classifying graphs which are 
 
+To convert the text classification task into the task of classifying graphs which are generated from the text
 \todo{How did the field evolve?}
 \todo{Hint related tasks}
 \todo{What is the most related work, how do they differ from our approach}
 \todo{Relate the other work to the new approach and work out their differences/results}
 \todo{Other approaches to graph classification}
 \todo{Mention other graphs}
+\todo{Mention \cite{Valerio2007} and their approach (``Reverse" classification: given a document, find a concept map)}
 
 \paragraph{``Shortest-Path Graph Kernels for Document Similarity" \cite{Nikolentzos2017a}}
 The most similar and recent work to our approach that we found was \cite{Nikolentzos2017a}. In this work, the authors first create co-occurrence graphs out of the text. Next, they create the gram matrix for the graphs with their own graph kernel and use a SVM to classify them.
@@ -498,9 +505,11 @@ The shortest path sub-kernel works as follows:
     \item{Count the number of same edges in the both graphs: when two edges are the same, add the product of their edge weights to the similarity}
 \end{enumerate}
 
-\todo{Mention that they did NOT perform experiments to differentiate the performance of the subkernels! My guess is that most of the performance comes from the simple-set matching subkernel.}
-\todo{Note that the shortest-path sub-kernel does not actually add a lot of performance?}
-\todo{Why is this approach different to ours? Co-occurrence vs. concept map}
+One thing to note about this work is that they used a combined kernel, yet they did not evaluate the performance or importance of each sub-kernel for the classification, ie. they did not report results for each sub-kernel.
+The simple-set-matching algorithm by itself has a high performance and most likely has the highest contribution to the classification results. We performed simple checks on the same datasets with only the simple-set-matching sub-kernel without their proposed shortest-path extension and got similar scores.
+A more thorougher analysis would be helpful to get a better insight.
+
+That said, this approach is quite similar to ours. In their approach, they also convert the texts into graphs and then classify the graphs. One difference to our approach is, besides that we use different kernels and more datasets, that we evaluate the performance of concept maps instead of only co-occurrence graphs.
 
 \paragraph{``Text Categorization as a Graph Classification Problem" \cite{Rousseau2015a}}
 In this paper, the authors generate co-occurrence graphs out of different text classification datasets.

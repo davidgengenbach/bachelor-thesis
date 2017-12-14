@@ -4,10 +4,6 @@
 
 \newcommand*{\fullref}[1]{\hyperref[{#1}]{\textit{\nameref*{#1}}}}
 
-\newcommand{\red}[1]{
-    \textcolor{red}{#1}
-}
-
 \newcommand{\getmydate}{%
   \ifcase\month%
     \or Januar\or Februar\or M\"arz%
@@ -29,8 +25,8 @@
 }
 
 \newcommand{\labelsubsection}[2]{%
-    \subsection{#1}%
-    \label{#2}%
+\subsection{#1}%
+\label{#2}%
 }
 
 \newcounter{question}

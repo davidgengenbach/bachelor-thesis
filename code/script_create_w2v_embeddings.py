@@ -34,7 +34,7 @@ def main():
     limited_datasets = args.limit_dataset
     os.makedirs(args.embedding_save_path, exist_ok=True)
 
-    datasets = dataset_helper.get_all_available_dataset_names(limit_datasets=limited_datasets)
+    datasets = dataset_helper.get_dataset_names_with_concept_map(limit_datasets=limited_datasets)
     Parallel(n_jobs=args.n_jobs)(delayed(process_dataset)(dataset_name, args) for dataset_name in datasets)
 
     LOGGER.info('Finished')

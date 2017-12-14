@@ -32,7 +32,7 @@ def main():
     args = get_args()
     helper.print_script_args_and_info(args)
 
-    datasets = dataset_helper.get_all_available_dataset_names(limit_datasets=args.limit_dataset)
+    datasets = dataset_helper.get_dataset_names_with_concept_map(limit_datasets=args.limit_dataset)
     graph_files = []
     for dataset in datasets:
         label_lookup_files = glob('{}/{}.*.label-lookup.npy'.format(args.lookup_path, dataset))
@@ -41,7 +41,6 @@ def main():
                 print('No lookup file for dataset found: {}'.format(dataset))
                 continue
             graph_files += [(cache_file, label_lookup_file) for cache_file in dataset_helper.get_all_cached_graph_datasets(dataset_name=dataset)]
-
     print('# Num tasks: {}'.format(len(graph_files)))
 
     Parallel(n_jobs=args.n_jobs)(delayed(process_dataset)(cache_file, label_lookup_file, args) for cache_file, label_lookup_file in graph_files)
@@ -50,7 +49,6 @@ def main():
 
 
 def process_dataset(cache_file, label_lookup_file, args):
-    start = time()
     dataset = filename_utils.get_dataset_from_filename(cache_file)
 
     cache_filename = filename_utils.get_filename_only(cache_file, with_extension=False)
@@ -61,8 +59,6 @@ def process_dataset(cache_file, label_lookup_file, args):
     if not args.force and os.path.exists(result_file):
         return
 
-    LOGGER.info('{:80} topn={:4} threshold={:4} Starting'.format(cache_filename , topn, threshold))
-
     with open(label_lookup_file, 'rb') as f:
         label_lookup = pickle.load(f)
 
@@ -71,6 +67,7 @@ def process_dataset(cache_file, label_lookup_file, args):
 
     # Get label to be renamed
     node_labels = list(chain.from_iterable([x.nodes() for x in X]))
+    unique_labels = set(node_labels)
     counter = collections.Counter(node_labels)
 
     node_labels_to_be_renamed = set([label for label, occurrences in counter.items() if occurrences <= args.max_occurrence])
@@ -88,16 +85,15 @@ def process_dataset(cache_file, label_lookup_file, args):
 
     lookup_ = dict(lookup_, **lookup__)
 
+    LOGGER.info('{:80} topn={:4} threshold={:4}\n\t\t#relabeled labels: {}\n\t\t#unique labels: {}\n\t\t#nodes: {}'.format(cache_filename, topn, threshold, len(lookup_), len(unique_labels), len(node_labels)))
+
+
     relabel_trans = transformers.RelabelGraphsTransformer(lookup_)
 
     X = relabel_trans.transform(X)
 
     with open(result_file, 'wb') as f:
         pickle.dump((X, Y), f)
-
-    time_needed = time() - start
-
-    LOGGER.info('{:80} topn={:4} threshold={:4} Finished (time={})'.format(cache_filename, topn, threshold, time_utils.seconds_to_human_readable(time_needed)))
 
 if __name__ == '__main__':
     main()
