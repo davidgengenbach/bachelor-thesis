@@ -24,7 +24,7 @@ This is most likely due to the small length of the underlying texts.
 The shortness of the text results in a lower number of occurrences of some concept in the text, ie. most of the concepts occur only once in a text.
 To address this issue, we then searched for a dataset with longer texts per document.
 
-\begin{figure}[ht]
+\begin{figure}[htb!]
 	\centering
 	\begin{tabular}{lcccccc}
 		{} &  \multicolumn{2}{c}{\#nodes/\#words} &  \multicolumn{2}{c}{\#edges/\#nodes} & \multicolumn{2}{c}{\#nodes/graph} \\
@@ -55,7 +55,7 @@ The results in this table show that the bulk of concept maps consist of small co
 In Figure \ref{fig:histogram_connected_components} we also plotted an histogram of the number of connected components per graph for \textit{ng20}.
 In Figure \ref{fig:graph_examples} shows examples of concept maps and co-occurrence graphs with different window sizes.
 
-\begin{figure}[ht]
+\begin{figure}[htb!]
 \centering
 \begin{tabular}{lrrrr}
 	{} &  $|s_c|=2$ &  $|s_c|=3$ &  $|s_c|=4$ & $|s_{all}| > 1$ \\
@@ -75,13 +75,13 @@ In Figure \ref{fig:graph_examples} shows examples of concept maps and co-occurre
 \caption{Percentage of connected component size of concept maps per dataset. $|s_c|=n$ corresponds to the size of the connected component and the percentage signifies how many connected component in the whole dataset have this size, eg. when $|s_c|=2$ has a 50\% share it means that 50\% of all connected components in all graphs have the size 2. $|s_{all}| > 1$ stands for the percentage of graphs that consist of more than one connected component, eg. when $|s_{all}| > 1$ is 50\% it means that 50\% of all graphs have more than one connected component.}\label{fig:connected_component_percentage_per_size}
 \end{figure}
 
-\begin{figure}[ht]
+\begin{figure}[htb!]
 \centering
 \includegraphics[width=0.8\linewidth]{assets/figures/hist-connected-components-ling-spam-CMap.pdf}
 \caption{Histogram of connected components per concept map. From the \textit{ling-spam} dataset.}\label{fig:histogram_connected_components}
 \end{figure}
 
-\begin{figure}[ht]
+\begin{figure}[htb!]
 	\centering
 	\includegraphics[width=0.9\linewidth]{assets/figures/connected_component_size_comparison.pdf}
 	\caption{Histogram of the size of connected components, ie. the number of nodes per connected component, of concept maps for two datasets. The distribution of the size of connected components varies greatly between different datasets. In this instance, the \textit{ng20} dataset has mostly small connected components while the \textit{ted\_talks} dataset has bigger connected components. This is most likely due to the fact that the \textit{ted\_talks} dataset consists of longer, coherent texts while the \textit{ling-spam} texts are shorter as well as more informal.}
@@ -89,7 +89,7 @@ In Figure \ref{fig:graph_examples} shows examples of concept maps and co-occurre
 \end{figure}
 
 
-\begin{figure}[ht]
+\begin{figure}[htb!]
 	\centering
 	\begin{tabular}{lrr}
 		\toprule
@@ -107,13 +107,13 @@ In Figure \ref{fig:graph_examples} shows examples of concept maps and co-occurre
 \end{figure} 
 
 
-\begin{figure}[ht]
+\begin{figure}[htb!]
 \centering
-\includegraphics[width=0.6\linewidth]{assets/figures/graph-examples.pdf}
-\caption{Graph examples per type. Three examples are shown per type. The number after the co-occurrence graph label signify the window size. The concept map examples all have more than one connected component, while the co-occurrence graphs all have only one. Taken the \textit{ling-spam} dataset.}\label{fig:graph_examples}
+\includegraphics[width=0.7\linewidth]{assets/figures/examples_graphs.pdf}
+\caption{Graph examples per type. Three random examples are shown per type. $w$ stands for the window size of the co-occurrence grpah. The concept map examples all have more than one connected component, while all co-occurrence graphs have only one. Dataset: \textit{ng20}}\label{fig:graph_examples}
 \end{figure}
 
-\begin{figure}[ht]
+\begin{figure}[htb!]
 \centering
 \includegraphics[width=0.7\linewidth]{assets/figures/hist-edgesnodes.pdf}
 \caption{Histogram of the number of edges divided by the number of nodes. Per graph type. The lines correspond to the median value.}
@@ -123,6 +123,16 @@ In Figure \ref{fig:graph_examples} shows examples of concept maps and co-occurre
 The co-occurrence graphs also have a simple structure.
 Co-occurrence graphs are always connected, ie. the number of connected components is 1, or 0 in the case of an empty graph.
 When the window size is 1, the graph is similar to a path, meaning that most of the nodes have a degree $< 2$. With increasing window size, the graph also gets more connected.
+
+\begin{figure}[htb!]
+	\centering
+	{\includegraphics[width=\linewidth]{assets/figures/percentage_degree.pdf}%
+		\caption{%
+			Distribution of concept map node degrees per datasets. $|d_v| = n$ stands for the percentage of nodes with degree $n$.
+			We can see that well over 90\% of all nodes have a degree of $3$ or less.
+		}%
+		\label{fig:percentage_degree}}
+\end{figure}
 
 \subquestionref{question:importance_structure}
 After investigating the structure of concept maps, we now aim to quantify the importance of the structure compared to the content.
@@ -141,7 +151,7 @@ For \textbf{(c)} (structure and content combined), we use the Weisfeiler-Lehman 
 
 In Table \ref{fig:table-results-structure-vs-content} we report the results obtained from these experiments.
 
-\begin{figure}[ht]
+\begin{figure}[htb!]
 \centering
 \begin{tabular}{llrrr}
           & & \multicolumn{3}{c}{f1 macro} \\
@@ -171,7 +181,7 @@ webkb & concept map &  0.472472 &  0.162010 &  0.222296 \\
 
 \todo{Co-occurrence:"Text kernel" performs nearly as well as normal text}
 \todo{Co-occurrence: only minor decrease (1\%) in performance when only using nouns}
-\begin{figure}[ht]
+\begin{figure}[htb!]
 \centering
 \begin{tabular}{lrrr}
 &  concept\_map &  cooccurrence &   ratio \\
@@ -190,7 +200,7 @@ webkb           &  0.2763 &  0.5082 &  0.5438 \\
 As one can see in Figure \ref{fig:results_cmap_vs_text}, the text-only- outperform graph-only approaches by a high margin.
 This is most likely due to the high compression factor of concept maps and co-occurrence graphs.
 
-\begin{figure}[ht]
+\begin{figure}[htb!]
 \centering
 \missingfigure[figcolor=white]{}
 \caption{Comparison of concept maps with text}
@@ -206,7 +216,7 @@ In concept maps, an edge label can be combined with the label of its source and 
 To evaluate how important the edge labels are, we first look at the occurrences of edge labels, ie. how often a unique edge label occurs in the concept maps of a whole dataset.
 In Figure \ref{fig:edge_label_occurrences} we see that, on average, 76\% of all unique edge labels occur only once per dataset. For comparison, the percentage of unique words which only occur once in a text, on average, is often well below 50\% for our datasets.
 
-\begin{figure}[ht]
+\begin{figure}[htb!]
 	\centering
 	\begin{tabular}{lrr}
 		dataset &  $ \%_{unique} $ & $ \%_{all}$  \\
@@ -235,7 +245,7 @@ As a test for the importance of edge labels, we evaluate \textbf{(a)} a graph ke
 For both, \textbf{(a)} and \textbf{(b)}, we use a graph kernel which first converts the graphs into a set of labels and then counts the number of these labels for each graph.
 For \textbf{(a)} we use the edge labels, for \textbf{(b)} we omit them.
 
-\begin{figure}[ht]
+\begin{figure}[htb!]
 	\centering
 \begin{tabular}{lrr}
 	{} & \multicolumn{2}{c}{edge labels} \\
@@ -268,7 +278,7 @@ So, the size of neighbourhoods per node are expected to decrease, since there is
 In Figure \ref{fig:results_directed_vs_undirected} we see the results of using WL with directed and un-directed edges.
 In all datasets, apart from the \textit{ng20} dataset, the directed edges outperform the un-directed approach.
 
-\begin{figure}[ht]
+\begin{figure}[htb!]
 	\centering
 \begin{tabular}{lrrr}
 	dataset &  un-directed & directed &  difference \\
@@ -296,7 +306,7 @@ So, an interesting question is whether the size of a concept map also correlates
 To test this, we classify the graphs with our standard approach, using the Weisfeiler-Lehman graph kernel, then a SVM to classify the feature maps.
 In the next step, we look at the results for different graph sizes, binning them with quantiles, in our case 10 quantiles, or deciles.
 
-\begin{figure}[ht]
+\begin{figure}[htb!]
 	\begin{subfigure}[t]{.5\linewidth}	{\includegraphics[width=\linewidth]{assets/figures/graph_binning_num_nodes.pdf}\label{fig:todo_1}}
 	\caption{Graphs}
 	\end{subfigure}
@@ -336,7 +346,7 @@ This gives us an insight into the relative importance of text- and graph feature
 In Figure \ref{fig:coefs_example_one_layer} we show an example of an one-layer neural net.
 For our purposes, we do not look at single features, or input neurons, but on a range of features, namely the text and graph feature ranges since, in our case, the text- and graph features are concatenated.
 
-\begin{figure}[ht!]
+\begin{figure}[htb!]
 	\centering
 	{\includegraphics[width=0.5\linewidth]{assets/figures/coefs_example.pdf}%
 		\caption{%
@@ -357,7 +367,7 @@ When looking at the absolute sum of the weights of the trained one-layer neural 
 While the difference of absolute sums of the coefficients does not seem especially high, it has to be noted that graph features are approximately only half as dense as text features.
 Thus the contribution by graph features to the end result is even lower than the neural net coefficients indicate.
 
-\begin{figure}[ht]
+\begin{figure}[htb!]
 	\centering
 	{\includegraphics[width=\linewidth]{assets/figures/combined_coefs_l1_l2_regularization.pdf}%
 		\caption{%
@@ -379,7 +389,7 @@ Yet it has to be noted that no hyperparameter tuning was performed and only a si
 \todo{Cite where it is said that l1 regularization produces sparse features}
 
 
-\begin{figure}[ht]
+\begin{figure}[htb!]
 \centering
 \begin{tabular}{llcc}
   &  & \multicolumn{2}{c}{Graph type} \\

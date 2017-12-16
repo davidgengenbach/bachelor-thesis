@@ -1,3 +1,6 @@
+import os
+import functools
+
 from transformers.graph_to_text_transformer import GraphToTextTransformer
 from transformers.pipelines import text_pipeline, graph_pipeline
 from utils import dataset_helper, graph_helper, constants
@@ -6,6 +9,8 @@ from . import task_helper
 from .task_helper import ExperimentTask, ClassificationData
 import sklearn
 import typing
+from glob import glob
+import transformers
 from sklearn import dummy, model_selection, preprocessing, pipeline
 
 
@@ -118,14 +123,32 @@ def get_task_combined(graph_cache_file: str) -> ExperimentTask:
     return ExperimentTask('graph_combined', get_filename_only(graph_cache_file), process)
 
 
-def get_task_graphs(graph_cache_file: str) -> ExperimentTask:
+def get_task_graphs(graph_cache_file: str, lookup_path = 'data/embeddings/graph-embeddings') -> ExperimentTask:
     def process() -> tuple:
         X, Y = dataset_helper.get_dataset_cached(graph_cache_file)
         X = graph_helper.get_graphs_only(X)
         estimator, params = task_helper.get_graph_estimator_and_params(X, Y)
         return ClassificationData(X, Y, estimator, params)
+    tasks = list()
+    tasks.append(ExperimentTask('graph', get_filename_only(graph_cache_file), process))
 
-    return ExperimentTask('graph', get_filename_only(graph_cache_file), process)
+
+    dataset = get_dataset_from_filename(graph_cache_file)
+    label_lookup_files = glob('{}/{}.*.label-lookup.npy'.format(lookup_path, dataset))
+
+    def process_relabeled(label_lookup_file):
+        X, Y = dataset_helper.get_dataset_cached(graph_cache_file)
+        X = graph_helper.get_graphs_only(X)
+        estimator, params = task_helper.get_graph_estimator_and_params(X, Y)
+        params['graph_preprocessing'] = [transformers.RelabelGraphsTransformer()]
+        params['graph_preprocessing__lookup_file'] = [label_lookup_file]
+        return ClassificationData(X, Y, estimator, params)
+
+    for label_lookup_file in label_lookup_files:
+        if not os.path.exists(label_lookup_file): continue
+        task_name = get_filename_only(graph_cache_file, with_extension=False) + '_' + get_filename_only(label_lookup_file)
+        tasks.append(ExperimentTask('graph_relabeled', task_name , functools.partial(process_relabeled, label_lookup_file=label_lookup_file)))
+    return tasks
 
 
 def get_gram_task(gram_cache_file) -> ExperimentTask:

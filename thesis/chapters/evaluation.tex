@@ -104,9 +104,8 @@ Before creating the vector representations of the text documents or the creation
 These pre-processing steps are similar to the pre-processing done in \cite{Cachopo2007}.
 An example of pre-processing can be seen in Figure \ref{fig:preprocessing_example}.
 
-\begin{figure}[ht!]
+\begin{figure}[htb!]
 	\begin{subfigure}[b]{0.45\linewidth}
-		
 \noindent\fbox{%
 \parbox{\textwidth}{%
 \textsf{I've heard *unconfirmed* rumours that there is a new Integra being released
@@ -154,7 +153,7 @@ For the extraction of the concept maps from the text, we used the implementation
 An explanation of the steps to create the concept maps is given in \ref{sec:implementation}.
 \todo{Directed edges!}
 
-\begin{figure}[ht]
+\begin{figure}[htb!]
 \centering\includegraphics[width=0.6\linewidth]{assets/figures/approach.pdf}
 \caption{Graph kernel based classification pipeline.}
 \end{figure}
@@ -232,7 +231,7 @@ This dataset consists of websites which have been downloaded from 4 american uni
 The webpages are grouped in seven classes. The distribution of this very skewed, for example with one class having over 3000 instances and another only a little over 100.
 We obtained a copy of this dataset from here\footnote{\url{http://www.cs.cmu.edu/afs/cs/project/theo-20/www/data/}}.
 
-\begin{figure}[ht]
+\begin{figure}[htb!]
 \centering
 \begin{tabular}{lrrrr}
 {} &  \# classes &  \# docs &  median \#words/doc &  \#uniq. words/\#words \\
@@ -302,7 +301,7 @@ This is far too high to accept the hypothesis on ground of these predictions.
 \todo{What confidence interval did we choose?}
 \todo{\url{https://stats.stackexchange.com/questions/104040/resampling-simulation-methods-monte-carlo-bootstrapping-jackknifing-cross}}
 
-\begin{figure}[ht]
+\begin{figure}[htb!]
   \begin{subfigure}[t]{0.29\linewidth}
   \centering
   {\includegraphics[height=2.2in]{assets/figures/permutation_test/true_labels.pdf}\label{fig:permutation_test_true}}

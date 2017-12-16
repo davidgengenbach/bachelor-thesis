@@ -43,6 +43,8 @@ from pprint import pprint
 from utils.graph_helper import *
 import experiments
 from experiments import experiment_helper
+from itertools import chain
+
 
 EXPORT_DPI = 100
 EXPORT_FIG_SIZE = (8, 4)
@@ -74,9 +76,10 @@ for name, val in params:
     plt.rcParams[name] = val
 
 
-def cleanup_axes(ax):
+def cleanup_axes(ax, remove_splines=True):
     ax.grid('off')
-    for pos, spine in ax.spines.items(): spine.set_visible(False)
+    if remove_splines:
+        for pos, spine in ax.spines.items(): spine.set_visible(False)
     ax.get_xaxis().set_visible(False)
     ax.get_yaxis().set_visible(False)
 

@@ -10,7 +10,7 @@ In this work, the labels $Y$ of the dataset are denoted with $Y_d = (y_1, y_2, \
 When the number of classes $|Y| = 2$, the classification task is called binary classification. For higher $|Y|$ it is called multi-class classification.
 In Figure \ref{table:classification_notation} we summarized the notation used in this work.
 
-\begin{figure}[ht!]
+\begin{figure}[htb!]
 \centering
 \begin{tabular}{lll}
  & Notation & Definition \\
@@ -36,7 +36,7 @@ The performance or score of a classifier is evaluated by comparing the predicted
 There are several metrics for evaluating the performance of a classifier.
 The classification metrics we use in this work are summarized in Figure \ref{fig:classification_metrics}.
 
-\begin{figure}[ht]
+\begin{figure}[htb!]
 \centering
 \renewcommand*{\arraystretch}{2.1}
 \begin{tabular}{llll}
@@ -134,7 +134,7 @@ The in-degree $d_{in}$ of a vertex $v \in V$ is $d_{in}(v) = |\{v | (v_1, v_2) \
 The out-degree $d_{out}$ is defined analogously as $d_{out}(v) = |\{v | (v_1, v_2) \in E \land v_1 = v\}|$.
 The degree of a vertex $v$ is $d(v) = d_{in}(v) + d_{out}(v)$ for directed graphs, and $d(v) = degree_{in}$ for undirected graphs.
 
-\begin{figure}[ht]
+\begin{figure}[htb!]
 \centering
 \begin{tabular}{ll}
 symbol &  meaning \\
@@ -164,7 +164,7 @@ In our work, concepts are important tokens in the text and consist of one or mor
 An edge between two concepts show that these concepts are related to each other. Edges can have labels also.
 For an example of a concept map, see Figure \ref{fig:concept_map}.
 
-\begin{figure}[ht!]
+\begin{figure}[htb!]
 \centering
 \includegraphics[width=0.5\linewidth]{assets/figures/concept_map.pdf}
 \caption{Example of a concept map. The nodes are the concepts. The directed edges connect the concepts to each other and have labels. In this example of a concept map, one could recover sentences from this graph, for example ``Caffeine \textit{is} a mild CNS stimulant". Taken and adapted from: \cite{Falke2017}}
@@ -185,14 +185,14 @@ Only relevant concepts and their relation to each other are captured, making con
 Another interesting property is of concept maps with its directed edges is that they can be ``unrolled" into text again, enabling conventional text-processing.
 Figure \ref{fig:concept_map_linearization} shows an example of such an unrolled concept map.
 
-\begin{figure}[ht!]
+\begin{figure}[htb!]
 	\centering
-	\begin{subfigure}[b]{.49\linewidth}
+	\begin{subfigure}[b]{.48\linewidth}
 		\centering
 		\includegraphics[height=2.2in]{assets/figures/graph_example_linearization.pdf}
 		\caption{Concept map}
 	\end{subfigure}
-	\begin{subfigure}[b]{.49\linewidth}
+	\begin{subfigure}[b]{.48\linewidth}
 		\centering
 		\noindent\fbox{%
 			\parbox{\textwidth}{%
@@ -229,7 +229,7 @@ Co-occurrence graphs can have edge weights corresponding to the counts of the co
 
 Figure \ref{fig:cooccurrence_graphs} shows examples of co-occurrence graphs with different windows sizes.
 
-\begin{figure}[ht!]%
+\begin{figure}[htb!]%
     \centering
     \begin{subfigure}[t]{0.33\linewidth}{\includegraphics[width=\linewidth]{assets/figures/cooccurrence/window_size_1.pdf}}%
     \caption{Window size: 1}%
@@ -433,24 +433,29 @@ This variant improves the run-time of the plain Weisfeiler-Lehman kernel by clev
 The results are exactly the same as with the plain Weisfeiler-Lehman kernel yet the calculation of the new labels is significantly faster.
 Our implementation also uses label compression, explained in Figure \ref{fig:wl_example}, to further speed up the calculation and assigning integer indices to the new labels, therefore enabling the creation of explicit feature maps $\phi(G)$.
 
-\begin{figure}[ht]
+\begin{figure}[htb!]
   \centering
-  \begin{subfigure}[t]{0.33\linewidth}
-  {\includegraphics[width=\linewidth]{assets/figures/wl_example/wl_iteration_0.pdf}\label{fig:wl_example_0}}
+  \begin{subfigure}[t]{0.49\linewidth}
+  {\includegraphics[width=\linewidth]{assets/figures/wl_examples/wl_iteration_0.pdf}\label{fig:wl_example_0}}
   \caption{Initial graphs}
   \end{subfigure}
-  \begin{subfigure}[t]{0.33\linewidth}
-  {\includegraphics[width=\linewidth]{assets/figures/wl_example/wl_iteration_1_stage_0_recolored}\label{fig:wl_example_1}}
-  \caption{After relabeling}
+  \begin{subfigure}[t]{0.49\linewidth}
+  {\includegraphics[width=\linewidth]{assets/figures/wl_examples/wl_iteration_1_stage_0_recolored}\label{fig:wl_example_1}}
+  \caption{$h=1$: After relabeling}
   \end{subfigure}
-  \begin{subfigure}[t]{0.33\linewidth}
-  {\includegraphics[width=\linewidth]{assets/figures/wl_example/wl_iteration_1_stage_1_compressed.pdf}\label{fig:wl_example_2}}
-  \caption{After label compression}
+  \begin{subfigure}[t]{0.49\linewidth}
+  {\includegraphics[width=\linewidth]{assets/figures/wl_examples/wl_iteration_1_stage_1_compressed.pdf}\label{fig:wl_example_2}}
+  \caption{$h=1$: After label compression}
   \end{subfigure}
-  \caption{Weisfeiler Lehman algorithm example. This examples shows one WL iteration with two graphs. The initial graphs are shown in \textbf{(a)}. The first step of the iteration is relabeling the graph vertices by concatenating each node label with its sorted neighbourhood labels. The finished relabeled graph is shown in \textbf{(b)}. As an extension to the plain Weisfeiler-Lehman algorithm, we also show the label compression step where the long labels, consisting of the node label and its neighbourhood labels, get compressed into a smaller label by assigning each unique label a new number. Same labels in different graphs get the same new label. The result of this step is shown in \textbf{(c)}. Under \textbf{(a)} and \textbf{(c)} we also added the feature maps $\phi{}$ for the graphs. Each entry in the vector corresponds to a label. If a vector entry is 1, it means that the corresponding label is present in the given graph. The inner product on the vectors of the graphs is the value of the Weisfeiler-Lehman graph kernel for these two graphs.
+\begin{subfigure}[t]{0.49\linewidth}
+{\includegraphics[width=\linewidth]{assets/figures/wl_examples/wl_iteration_2_stage_1_compressed.pdf}\label{fig:wl_example_2}}
+\caption{$h=2$: After label compression}
+\end{subfigure}
+  \caption{Weisfeiler Lehman algorithm example. This examples shows one WL iteration with two graphs, $G_1$ and $G_2$. The initial graphs are shown in \textbf{(a)}. The first step of a WL iteration is relabeling the graph vertices by concatenating each node label with its sorted neighbourhood labels. The finished relabeled graph is shown in \textbf{(b)}. As an extension to the plain Weisfeiler-Lehman algorithm, we also show the label compression step where the long labels, consisting of the node label and its neighborhood labels, get compressed into a smaller label by assigning each unique label a new number. Same multi-label labels in different graphs get the same new label. The result of this step is shown in \textbf{(c)}. Under \textbf{(a)},  \textbf{(b)} and \textbf{(d)} we also added the feature maps $\phi(G)$ for both graphs. Each entry in the vector corresponds to a label. If a vector entry is 1, the corresponding label is present in the graph. The inner product on the vectors of the graphs is the value of the Weisfeiler-Lehman graph kernel for these two graphs.
   In this case, the similarity before the iteration would be $\langle \phi(G_1), \phi(G_2) \rangle = \langle [1, 1, 1, 1, 0, 0, 0, 0], [1, 1, 1, 1, 0, 0, 0, 0] \rangle = 4$. After the relabeling, the value of the inner product is $2$.
-  Before doing the WL iteration, the inner product on the feature maps simply returns the number of common labels. After the first iteration, the neighbourhood of each node and therefor the structure of the graph is also reflected in the feature map - resulting in a lower similarity in out example.
-  Please note that these feature vectors are specific to these two graphs and their labels. The dimension of the vector corresponds to the sum of the number of vertices in the two graphs.}\label{fig:wl_example}
+  Before doing the WL iteration, the inner product on the feature maps simply returns the number of common labels. After the first iteration, the neighborhood of each node and therefor the structure of the graph is also reflected in the feature map - resulting in a lower similarity in out example.
+  Notice that before the relabeling, ie. in \textbf{(a)}, the labels for the left-most node was the same for both graphs. After the first iterations, in \textbf{(b)} and \textbf{(c)}, they get different colors.
+  The same happens for the top-most node: after the second iteration, in \textbf{(d)}, the labels are also different since in iteration $h=2$ not only the immediate neighborhood has to be the same for a match, also the neighborhood of its neighborhood.}\label{fig:wl_example}
 \end{figure}
 
 \subsubsection{Kernel Methods and Kernel trick}
@@ -541,16 +546,26 @@ Also, they do not evaluate the effect of combining text- and graph features.
 That said, they provide interesting comparisons of text- and graph based approaches, pointing out the similarity of n-grams with the relationships which are captured in co-occurrence graphs.
 
 \paragraph{``Concept Graph Preserving Semantic Relationship for Biomedical Text Categorization" \cite{Gulrandhe2015}}
-Graphs: extracted keywords/concepts (POS tagger, only nouns), mapping of concepts to UMLS database, extraction of relationship between them.
+The paper explores also explores the usefulness of using automatically generated concept graphs for text classification.
+They first extract a concept graph for each of the articles in a medical dataset. Constructing the concept graph was done by extracting noun phrases with a \textit{Part-of-Speech} short \textit{POS}, tagger.
+Next, these extracted noun phrases are then looked up in the medical database called \textit{UMLS}. When a noun phrase is found in this database, it becomes a node for the concept graph that is generated from th text. Other noun phrases are ignored.
+This additional filtering is done to find important concepts in a controlled vocabulary which can be further enriched by relationships which are also stored in the \textit{UMLS} database.
+The relationships between concepts in the \textit{UMLS} database are semantic, eg. whether two concepts are synonyms for each other.
+These relationships are then used as the edges between the concepts in the generated concept graph.
+In the next step, they gather node specific metrics, eg. the frequency of concepts in the underlying text, and sum them up to retrieve a weight $w_v$ for each node $v$.
+Next, they obtain edge weights for each edge $e = (v, v')$ between two nodes $v$ and $v'$ by adding up the weights of both nodes, ie. $w_e = d_v + d_{v'}$.
+Then they remove edges which have a weight below some given threshold.
+After generating the concept graphs in this manner, the authors use a simple edge matching kernel to calculate the gram matrix for concept graphs.
+The kernel they use is similar to the graph kernel we introduced before, namely the \textit{Simple Non-Structural Graph Kernel}: instead of counting the number of common nodes, as in our example, they instead match the edges.
+As a final step, they train a kernelized \textit{SVM} and a kernelized \textit{k-Nearest-Neighbor} classifier with the gram matrix for the concept graphs and the labels as input.
 
-Nodes are get 4 different weight components: tf, idf, connectivity, \#connected components.
+Unfortunately, the authors do not report their classification scores or provide the means to obtain the used dataset. 
+Therefore an analysis of the claim is hardly testable that their approach shows statistically significant improvement over conventional, text-based approaches.
+That said, their approach is quite similar to our approach: they also use noun phrases extracted from a text to subsequently train a kernelized \textit{SVM}.
+Yet, while they use semantic relationships obtained from a database as edges, we obtain the edges directly from the text.
+Also, we use different kernels to leverage multiple aspects of the structure and content of the concept maps. The authors, on the other hand, only evaluate one kernel capitalizing on the edges between concepts.
 
-Kernel: number of shared edges
-
-No results
-
-
-\paragraph{``Text classification using Semantic Information and Graph Kernels" \cite{???}}
+\paragraph{``Text classification using Semantic Information and Graph Kernels" \cite{Gaspar2011}}
 In this paper, the text classification task is also converted into a graph classification task.
 The authors create a graph of the underlying text by extracting so-called \underline{D}iscourse \underline{R}epresentation \underline{S}tructures, or DRS, which capture the semantic relationships in the sentences of the underlying text.
 A DRS consists of two parts, namely a set discourse referents, or entities, and conditions on these entities.
@@ -559,7 +574,7 @@ The conditions then define the meaning or relationship of the items. In the give
 
 \todo{How to cite this example?}
 
-To construct a graph from the extracted DRS', the entities become vertices and the conditions become edges between them.
+To construct a graph from the extracted DRSs, the entities become vertices and the conditions become edges between them.
 A unary condition on a vertex, for instance $\text{male}(x1)$, becomes a loop for the node $x1$.
 Conditions on two entities become directed edges, going from the entity of the first argument to the second condition argument, for example the condition $\text{agent}(x3, x1)$ creates a node from $x3$ to $x1$.
 This results in a graph which captures the semantic relationship between the entities of the underlying graph.
