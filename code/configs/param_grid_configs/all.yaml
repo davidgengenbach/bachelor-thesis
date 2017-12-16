@@ -202,8 +202,12 @@ params_per_type:
     graph_preprocessing:
       VAL_:
       - RelabelGraphsTransformer
-      lookup_file:
-      - data/embeddings/graph-embeddings/ling-spam.threshold-0.99.topn-10.label-lookup.npy
+      dataset:
+      - ling-spam
+      threshold:
+      - '0.99'
+      topn:
+      - '10'
     normalizer:
     - MaxAbsScaler
   graph_structure_only:

@@ -1,19 +1,21 @@
 import sklearn
 import networkx as nx
 import pickle
+import os
 from utils import graph_helper
 from itertools import chain
 import collections
 
 class RelabelGraphsTransformer(sklearn.base.BaseEstimator, sklearn.base.TransformerMixin):
 
-    def __init__(self, lookup_file = None, max_occurrence=2):
-        self.lookup_file = lookup_file
+    def __init__(self, dataset:str = None, threshold: str=None, topn: str=None, max_occurrence=2):
+        self.threshold = threshold
+        self.dataset = dataset
+        self.topn = topn
         self.max_occurrence = max_occurrence
 
     def fit(self, X, y=None, **fit_params):
-        assert isinstance(self.lookup_file, str)
-        self.lookup = get_lookup_from_file(self.lookup_file, X, self.max_occurrence)
+        self.lookup = get_lookup_from_file(self.dataset, self.threshold, self.topn, X, self.max_occurrence)
         return self
 
     def transform(self, X, y=None, **fit_params):
@@ -33,19 +35,26 @@ class RelabelGraphsTransformer(sklearn.base.BaseEstimator, sklearn.base.Transfor
                 out.append((adj, relabeled_nodes))
         return out
 
-
-def get_lookup_from_file(label_lookup_file: str, X, max_occurrence: int=2):
-    with open(label_lookup_file, 'rb') as f:
-        label_lookup = pickle.load(f)
-
-    X = graph_helper.get_graphs_only(X)
-
+def get_node_labels_below_given_threshold(X, max_occurrence: int = 2):
     # Get label to be renamed
     node_labels = list(chain.from_iterable([x.nodes() for x in X]))
     unique_labels = set(node_labels)
     counter = collections.Counter(node_labels)
 
     node_labels_to_be_renamed = set([label for label, occurrences in counter.items() if occurrences <= max_occurrence])
+    return node_labels_to_be_renamed
+
+
+def get_lookup_from_file(dataset, threshold, topn, X, max_occurrence: int=2, label_lookup_folder='data/embeddings/graph-embeddings'):
+    label_lookup_file = '{}/{}.threshold-{}.topn-{}.label-lookup.npy'.format(label_lookup_folder, dataset, threshold, topn)
+
+    if not os.path.exists(label_lookup_file):
+        raise FileNotFoundError('Label lookup file not found: {}'.format(label_lookup_file))
+
+    with open(label_lookup_file, 'rb') as f:
+        label_lookup = pickle.load(f)
+
+    node_labels_to_be_renamed = get_node_labels_below_given_threshold(X, max_occurrence)
 
     lookup_ = {
         label: new_label for label, new_label in label_lookup.items() if label in node_labels_to_be_renamed

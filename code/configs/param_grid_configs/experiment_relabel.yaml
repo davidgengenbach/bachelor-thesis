@@ -31,9 +31,14 @@ params_per_type:
         return_iteration:
         - stacked
         use_zeroth:
+        - false
         - true
     graph_preprocessing:
       VAL_:
       - RelabelGraphsTransformer
+      threshold:
+      - 0.99
+      topn:
+      - 10
     normalizer:
     - MaxAbsScaler
