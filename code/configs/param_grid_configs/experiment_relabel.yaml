@@ -1,8 +1,8 @@
 limit_dataset:
-#- ling-spam
+- ling-spam
 - ng20
 #- nyt_200
-#- r8
+- r8
 - review_polarity
 - rotten_imdb
 - tagmynews
@@ -37,8 +37,14 @@ params_per_type:
       VAL_:
       - RelabelGraphsTransformer
       threshold:
+      - 0.5
+      - 0.7
+      - 0.9
       - 0.99
       topn:
+      #- 1
+      #- 2
+      #- 5
       - 10
     normalizer:
-    - MaxAbsScaler
+    - ~ #MaxAbsScaler

@@ -1,5 +1,5 @@
 import unittest
-from transformers.remove_single_occurrence_graph_labels import RemoveSingleOccurrenceGraphLabels
+from transformers.remove_single_occurrence_graph_labels import RemoveInfrequentGraphLabels
 import networkx as nx
 import scipy.sparse
 import numpy as np
@@ -18,7 +18,7 @@ def _get_adj_matrix_for_labels(labels, set_elements = True):
 
 class RemoveSingleOccurrenceGraphLabelsTest(unittest.TestCase):
     def test_single_occurrence_remover_nxgraph(self):
-        remover = RemoveSingleOccurrenceGraphLabels()
+        remover = RemoveInfrequentGraphLabels()
 
         g1 = nx.Graph()
         g1.add_node(MULTIPLE_LABEL)
@@ -51,7 +51,7 @@ class RemoveSingleOccurrenceGraphLabelsTest(unittest.TestCase):
         g2_adj = _get_adj_matrix_for_labels(g2_labels)
 
         X = [(g1_adj, g1_labels), (g2_adj, g2_labels)]
-        remover = RemoveSingleOccurrenceGraphLabels()
+        remover = RemoveInfrequentGraphLabels()
 
         X_new = remover.transform(X)
         self.assertEqual(len(X), len(X_new))

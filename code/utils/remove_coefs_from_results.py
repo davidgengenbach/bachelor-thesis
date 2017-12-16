@@ -21,6 +21,7 @@ def remove_coefs(clf):
         'support_',
         'support_vectors_',
         'vocabulary_',
+        'lookup'
     ]:
         try:
             setattr(clf, x, None)

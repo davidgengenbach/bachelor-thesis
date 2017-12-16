@@ -70,7 +70,7 @@ def get_kernel_from_filename(filename: str) -> str:
         parts.append('simple_set_matching')
     if 'graph_text_' in filename or 'graph_content_only' in filename:
         parts.append('text')
-    if 'combined' in filename or '__graph__' in filename or 'graph_structure_only' in filename:
+    if 'combined' in filename or '__graph__' in filename or 'graph_structure_only' in filename or 'graph_relabel' in filename:
         parts.append('wl')
     if 'node_weight' in filename:
         parts.append('wl_nodeweight')
@@ -132,7 +132,7 @@ def get_results(folder=None, use_already_loaded=False, results_directory=RESULTS
         for idx, el in enumerate(result['params']):
             result['params'][idx] = clean_result_keys(el)
 
-        is_graph_dataset = '_graph__dataset' in result_file or 'graph_combined__dataset' in result_file or '__graph_node_weights__dataset_' in result_file or 'graph_cooccurrence' in result_file or '__graph_structure_only__' in result_file
+        is_graph_dataset = '_graph__dataset' in result_file or 'graph_combined__dataset' in result_file or '__graph_node_weights__dataset_' in result_file or 'graph_cooccurrence' in result_file or '__graph_structure_only__' in result_file or '_graph_relabel' in result_file
         result['combined'] = 'graph_combined__dataset_' in result_file
         result['kernel'] = 'unknown'
         if is_graph_dataset:
@@ -149,10 +149,11 @@ def get_results(folder=None, use_already_loaded=False, results_directory=RESULTS
             is_relabeled = 'relabeled' in result_file
             result['relabeled'] = is_relabeled
             if is_relabeled:
-                topn = result_file.split('topn-')[1].split('_')[0]
-                threshold = result_file.split('threshold-')[1].split('_')[0]
-                result['topn'] = int(topn)
-                result['threshold'] = float(threshold)
+                #topn = result_file.split('topn-')[1].split('_')[0]
+                #threshold = result_file.split('threshold-')[1].split('_')[0]
+                #result['topn'] = int(topn)
+                #result['threshold'] = float(threshold)
+                pass
 
             # Co-Occurrence
             if is_cooccurrence_dataset:
@@ -190,7 +191,7 @@ def get_results(folder=None, use_already_loaded=False, results_directory=RESULTS
 
     if filter_out_non_complete_datasets:
         # Only keep datasets where there are all three types (text, co-occurrence and concept-graph) of results
-        df_all = _DF_ALL.groupby('dataset').filter(lambda x: len(x.type.value_counts()) == filter_out_non_complete_datasets).reset_index(drop=True)
+        df_all = filter_out_datasets(_DF_ALL, lambda x: len(x.type.value_counts()) == filter_out_non_complete_datasets)
     else:
         df_all = _DF_ALL
 
@@ -271,6 +272,10 @@ def get_predictions(folder: str = None, filenames: typing.Collection = None) -> 
         with open(prediction_file, 'rb') as f:
             prediction = pickle.load(f)
         yield prediction_file, prediction
+
+
+def filter_out_datasets(df, fn):
+    return df.groupby('dataset').filter(fn).reset_index(drop=True)
 
 
 def get_experiments_by_names(names: list) -> pd.DataFrame:
