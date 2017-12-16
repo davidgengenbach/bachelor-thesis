@@ -1,0 +1,39 @@
+limit_dataset:
+#- ling-spam
+- ng20
+#- nyt_200
+#- r8
+- review_polarity
+- rotten_imdb
+- tagmynews
+#- ted_talks
+limit_graph_type:
+- concept_map
+params_per_type:
+  graph_relabeled:
+    feature_extraction:
+      fast_wl:
+        h:
+        - 10
+        ignore_label_order:
+        - false
+        node_weight_function:
+        - ~
+        round_to_decimals:
+        - 10
+        same_label:
+        - false
+        use_directed:
+        - true
+        use_early_stopping:
+        - false
+      phi_picker:
+        return_iteration:
+        - stacked
+        use_zeroth:
+        - true
+    graph_preprocessing:
+      VAL_:
+      - RelabelGraphsTransformer
+    normalizer:
+    - MaxAbsScaler
