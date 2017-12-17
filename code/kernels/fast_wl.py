@@ -61,7 +61,7 @@ def transform(
     num_graphs = len(graphs)
     num_vertices = sum(len(x) for x in graph_labels)
 
-    phi_dim = phi_dim if phi_dim is not None else num_vertices
+    phi_dim = phi_dim if phi_dim is not None else num_vertices * 5
 
     assert phi_dim is not None
     assert len(graph_labels) == len(graphs)

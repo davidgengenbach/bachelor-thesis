@@ -64,7 +64,7 @@ def process_graph_cache_file(graph_cache_file, args):
     label_lookup_files = glob('{}/{}.*.label-lookup.npy'.format(args.lookup_path, dataset))
 
     tuple_trans = NxGraphToTupleTransformer()
-    fast_wl_trans = FastWLGraphKernelTransformer(h=args.wl_h)
+    fast_wl_trans = FastWLGraphKernelTransformer(h=args.wl_h, use_early_stopping=False)
 
     try:
         phi_graph_cache_file = graph_cache_file.replace('.npy', '.phi.npy')

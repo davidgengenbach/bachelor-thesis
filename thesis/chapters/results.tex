@@ -430,24 +430,51 @@ webkb
 \todo{?}
 
 \labelsubsection{Related And Intermediate Observations}{subsec:related_and_intermediate_observation}
-\todo{Sparsity of feature vectors}
-\todo{Complexity of approach}
+In this section we report observations which are not directly related to our questions or hypothesis, yet they nevertheless have provided us more insights into our analysis.
+
+\subsubsection{Weisfeiler-Lehman $\phi$ Feature Map Visualization}
+When debugging our Weisfeiler-Lehman implementation and extensions, we often wanted to see the effect on the feature vectors created by WL.
+For this, we plotted the feature vector $\phi(G)$ for each graph $G$ for several WL iterations.
+In Figure \ref{fig:phi_distribution_example} we see an example of such a $\phi$ distribution plot.
+
+\begin{figure}[htb!]
+	\centering
+	{\includegraphics[width=\linewidth]{assets/figures/phi_distribution/ng20_train.png}%
+		\caption{%
+			Example of a WL $\phi$ distribution plot.
+			For each WL iteration $h$, the horizontal $x$-axis corresponds to the concept maps in the datasets, while the vertical $y$-axis corresponds to the indices of $\phi(G)$ which are non-zero, ie. when there is a point at $x=0$ and $y=10$, the graph $G_0$ has the label $10$.
+			The colors of the points correspond to the class of the graph.
+			Dataset: \textit{ng20}.
+		}%
+		\label{fig:phi_distribution_example}}
+\end{figure}
+
+It has to be noted that we implemented WL where the labels are assigned when they are first encountered. That means that when we create the feature map $\phi(G_i)$ for graph $G_i$, we relabel the graph by assigning it a new multi-label by taking the neighborhood into account (\textit{recoloring}). In the next step, we compress the new multi-label by assigning it a new number if it has not been encountered before and save it in a multi-label-lookup. If the multi-label has been encountered before, ie. the multi-label is in the multi-label-lookup, we assign it the number it has been assigned before.
+This is the \textit{label compression} step.
+So, we iterate over the graphs one by one and create feature maps $\phi$.
+When the first processed graph, $G_1$, has the new compressed labels $\{1, 2, \ldots, n\}$, the next processed graph, $G_2$, will have labels that are either \textbf{(1)} new, in which case they get a new, compressed label that is higher than $n$ or \textbf{(2)} they were already encountered in $G_1$, so they get the label from the lookup.
+This way we get incrementing labels for each graph.
+When we also sort the graphs by their assigned class, ie. all graphs of class $y_i$ are processed after another, then one can look at the labels that are assigned to each class and also see the nice pattern which arises in Figure \ref{fig:phi_distribution_example}.
+While this kind of plot is useful for analyzing the whole datasets at once, this plot becomes especially interesting when splitting the dataset into two sets, eg. a stratified train- and test set.
+When creating the feature maps $\phi$ for the graphs in the train set, for each WL iteration $h$ we save the multi-label-lookup which we can then use to create the feature maps for the test set.
+This way, we see another interesting 
+
 \todo{Usefulness of WL to get feeling for graph connectedness, uniqueness of structure, uniqueness of labels}
 
 \subsubsection{Weisfeiler-Lehman extension}
-With increasing iterations $h$ of the Weisfeiler-Lehman algorithm, the exact matches of the subtrees of height $h$ become much more improbable.
-In iteration 0, the Weisfeiler-Lehman only counts the number of node labels in the graphs, for iteration 1 it takes the immediate neighbourhood of the nodes into account, for iteration 2 is takes the neighbourhood of the neighbourhood into account and so on.
-So, with \textbf{(1)} higher iterations, the probability of having an exact match decreases.
+With increasing iterations $h$ of the Weisfeiler-Lehman algorithm, exact matches of subtrees of height $h$ become more improbable.
+In iteration 0, the Weisfeiler-Lehman only counts the number of node labels in the graphs, for iteration 1 it takes the immediate neighborhood of the nodes into account, for iteration 2 is takes the neighborhood of the neighborhood into account and so on.
+So, \textbf{(1)} with higher iterations, the probability of having an exact match decreases.
 
-Another difficulty arises for nodes with a high number of neighbours. \textbf{(2)} The probability of an exact match also decreases with a higher degree.
+Another difficulty arises for nodes with a high number of neighbors. \textbf{(2)} The probability of an exact match also decreases with a higher degree.
 
-These two difficulties, \textbf{(1)} the increased difficulty of a match with higher iterations and \textbf{(2)} the increased difficulty of a match for nodes with higher degrees, are not addressed when using Weisfeiler-Lehman in its plain version. Both difficulties are neither encoded in the features maps nor when creating the gram matrix.
+These two difficulties, \textbf{(1)} the increased difficulty of a match with higher iterations and \textbf{(2)} the increased difficulty of a match for nodes with higher degrees, are not addressed when using Weisfeiler-Lehman in its plain version. Both difficulties are neither encoded in the features maps nor are they considered when creating the gram matrix.
 
 As a possible solution for these difficulties, we propose an extension to the plain Weisfeiler-Lehman algorithm.
 Our extension augments the WL algorithm by adding node weights.
 For each of the nodes in all graphs, we first calculate node weights which encode the importance of the nodes or the difficulty of getting an exact match in WL.
 An example of such node weights are the node degree or node weights extracted with PageRank.
-The node degree is an interesting metric for node weights since it actually encodes the size of the immediate neighbourhood of a node and therefore could possibly address both problem \textbf{(1)} and \textbf{(2)}.
+The node degree is an interesting metric for node weights since it actually encodes the size of the immediate neighborhood of a node and therefore could possibly address both problem \textbf{(1)} and \textbf{(2)}.
 
 \todo{Explain how to actually use the node weights.}
 \todo{Remark that the node weights could be seen as an additional metric of frequency: nodes with a higher degree have been in the text more frequently.}

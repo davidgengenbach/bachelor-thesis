@@ -8,7 +8,7 @@ Classification using machine learning is the task of automatically assigning cla
 Given a dataset $D = \{(x_1, y_1), (x_2, y_2), \ldots, (x_n, y_n) \} \subseteq X \times Y$ of $n$ items where $(x_i, y_i)$ are dataset instances, the supervised classification task is to create a classifier which predicts a label $y' \in Y$ for a given $x \in X$.
 In this work, the labels $Y$ of the dataset are denoted with $Y_d = (y_1, y_2, \ldots, y_n )$, the predicted labels are denoted as $Y'_d = (y'_1, y'_2, \ldots, y'_n )$.
 When the number of classes $|Y| = 2$, the classification task is called binary classification. For higher $|Y|$ it is called multi-class classification.
-In Figure \ref{table:classification_notation} we summarized the notation used in this work.
+In Figure \ref{table:classification_notation} we summarize the classification notation.
 
 \begin{figure}[htb!]
 \centering
@@ -28,11 +28,11 @@ Dataset & $D$ & $\{(x_1, y_1), \ldots, (x_n, y_n) \} \subseteq X \times Y$
 \caption{Classification notation.}\label{table:classification_notation}
 \end{figure}
 
-To automatically assign the labels in a supervised way, generally a classifier algorithm is used to train a classifier by providing it datapoints and their labels.
+To automatically assign the labels in a supervised way, generally a learning algorithm is used to train a classifier by providing it datapoints and its labels.
 The classifier algorithm then, internally, creates a model of the data and often optimizes internal parameters to fit the data.
-During prediction, that is when wanting to automatically assign a label to a (new) datapoint, the new datapoint is given into the classifier which returns a predicted label.
+During prediction, that is when wanting to automatically assign a label to a (new) datapoint $x_i$, the new datapoint is fed into the classifier which in turn returns the predicted label, $y'_i$.
 
-The performance or score of a classifier is evaluated by comparing the predicted labels $y'_i$ for datapoints $x_i$ with the real label $y_i$ in the dataset.
+The performance or score of a trained classifier is evaluated by comparing the labels it predicts, $y'_i$,  for datapoints $x_i$ with the real label $y_i$ in the dataset.
 There are several metrics for evaluating the performance of a classifier.
 The classification metrics we use in this work are summarized in Figure \ref{fig:classification_metrics}.
 
@@ -83,36 +83,38 @@ $F1_{\text{macro}} = \displaystyle \frac{\sum\nolimits_{y \in Y} F1_y}{|Y|}$
 \end{figure}
 
 In this work, we will mostly use a classifier algorithm called \textit{Support Vector Machine}, or \textit{SVM}.
+We will provide a more detailed explanation of the \textit{SVM} later on.
 
 \labelsubsection{Texts}{subsec:texts}
 Text is ubiquitous and the task of automatically processing or classifying text has become more important as the volume of available texts grows daily.
-While text is on of the most prominent representation for information for humans, designing algorithms to automatically parse, ``understand" or classify text bear inherent complexities.
+While text is arguably the most prominent representation for information for humans, designing algorithms to automatically parse, ``understand" or classify text bear inherent complexities.
 Language is a highly complex method to convey information. 
-Text often creates its own context, eg. by mentioning some concept in the beginning of the text and only implicitly relating it at the end. Or by using different words to represent the same concept.
+Text often creates its own context, eg. by mentioning some concept in the beginning of a text and only implicitly relating to it at the end. Or by using different words to represent the same concept.
 Other difficulties arise due to varying writing styles by different authors.
-Another obvious problem is the ambiguous nature of language, eg. in english the word ``bear" can relate to the animal or a verb.
+Another obvious problem is the ambiguous nature of language, eg. in English the word ``bear" can relate to the animal or the verb.
 Often the meaning of a word is defined by its (immediate) context.
 Manually defining rules or algorithms to remove the ambiguity of language have been shown to be very laborious if not impossible.
 
-These and other difficulties harden the task of processing natural language text.
+These and other difficulties harden the task of processing natural language text significantly.
 Yet, the task of processing text emerges in important real-world applications.
 In text classification, for instance, massive amounts of text make manual assignment of labels virtually impossible, so figuring out automatic approaches to classify text becomes appealing.
 Numerous text processing and classification approaches have been proposed in the literature and have shown good accuracy in real-world scenarios.
 
 Since text is most often of non-fixed size, several fixed-size representations have been proposed and employed to enable machine text processing.
-One common approach to represent texts is by counting all unique words in a text. The counts of the unique words can then be, together with a fixed-size vocabulary, transformed into fixed-size representations of the text.
+One common approach to represent texts is by counting all unique words in a text. The counts of unique words can then be, together with a fixed-size vocabulary, transformed into fixed-size representations, or vectors.
 With this approach, some information about the text is omitted, namely the sentence structure, word-order, word-dependency to name just a few. 
 So, after transforming a text into this representation, recovering the original text becomes impossible.
 That said, while this representation is quite simple and does not capture all information of the text, when using it in the context of text-classification, these representations actually perform very well.
 Such representations provide an easy-to-implement baseline and starting point for further improvements.
 For example, one extension to this representation does not only use the simple one-word counts but also counts word pairs or consecutive word sequences. These sequences are called $n$-grams, where $n$ stands for the size of such the sequence, eg. $2$-grams consist of 2 words and so on.
+In section \ref{sec:evaluation} we will explain these text-based approaches more throughly.
 
 \labelsubsection{Graphs}{subsec:graphs}
-A labeled graph is a triple $G = (V, E, \pi)$, where $V$ is the set of vertices or nodes, $E \subseteq V \times V$ are the edges and $\pi: V \to X$ is a labelling function which assigns a label to a given vertex. 
+A labeled graph is a triple $G = (V, E, \pi)$, where $V$ is the set of vertices or nodes, $E \subseteq V \times V$ are the edges and $\pi: V \to X$ is a labeling function which assigns a label to a given vertex. 
 A graph is called undirected when $\forall (v_1, v_2) \in E: (v_2, v_1) \in E$, otherwise it is called directed. 
 A graph $G'=(V', E', \pi)$ is called a subgraph of graph $G = (V, E, \pi)$ when $V' \subseteq V$, $E' \subseteq E$ and $\forall (v, v') \in V': v \in V' \land v' \in V'$.
 
-The (outgoing) neighbours $n(v)$ of a node $v$ are defined as the set $n(v) = \{v' | (v, v') \in E \}$.
+The (outgoing) neighbors $n(v)$ of a node $v$ are defined as the set $n(v) = \{v' | (v, v') \in E \}$.
 
 \paragraph{Walks and Paths}
 A walk on a graph is a (finite) sequence of edges, $w = (e_1, \cdots, e_n)$ with the constraint that $\forall 0 < i < n: \forall e_i = (v_1, v_2) \in w: \exists v_3: e_{i + 1} = (v_2, v_3)$. The length of the walk is $n$.
@@ -172,12 +174,20 @@ For an example of a concept map, see Figure \ref{fig:concept_map}.
 \end{figure}
 
 Concept maps are useful for visualizing concepts and their relation to each other.
-Concept maps can be used to quickly explore a given topic and immediately see connections between concepts visually.
-Through the degree of a concept, one can also infer the relative importance of that concept in the underlying text.
+They can be used to quickly explore a given topic and immediately see connections between concepts visually.
+Through the degree of a concept node, one can also infer the relative importance of that concept in the underlying text.
 
 By combining different texts of the same topic, one can also create a concept map for the whole topic.
 In this case, the concepts are not confined to a single text.
 The visualization with concept maps of one or more individual texts therefor enables the non-linear exploration of multiple texts of a topic at the same time.
+This property makes concept maps interesting in the learning context where visual components become crucial for understanding.
+Text, on the other hand, is a linear medium, eg. one often has to read the preceding paragraphs/sections and understand its contents to learn about a new concept.
+Extending text, eg. combining several texts of the same topic, also becomes quite laborious since text is inherently linear, so one has to either manually merge the new texts or add side-notes or references to later text passages.
+The same task for concept maps can be far easier since one must ``only" find relevant concepts in the texts and their relations to each other. After that the graph can easily constructed.
+When the same concept appears in two texts, so the idea, they will be mapped to the same node.
+Also, extending a concept map is only a matter of adding new concepts or edges.
+One can also augment a node with attributes, eg. add a text that is relevant for this node.
+All these properties enable the iterative construction of concept maps by incurring little to no overhead when extending or augmenting concept maps.
 
 Since the concepts in a concept map often contain only a small subset of the text, concept maps also summarize the underlying text.
 Only relevant concepts and their relation to each other are captured, making concept maps interesting for (multi-document) text summarization.
@@ -215,11 +225,10 @@ Figure \ref{fig:concept_map_linearization} shows an example of such an unrolled 
 \end{figure}
 
 While text is currently arguably the most common medium for information storage, due to the rise of more interactive information mediums, eg. computers, concept maps might become more important in the future.
-There are several advantages of concept maps over text, being more structured and visual being one of them.
-Concept maps can be extended easily by adding new nodes/edges to the concept map or augmenting it with new information\cite{Canas2008} by adding text, links or images to nodes.
-Concept maps therefore have the potential to become a crucial part in the context of learning, both  for children and adults.
+There are several advantages of concept maps over text, being more structured and visual being to name just a few.
+Concept maps therefore have the potential to become a crucial part in the context of information representation and/or learning.
 
-In Chapter \ref{sec:implementation} we introduce the concept map extraction implementation we use and further explain the steps in creating the concept maps automatically from given texts.
+In Chapter \ref{sec:implementation} we introduce the concept map extraction implementation we use and further explain the steps in creating the concept maps automatically from given.
 
 \subsubsection{Co-Occurrence Graph}
 A co-occurrence graph, or graph-of-words, is generated from a text by creating a graph with all the words of the underlying text as nodes.
