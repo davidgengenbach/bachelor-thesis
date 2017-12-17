@@ -3,7 +3,6 @@ We will also often compare the results on these questions for concept maps to co
 
 In the next chapter, we will report the results to the experiments we devised to answer the questions which we posed in this chapter and also discuss the significance of the results to our hypothesis.
 
-\todo{Work out differences of graph types, find similarities across datasets}
 \todo{Provide the questions that are relevant for the hypothesis}
 \todo{What is the best kernel for concept map classification?}
 \todo{Extensions to WL?}
@@ -43,7 +42,7 @@ For the \textbf{structure-only kernel}, we will use a modified version of the We
 For the \textbf{structure-and-content kernel}, we use the plain Weisfeiler-Lehman graph kernel. 
 
 \todo{We also added an extension to the kernel by using node weights as weights for the labels. We first extracted a weight for each node by calculating the node degree.
-We added this extension to give additional weight to label matches of nodes with a greater number of neighbours, ie. higher degree, since matches with a greater neighbourhood are far less often.
+We added this extension to give additional weight to label matches of nodes with a greater number of neighbors, ie. higher degree, since matches with a greater neighborhood are far less often.
 Instead of the degree, one could also use another metric like PageRank and using the resulting node weights. Using node weights is a trade-off: giving the nodes more weight when they are more connect implies that words that occur often have a high importance!}
 
 \subquestion{How does the classification results of co-occurrence graphs compare to concept maps?}{question:comparison_coo}
@@ -57,12 +56,18 @@ This experiment will also serve as a baseline in later experiments.
 
 \subquestion{How useful are multi-word labels in concept maps?}{question:multi_labels}
 Concept map node labels often consist of more than one word which is one of the differences to co-occurrence graphs and other graph text-representations.
-Yet, our default approach, using Weisfeiler Lehman, does not use the fact of multi-word labels.
-For this question we evaluate other approaches which make use of the multi-word labels of concept maps.
+Yet, our default approach, ie. using Weisfeiler Lehman, does not leverage these multi-word labels.
+So, for this question, we evaluate other approaches which make use of the multi-word labels and evaluate the usefulness of them.
 
 \subquestion{How diverse and useful are edge labels in concept maps?}{question:edge_labels}
 Another difference of concept maps to co-occurrence graphs is that the former have edge labels.
 For this question wee evaluate the importance and role of the edge labels in graph classification. To make use of the edge label, we will also introduce the ``linearized" graph, ie. concept maps converted into text.
+
+\subquestion{Does removing infrequent node labels from the concept map improve classification performance?}{question:infrequent_nodelabels}
+As with text, there are often a great number of words which only occur once in the whole dataset. The same applies to concept maps.
+In text-based classification approaches, infrequent words are often removed from the text for two reasons: (1) the resulting classifier has less parameters, (2) removing infrequent words greatly reduces the size of feature vectors which, in some cases, can prevent overfitting to too specific features.
+Another, WL specific problem is that when a concept only occurs once and it is in the neighborhood of another node, matches in higher iterations of WL are impossible since the concept only occurs once and can not be in any other neighborhood apart from the only occurrence.
+For this question, we will evaluate whether removing infrequent node labels will result in better scores.
 
 \subquestion{How does the performance of using the directed edges in concept maps compare to undirected edges?}{question:directed_vs_undirected}
 Concept maps, in contrast to co-occurrence graphs, also have directed edges.

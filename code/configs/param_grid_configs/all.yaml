@@ -65,6 +65,7 @@ params_per_type:
         - stacked
         use_zeroth:
         - false
+        - true
     graph_preprocessing:
     - NoneType
     normalizer:
@@ -171,6 +172,7 @@ params_per_type:
         - stacked
         use_zeroth:
         - false
+        - true
     graph_preprocessing:
     - NoneType
     normalizer:
@@ -199,15 +201,16 @@ params_per_type:
         - stacked
         use_zeroth:
         - false
+        - true
     graph_preprocessing:
       VAL_:
       - RelabelGraphsTransformer
       dataset:
       - ling-spam
       threshold:
-      - '0.99'
+      - 0.99
       topn:
-      - '10'
+      - 10
     normalizer:
     - MaxAbsScaler
   graph_structure_only:
@@ -234,6 +237,7 @@ params_per_type:
         - stacked
         use_zeroth:
         - false
+        - true
     graph_preprocessing:
     - NoneType
     normalizer:

@@ -38,9 +38,11 @@
 \makeatother
 
 \newcommand{\subquestion}[2]{%
+	\vspace{0.3cm}
     \begin{question}{#1}\label{#2}\end{question}
 }%
 
-\newcommand{\subquestionref}[1]{
-    \paragraph{\nameref{#1}}
+\newcommand{\subquestionref}[1]{%
+	\vspace{0.3cm}
+    \paragraph{Answer to \nameref{#1}}
 }

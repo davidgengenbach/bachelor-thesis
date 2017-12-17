@@ -1,68 +1,20 @@
 limit_dataset:
 - ling-spam
 - ng20
-- nyt_200
+#- nyt_200
 - r8
 - review_polarity
 - rotten_imdb
 - tagmynews
-- ted_talks
+#- ted_talks
+limit_graph_type:
+- concept_map
 params_per_type:
-  dummy_most_frequent:
-    classifier:
-      strategy:
-      - most_frequent
-  graph:
-    classifier:
-      C:
-      - 0.001
-      - 0.01
-      #- 0.1
-      - 1
-    feature_extraction:
-      fast_wl:
-        h:
-        - 10
-        node_weight_function:
-        - ~
-      phi_picker:
-        return_iteration:
-        - stacked
-        use_zeroth:
-        - false
-        - true
-    normalizer:
-    - MaxAbsScaler
-  text:
-    classifier:
-      C:
-      - 0.001
-      - 0.01
-      #- 0.1
-      - 1
-    preprocessing:
-    - SimplePreProcessingTransformer
-    scaler:
-    - MaxAbsScaler
-    vectorizer:
-      VAL_:
-      - CountVectorizer
-      - TfidfVectorizer
-      binary:
-      - true
-      - false
-      ngram_range:
-      - !!python/tuple
-        - 1
-        - 1
-      - !!python/tuple
-        - 1
-        - 2
   graph_combined:
     classifier:
       C:
-      - 0.001
       - 0.01
+      - 0.1
       - 1
     features:
       fast_wl_pipeline:
@@ -71,16 +23,29 @@ params_per_type:
             fast_wl:
               h:
               - 10
+              ignore_label_order:
+              - false
               node_weight_function:
               - ~
               round_to_decimals:
               - 10
+              same_label:
+              - false
+              use_directed:
+              - true
+              use_early_stopping:
+              - false
             phi_picker:
               return_iteration:
               - stacked
               use_zeroth:
               - false
               - true
+          graph_preprocessing:
+            VAL_:
+            - RemoveInfrequentGraphLabels
+            max_occurrences:
+            - 1
           normalizer:
           - MaxAbsScaler
       text:
