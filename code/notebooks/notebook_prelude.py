@@ -87,11 +87,11 @@ def cleanup_axes(ax, remove_splines=True):
 IMAGE_FOLDER = 'tmp'
 os.makedirs(IMAGE_FOLDER, exist_ok=True)
 
-def save_fig(fig, filename_without_ext, folder = IMAGE_FOLDER, extensions = ['png', 'pdf']):
+def save_fig(fig, filename_without_ext, folder = IMAGE_FOLDER, extensions = ['png', 'pdf'], dpi=72):
     os.makedirs(folder, exist_ok=True)
     for ext in extensions:
         filename = '{}/{}.{}'.format(folder, filename_without_ext, ext)
-        fig.savefig(filename)
+        fig.savefig(filename, dpi=dpi)
 
 
 DATASETS = dataset_helper.get_all_available_dataset_names()

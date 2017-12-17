@@ -439,12 +439,15 @@ In Figure \ref{fig:phi_distribution_example} we see an example of such a $\phi$ 
 
 \begin{figure}[htb!]
 	\centering
-	{\includegraphics[width=\linewidth]{assets/figures/phi_distribution/ng20_train.png}%
+	{\includegraphics{assets/figures/wl_phi_distributions/dataset_graph_concept_map_ng20-v3_phi_npy.png}
 		\caption{%
 			Example of a WL $\phi$ distribution plot.
 			For each WL iteration $h$, the horizontal $x$-axis corresponds to the concept maps in the datasets, while the vertical $y$-axis corresponds to the indices of $\phi(G)$ which are non-zero, ie. when there is a point at $x=0$ and $y=10$, the graph $G_0$ has the label $10$.
-			The colors of the points correspond to the class of the graph.
+			There are as many points in this plot as there are vertices in the dataset.
+			The colors of a point corresponds to the class of the graph, in this case the 20 classes of \textit{ng20}.
+			The red line marks the number of vertices in the datasets which is also the dimension of the feature map $\phi$.
 			Dataset: \textit{ng20}.
+			\textit{Note: embedding this plot in a vector format  was not possible due to the sheer number of points to be drawn. The rasterized image seen here interpolates the individual points.}
 		}%
 		\label{fig:phi_distribution_example}}
 \end{figure}
@@ -455,9 +458,42 @@ So, we iterate over the graphs one by one and create feature maps $\phi$.
 When the first processed graph, $G_1$, has the new compressed labels $\{1, 2, \ldots, n\}$, the next processed graph, $G_2$, will have labels that are either \textbf{(1)} new, in which case they get a new, compressed label that is higher than $n$ or \textbf{(2)} they were already encountered in $G_1$, so they get the label from the lookup.
 This way we get incrementing labels for each graph.
 When we also sort the graphs by their assigned class, ie. all graphs of class $y_i$ are processed after another, then one can look at the labels that are assigned to each class and also see the nice pattern which arises in Figure \ref{fig:phi_distribution_example}.
-While this kind of plot is useful for analyzing the whole datasets at once, this plot becomes especially interesting when splitting the dataset into two sets, eg. a stratified train- and test set.
+
+This plot also gives an insight about the convergence of WL.
+The highest encountered $\phi$ index in iteration $h=1$ must be higher or equal than the highest $\phi$ index encountered in $h=0$.
+This is directly due to the fact that more colors are needed to color the graph nodes in higher iterations - if WL has not converged.
+The number of labels, or colors, $|L_i|$ assigned in iteration $h=i$ must be smaller or equal than the labels for iteration $h=i+1$, ie. $|L_i| \leq |L_{i + 1}|$.
+When $|L_i| = |L_{i + 1}|$, WL is said to have converged, ie. the number of colors will not change anymore.
+
+In this figure, there is also a highest horizontal, green line.
+This line signifies the highest $\phi$ index where there was a non-zero entry.
+It also serves as a marker of the last compressed label number which was assigned in this dataset.
+
+While this kind of plot is useful for analyzing the whole datasets at once, it becomes especially interesting when splitting the dataset into sets, eg. by splitting it into a stratified train- and test set.
 When creating the feature maps $\phi$ for the graphs in the train set, for each WL iteration $h$ we save the multi-label-lookup which we can then use to create the feature maps for the test set.
-This way, we see another interesting 
+The multi-label lookup therefor acts as a kind of continuation, saving the state of the WL iteration with all encountered labels.
+Then, when creating the feature maps for the test set, we use the multi-label lookups to generate the feature maps in the same way, now for the graphs in the test set.
+When plotting the train- and test set feature maps separated we can get interesting insights into the dataset and the concept maps.
+For an example, see Figure \ref{fig:phi_distribution_train_test}.
+
+\begin{figure}[htb!]
+	\begin{subfigure}[t]{.49\linewidth}%
+		{\includegraphics{assets/figures/wl_phi_distributions/dataset_graph_concept_map_ng20-v3_splitted_phi_npy_train.png}}\caption{Train}%
+	\end{subfigure}%
+	\begin{subfigure}[t]{.49\linewidth}%
+		{\includegraphics{assets/figures/wl_phi_distributions/dataset_graph_concept_map_ng20-v3_splitted_phi_npy_test.png}}\caption{Test}%
+	\end{subfigure}%
+	\caption{WL $\phi$ distribution with a stratified train/test split.}%
+	\label{fig:phi_distribution_train_test}
+\end{figure}
+
+While the train set looks nearly the same as if plotting the simple dataset without the split, the test set differs quite a bit.
+Notice how, in the test set, there are ``clusters" around some regions for each of the classes. 
+Keep in mind that the $y$-position of the point signifies the index $i$ in $\phi(G)$ for that graph.
+Because of the aforementioned implementation, we now are able to see a pattern for each of the classes, namely the clusters.
+For the test set, we can also see how many new labels have been found in a given iteration.
+As we said before, the horizontal green line, in both plots, signifies the last label that has been encountered.
+In the case of the split sets, it also marks the last label that has been encountered in the train set.
 
 \todo{Usefulness of WL to get feeling for graph connectedness, uniqueness of structure, uniqueness of labels}
 
