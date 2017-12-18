@@ -1,3 +1,50 @@
+## 18.12.2017
+- Thesis
+    - Resolved citing issue
+
+
+## 17.12.2017
+- Code
+    - Plot for phi distributions improved
+    - Added new experiments
+        - Relabeling of infrequent labels with combined
+- Thesis
+    - Wrote text and added plots for phi distribution
+    - Added text for infrequent labels experiment
+    - Minor grammar check
+
+
+## 16.12.2017
+- Code
+    - Added new experiments
+        - Relabeling of infrequent labels
+    - Plots for node degree distribution
+    - Plots for \phi distribution
+- Thesis
+    - WL example plot improved
+    - Related papers: added explanation for _Text classification using Semantic Information and Graph Kernels_
+
+
+## 15.12.2017
+- Break
+
+## 14.12.2017
+- Code
+    - Cleanup
+- Thesis
+    - Added text for text-section
+    - Added statistics about concept frequency
+    - Added example of one-layer neural net
+    - Added graph for combined feature SVM analysis
+
+
+## 13.12.2017
+- Thesis
+    - Cleanup
+    - Added better version of WL examples
+    - Added statistics about node degree distribution
+
+
 ## 12.12.2017
 - Code
     - Cleanup of embeddings creation
