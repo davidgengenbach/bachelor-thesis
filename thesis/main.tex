@@ -1,4 +1,4 @@
-\documentclass[article,type=bsc,colorback,accentcolor=tud9c]{tudthesis}
+\documentclass[report,type=bsc,colorback,accentcolor=tud9c,bigchapter,bibliography=totoc]{tudthesis}
 \usepackage[english]{babel}
 \usepackage{amsmath}
 \usepackage{hyperref}
@@ -31,7 +31,6 @@
 \usepackage[backend=biber,style=alphabetic]{biblatex}
 \addbibresource{library.bib}
 
-
 \begin{document}
   \makethesistitle
   \affidavit{David Marlon Gengenbach}
@@ -39,14 +38,15 @@
   \tableofcontents
   \newpage
   \setcounter{page}{1}
-  \labelsectioninclude{Introduction}{sec:introduction}{chapters/introduction}
-  \labelsectioninclude{Background}{sec:background}{chapters/background}
-  \labelsectioninclude{Experimental Setup}{sec:evaluation}{chapters/evaluation}
-  \labelsectioninclude{Results and Discussion}{sec:results}{chapters/results}
-  \labelsectioninclude{Conclusions}{sec:conclusions}{chapters/conclusions}
+  \abstract{\input{chapters/abstract}}
+  \newpage
+  \labelchapterinclude{Introduction}{sec:introduction}{chapters/introduction}
+  \labelchapterinclude{Background}{sec:background}{chapters/background}
+  \labelchapterinclude{Experimental Setup}{sec:evaluation}{chapters/evaluation}
+  \labelchapterinclude{Results and Discussion}{sec:results}{chapters/results}
+  \labelchapterinclude{Conclusions}{sec:conclusions}{chapters/conclusions}
   %\listoftodos
   
   \newpage
-
-  \printbibliography
+  \printbibliography[heading=bibintoc]
 \end{document}

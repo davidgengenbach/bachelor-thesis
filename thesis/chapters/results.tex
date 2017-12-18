@@ -1,4 +1,4 @@
-\labelsubsection{Results and Observations}{subsec:results_and_observations}
+\labelsection{Results and Observations}{subsec:results_and_observations}
 In the next sections we will investigate the questions we posed in the previous chapter.
 After that, we will gather our findings to form an judgement of the validity of our hypothesis.
 
@@ -429,10 +429,10 @@ webkb
 \subquestionref{question:comparison_runtime}
 \todo{?}
 
-\labelsubsection{Related And Intermediate Observations}{subsec:related_and_intermediate_observation}
+\labelsection{Related And Intermediate Observations}{subsec:related_and_intermediate_observation}
 In this section we report observations which are not directly related to our questions or hypothesis, yet they nevertheless have provided us more insights into our analysis.
 
-\subsubsection{Weisfeiler-Lehman $\phi$ Feature Map Visualization}
+\subsection{Weisfeiler-Lehman $\phi$ Feature Map Visualization}
 When debugging our Weisfeiler-Lehman implementation and extensions, we often wanted to see the effect on the feature vectors created by WL.
 For this, we plotted the feature vector $\phi(G)$ for each graph $G$ for several WL iterations.
 In Figure \ref{fig:phi_distribution_example} we see an example of such a $\phi$ distribution plot.
@@ -497,7 +497,7 @@ In the case of the split sets, it also marks the last label that has been encoun
 
 \todo{Usefulness of WL to get feeling for graph connectedness, uniqueness of structure, uniqueness of labels}
 
-\subsubsection{Weisfeiler-Lehman extension}
+\subsection{Weisfeiler-Lehman extension}
 With increasing iterations $h$ of the Weisfeiler-Lehman algorithm, exact matches of subtrees of height $h$ become more improbable.
 In iteration 0, the Weisfeiler-Lehman only counts the number of node labels in the graphs, for iteration 1 it takes the immediate neighborhood of the nodes into account, for iteration 2 is takes the neighborhood of the neighborhood into account and so on.
 So, \textbf{(1)} with higher iterations, the probability of having an exact match decreases.

@@ -7,7 +7,7 @@ In the next chapter, we will report the results to the experiments we devised to
 \todo{What is the best kernel for concept map classification?}
 \todo{Extensions to WL?}
 
-\labelsubsection{Experiments}{subsec:experiments}
+\labelsection{Experiments}{subsec:experiments}
 To better understand, we devised a number of questions directly concerning our hypothesis.
 After finding (approximations to) suitable answers for the posed questions.
 In this section we will also introduce the baselines for our tests and describe our methodology in general.
@@ -95,7 +95,7 @@ We also compare the results with both text-only and graph-only approaches.
 Another important question concerns the complexity of our approach.
 While graph kernels like Weisfeiler-Lehman or the Random-Walk kernel have seen a rise in efficiency and improvement in runtime, there is still an overhead associated with creating concept maps.
 
-\subsubsection{Baselines}
+\subsection{Baselines}
 \paragraph{Preprocessing}
 Before creating the vector representations of the text documents or the creation of the co-occurrence graphs and concept maps, we first pre-process the plain text by
 
@@ -164,7 +164,7 @@ An explanation of the steps to create the concept maps is given in \ref{sec:impl
 \end{figure}
 \todo{Add diagram for gram-matrix based classification.}
 
-\labelsubsection{Datasets}{subsec:datasets}
+\labelsection{Datasets}{subsec:datasets}
 We chose a number of datasets, ranging from informal texts written by internet users, eg.  the \textit{ng20} internet forum corpus, to more structured texts, eg. the \textit{nyt} corpus.
 The texts of the corpora are also of varying length, enabling us to evaluate the effect of varying concept map sizes.
 
@@ -253,9 +253,9 @@ webkb           & 7 & 8274 & 158 & 0.15 \\
 \caption{Dataset statistics.}
 \end{figure}
 
-\labelsubsection{Methods}{subsec:methods}
+\labelsection{Methods}{subsec:methods}
 
-\subsubsection{Cross-Validation}
+\subsection{Cross-Validation}
 For all the classification tasks we used train-/validation- and test sets.
 The split is done as follows: 85\% for train- and validation set together and 15\% for the validation set.
 We then use stratified k-fold cross-validation to further split the train- and validation set. In our case, we used $k = 3$, meaning that $\frac{2}{3}$ of the dataset is used for training, and the rest for validation.
@@ -263,11 +263,11 @@ The stratification ensures that the class distribution in the train set is (near
 
 \todo{Hold-out set!}
 
-\subsubsection{Metrics}
+\subsection{Metrics}
 We evaluated a number of metrics for each classification task, namely: 
 recall, precision, accuracy and the F1-score. We mostly focus on the F1-score since it captures the overall performance of classification algorithms.
 
-\subsubsection{Significance tests}
+\subsection{Significance tests}
 When comparing two models we used the permutation test, or exact test, to test the significance of the difference in performance of these two approaches.
 The permutation test tests whether the observed difference of the performances of the two approaches is the product of chance.
 The test only returns a probability for observing a given performance difference. The test does not give a definite answer whether the difference was due to chance.
@@ -333,13 +333,13 @@ This is far too high to accept the hypothesis on ground of these predictions.
 \end{figure}
 
 
-\labelsubsection{Implementation}{sec:implementation}
+\labelsection{Implementation}{sec:implementation}
 We mostly used Python to implement most of the code required to run the experiments.
 The code and instructions on how set-up the experiments can be found on GitHub \footnote{\url{https://github.com/davidgengenbach/bachelor-thesis}}.
 \todo{Scikit-learn, networkx, \dots}
 \todo{Code by Tobias to extract concept maps}
 
-\subsubsection{Concept Map Extraction}
+\subsection{Concept Map Extraction}
 We used the code \footnote{\url{https://github.com/UKPLab/ijcnlp2017-cmaps}} provided by Falke \cite{Falke2017} to create the concept maps.
 In this section we will briefly describe the steps the code performs. For a more detailed explanation, see \cite{Falke2017}.
 

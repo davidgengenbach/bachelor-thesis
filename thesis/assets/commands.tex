@@ -13,19 +13,16 @@
   \fi\ \number\year%
 }
 
+\newcommand{\labelchapterinclude}[3]{%
+\chapter{#1}%
+\label{#2}%
+\input{#3}%
+%\newpage%
+}
+
+
 \newcommand{\labelsection}[2]{%
-    \section{#1}%
-    \label{#2}%
-}
-
-\newcommand{\labelsectioninclude}[3]{%
-    \labelsection{#1}{#2}%
-    \input{#3}%
-    %\newpage%
-}
-
-\newcommand{\labelsubsection}[2]{%
-\subsection{#1}%
+\section{#1}%
 \label{#2}%
 }
 
@@ -38,11 +35,11 @@
 \makeatother
 
 \newcommand{\subquestion}[2]{%
-	\vspace{0.3cm}
+	\vspace{0.4cm}
     \begin{question}{#1}\label{#2}\end{question}
 }%
 
 \newcommand{\subquestionref}[1]{%
-	\vspace{0.3cm}
+	\vspace{0.4cm}
     \paragraph{Answer to \nameref{#1}}
 }

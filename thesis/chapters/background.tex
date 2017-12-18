@@ -3,7 +3,7 @@ In this chapter we will introduce the notations and concepts we will use in subs
 \todo{Introductions to used classifiers, concepts}
 \todo{Concretize the problem and its notation}
 
-\labelsubsection{Classification Task}{subsec:classification_task}
+\labelsection{Classification Task}{subsec:classification_task}
 Classification using machine learning is the task of automatically assigning classes, or labels, to given datapoints.
 Given a dataset $D = \{(x_1, y_1), (x_2, y_2), \ldots, (x_n, y_n) \} \subseteq X \times Y$ of $n$ items where $(x_i, y_i)$ are dataset instances, the supervised classification task is to create a classifier which predicts a label $y' \in Y$ for a given $x \in X$.
 In this work, the labels $Y$ of the dataset are denoted with $Y_d = (y_1, y_2, \ldots, y_n )$, the predicted labels are denoted as $Y'_d = (y'_1, y'_2, \ldots, y'_n )$.
@@ -85,7 +85,7 @@ $F1_{\text{macro}} = \displaystyle \frac{\sum\nolimits_{y \in Y} F1_y}{|Y|}$
 In this work, we will mostly use a classifier algorithm called \textit{Support Vector Machine}, or \textit{SVM}.
 We will provide a more detailed explanation of the \textit{SVM} later on.
 
-\labelsubsection{Texts}{subsec:texts}
+\labelsection{Texts}{subsec:texts}
 Text is ubiquitous and the task of automatically processing or classifying text has become more important as the volume of available texts grows daily.
 While text is arguably the most prominent representation for information for humans, designing algorithms to automatically parse, ``understand" or classify text bear inherent complexities.
 Language is a highly complex method to convey information. 
@@ -109,7 +109,7 @@ Such representations provide an easy-to-implement baseline and starting point fo
 For example, one extension to this representation does not only use the simple one-word counts but also counts word pairs or consecutive word sequences. These sequences are called $n$-grams, where $n$ stands for the size of such the sequence, eg. $2$-grams consist of 2 words and so on.
 In section \ref{sec:evaluation} we will explain these text-based approaches more throughly.
 
-\labelsubsection{Graphs}{subsec:graphs}
+\labelsection{Graphs}{subsec:graphs}
 A labeled graph is a triple $G = (V, E, \pi)$, where $V$ is the set of vertices or nodes, $E \subseteq V \times V$ are the edges and $\pi: V \to X$ is a labeling function which assigns a label to a given vertex. 
 A graph is called undirected when $\forall (v_1, v_2) \in E: (v_2, v_1) \in E$, otherwise it is called directed. 
 A graph $G'=(V', E', \pi)$ is called a subgraph of graph $G = (V, E, \pi)$ when $V' \subseteq V$, $E' \subseteq E$ and $\forall (v, v') \in V': v \in V' \land v' \in V'$.
@@ -160,7 +160,7 @@ $c(v)$ & Connected component of $v$ \\
 \caption{Graph notation.}
 \end{figure}
 
-\subsubsection{Concept Map}
+\subsection{Concept Map}
 A concept map is a directed graph where the nodes are concepts. In our case, the concept maps are automatically constructed from text, yet it is also possible to create them manually.
 In our work, concepts are important tokens in the text and consist of one or more words of the underlying text.
 An edge between two concepts show that these concepts are related to each other. Edges can have labels also.
@@ -230,7 +230,7 @@ Concept maps therefore have the potential to become a crucial part in the contex
 
 In Chapter \ref{sec:implementation} we introduce the concept map extraction implementation we use and further explain the steps in creating the concept maps automatically from given.
 
-\subsubsection{Co-Occurrence Graph}
+\subsection{Co-Occurrence Graph}
 A co-occurrence graph, or graph-of-words, is generated from a text by creating a graph with all the words of the underlying text as nodes.
 There is an edge between two nodes if the labels of the source and target node co-occur in the text.
 Two words co-occur when the distance between the words in the text is below a given threshold, the window size.
@@ -264,7 +264,7 @@ It has to be noted that this comparison is not entirely fair since co-occurrence
 The concept maps we extracted on the other hand have a far greater compression factor as we will see, ie. they summarize the content more.
 For our comparison, we will also not use the edge weights since concept maps do not have edge weights.
 
-\labelsubsection{Graph Kernels}{subsec:graph_kernel}
+\labelsection{Graph Kernels}{subsec:graph_kernel}
 In most cases, texts and graphs are not of fixed size.
 However, most classification algorithms operate on fixed size vectors.
 Fortunately, there are several approaches to overcome this problem.
@@ -364,7 +364,7 @@ The scope of a graph kernel can therefor also vary widely from only capturing na
 
 For a more detailed overview on graph kernels, \cite{Gartner2003a} contains a survey of current graph kernel approaches.
 
-\subsubsection{Examples}
+\subsection{Examples}
 \paragraph{Simple Equality Graph Kernel}
 This graph kernel simply compares the nodes and edges of the two graphs and returns whether they are exactly the same:
 \begin{equation*}
@@ -467,7 +467,7 @@ Our implementation also uses label compression, explained in Figure \ref{fig:wl_
   The same happens for the top-most node: after the second iteration, in \textbf{(d)}, the labels are also different since in iteration $h=2$ not only the immediate neighborhood has to be the same for a match, also the neighborhood of its neighborhood.}\label{fig:wl_example}
 \end{figure}
 
-\subsubsection{Kernel Methods and Kernel trick}
+\subsection{Kernel Methods and Kernel trick}
 We have seen that a kernel can be used to calculate a measure of similarity between two objects, eg. graphs.
 Some kernels can be expressed as an inner product $k(X, X') = \langle \phi(X), \phi(X') \rangle$ on two (implicit) vector representations of the objects $X$ and $X'$.
 In this case, the vector representations $\phi(X)$ can be used in conventional classification algorithms.
@@ -488,7 +488,7 @@ It enables linear models, such as the SVM, to solve non-linear separable problem
 
 In our work, we will use both the kernelized version of the SVM, ie. learning with a gram matrix, as well as the version using an explicit feature map $\phi$.
 
-\labelsubsection{Graph Kernel Based Text Classification}{subsec:graph_kernel_based_text_classification}
+\labelsection{Graph Kernel Based Text Classification}{subsec:graph_kernel_based_text_classification}
 In this section, we will introduce related work and briefly recap the history of the field.
 In our work, we convert the task of classifying text into the problem of classifying graphs which are 
 
