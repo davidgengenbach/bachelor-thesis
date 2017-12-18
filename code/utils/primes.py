@@ -56,3 +56,6 @@ def get_log_primes(range_start = None, range_end = None):
 
     save_to_cache()
     return log_primes
+
+
+get_highest_prime_range()

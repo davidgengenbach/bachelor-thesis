@@ -19,5 +19,6 @@ sklearn==0.0
 statsmodels==0.8.0
 deepwalk==1.0.2
 
+flamegraph
 gitpython
 configargparse

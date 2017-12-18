@@ -88,26 +88,6 @@ In Figure \ref{fig:graph_examples} shows examples of concept maps and co-occurre
 	\label{fig:histogram_connected_component_size}
 \end{figure}
 
-
-\begin{table}[htb!]
-	\centering
-	\begin{tabular}{lrr}
-		\toprule
-		&  concept-map &  cooccurrence \\
-		\midrule
-		ling-spam       &  0.0897 &  0.0651 \\
-		ng20            &  0.0508 &  0.0457 \\
-		reuters-21578   &  0.0899 &  0.0131 \\
-		review\_polarity &  0.1848 &  0.0323 \\
-		rotten\_imdb     &  0.1731 &  0.0801 \\
-		tagmynews       &  0.1399 &  0.0229 \\
-		webkb           &  0.1132 &  0.0526 \\
-		\bottomrule
-	\end{tabular}
-	\caption[Statistics: Percentage of concepts occurring only once]{Percentage of concepts that occur only once in the dataset. Per graph type and dataset.}\label{table:percentage_concept_only_once}
-\end{table} 
-
-
 \begin{figure}[htb!]
 \centering
 \includegraphics[width=0.7\linewidth]{assets/figures/examples_graphs.pdf}
@@ -268,16 +248,29 @@ For some datasets, omitting the edge label actually improves the classification 
 \todo{These facts all indicate that edge labels, while crucial and useful for text-summarization and the subsequent use by a human, seem to have limited use in graph classification.}
 
 \subquestionref{question:infrequent_nodelabels}
-\todo{?}
+In Figure \ref{fig:percentage_distribution_concept_occurrences} we can see that, depending on the dataset, between 75\% to 90\% of all node labels occur only once per dataset.
+This is also common in texts where most words also only occur once per dataset.
+ 
+\begin{figure}[htb!]
+	\centering{\includegraphics[width=\linewidth]{assets/figures/tmp/percentage_distribution_concept_occurrences.pdf}}
+	\caption[Statistics: Distribution concept occurrence]{Concept map node label occurrences per dataset. $|n_v| = i$ stands for the percentage of labels with $i$ occurrences in the dataset, eg. when $|n_v| = 1$ has 50\%, it would mean that 50\% of all unique concepts only occur once per dataset.}\label{fig:percentage_distribution_concept_occurrences}
+\end{figure}
+
+While in text-based approaches, infrequent words are either ignored or filtered out to reduce the vocabulary and subsequently the dimension of the feature vector, the infrequent node labels might pose a far greater problem for our approach.
+As noted before, in our work, we capitalize on the Weisfeiler-Lehman graph kernel to extract useful features for subsequent classification.
+In the context of WL, infrequent node labels might become a problem since a match becomes less likely with less occurring words, or a match even becomes impossible as in the case of node labels which occur only once.
+When simply creating a feature vector by counting the node labels in each graph, infrequent node labels would not pose a problem.
+WL on the other hand relies on exact matches of neighborhoods.
+Thus, a node label which only occurs once would ``taint" its neighborhood, effectively making matches in its neighborhoods impossible.
 
 \subquestionref{question:directed_vs_undirected}
 The concept maps we extracted have directed edges.
 In this question, we evaluate the usefulness of these two cases.
 We compare the classification performance of using the directed versus un-directed case with the Weisfeiler-Lehman graph kernel.
 
-When using WL with undirected edges, the neighbours $n_v$ of a node $v$ are all nodes $v'$ that are connected by an edge to $v$, or $n_v = \{v' | (v, v') \in E \lor (v', v ) \in E \}$.
-With directed edges, on the other hand, the neighbours $n_v$ of a node $v$ are only nodes $v'$ where there exists a directed edge from $v$ to $v'$, or $n_v = \{v' | (v, v') \in E \}$.
-So, the size of neighbourhoods per node are expected to decrease, since there is an additional constraint to what constitutes a neighbour.
+When using WL with undirected edges, the neighbors $n_v$ of a node $v$ are all nodes $v'$ that are connected by an edge to $v$, or $n_v = \{v' | (v, v') \in E \lor (v', v ) \in E \}$.
+With directed edges, on the other hand, the neighbors $n_v$ of a node $v$ are only nodes $v'$ where there exists a directed edge from $v$ to $v'$, or $n_v = \{v' | (v, v') \in E \}$.
+So, the size of neighborhoods per node are expected to decrease, since there is an additional constraint to what constitutes a neighbor.
 
 In Table \ref{table:results_directed_vs_undirected} we see the results of using WL with directed and un-directed edges.
 In all datasets, apart from the \textit{ng20} dataset, the directed edges outperform the un-directed approach.
@@ -319,7 +312,7 @@ In the next step, we look at the results for different graph sizes, binning them
 	{\includegraphics[width=\linewidth]{assets/figures/text_binning_num_words.pdf}\label{fig:todo_2}}
 	\caption{Text}
 	\end{subfigure}
-	\caption{Classification performance per graph/text size. The x-axis corresponds to the size of the graph/text, the y-axis for the classification performance for graphs/text of that size. Dataset: \textit{ng20}}\label{fig:graph_size_performance}
+	\caption[Statistics: Histogram of classification performance per graph/text size]{Classification performance per graph/text size. The x-axis corresponds to the size of the graph/text, the y-axis for the classification performance for graphs/text of that size. Dataset: \textit{ng20}}\label{fig:graph_size_performance}
 \end{figure}
 
 In Figure \ref{fig:graph_size_performance} we see an example for the \textit{ng20} dataset where we binned the different graph and text sizes and report the classification scores of documents with these sizes.
@@ -377,7 +370,7 @@ Thus the contribution by graph features to the end result is even lower than the
 \begin{figure}[htb!]
 	\centering
 	{\includegraphics[width=\linewidth]{assets/figures/combined_coefs_l1_l2_regularization.pdf}%
-		\caption[Statistics: Histogram of trained one-layer neural net]{%
+		\caption[Statistics: Histogram of the trained weights of a one-layer neural net]{%
 			Histogram of the trained one-layer neural net weights. The neural net was trained on the concatenated graph- and text features.
 			Higher values indicate higher importance.
 			\textit{Graph (All)} stands for the sum of all graph feature weights, while the \textit{Graph $N$} stand for the individual Weisfeiler-Lehman iterations.

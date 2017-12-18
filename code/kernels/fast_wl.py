@@ -21,7 +21,7 @@ def transform(
         phi_dim: int = None,
         labels_dtype: np.dtype = np.uint64,
         phi_dtype: np.dtype = np.uint32,
-        used_matrix_type: scipy.sparse.spmatrix = dok_matrix,
+        used_matrix_type: scipy.sparse.spmatrix = lil_matrix,
         round_signatures_to_decimals: int = 1,
         append_to_labels: bool = True,
         ignore_label_order = False,
@@ -115,7 +115,7 @@ def transform(
     else:
         rounding_factor = np.power(10, round_signatures_to_decimals)
 
-    phi_lists = [phi.tolil()]
+    phi_lists = [phi]
 
     last_highest_label = -1
     # For the number of iterations h...
@@ -149,7 +149,7 @@ def transform(
 
 
         # ... save phi
-        phi_lists.append(phi.tolil())
+        phi_lists.append(phi)
         # ... save label counters/lookups for later use
         new_label_counters.append(label_counter)
         new_label_lookups.append(label_lookup)
