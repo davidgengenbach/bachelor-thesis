@@ -18,7 +18,9 @@ Following are the questions we devised in order to understand and test our hypot
 
 \todo{Add runtime analysis}
 
-\subquestion{How diverse is the structure of the concept maps?}{question:structure_diversity}
+\labelsubsection{Questions}{subsec:questions}
+
+\subquestion{How diverse is the structure of concept maps?}{question:structure_diversity}
 When the structure of the graphs is mostly homogeneous or the structural differences are not distinct between graphs of different classes, the structure by itself will most likely not contribute to the classification performance.
 When comparing the graph similarity under some graph kernel, the graphs of a given class should be distinguishable from the graphs of the other classes.
 
@@ -134,7 +136,7 @@ An example of pre-processing can be seen in Figure \ref{fig:preprocessing_exampl
 \vspace{0.5in}
     \caption{After}
     \end{subfigure}
-	\caption{Pre-processing example. Text taken from \textit{ng20} dataset.}\label{fig:preprocessing_example}
+	\caption[Example: Pre-Processing]{Pre-processing example. Text taken from \textit{ng20} dataset.}\label{fig:preprocessing_example}
 \end{figure}
 
 For the co-occurrence graphs, we also optionally filtered out the non-nouns to increase the compression and thus achieve more comparability to concept maps.
@@ -160,7 +162,7 @@ An explanation of the steps to create the concept maps is given in \ref{sec:impl
 
 \begin{figure}[htb!]
 \centering\includegraphics[width=0.6\linewidth]{assets/figures/approach.pdf}
-\caption{Graph kernel based classification pipeline.}
+\caption[Diagram: Graph kernel based classification]{Graph kernel based classification pipeline.}
 \end{figure}
 \todo{Add diagram for gram-matrix based classification.}
 
@@ -250,7 +252,7 @@ tagmynews       & 7 & 32600 & 24 & 0.11 \\
 webkb           & 7 & 8274 & 158 & 0.15 \\
 \bottomrule
 \end{tabular}
-\caption{Dataset statistics.}
+\caption[Statistics: Datasets]{Dataset statistics.}
 \end{figure}
 
 \labelsection{Methods}{subsec:methods}
@@ -328,7 +330,7 @@ This is far too high to accept the hypothesis on ground of these predictions.
   {\includegraphics[width=1\textwidth]{assets/figures/permutation_test/distribution.pdf}\label{fig:permutation_test_distribution}}
   \caption{Observed differences in sample scores}
   \end{subfigure}
-  \caption{Permutation test example. A significance test is most often used to test whether a hypothesis is true with a given confidence.}
+  \caption[Example: Permutation Test]{Permutation test example. A significance test is most often used to test whether an observed difference is a product of chance or indeed is significant. Significance tests only provide a probability, not a definite answer.}
   \label{fig:example_permutation_test}
 \end{figure}
 
@@ -351,3 +353,4 @@ Also, a concept can consist of multiple words, eg. for ``David likes something e
 The extracted concepts are later used as node labels, and the relation between them as the edges between concepts.
 
 Next, the extracted relations get filtered so that only concepts are kept which contain at least one noun and which consist of fewer words than some a given threshold, in our case 10 words. This filtering is done to ensure the brevity and usefulness of the concepts.
+\todo{This is somewhat similar to the original text, how to cite?}

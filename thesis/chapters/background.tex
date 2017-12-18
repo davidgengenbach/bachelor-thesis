@@ -25,7 +25,7 @@ Instance & $d_i$ & $(x_i, y_i) \in X \times Y$
 \\
 Dataset & $D$ & $\{(x_1, y_1), \ldots, (x_n, y_n) \} \subseteq X \times Y$ 
 \end{tabular}
-\caption{Classification notation.}\label{table:classification_notation}
+\caption[Notation: Classification]{Classification notation.}\label{table:classification_notation}
 \end{figure}
 
 To automatically assign the labels in a supervised way, generally a learning algorithm is used to train a classifier by providing it datapoints and its labels.
@@ -79,7 +79,7 @@ $\displaystyle 2 \cdot \frac{Pr_y \cdot R_y}{Pr_y + R_y}$ &
 $F1_{\text{macro}} = \displaystyle \frac{\sum\nolimits_{y \in Y} F1_y}{|Y|}$
 \\
 \end{tabular}
-\caption{Classification performance metric notation. As performance metrics, we will us accuracy, macro precision, macro recall and the macro F1 score. The macro version of a metric takes into account how many elements there are in each class which is helpful for skewed datasets, ie. where the number of instances per label is not distributed uniformly per label.}\label{fig:classification_metrics}
+\caption[Notation: Classification metrics]{Classification performance metric notation. As performance metrics, we will us accuracy, macro precision, macro recall and the macro F1 score. The macro version of a metric takes into account how many elements there are in each class which is helpful for skewed datasets, ie. where the number of instances per label is not distributed uniformly per label.}\label{fig:classification_metrics}
 \end{figure}
 
 In this work, we will mostly use a classifier algorithm called \textit{Support Vector Machine}, or \textit{SVM}.
@@ -157,7 +157,7 @@ $d_{istance}(v, v')$ & Shortest path length between $v$ and $v'$ \\
 $c_{all}(G)$ & Set of all connected components of $G$ \\
 $c(v)$ & Connected component of $v$ \\
 \end{tabular}
-\caption{Graph notation.}
+\caption[Notation: Graphs]{Graph notation.}
 \end{figure}
 
 \subsection{Concept Map}
@@ -169,7 +169,7 @@ For an example of a concept map, see Figure \ref{fig:concept_map}.
 \begin{figure}[htb!]
 \centering
 \includegraphics[width=0.5\linewidth]{assets/figures/concept_map.pdf}
-\caption{Example of a concept map. The nodes are the concepts. The directed edges connect the concepts to each other and have labels. In this example of a concept map, one could recover sentences from this graph, for example ``Caffeine \textit{is} a mild CNS stimulant". Taken and adapted from: \cite{Falke2017}}
+\caption[Example: Concept map]{Example of a concept map. The nodes are the concepts. The directed edges connect the concepts to each other and have labels. In this example of a concept map, one could recover sentences from this graph, for example ``Caffeine \textit{is} a mild CNS stimulant". Taken and adapted from: \cite{Falke2017}}
 \label{fig:concept_map}
 \end{figure}
 
@@ -217,7 +217,7 @@ Figure \ref{fig:concept_map_linearization} shows an example of such an unrolled 
 		\vspace{0.7in}
 		\caption{Extracted sentences}
 	\end{subfigure}%
-	\caption{Example of a concept map with its linearized version.
+	\caption[Example: Linearized Concept Map]{Example of a concept map with its linearized version.
 		The directed edges with their source- and sink vertices get unrolled into sentences.
 		Note that there are as many sentences as there are edges in the original concept map.
 		Linearizing a concept map in such a way enables conventional text-processing approaches, eg. extracting word counts with \textit{BoW} then classifying with a \textit{SVM}.}
@@ -249,7 +249,7 @@ Figure \ref{fig:cooccurrence_graphs} shows examples of co-occurrence graphs with
     \begin{subfigure}[t]{0.33\linewidth}{\includegraphics[width=\linewidth]{assets/figures/cooccurrence/window_size_6.pdf}}%
     \caption{Window size: 6}%
     \end{subfigure}
-    \caption{Example for co-occurrence graphs. Generated from the sentence: ``Quotation is a serviceable substitute for wit". With increasing window size, the number of edges and therefor the connectedness of the co-occurrence graph also increases.}%
+    \caption[Example: Co-Occurrence Graph]{Example for co-occurrence graphs. Generated from the sentence: ``Quotation is a serviceable substitute for wit". With increasing window size, the number of edges and therefor the connectedness of the co-occurrence graph also increases.}%
     \label{fig:cooccurrence_graphs}%
 \end{figure}
 
@@ -460,14 +460,14 @@ Our implementation also uses label compression, explained in Figure \ref{fig:wl_
 {\includegraphics[width=\linewidth]{assets/figures/wl_examples/wl_iteration_2_stage_1_compressed.pdf}\label{fig:wl_example_2}}
 \caption{$h=2$: After label compression}
 \end{subfigure}
-  \caption{Weisfeiler Lehman algorithm example. This examples shows one WL iteration with two graphs, $G_1$ and $G_2$. The initial graphs are shown in \textbf{(a)}. The first step of a WL iteration is relabeling the graph vertices by concatenating each node label with its sorted neighbourhood labels. The finished relabeled graph is shown in \textbf{(b)}. As an extension to the plain Weisfeiler-Lehman algorithm, we also show the label compression step where the long labels, consisting of the node label and its neighborhood labels, get compressed into a smaller label by assigning each unique label a new number. Same multi-label labels in different graphs get the same new label. The result of this step is shown in \textbf{(c)}. Under \textbf{(a)},  \textbf{(b)} and \textbf{(d)} we also added the feature maps $\phi(G)$ for both graphs. Each entry in the vector corresponds to a label. If a vector entry is 1, the corresponding label is present in the graph. The inner product on the vectors of the graphs is the value of the Weisfeiler-Lehman graph kernel for these two graphs.
+  \caption[Example: Weisfeiler Lehman iteration]{Weisfeiler Lehman algorithm example. This examples shows one WL iteration with two graphs, $G_1$ and $G_2$. The initial graphs are shown in \textbf{(a)}. The first step of a WL iteration is relabeling the graph vertices by concatenating each node label with its sorted neighbourhood labels. The finished relabeled graph is shown in \textbf{(b)}. As an extension to the plain Weisfeiler-Lehman algorithm, we also show the label compression step where the long labels, consisting of the node label and its neighborhood labels, get compressed into a smaller label by assigning each unique label a new number. Same multi-label labels in different graphs get the same new label. The result of this step is shown in \textbf{(c)}. Under \textbf{(a)},  \textbf{(b)} and \textbf{(d)} we also added the feature maps $\phi(G)$ for both graphs. Each entry in the vector corresponds to a label. If a vector entry is 1, the corresponding label is present in the graph. The inner product on the vectors of the graphs is the value of the Weisfeiler-Lehman graph kernel for these two graphs.
   In this case, the similarity before the iteration would be $\langle \phi(G_1), \phi(G_2) \rangle = \langle [1, 1, 1, 1, 0, 0, 0, 0], [1, 1, 1, 1, 0, 0, 0, 0] \rangle = 4$. After the relabeling, the value of the inner product is $2$.
   Before doing the WL iteration, the inner product on the feature maps simply returns the number of common labels. After the first iteration, the neighborhood of each node and therefor the structure of the graph is also reflected in the feature map - resulting in a lower similarity in out example.
   Notice that before the relabeling, ie. in \textbf{(a)}, the labels for the left-most node was the same for both graphs. After the first iterations, in \textbf{(b)} and \textbf{(c)}, they get different colors.
   The same happens for the top-most node: after the second iteration, in \textbf{(d)}, the labels are also different since in iteration $h=2$ not only the immediate neighborhood has to be the same for a match, also the neighborhood of its neighborhood.}\label{fig:wl_example}
 \end{figure}
 
-\subsection{Kernel Methods and Kernel trick}
+\labelsection{Kernel Methods and Kernel trick}{sec:kernel_method_and_kernel_trick}
 We have seen that a kernel can be used to calculate a measure of similarity between two objects, eg. graphs.
 Some kernels can be expressed as an inner product $k(X, X') = \langle \phi(X), \phi(X') \rangle$ on two (implicit) vector representations of the objects $X$ and $X'$.
 In this case, the vector representations $\phi(X)$ can be used in conventional classification algorithms.
@@ -500,6 +500,8 @@ To convert the text classification task into the task of classifying graphs whic
 \todo{Other approaches to graph classification}
 \todo{Mention other graphs}
 \todo{Mention \cite{Valerio2007} and their approach (``Reverse" classification: given a document, find a concept map)}
+
+\labelsubsection{Related Work}{subsection:related_work}
 
 \paragraph{``Shortest-Path Graph Kernels for Document Similarity" \cite{Nikolentzos2017a}}
 The most similar and recent work to our approach that we found was \cite{Nikolentzos2017a}. In this work, the authors first create co-occurrence graphs out of the text. Next, they create the gram matrix for the graphs with their own graph kernel and use a SVM to classify them.
@@ -643,4 +645,5 @@ In both cases, the matrix $M$ aims to encode the similarities of the substructur
 The authors report an improvement of classification scores for several real-world datasets, comparing the scores of the plain version of a kernel with their augmented version.
 
 
+\labelsubsection{Summary}{subsection:related_work_summary}
 \todo{How does this approach differ from ours?}

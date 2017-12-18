@@ -13,7 +13,7 @@ To investigate whether concept maps are useful for text classification, we first
 Our hypothesis especially highlights the structure of the concept maps since it is one of the main differences to other text representation.
 Finding out whether the structure of concept maps is heterogeneous therefore is a first crucial step.
 
-In Figure \ref{fig:graph_statistics}, we gathered metrics about the connectedness of concept maps and co-occurrence graphs with window size 1 for comparison.
+In Table \ref{table:graph_statistics}, we gathered metrics about the connectedness of concept maps and co-occurrence graphs with window size 1 for comparison.
 One thing that immediately becomes apparent is the compression factor of the concept maps: on average, only approximately 8\% of the original text-content is retained in the concept maps.
 This compression is useful for tasks like text summarization where only important concepts should be kept from the underlying text.
 
@@ -24,7 +24,7 @@ This is most likely due to the small length of the underlying texts.
 The shortness of the text results in a lower number of occurrences of some concept in the text, ie. most of the concepts occur only once in a text.
 To address this issue, we then searched for a dataset with longer texts per document.
 
-\begin{figure}[htb!]
+\begin{table}[htb!]
 	\centering
 	\begin{tabular}{lcccccc}
 		{} &  \multicolumn{2}{c}{\#nodes/\#words} &  \multicolumn{2}{c}{\#edges/\#nodes} & \multicolumn{2}{c}{\#nodes/graph} \\
@@ -41,21 +41,21 @@ To address this issue, we then searched for a dataset with longer texts per docu
 		\O{}            & 0.08 & 0.24 & 1.36 & 2.52 & 129.22 & 20.75 \\
 		\bottomrule
 	\end{tabular}
-	\caption{Graph statistics. \textit{\#words} is the number of words in the whole text dataset. The metrics for co-occurrence graphs are obtained using a window size of 1. The \textit{\#nodes/\#words} metric corresponds to a compression factor. Note that, on average, the concept maps have a compression factor of 8\% compared to the 24\% of co-occurrence graphs. This means that co-occurrence graphs have approximately three times more node labels than concept maps. The \textit{\#edges/\#nodes} metric is an indicator for the connectedness of the graphs. Because we remove nodes which have no edge to other nodes, the \textit{\#edges/\#nodes} metric captures the average degree of the nodes. Looking at that metric we also see that, on average, the co-occurrence graphs with window size 1 have roughly twice as much edges per node as concept maps.}\label{fig:graph_statistics}
-\end{figure}
+	\caption[Statistics: Graphs]{Graph statistics. \textit{\#words} is the number of words in the whole text dataset. The metrics for co-occurrence graphs are obtained using a window size of 1. The \textit{\#nodes/\#words} metric corresponds to a compression factor. Note that, on average, the concept maps have a compression factor of 8\% compared to the 24\% of co-occurrence graphs. This means that co-occurrence graphs have approximately three times more node labels than concept maps. The \textit{\#edges/\#nodes} metric is an indicator for the connectedness of the graphs. Because we remove nodes which have no edge to other nodes, the \textit{\#edges/\#nodes} metric captures the average degree of the nodes. Looking at that metric we also see that, on average, the co-occurrence graphs with window size 1 have roughly twice as much edges per node as concept maps.}\label{table:graph_statistics}
+\end{table}
 
 \todo{New dataset! Statistics}
 \todo{Add statistics about \# of occurrences of concepts in graphs}
 
 Another hint for the un-connectedness of concept maps is the number of connected components.
-In Figure \ref{fig:connected_component_percentage_per_size} we can see that most of the graphs have more than one connected component. Together with the observation of the low number of nodes per graph, this also implies the low connectedness of concept maps.
+In Table \ref{table:connected_component_percentage_per_size} we can see that most of the graphs have more than one connected component. Together with the observation of the low number of nodes per graph, this also implies the low connectedness of concept maps.
 In this table we also report the percentage of connected components of size $\{2,3,4\}$ to the total number of connected components.
 The results in this table show that the bulk of concept maps consist of small connected components and are generally quite un-connected. Connected components of size 2 and 3, ie. containing 2 or 3 nodes, make up 80 \% of all connected components.
 
 In Figure \ref{fig:histogram_connected_components} we also plotted an histogram of the number of connected components per graph for \textit{ng20}.
 In Figure \ref{fig:graph_examples} shows examples of concept maps and co-occurrence graphs with different window sizes.
 
-\begin{figure}[htb!]
+\begin{table}[htb!]
 \centering
 \begin{tabular}{lrrrr}
 	{} &  $|s_c|=2$ &  $|s_c|=3$ &  $|s_c|=4$ & $|s_{all}| > 1$ \\
@@ -72,24 +72,24 @@ In Figure \ref{fig:graph_examples} shows examples of concept maps and co-occurre
 	\O            & \% 61.3 & \% 21.3 & \% 7.9 & \% 73.7 \\
 	\bottomrule
 \end{tabular}
-\caption{Percentage of connected component size of concept maps per dataset. $|s_c|=n$ corresponds to the size of the connected component and the percentage signifies how many connected component in the whole dataset have this size, eg. when $|s_c|=2$ has a 50\% share it means that 50\% of all connected components in all graphs have the size 2. $|s_{all}| > 1$ stands for the percentage of graphs that consist of more than one connected component, eg. when $|s_{all}| > 1$ is 50\% it means that 50\% of all graphs have more than one connected component.}\label{fig:connected_component_percentage_per_size}
-\end{figure}
+\caption[Statistics: Percentage of connected components size]{Percentage of connected component size of concept maps per dataset. $|s_c|=n$ corresponds to the size of the connected component and the percentage signifies how many connected component in the whole dataset have this size, eg. when $|s_c|=2$ has a 50\% share it means that 50\% of all connected components in all graphs have the size 2. $|s_{all}| > 1$ stands for the percentage of graphs that consist of more than one connected component, eg. when $|s_{all}| > 1$ is 50\% it means that 50\% of all graphs have more than one connected component.}\label{table:connected_component_percentage_per_size}
+\end{table}
 
 \begin{figure}[htb!]
 \centering
 \includegraphics[width=0.8\linewidth]{assets/figures/hist-connected-components-ling-spam-CMap.pdf}
-\caption{Histogram of connected components per concept map. From the \textit{ling-spam} dataset.}\label{fig:histogram_connected_components}
+\caption[Statistics: Histogram of connected components per concept map]{Histogram of connected components per concept map. From the \textit{ling-spam} dataset.}\label{fig:histogram_connected_components}
 \end{figure}
 
 \begin{figure}[htb!]
 	\centering
 	\includegraphics[width=0.9\linewidth]{assets/figures/connected_component_size_comparison.pdf}
-	\caption{Histogram of the size of connected components, ie. the number of nodes per connected component, of concept maps for two datasets. The distribution of the size of connected components varies greatly between different datasets. In this instance, the \textit{ng20} dataset has mostly small connected components while the \textit{ted\_talks} dataset has bigger connected components. This is most likely due to the fact that the \textit{ted\_talks} dataset consists of longer, coherent texts while the \textit{ling-spam} texts are shorter as well as more informal.}
+	\caption[Statistics: Histogram of size of connectec components]{Histogram of the size of connected components, ie. the number of nodes per connected component, of concept maps for two datasets. The distribution of the size of connected components varies greatly between different datasets. In this instance, the \textit{ng20} dataset has mostly small connected components while the \textit{ted\_talks} dataset has bigger connected components. This is most likely due to the fact that the \textit{ted\_talks} dataset consists of longer, coherent texts while the \textit{ling-spam} texts are shorter as well as more informal.}
 	\label{fig:histogram_connected_component_size}
 \end{figure}
 
 
-\begin{figure}[htb!]
+\begin{table}[htb!]
 	\centering
 	\begin{tabular}{lrr}
 		\toprule
@@ -103,20 +103,21 @@ In Figure \ref{fig:graph_examples} shows examples of concept maps and co-occurre
 		tagmynews       &  0.1399 &  0.0229 \\
 		webkb           &  0.1132 &  0.0526 \\
 		\bottomrule
-	\end{tabular}\caption{Percentage of concepts that occur only once in the dataset. Per graph type and dataset.}
-\end{figure} 
+	\end{tabular}
+	\caption[Statistics: Percentage of concepts occurring only once]{Percentage of concepts that occur only once in the dataset. Per graph type and dataset.}\label{table:percentage_concept_only_once}
+\end{table} 
 
 
 \begin{figure}[htb!]
 \centering
 \includegraphics[width=0.7\linewidth]{assets/figures/examples_graphs.pdf}
-\caption{Graph examples per type. Three random examples are shown per type. $w$ stands for the window size of the co-occurrence grpah. The concept map examples all have more than one connected component, while all co-occurrence graphs have only one. Dataset: \textit{ng20}}\label{fig:graph_examples}
+\caption[Examples: Graph types]{Graph examples per type. Three random examples are shown per type. $w$ stands for the window size of the co-occurrence grpah. The concept map examples all have more than one connected component, while all co-occurrence graphs have only one. The shown graphs were randomly chosen from all graphs with $5 \leq |V| \leq 10$.Dataset: \textit{ng20}}\label{fig:graph_examples}
 \end{figure}
 
 \begin{figure}[htb!]
 \centering
 \includegraphics[width=0.7\linewidth]{assets/figures/hist-edgesnodes.pdf}
-\caption{Histogram of the number of edges divided by the number of nodes. Per graph type. The lines correspond to the median value.}
+\caption[Statistics: Histogram of the number of edges divided by the number of nodes]{Histogram of the number of edges divided by the number of nodes. Per graph type. The lines correspond to the median value.}
 \label{fig:histogram-edges-div-nodes-per-type}
 \end{figure}
 
@@ -127,7 +128,7 @@ When the window size is 1, the graph is similar to a path, meaning that most of 
 \begin{figure}[htb!]
 	\centering
 	{\includegraphics[width=\linewidth]{assets/figures/percentage_degree.pdf}%
-		\caption{%
+		\caption[Statistics: Distribution of concept map node degrees]{%
 			Distribution of concept map node degrees per datasets. $|d_v| = n$ stands for the percentage of nodes with degree $n$.
 			We can see that well over 90\% of all nodes have a degree of $3$ or less.
 		}%
@@ -149,9 +150,9 @@ After executing WL on the graphs, we obtain the feature maps which get subsequen
 
 For \textbf{(c)} (structure and content combined), we use the Weisfeiler-Lehman that takes both structure and content into account.
 
-In Table \ref{fig:table-results-structure-vs-content} we report the results obtained from these experiments.
+In Table \ref{table:table_results_structure_vs_content} we report the results obtained from these experiments.
 
-\begin{figure}[htb!]
+\begin{table}[htb!]
 \centering
 \begin{tabular}{llrrr}
           & & \multicolumn{3}{c}{f1 macro} \\
@@ -170,8 +171,8 @@ webkb & concept map &  0.472472 &  0.162010 &  0.222296 \\
           & cooccurrence &  0.714741 &  0.170633 &  0.472485 \\
 \bottomrule
 \end{tabular}
-\caption{Comparison of linearized graph with CountVectorizer and results of WL}\label{fig:table-results-structure-vs-content}
-\end{figure}
+\caption[Results: Linearized vs. WL]{Comparison of linearized graph with CountVectorizer and results of WL}\label{table:table_results_structure_vs_content}
+\end{table}
 
 \todo{Interpret results!}
 \todo{Ratio between (a), (b) to (c). Why is combined less good?}
@@ -181,7 +182,7 @@ webkb & concept map &  0.472472 &  0.162010 &  0.222296 \\
 
 \todo{Co-occurrence:"Text kernel" performs nearly as well as normal text}
 \todo{Co-occurrence: only minor decrease (1\%) in performance when only using nouns}
-\begin{figure}[htb!]
+\begin{table}[htb!]
 \centering
 \begin{tabular}{lrrr}
 &  concept\_map &  cooccurrence &   ratio \\
@@ -193,8 +194,8 @@ rotten\_imdb     &  0.5786 &  0.8070 &  0.7170 \\
 webkb           &  0.2763 &  0.5082 &  0.5438 \\
 \bottomrule
 \end{tabular}
-\caption{Comparison of co-occurrence results with concept maps}
-\end{figure}
+\caption[Results: Co-Occurrence vs. Concept Maps]{Comparison of co-occurrence results with concept maps}\label{table:comparison_results_cooccurrence}
+\end{table}
 
 \subquestionref{question:comparison_text}
 As one can see in Figure \ref{fig:results_cmap_vs_text}, the text-only- outperform graph-only approaches by a high margin.
@@ -203,7 +204,7 @@ This is most likely due to the high compression factor of concept maps and co-oc
 \begin{figure}[htb!]
 \centering
 \missingfigure[figcolor=white]{}
-\caption{Comparison of concept maps with text}
+\caption[Results: Concept Maps vs. Text]{Comparison of concept maps with text}
 \label{fig:results_cmap_vs_text}
 \end{figure}
 
@@ -214,9 +215,9 @@ As we can see in Figure \ref{?}, most concept map node labels consist of more th
 \subquestionref{question:edge_labels}
 In concept maps, an edge label can be combined with the label of its source and target nodes to form a sentence.
 To evaluate how important the edge labels are, we first look at the occurrences of edge labels, ie. how often a unique edge label occurs in the concept maps of a whole dataset.
-In Figure \ref{fig:edge_label_occurrences} we see that, on average, 76\% of all unique edge labels occur only once per dataset. For comparison, the percentage of unique words which only occur once in a text, on average, is often well below 50\% for our datasets.
+In Table \ref{table:edge_label_occurrences} we see that, on average, 76\% of all unique edge labels occur only once per dataset. For comparison, the percentage of unique words which only occur once in a text, on average, is often well below 50\% for our datasets.
 
-\begin{figure}[htb!]
+\begin{table}[htb!]
 	\centering
 	\begin{tabular}{lrr}
 		dataset &  $ \%_{unique} $ & $ \%_{all}$  \\
@@ -233,10 +234,10 @@ In Figure \ref{fig:edge_label_occurrences} we see that, on average, 76\% of all 
 		\O           & 76 & 37 \\
 		\bottomrule
 	\end{tabular}
-	\caption{Percentage of concept map edge labels occurring only once in the whole dataset.
+	\caption[Statistics: Percentage of concept map labels occurring once]{Percentage of concept map edge labels occurring only once in the whole dataset.
 		$ \%_{unique} $ corresponds to the percentage of edge labels which only occur once to the number of unique labels in the whole dataset, eg. $ \%_{unique} = 50\% $ would mean that 50\% of all unique edge labels occur only once.
-		$ \%_{all}$ stands for the percentage of edge labels which occur only once to all labels (with duplicates), eg. $ \%_{all} = 50\%$ would mean that 50\% of all edge labels occur only once in the dataset.}\label{fig:edge_label_occurrences}
-\end{figure}
+		$ \%_{all}$ stands for the percentage of edge labels which occur only once to all labels (with duplicates), eg. $ \%_{all} = 50\%$ would mean that 50\% of all edge labels occur only once in the dataset.}\label{table:edge_label_occurrences}
+\end{table}
 
 When examining the most occurring edge labels per dataset, most of these most-frequent edge labels consist of stopwords or non-descriptive words like ``is", ``has", ``are".
 These most-frequent edge labels, together with the edge labels which occur only once, form the bulk of all edge labels.
@@ -245,7 +246,7 @@ As a test for the importance of edge labels, we evaluate \textbf{(a)} a graph ke
 For both, \textbf{(a)} and \textbf{(b)}, we use a graph kernel which first converts the graphs into a set of labels and then counts the number of these labels for each graph.
 For \textbf{(a)} we use the edge labels, for \textbf{(b)} we omit them.
 
-\begin{figure}[htb!]
+\begin{table}[htb!]
 	\centering
 \begin{tabular}{lrr}
 	{} & \multicolumn{2}{c}{edge labels} \\
@@ -258,10 +259,10 @@ For \textbf{(a)} we use the edge labels, for \textbf{(b)} we omit them.
 	ted\_talks  & \textbf{0.455} & 0.418 \\
 	\bottomrule
 \end{tabular}
-\caption{Classification results for a graph kernel either using or omitting edge labels.}\label{fig:edge_label_classification}
-\end{figure}
+\caption[Results: Graph Kernel with and without edge labels]{Classification results for a graph kernel either using or omitting edge labels.}\label{table:edge_label_classification}
+\end{table}
 
-As we can see in Figure \ref{fig:edge_label_classification}, omitting or using the edge labels result in comparable performance.
+As we can see in Table \ref{table:edge_label_classification}, omitting or using the edge labels result in comparable performance.
 For some datasets, omitting the edge label actually improves the classification score.
 
 \todo{These facts all indicate that edge labels, while crucial and useful for text-summarization and the subsequent use by a human, seem to have limited use in graph classification.}
@@ -278,10 +279,10 @@ When using WL with undirected edges, the neighbours $n_v$ of a node $v$ are all 
 With directed edges, on the other hand, the neighbours $n_v$ of a node $v$ are only nodes $v'$ where there exists a directed edge from $v$ to $v'$, or $n_v = \{v' | (v, v') \in E \}$.
 So, the size of neighbourhoods per node are expected to decrease, since there is an additional constraint to what constitutes a neighbour.
 
-In Figure \ref{fig:results_directed_vs_undirected} we see the results of using WL with directed and un-directed edges.
+In Table \ref{table:results_directed_vs_undirected} we see the results of using WL with directed and un-directed edges.
 In all datasets, apart from the \textit{ng20} dataset, the directed edges outperform the un-directed approach.
 
-\begin{figure}[htb!]
+\begin{table}[htb!]
 	\centering
 \begin{tabular}{lrrr}
 	dataset &  un-directed & directed &  difference \\
@@ -296,8 +297,8 @@ In all datasets, apart from the \textit{ng20} dataset, the directed edges outper
 	ted\_talks       &  0.1399 &  \textbf{0.1790} &  0.0391 \\
 	\bottomrule
 \end{tabular}
-\caption{Classification results when using directed versus un-directed edges with WL.}\label{fig:results_directed_vs_undirected}
-\end{figure}
+\caption[Results: WL with directed and un-directed edges]{Classification results when using directed versus un-directed edges with WL.}\label{table:results_directed_vs_undirected}
+\end{table}
 
 This is most likely due to the aforementioned property that the neighborhoods are smaller with directed edges, making exact matches of neighborhoods more probable.
 Note that using directed edges in WL could be compared with using n-grams: when the order of words/nodes is fixed in one direction, vertices with no outgoing edges do not have a neighborhood. Thus they are, for all WL iterations, considered to be the same label, ie. they get no new color assigned.
@@ -338,7 +339,7 @@ For the graph features we used the Weisfeiler-Lehman algorithm since it is able 
 These feature maps can easily be concatenated with the text features.
 For other graph kernels where an explicit feature map $\phi(G)$ can not be calculated, in order to combine graph- and text features, we would have needed to create a combined kernel that takes both text- and graph features into account and calculate a gram matrix.
 The interpretability of this approach would be far lower since both graph- and text-features would be merged together in a single number without being able to distinguish the relative importance of the text- and graph features after creating the gram matrix.
-In Figure \ref{fig:results_comparison_combined} we see the classification scores for the combined features for both co-occurrence graphs and concept maps.
+In Table \ref{table:results_comparison_combined} we see the classification scores for the combined features for both co-occurrence graphs and concept maps.
 
 As we see, the performance of the combined approached compared the text-only approach is comparable.
 With some datasets, the combined approach is slightly better than the text-only approach. Especially for the ng20 dataset, we see an improvement of ca. 3\% over the text-only approach.
@@ -355,7 +356,7 @@ For our purposes, we do not look at single features, or input neurons, but on a 
 \begin{figure}[htb!]
 	\centering
 	{\includegraphics[width=0.5\linewidth]{assets/figures/coefs_example.pdf}%
-		\caption{%
+		\caption[Example: One-layer neural net]{%
 			Example of an one-layer neural net. The numbers on the line from input features to the output are weights.
 			We examine these weights for single features to gain an insight into the importance the neural net assigned to a given feature. Since a feature contributes to all output neurons, we look at the sum of its absolute weights. Eg. for \textit{Feature 1} the sum of the absolute weights would be $|6| + |-4| = 10$ and for \textit{Feature n} it is $|2| + |1| = 3$, which gives us the hint that \textit{Feature 1} might be more important for the classification result than \textit{Feature N}.
 			This analysis presupposes that the feature magnitudes, ie. the values of features, are normalized or - roughly speaking - in the same range on average, eg. \textit{Feature 1} does not take values between $[100, 200]$ while \textit{Feature N} takes values from $[0, 1]$, instead both feature values are roughly in the same range.
@@ -376,11 +377,11 @@ Thus the contribution by graph features to the end result is even lower than the
 \begin{figure}[htb!]
 	\centering
 	{\includegraphics[width=\linewidth]{assets/figures/combined_coefs_l1_l2_regularization.pdf}%
-		\caption{%
+		\caption[Statistics: Histogram of trained one-layer neural net]{%
 			Histogram of the trained one-layer neural net weights. The neural net was trained on the concatenated graph- and text features.
 			Higher values indicate higher importance.
-			\textit{Graph (All)} stands for th sum of all graph feature weights, while the \textit{Graph $N$} stand for the individual Weisfeiler-Lehman iterations.
-			Higher iterations of WL take a bigger neighbourhood into account.
+			\textit{Graph (All)} stands for the sum of all graph feature weights, while the \textit{Graph $N$} stand for the individual Weisfeiler-Lehman iterations.
+			Higher iterations of WL take a bigger neighborhood into account.
 			Dataset: \textit{ng20}.
 		}%
 		\label{fig:combined_coefs_l1_l2_regularization}}
@@ -390,12 +391,12 @@ Another interesting result of this weight analysis is the importance the neural 
 When looking at the importance of the first iteration and \textit{L1} regularization, \textit{Graph 1} in Figure \ref{fig:combined_coefs_l1_l2_regularization}, we see that while the neural net nearly discourages all higher WL iterations by assigning low weights, it assigns higher importance to the first iteration of WL, $941$ versus $15$.
 The first iteration of WL takes only the immediate neighborhood into account, therefore matches are far more probable than matches in higher iterations.
 In our example in Figure \ref{fig:combined_coefs_l1_l2_regularization}, \textit{L1}- outperformed \textit{L2} regularization by a high margin, approximately 7\% difference in the \textit{F1} macro score.
-Yet it has to be noted that no hyperparameter tuning was performed and only a simple train-/test split was used.
+Yet it has to be noted that no hyper-parameter tuning was performed and only a simple train-/test split was used.
 
 \todo{Cite where it is said that l1 regularization produces sparse features}
 
 
-\begin{figure}[htb!]
+\begin{table}[htb!]
 \centering
 \begin{tabular}{llcc}
   &  & \multicolumn{2}{c}{Graph type} \\
@@ -422,9 +423,9 @@ webkb
           & text only & \multicolumn{2}{c}{ 0.702095 }\\	
 \bottomrule
 \end{tabular}
-\caption{Comparison of classification using both concept maps and text. TODO: Add standard deviations}%
-\label{fig:results_comparison_combined}
-\end{figure}
+\caption[Results: Combined text- and graph features]{Comparison of classification using both concept maps and text. TODO: Add standard deviations}%
+\label{table:results_comparison_combined}
+\end{table}
 
 \subquestionref{question:comparison_runtime}
 \todo{?}
@@ -440,7 +441,7 @@ In Figure \ref{fig:phi_distribution_example} we see an example of such a $\phi$ 
 \begin{figure}[htb!]
 	\centering
 	{\includegraphics{assets/figures/wl_phi_distributions/dataset_graph_concept_map_ng20-v3_phi_npy.png}
-		\caption{%
+		\caption[Example: $\phi$ distribution plot]{%
 			Example of a WL $\phi$ distribution plot.
 			For each WL iteration $h$, the horizontal $x$-axis corresponds to the concept maps in the datasets, while the vertical $y$-axis corresponds to the indices of $\phi(G)$ which are non-zero, ie. when there is a point at $x=0$ and $y=10$, the graph $G_0$ has the label $10$.
 			There are as many points in this plot as there are vertices in the dataset.
@@ -483,7 +484,7 @@ For an example, see Figure \ref{fig:phi_distribution_train_test}.
 	\begin{subfigure}[t]{.49\linewidth}%
 		{\includegraphics{assets/figures/wl_phi_distributions/dataset_graph_concept_map_ng20-v3_splitted_phi_npy_test.png}}\caption{Test}%
 	\end{subfigure}%
-	\caption{WL $\phi$ distribution with a stratified train/test split.}%
+	\caption[Diagram: $\phi$ distribution plot for \textit{ng20}.]{WL $\phi$ distribution with a stratified train/test split.}%
 	\label{fig:phi_distribution_train_test}
 \end{figure}
 
