@@ -2,12 +2,6 @@ limit_graph_type:
 - concept_map
 params_per_type:
   graph_combined:
-    classifier:
-      C:
-      - 0.001
-      - 0.01
-      #- 0.1
-      - 1
     features:
       fast_wl_pipeline:
         feature_extraction:
@@ -21,6 +15,10 @@ params_per_type:
               - 10
               same_label:
               - true
+              use_directed:
+              - true
+              use_early_stopping:
+              - false
             phi_picker:
               return_iteration:
               - stacked

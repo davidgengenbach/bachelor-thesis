@@ -11,11 +11,6 @@ limit_graph_type:
 - concept_map
 params_per_type:
   graph_combined:
-    classifier:
-      C:
-      - 0.01
-      - 0.1
-      - 1
     features:
       fast_wl_pipeline:
         feature_extraction:

@@ -13,12 +13,6 @@ params_per_type:
       strategy:
       - most_frequent
   graph:
-    classifier:
-      C:
-      - 0.001
-      - 0.01
-      #- 0.1
-      - 1
     feature_extraction:
       fast_wl:
         h:
@@ -34,12 +28,6 @@ params_per_type:
     normalizer:
     - MaxAbsScaler
   text:
-    classifier:
-      C:
-      - 0.001
-      - 0.01
-      #- 0.1
-      - 1
     preprocessing:
     - SimplePreProcessingTransformer
     scaler:
@@ -59,11 +47,6 @@ params_per_type:
         - 1
         - 2
   graph_combined:
-    classifier:
-      C:
-      - 0.001
-      - 0.01
-      - 1
     features:
       fast_wl_pipeline:
         feature_extraction:
@@ -75,6 +58,10 @@ params_per_type:
               - ~
               round_to_decimals:
               - 10
+              use_directed:
+              - true
+              use_early_stopping:
+              - false
             phi_picker:
               return_iteration:
               - stacked

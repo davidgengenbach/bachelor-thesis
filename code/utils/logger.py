@@ -1,8 +1,10 @@
 import logging
+import sys
 
 logging.basicConfig(
     level=logging.DEBUG,
-    format="%(asctime)s // %(levelname)s // %(message)s"
+    format="%(asctime)s // %(levelname)s // %(message)s",
+    stream=sys.stdout
     #format="%(asctime)s // %(levelname)s - %(name)s: %(message)s"
 )
 

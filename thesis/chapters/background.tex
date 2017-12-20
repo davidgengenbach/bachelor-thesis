@@ -471,9 +471,9 @@ Our implementation also uses label compression, explained in Figure \ref{fig:wl_
 We have seen that a kernel can be used to calculate a measure of similarity between two objects, eg. graphs.
 Some kernels can be expressed as an inner product $k(X, X') = \langle \phi(X), \phi(X') \rangle$ on two (implicit) vector representations of the objects $X$ and $X'$.
 In this case, the vector representations $\phi(X)$ can be used in conventional classification algorithms.
-Yet, calculating these representations is not always possible or feasible since the dimension of such a representation is quite high.
+Yet, calculating these representations is not always possible or feasible since the dimension of such a representation is quite high or even infinite.
 There is another approach for classification (and regression), the aforementioned kernel methods.
-Kernel methods operate directly with the kernel values and do not use the implicit feature representations $\phi(X)$.
+Kernel methods operate directly with the kernel and do not use the explicit feature representations $\phi(X)$.
 Instead, kernel methods use the similarities $k(X, X')$ directly.
 
 One popular example of a kernel method is the Support Vector Machine, or SVM.
@@ -484,9 +484,21 @@ After training, to predict the label for a given instance $X_{test}$, the pairwi
 This vector $v$ is then fed into the SVM which predicts the label for $X_{test}$.
 Note that this kernel method approach does not use explicit feature maps of the instances, only their pairwise similarities.
 This feature of not needing to calculate the explicit feature map $\phi$ is called kernel trick.
-It enables linear models, such as the SVM, to solve non-linear separable problems.
+Here, the explicit inner product on the two feature maps $\phi$ is not needed, only $k(X, X')$.
+The kernel trick also enables linear algorithms, such as the un-kernelized \textit{SVM}, to solve non-linear problems.
+Apart from the kernelized \textit{SVM}, the class of kernel methods also includes kernelized \textit{PCA}, kernelized \textit{k-Means}, \textit{Gaussian Processes} and others.
 
-In our work, we will use both the kernelized version of the SVM, ie. learning with a gram matrix, as well as the version using an explicit feature map $\phi$.
+In our work, we will use both the kernelized version of the \textit{SVM}, ie. learning with a gram matrix, as well as the version using an explicit feature map $\phi$.
+
+\todo{\textbf{Kernel trick}
+
+	``Any algorithm to process finite-dimensional vectors that can be
+	expressed only in terms of pairwise inner products can be applied to
+	potentially infinite-dimensional vectors in the feature space of a p.d.
+	kernel by replacing each inner product evaluation by a kernel evaluation."
+	
+	\url{https://lear.inrialpes.fr/people/mairal/teaching/2015-2016/MVA/fichiers/mva_slides.pdf}
+}
 
 \labelsection{Graph Kernel Based Text Classification}{subsec:graph_kernel_based_text_classification}
 In this section, we will introduce related work and briefly recap the history of the field.
