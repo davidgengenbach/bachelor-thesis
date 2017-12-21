@@ -258,17 +258,22 @@ webkb           & 7 & 8274 & 158 & 0.15 \\
 \labelsection{Methods}{subsec:methods}
 
 \subsection{Cross-Validation}
-For all the classification tasks we used train-/validation- and test sets.
-The split is done as follows: 85\% for train- and validation set together and 15\% for the validation set.
+For all the classification tasks we use train-/validation- and test set splits.
+The split is done as follows: 85\% for train- and validation set together and 15\% for the test set.
 We then use stratified k-fold cross-validation to further split the train- and validation set. In our case, we used $k = 3$, meaning that $\frac{2}{3}$ of the dataset is used for training, and the rest for validation.
-The stratification ensures that the class distribution in the train set is (nearly) the same as in the validation set.
+The stratification ensures that the class distribution in the different sets is \textit{almost} the same as in the class distribution of the complete dataset.
 
-\todo{Hold-out set!}
+Hyperparameter tuning and model selection was done using cross-validation on the train-/ validation set, ie. we first trained classifiers for all hyperparameter choices on all $k$ train-/validation splits, and after finding the best hyper-parameters on these sets, we retrained the best classifier on the whole train-/validation set and then evaluated the performance on the test set \textbf{once}.
+So, the test set was \textbf{not} used for immediate evaluation or parameter tuning.
+The classification performance is only evaluated once on the test set to retrieve the final results we report here.
 
 \subsection{Metrics}
 We evaluated a number of metrics for each classification task, namely: 
 recall, precision, accuracy and the F1-score. We mostly focus on the F1 macro score since it captures the overall performance of classification algorithms by merging two other metrics, namely precision and recall.
 For an overview and definition of the mentioned metrics, please see Section \ref{subsec:classification_task}.
+
+\subsection{Normalization}
+\todo{\textit{MaxAbsScaler}}
 
 \subsection{Significance tests}
 When comparing two models we used the permutation test, or exact test, to test the significance of the difference in performance of these two approaches.
@@ -343,10 +348,10 @@ The code and instructions on how set-up the experiments can be found on GitHub \
 \todo{Code by Tobias to extract concept maps}
 
 \subsection{Concept Map Extraction}
-We used the code \footnote{\url{https://github.com/UKPLab/ijcnlp2017-cmaps}} provided by Falke \cite{Falke2017} to create the concept maps.
+We used the code provided by Falke\footnote{\url{https://github.com/UKPLab/ijcnlp2017-cmaps}}  to create the concept maps.
 In this section we will briefly describe the steps the code performs. For a more detailed explanation, see \cite{Falke2017}.
 
-The input to the concept map extraction algorithm is a single text document. The output is a single concept maps for this text document.
+The input to the concept map extraction algorithm is a single text document. The output is a single concept map for this text document.
 
 First, the algorithm extracts concepts and their relations to another.
 This is done by extracting binary relations from the text. A binary relation consists of three parts: two concepts and the relation between them. An example for a binary relation is ``David likes something", here ``David" and ``something`` are the concepts and ``likes" the relation them. Note that the binary relation is directed, eg. ``Something likes David" is not the same binary relation as ``David likes something."

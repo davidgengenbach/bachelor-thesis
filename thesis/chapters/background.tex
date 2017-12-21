@@ -1,89 +1,5 @@
-In this chapter we will introduce the notations and concepts we will use in subsequent sections.
+In this chapter we will introduce the notations and concepts we will use in subsequent chapters.
 
-\todo{Introductions to used classifiers, concepts}
-\todo{Concretize the problem and its notation}
-
-\labelsection{Classification Task}{subsec:classification_task}
-Classification using machine learning is the task of automatically assigning classes, or labels, to given datapoints.
-Given a dataset $D = \{(x_1, y_1), (x_2, y_2), \ldots, (x_n, y_n) \} \subseteq X \times Y$ of $n$ items where $(x_i, y_i)$ are dataset instances, the supervised classification task is to create a classifier which predicts a label $y' \in Y$ for a given $x \in X$.
-In this work, the labels $Y$ of the dataset are denoted with $Y_d = (y_1, y_2, \ldots, y_n )$, the predicted labels are denoted as $Y'_d = (y'_1, y'_2, \ldots, y'_n )$.
-When the number of classes $|Y| = 2$, the classification task is called binary classification. For higher $|Y|$ it is called multi-class classification.
-In Figure \ref{table:classification_notation} we summarize the classification notation.
-
-\begin{figure}[htb!]
-\centering
-\begin{tabular}{lll}
- & Notation & Definition \\
-\toprule
-Datapoint & $x$ & $x \in X$
-\\
-Label & $y$ & $y \in Y$
-\\
-Real and predicted label of $x_i$ & $y_i$, $y'_i$ &  $y_i, y'_i \in Y$
-\\
-Instance & $d_i$ & $(x_i, y_i) \in X \times Y$
-\\
-Dataset & $D$ & $\{(x_1, y_1), \ldots, (x_n, y_n) \} \subseteq X \times Y$ 
-\end{tabular}
-\caption[Notation: Classification]{Classification notation.}\label{table:classification_notation}
-\end{figure}
-
-To automatically assign the labels in a supervised way, generally a learning algorithm is used to train a classifier by providing it datapoints and its labels.
-The classifier algorithm then, internally, creates a model of the data and often optimizes internal parameters to fit the data.
-During prediction, that is when wanting to automatically assign a label to a (new) datapoint $x_i$, the new datapoint is fed into the classifier which in turn returns the predicted label, $y'_i$.
-
-The performance or score of a trained classifier is evaluated by comparing the labels it predicts, $y'_i$,  for datapoints $x_i$ with the real label $y_i$ in the dataset.
-There are several metrics for evaluating the performance of a classifier.
-The classification metrics we use in this work are summarized in Figure \ref{fig:classification_metrics}.
-
-\begin{figure}[htb!]
-\centering
-\renewcommand*{\arraystretch}{2.1}
-\begin{tabular}{llll}
- & Notation & Definition & \\
-\toprule
-True positives of $y$ &
-$TP_y$ &
-$\displaystyle |\{i | y'_i = y, y'_i = y_i \}|$ &
-\\
-False positives of $y$ &
-$FP_y$ &
-$\displaystyle |\{i | y'_i = y, y_i \neq y \}|$ &
-\\
-True negatives of $y$ &
-$TN_y$ &
-$\displaystyle |\{i | y'_i \neq y, y_i \neq y\}|$ &
-\\
-False negatives of $y$ &
-$FN_y$ &
-$\displaystyle |\{i | y'_i \neq y, y_i = y\}|$ &
-\\
-\midrule
-Accuracy &
-$A$ &
-$\displaystyle \frac{\sum\nolimits_{y \in Y} TP_y}{|D|}$ &
-\\
-Precision of $y$ &
-$Pr_y$ &
-$\displaystyle \frac{TP_y}{TP_y + FP_y} $ &
-$Pr_{\text{macro}} = \displaystyle \frac{\sum\nolimits_{y \in Y} Pr_y}{|Y|}$
-\\
-Recall of $y$ &
-$R_y$ &
-$\displaystyle \frac{TP_y}{TP_y + FN_y}$ &
-$R_{\text{macro}} = \displaystyle \frac{\sum\nolimits_{y \in Y} R_y}{|Y|}$
-\\
-F1 score of $y$ &
-$F1_y$ &
-$\displaystyle 2 \cdot \frac{Pr_y \cdot R_y}{Pr_y + R_y}$ &
-$F1_{\text{macro}} = \displaystyle \frac{\sum\nolimits_{y \in Y} F1_y}{|Y|}$
-\\
-\end{tabular}
-\caption[Notation: Classification metrics]{Classification performance metric notation. As performance metrics, we will us accuracy, macro precision, macro recall and the macro F1 score. The macro version of a metric takes into account how many elements there are in each class which is helpful for skewed datasets, ie. where the number of instances per label is not distributed uniformly per label.}\label{fig:classification_metrics}
-\end{figure}
-
-In this work, we will mostly use a classifier algorithm called \textit{Support Vector Machine}, or \textit{SVM}.
-We will provide a more detailed explanation of the \textit{SVM} later on.
 
 \labelsection{Texts}{subsec:texts}
 Text is ubiquitous and the task of automatically processing or classifying text has become more important as the volume of available texts grows daily.
@@ -91,11 +7,11 @@ While text is arguably the most prominent representation for information for hum
 Language is a highly complex method to convey information. 
 Text often creates its own context, eg. by mentioning some concept in the beginning of a text and only implicitly relating to it at the end. Or by using different words to represent the same concept.
 Other difficulties arise due to varying writing styles by different authors.
-Another obvious problem is the ambiguous nature of language, eg. in English the word ``bear" can relate to the animal or the verb.
+Another obvious problem is the ambiguous nature of language\cite{Britton1978}, eg. in English the word ``bear" can relate to the animal or the verb.
 Often the meaning of a word is defined by its (immediate) context.
-Manually defining rules or algorithms to remove the ambiguity of language have been shown to be very laborious if not impossible.
+Manually defining rules or algorithms to remove the ambiguity of language have been shown to be very laborious if not impossible \cite[p.~11]{Weikum2002}.
 
-These and other difficulties harden the task of processing natural language text significantly.
+These and other difficulties harden the task of processing natural language text significantly \cite{Chowdhury2003,Weikum2002}.
 Yet, the task of processing text emerges in important real-world applications.
 In text classification, for instance, massive amounts of text make manual assignment of labels virtually impossible, so figuring out automatic approaches to classify text becomes appealing.
 Numerous text processing and classification approaches have been proposed in the literature and have shown good accuracy in real-world scenarios.
@@ -109,10 +25,12 @@ Such representations provide an easy-to-implement baseline and starting point fo
 For example, one extension to this representation does not only use the simple one-word counts but also counts word pairs or consecutive word sequences. These sequences are called $n$-grams, where $n$ stands for the size of such the sequence, eg. $2$-grams consist of 2 words and so on.
 In section \ref{sec:evaluation} we will explain these text-based approaches more throughly.
 
+For an recent survey of the history and challenges of natural language processing, see \cite{Chowdhury2003,DeCastilho2014}.
+
 \labelsection{Graphs}{subsec:graphs}
-A labeled graph is a triple $G = (V, E, \pi)$, where $V$ is the set of vertices or nodes, $E \subseteq V \times V$ are the edges and $\pi: V \to X$ is a labeling function which assigns a label to a given vertex. 
+A labeled graph \cite[p.~1]{Bondy1976} is a triple $G = (V, E, \pi)$, where $V$ is the set of vertices or nodes, $E \subseteq V \times V$ are the edges and $\pi: V \to X$ is a labeling function which assigns a label to a given vertex. 
 A graph is called undirected when $\forall (v_1, v_2) \in E: (v_2, v_1) \in E$, otherwise it is called directed. 
-A graph $G'=(V', E', \pi)$ is called a subgraph of graph $G = (V, E, \pi)$ when $V' \subseteq V$, $E' \subseteq E$ and $\forall (v, v') \in V': v \in V' \land v' \in V'$.
+A graph $G'=(V', E', \pi)$ is called a subgraph of graph $G = (V, E, \pi)$ when $V' \subseteq V$, $E' \subseteq E$ and $\forall (v, v') \in E: v \in V' \land v' \in V' \land (v, v') \in E'$.
 
 The (outgoing) neighbors $n(v)$ of a node $v$ are defined as the set $n(v) = \{v' | (v, v') \in E \}$.
 
@@ -264,7 +182,98 @@ It has to be noted that this comparison is not entirely fair since co-occurrence
 The concept maps we extracted on the other hand have a far greater compression factor as we will see, ie. they summarize the content more.
 For our comparison, we will also not use the edge weights since concept maps do not have edge weights.
 
-\labelsection{Graph Kernels}{subsec:graph_kernel}
+
+\labelsection{Classification Task}{subsec:classification_task}
+Classification using machine learning is the task of automatically assigning classes, or labels, to given datapoints.
+Given a dataset $D = \{(x_1, y_1), (x_2, y_2), \ldots, (x_n, y_n) \} \subseteq X \times Y$ of $n$ items where $(x_i, y_i)$ are dataset instances, the supervised classification task is to create a classifier which predicts a label $y' \in Y$ for a given $x \in X$.
+In this work, the labels $Y$ of the dataset are denoted with $Y_d = (y_1, y_2, \ldots, y_n )$, the predicted labels are denoted as $Y'_d = (y'_1, y'_2, \ldots, y'_n )$.
+When the number of classes $|Y| = 2$, the classification task is called binary classification. For higher $|Y|$ it is called multi-class classification.
+In Figure \ref{table:classification_notation} we summarize the classification notation.
+Our notations are similar to the notation in \cite[p.~11]{Bishop2006}.
+
+\begin{figure}[htb!]
+	\centering
+	\begin{tabular}{lll}
+		& Notation & Definition \\
+		\toprule
+		Datapoint & $x$ & $x \in X$
+		\\
+		Label & $y$ & $y \in Y$
+		\\
+		Real and predicted label of $x_i$ & $y_i$, $y'_i$ &  $y_i, y'_i \in Y$
+		\\
+		Instance & $d_i$ & $(x_i, y_i) \in X \times Y$
+		\\
+		Dataset & $D$ & $\{(x_1, y_1), \ldots, (x_n, y_n) \} \subseteq X \times Y$ 
+	\end{tabular}
+	\caption[Notation: Classification]{Classification notation.}\label{table:classification_notation}
+\end{figure}
+
+To automatically assign the labels in a supervised way, generally a learning algorithm is used to train a classifier by providing it datapoints and its labels.
+The classifier algorithm then, internally, creates a model of the data and often optimizes internal parameters to fit the data.
+During prediction, that is when wanting to automatically assign a label to a (new) datapoint $x_i$, the new datapoint is fed into the classifier which in turn returns the predicted label, $y'_i$.
+
+\labelsubsection{Classifiers}{subsec:classifiers}
+\todo{SVM, One-layer neural net, \ldots}
+In this work, we will mostly use a classifier algorithm called \textit{Support Vector Machine}, or \textit{SVM}.
+
+\labelsubsection{Performance Metrics}{subsec:classification_metrics}
+The performance or score of a trained classifier is evaluated by comparing the labels it predicts, $y'_i$,  for datapoints $x_i$ with the real label $y_i$ in the dataset.
+There are several metrics for evaluating the performance of a classifier.
+The classification metrics we use in this work are summarized in Figure \ref{fig:classification_metrics}.
+For an extensive overview of classification metrics, see \cite{Forman2003}.
+In this work, we will use the term classification performance synonymously with classification score, unless otherwise stated.
+On the other hand, we will refer to the complexity or run-time of a classification algorithm by the classification run-time.
+
+\begin{figure}[htb!]
+	\centering
+	\renewcommand*{\arraystretch}{1.7}
+	\begin{tabular}{llll}
+		& Notation & Definition & \\
+		\toprule
+		True positives of $y$ &
+		$TP_y$ &
+		$\displaystyle |\{i | y'_i = y, y'_i = y_i \}|$ &
+		\\
+		False positives of $y$ &
+		$FP_y$ &
+		$\displaystyle |\{i | y'_i = y, y_i \neq y \}|$ &
+		\\
+		True negatives of $y$ &
+		$TN_y$ &
+		$\displaystyle |\{i | y'_i \neq y, y_i \neq y\}|$ &
+		\\
+		False negatives of $y$ &
+		$FN_y$ &
+		$\displaystyle |\{i | y'_i \neq y, y_i = y\}|$ &
+		\\[1ex]
+		\midrule{}%
+		\\[-2ex]
+		Accuracy &
+		$A$ &
+		$\displaystyle \frac{\sum\nolimits_{y \in Y} TP_y}{|D|}$ &
+		\\[3ex]
+		Precision of $y$ &
+		$Pr_y$ &
+		$\displaystyle \frac{TP_y}{TP_y + FP_y} $ &
+		$Pr_{\text{macro}} = \displaystyle \frac{\sum\nolimits_{y \in Y} Pr_y}{|Y|}$
+		\\[3ex]
+		Recall of $y$ &
+		$R_y$ &
+		$\displaystyle \frac{TP_y}{TP_y + FN_y}$ &
+		$R_{\text{macro}} = \displaystyle \frac{\sum\nolimits_{y \in Y} R_y}{|Y|}$
+		\\[3ex]
+		F1 score of $y$ &
+		$F1_y$ &
+		$\displaystyle 2 \cdot \frac{Pr_y \cdot R_y}{Pr_y + R_y}$ &
+		$F1_{\text{macro}} = \displaystyle \frac{\sum\nolimits_{y \in Y} F1_y}{|Y|}$
+		\\
+	\end{tabular}
+	\caption[Notation: Classification metrics]{Classification performance metric notation. As performance metrics, we will us accuracy, macro precision, macro recall and the macro F1 score. The macro version of a metric takes into account how many elements there are in each class which is helpful for skewed datasets, ie. where the number of instances per label is not distributed uniformly per label.}\label{fig:classification_metrics}
+\end{figure}
+
+
+\labelsection{Kernels}{subsec:kernel}
 In most cases, texts and graphs are not of fixed size.
 However, most classification algorithms operate on fixed size vectors.
 Fortunately, there are several approaches to overcome this problem.
@@ -275,13 +284,13 @@ A kernel is a function $k$ which returns a measure of similarity between two obj
 k: X \times X \rightarrow \mathbb{Q}
 \end{equation*}
 
-A kernel function has to be:
+A kernel function has to be \cite{Kriege2012}:
 \begin{itemize}
     \item{\textit{symmetric}: $k(x, x') = k(x', x)$}
     \item{\textit{non-negative definite}: $\forall x, x': k(x, x') \geq 0$}
 \end{itemize}
 
-An interesting property of kernels is that they can be combined easily with symmetric operations, eg. by adding or multiplicating the results of two kernel functions, $k_1$ and $k_2$:
+An interesting property of kernels is that they can be combined easily with symmetric operations \cite[p.~296]{Bishop2006}, eg. by adding or multiplicating the results of two kernel functions, $k_1$ and $k_2$:
 
 \begin{equation*}
 k_{combined}(x, x') = k_1(x, x') \cdot k_2(x, x')
@@ -293,7 +302,7 @@ This property enables composite kernels to capture multiple means of similarity 
 For example, a simple kernel on two numbers (or vectors) is $k(x, x') = | x \cdot x' |$, where $| \cdot |$ is the absolute value (or a norm).
 Another example of a kernel between strings is $k(s, s') = \delta(s = s')$, where $\delta(\cdot)$ is the Kronecker delta. This kernel returns 1 if the two given strings are the same, and 0 if they are different.
 Note that both these kernels are indeed valid.
-That said, when using kernels in the real world, one can also use non-valid kernel, ie. kernels which are non-symmetric and/or return negative numbers. While such ``kernel" are not strictly valid, they can nevertheless perform good in real-world applications, even better than valid kernels.
+That said, when using kernels in the real world, one can also use non-valid kernels, ie. kernels which are non-symmetric and/or return negative numbers. While such ``kernel" are not strictly valid, they can nevertheless perform good in real-world applications, even better than valid kernels.
 
 Kernels can be used in kernel methods for classification and other tasks.
 Prominent examples of kernel methods are the SVM, kernelized PCA and Gaussian Processes.
@@ -309,11 +318,58 @@ Here, $\phi(X)$ returns a fixed-size vector representation of the object $X$ and
 This $\phi(X)$ can then be used in all vector-based classification algorithms, not only kernel methods.
 An example for such a kernel is the string kernel which counts the number of occurrences of words in a given text, then creates a vector representation by giving each word an index in the vector and setting this index to the number of occurrences of that word. The inner product of two of these vector representations then create a kernel.
 
+\paragraph{Gram matrix}
+A gram matrix, or kernel matrix, for a given kernel is a matrix $A$ for a set of objects, $D = (x_1, x_2, \ldots, x_n)$ where the entries are the pairwise similarities between all these objects in the dataset:
+\begin{equation*}
+A_{i,j} = k(x_i, x_j)
+\end{equation*}
+So, the entry in the $i$-th row and $j$-th column signifies the similarity of $x_i$ and $x_j$ under the given kernel.
+
+When the explicit feature map $\phi(x)$ for each $x$ is given, one can also construct the gram matrix by stacking these vectors into a matrix $M_{\phi}$ and calculating the product on the transpose
+\begin{equation*}
+A = M_{\phi} M_{\phi}^T
+\end{equation*}
+The gram matrix is symmetric by definition since the underlying kernel is also symmetric, ie. $A_{i,j} = A_{j, i}$.
+
+\labelsubsection{Kernel Methods and Kernel trick}{sec:kernel_method_and_kernel_trick}
+We have seen that a kernel can be used to calculate a measure of similarity between two objects, eg. graphs.
+Some kernels can be expressed as an inner product $k(X, X') = \langle \phi(X), \phi(X') \rangle$ on two (implicit) vector representations of the objects $X$ and $X'$.
+In this case, the vector representations $\phi(X)$ can be used in conventional classification algorithms.
+Yet, calculating these representations is not always possible or feasible since the dimension of such a representation is quite high or even infinite.
+There is another approach for classification (and regression), the aforementioned kernel methods.
+Kernel methods\cite[p.~291]{Bishop2006} operate directly with the kernel and do not use the explicit feature representations $\phi(X)$.
+Instead, kernel methods use the similarities $k(X, X')$ directly.
+
+One popular example of a kernel method is the Support Vector Machine, or SVM.
+The SVM is able to use both vector representations of elements in the dataset or the pairwise similarities, the gram matrix, between them.
+At training time, the gram matrix $A$ of all objects in the training set, $d_{train} = \{X_1, X_2, \ldots, X_n\}$, is calculated.
+This gram matrix $A$ and the corresponding classes then get fed into the SVM which fits its coefficients to them.
+After training, to predict the label for a given instance $X_{test}$, the pairwise similarities of t$X_{test}$ and all training examples are calculated, resulting in a vector $v = (k(X_{test}, X_1), k(X_{test}, X_2), \ldots, k(X_{test}, X\_n))$.
+This vector $v$ is then fed into the SVM which predicts the label for $X_{test}$.
+Note that this kernel method approach does not use explicit feature maps of the instances, only their pairwise similarities.
+This feature of not needing to calculate the explicit feature map $\phi$ is called kernel trick \cite[p.~292]{Bishop2006}.
+Here, the explicit inner product on the two feature maps $\phi$ is not needed, only $k(X, X')$.
+The kernel trick also enables linear algorithms, such as the un-kernelized \textit{SVM}, to solve non-linear problems.
+Apart from the kernelized \textit{SVM}, the class of kernel methods also includes kernelized \textit{PCA}, kernelized \textit{k-Means}, \textit{Gaussian Processes}\cite[p.~303]{Bishop2006} and others.
+
+In our work, we will use both the kernelized version of the \textit{SVM}, ie. learning with a gram matrix, as well as the version using an explicit feature map $\phi$.
+
+\todo{\textbf{Kernel trick}
+	
+	``Any algorithm to process finite-dimensional vectors that can be
+	expressed only in terms of pairwise inner products can be applied to
+	potentially infinite-dimensional vectors in the feature space of a p.d.
+	kernel by replacing each inner product evaluation by a kernel evaluation."
+	
+	\url{https://lear.inrialpes.fr/people/mairal/teaching/2015-2016/MVA/fichiers/mva_slides.pdf}
+}
+
+\labelsubsection{Graph Kernels}{subsec:graph_kernels}
 A graph kernel is simply a kernel that operates on graphs.
 
-Graph kernels that measure the similarity of two graphs are related to the isomorphism test between two graphs.
+Graph kernels that measure the similarity of two graphs are related to the isomorphism test \cite[p.~4]{Bondy1976} between two graphs.
 The graph isomorphism test returns whether two graphs are structurally the same.
-In this test, the labels of the vertices and edges are ignored. Otherwise the task would be far easier since one could simply compare the labels and edges of the graphs - when they are both exactly the same, the graphs are the same.
+In this test, the labels of the vertices and edges are ignored. Otherwise the task would be far easier since one could simply compare the labels and edges of the graphs - when they are both exactly the same, the graphs are the same \cite[p.~4]{Bondy1976}.
 Instead, in the graph isomorphism test one has to find two mappings: one bijective mapping $\psi_{V}: V_1 \mapsto V_2$ from the vertices of the first graph to the vertices of the second graph and another bijective mapping $\psi_{E}: E_1 \mapsto E_2$ with the constraint:
 
 \begin{equation*}
@@ -326,10 +382,8 @@ Instead, in the graph isomorphism test one has to find two mappings: one bijecti
     \psi_{V}(v_t) = v'_t
 \end{equation*}
 
-\todo{Explain constraints for the mapping}
-
 If such a mapping exists, the two graphs are called isomorphic.
-While the complexity of the graph isomorphism test is not known yet, it is suspected to lie in P or it may also be NP-complete.
+While the complexity of the graph isomorphism test is not known yet, it is suspected to lie in P or it may also be NP-complete \cite{Hido2009,Kulharia2008}.
  
 One could use the graph isomorphism test, or a variant thereof, to create a graph kernel $k_{isomorphism}$ by returning 1 if the two graphs are isomorphic and 0 otherwise.
 Yet, as we noted before, the runtime of the graph isomorphism test is high and also, in the presented version, does not take edge or node labels into account.
@@ -337,18 +391,6 @@ We will see other examples of graph kernels in the next paragraphs.
 Note that each graph kernel has different strengths and weaknesses, often being subject to a trade-off between accuracy versus compute time.
 So, when choosing a suitable kernel, the importance of each aspect of the graphs, eg. labels or structure, has to be assessed.
 
-\paragraph{Gram matrix}
-A gram matrix, or kernel matrix, for a given kernel is a matrix $A$ for a set of objects, $D = (x_1, x_2, \ldots, x_n)$ where the entries are the pairwise similarities between all these objects in the dataset:
-\begin{equation*}
-    A_{i,j} = k(x_i, x_j)
-\end{equation*}
-So, the entry in the $i$-th row and $j$-th column signifies the similarity of $x_i$ and $x_j$ under the given kernel.
-
-When the explicit feature map $\phi(x)$ for each $x$ is given, one can also construct the gram matrix by stacking these vectors into a matrix $M_{\phi}$ and calculating the product on the transpose
-\begin{equation*}
-    A = M_{\phi} M_{\phi}^T
-\end{equation*}
-The gram matrix is symmetric by definition since the underlying kernel is also symmetric, ie. $A_{i,j} = A_{j, i}$.
 
 \paragraph{Graph Kernel Categories}
 Several graph kernels have been proposed in the literature.
@@ -417,14 +459,14 @@ This relabeling is also called recoloring or color refinement.
 The WL graph kernel relabels a vertex $v$ by concatenating two components:
 \begin{enumerate}
     \item{the current label of the vertex: $\pi_{i-1}(v)$}
-    \item{the sorted labels of the neighbourhood: $\{ \pi_{i-1}(v') | v' \in n(v) \}$}
+    \item{the sorted labels of the neighborhood: $\{ \pi_{i-1}(v') | v' \in n(v) \}$}
 \end{enumerate}
 where $\pi_{i}$ is the labeling function for iteration $i$ with $\pi_0 = \pi$.
 The resulting new label of $v$ is the sequence $(\pi_{i-1}(v), \pi_{i-1}(v_{neighbour,1}), \dots , \pi_{i-1}(v_{neighbour,n}))$.
 After the iteration, a new labeling function is created accordingly: $\pi_i(v)$ now returns to the new label of $v$.
-So, for each iteration, a node gets the same label as another node if they have the same label and neighbourhood.
-For the first iteration, the labels of a node consist of the immediate neighbourhood.
-In the next iteration, the label of a node than encodes the neighbourhood of the neighbourhood, ie. 
+So, for each iteration, a node gets the same label as another node if they have the same label and neighborhood.
+For the first iteration, the labels of a node consist of the immediate neighborhood.
+In the next iteration, the label of a node than encodes the neighborhood of the neighborhood, ie. 
 
 The Weisfeiler-Lehman graph kernel has been shown to achieve state-of-the-art performance on several datasets and applications.
 It takes into account both content and structure, while also performing good in terms of compute-time.
@@ -460,45 +502,13 @@ Our implementation also uses label compression, explained in Figure \ref{fig:wl_
 {\includegraphics[width=\linewidth]{assets/figures/wl_examples/wl_iteration_2_stage_1_compressed.pdf}\label{fig:wl_example_2}}
 \caption{$h=2$: After label compression}
 \end{subfigure}
-  \caption[Example: Weisfeiler Lehman iteration]{Weisfeiler Lehman algorithm example. This examples shows one WL iteration with two graphs, $G_1$ and $G_2$. The initial graphs are shown in \textbf{(a)}. The first step of a WL iteration is relabeling the graph vertices by concatenating each node label with its sorted neighbourhood labels. The finished relabeled graph is shown in \textbf{(b)}. As an extension to the plain Weisfeiler-Lehman algorithm, we also show the label compression step where the long labels, consisting of the node label and its neighborhood labels, get compressed into a smaller label by assigning each unique label a new number. Same multi-label labels in different graphs get the same new label. The result of this step is shown in \textbf{(c)}. Under \textbf{(a)},  \textbf{(b)} and \textbf{(d)} we also added the feature maps $\phi(G)$ for both graphs. Each entry in the vector corresponds to a label. If a vector entry is 1, the corresponding label is present in the graph. The inner product on the vectors of the graphs is the value of the Weisfeiler-Lehman graph kernel for these two graphs.
+  \caption[Example: Weisfeiler Lehman iteration]{Weisfeiler Lehman algorithm example. This examples shows one WL iteration with two graphs, $G_1$ and $G_2$. The initial graphs are shown in \textbf{(a)}. The first step of a WL iteration is relabeling the graph vertices by concatenating each node label with its sorted neighborhood labels. The finished relabeled graph is shown in \textbf{(b)}. As an extension to the plain Weisfeiler-Lehman algorithm, we also show the label compression step where the long labels, consisting of the node label and its neighborhood labels, get compressed into a smaller label by assigning each unique label a new number. Same multi-label labels in different graphs get the same new label. The result of this step is shown in \textbf{(c)}. Under \textbf{(a)},  \textbf{(b)} and \textbf{(d)} we also added the feature maps $\phi(G)$ for both graphs. Each entry in the vector corresponds to a label. If a vector entry is 1, the corresponding label is present in the graph. The inner product on the vectors of the graphs is the value of the Weisfeiler-Lehman graph kernel for these two graphs.
   In this case, the similarity before the iteration would be $\langle \phi(G_1), \phi(G_2) \rangle = \langle [1, 1, 1, 1, 0, 0, 0, 0], [1, 1, 1, 1, 0, 0, 0, 0] \rangle = 4$. After the relabeling, the value of the inner product is $2$.
   Before doing the WL iteration, the inner product on the feature maps simply returns the number of common labels. After the first iteration, the neighborhood of each node and therefor the structure of the graph is also reflected in the feature map - resulting in a lower similarity in out example.
   Notice that before the relabeling, ie. in \textbf{(a)}, the labels for the left-most node was the same for both graphs. After the first iterations, in \textbf{(b)} and \textbf{(c)}, they get different colors.
   The same happens for the top-most node: after the second iteration, in \textbf{(d)}, the labels are also different since in iteration $h=2$ not only the immediate neighborhood has to be the same for a match, also the neighborhood of its neighborhood.}\label{fig:wl_example}
 \end{figure}
 
-\labelsection{Kernel Methods and Kernel trick}{sec:kernel_method_and_kernel_trick}
-We have seen that a kernel can be used to calculate a measure of similarity between two objects, eg. graphs.
-Some kernels can be expressed as an inner product $k(X, X') = \langle \phi(X), \phi(X') \rangle$ on two (implicit) vector representations of the objects $X$ and $X'$.
-In this case, the vector representations $\phi(X)$ can be used in conventional classification algorithms.
-Yet, calculating these representations is not always possible or feasible since the dimension of such a representation is quite high or even infinite.
-There is another approach for classification (and regression), the aforementioned kernel methods.
-Kernel methods operate directly with the kernel and do not use the explicit feature representations $\phi(X)$.
-Instead, kernel methods use the similarities $k(X, X')$ directly.
-
-One popular example of a kernel method is the Support Vector Machine, or SVM.
-The SVM is able to use both vector representations of elements in the dataset or the pairwise similarities, the gram matrix, between them.
-At training time, the gram matrix $A$ of all objects in the training set, $d_{train} = \{X_1, X_2, \ldots, X_n\}$, is calculated.
-This gram matrix $A$ and the corresponding classes then get fed into the SVM which fits its coefficients to them.
-After training, to predict the label for a given instance $X_{test}$, the pairwise similarities of t$X_{test}$ and all training examples are calculated, resulting in a vector $v = (k(X_{test}, X_1), k(X_{test}, X_2), \ldots, k(X_{test}, X\_n))$.
-This vector $v$ is then fed into the SVM which predicts the label for $X_{test}$.
-Note that this kernel method approach does not use explicit feature maps of the instances, only their pairwise similarities.
-This feature of not needing to calculate the explicit feature map $\phi$ is called kernel trick.
-Here, the explicit inner product on the two feature maps $\phi$ is not needed, only $k(X, X')$.
-The kernel trick also enables linear algorithms, such as the un-kernelized \textit{SVM}, to solve non-linear problems.
-Apart from the kernelized \textit{SVM}, the class of kernel methods also includes kernelized \textit{PCA}, kernelized \textit{k-Means}, \textit{Gaussian Processes} and others.
-
-In our work, we will use both the kernelized version of the \textit{SVM}, ie. learning with a gram matrix, as well as the version using an explicit feature map $\phi$.
-
-\todo{\textbf{Kernel trick}
-
-	``Any algorithm to process finite-dimensional vectors that can be
-	expressed only in terms of pairwise inner products can be applied to
-	potentially infinite-dimensional vectors in the feature space of a p.d.
-	kernel by replacing each inner product evaluation by a kernel evaluation."
-	
-	\url{https://lear.inrialpes.fr/people/mairal/teaching/2015-2016/MVA/fichiers/mva_slides.pdf}
-}
 
 \labelsection{Graph Kernel Based Text Classification}{subsec:graph_kernel_based_text_classification}
 In this section, we will introduce related work and briefly recap the history of the field.
@@ -635,7 +645,7 @@ k(G, G') = \phi^T(G) \cdot M \cdot \phi(G')
 
 The intuition here is that each vector entry of $\phi(G)$ corresponds to the count of some substructure of $G$ and that these substructures are not independent of each other, ie. they can be similar to each other.
 Yet when calculating the plain kernel only exact matches of substructures in the two graphs are considered.
-For instances, suppose substructure $g_1$ is similar to another substructure $g_2$ and substructure $g_1$ is only present in $G$ and not in $G'$, conversely substructure $g_2$ is only present in $G'$ and not in $G$.
+For instance, suppose substructure $g_1$ is similar to another substructure $g_2$ and substructure $g_1$ is only present in $G$ and not in $G'$, conversely substructure $g_2$ is only present in $G'$ and not in $G$.
 Suppose some kernel $k$ would construct $\phi_k(G)$ by counting the occurrences of $g_1$ and $g_2$, so $\phi_k(G) = (n_{g_1}(G), n_{g_2}(G))$ where $n_{g_i}(G)$ counts the occurrence of substructure $g_i$ in $G$.
 In the above example, $\phi_k(G_1) = (1, 0)$ and $\phi_k(G_2) = (0, 1)$. When calculating $k(G, G') = \phi_k^T(G) \cdot \phi_k(G') $ the similarity under the kernel would equal 0, therefore ignoring the similarity of substructure $g_1$ and $g_2$.
 The proposed extension to the kernel aims to address this issue by using embeddings for the substructures to identify the similarity of substructures and then allowing ``partial" instead of only exact matches.

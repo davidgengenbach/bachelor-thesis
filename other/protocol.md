@@ -1,3 +1,43 @@
+## 21.12.2017
+- Conversation with Tobias
+    - Thesis feedback
+        - \phi Visualization
+        - Gliederung
+            2.4 - Graph kernel examples nicht als Section
+        - \newpage bei neuem Chapter
+        - Table Metrics
+            - Padding
+        - "d_{istance}"
+        - Subgraph
+            - E anstatt V
+        - Add references
+        - Macro Metrics
+            - Explain that the macro is over classes
+        - Co-occurrence
+            - More edges also when word occurs often
+            - Example with multiple word occurrence
+            - Write to text
+        - Graph isomorphism
+            - Add citation
+        - Hypothesis
+            - "Mining" -> leveraging
+            - "classification score" -> better word?
+            - Define performance in Background
+        - BoW
+            - Word-Tfidf und Word-Frequency, both are BoW
+        - Graph based representations
+            - Add "Section"
+            - \nameref{}
+        - Perceptron
+            - Explanation
+            - Difference to one-layer net?
+            - Perceptron -> One-layer Net
+        - Conclusions
+            - Limitations
+                - What are disclaimers for the work?
+                - What did we not analyze despite it being important?
+
+
 ## 18.12.2017
 - Thesis
     - Resolved citing issue
