@@ -1,6 +1,6 @@
 \presetkeys{todonotes}{inline}{}
 
-\newcommand{\hypothesis}{Concept maps capture structural information about the underlying text. Leveraging this structural information in the context of text-classification leads to improved classification performance.}
+\newcommand{\hypothesis}{Concept maps capture structural information about the underlying text. Leveraging this structural information in the context of text classification leads to improved classification performance.}
 
 \newcommand*{\fullref}[1]{\hyperref[{#1}]{\textit{\nameref*{#1}}}}
 
@@ -14,8 +14,10 @@
 }
 
 \newcommand{\labelchapterinclude}[3]{%
+	
 \chapter{#1}%
 \label{#2}%
+\renewcommand*{\arraystretch}{1}
 \input{#3}%
 \newpage%
 }
