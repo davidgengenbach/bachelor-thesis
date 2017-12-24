@@ -59,7 +59,7 @@ params_per_type:
         use_directed:
         - true
         use_early_stopping:
-        - false
+        - true
       phi_picker:
         return_iteration:
         - stacked
@@ -97,7 +97,7 @@ params_per_type:
               use_directed:
               - true
               use_early_stopping:
-              - false
+              - true
             phi_picker:
               return_iteration:
               - stacked
@@ -166,7 +166,7 @@ params_per_type:
         use_directed:
         - true
         use_early_stopping:
-        - false
+        - true
       phi_picker:
         return_iteration:
         - stacked
@@ -195,7 +195,7 @@ params_per_type:
         use_directed:
         - true
         use_early_stopping:
-        - false
+        - true
       phi_picker:
         return_iteration:
         - stacked
@@ -231,7 +231,7 @@ params_per_type:
         use_directed:
         - true
         use_early_stopping:
-        - false
+        - true
       phi_picker:
         return_iteration:
         - stacked

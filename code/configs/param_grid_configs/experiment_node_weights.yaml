@@ -1,23 +1,13 @@
-limit_dataset:
-- ling-spam
-#- ng20
-#- reuters-21578
-- review_polarity
-- rotten_imdb
-#- tagmynews
-- webkb
+limit_graph_type:
+- concept_map
 params_per_type:
   graph_node_weights:
     feature_extraction:
       fast_wl:
-        h:
-        - 10
         node_weight_function:
         - ~
         #- nxgraph_pagerank_metric
         - nxgraph_degrees_metric
-        round_to_decimals:
-        - 10
         node_weight_iteration_weight_function:
         - ~
         - iteration_weight_function
@@ -26,6 +16,6 @@ params_per_type:
         return_iteration:
         - stacked
         use_zeroth:
-        - false
+        - true
     normalizer:
-    - MaxAbsScaler
+    - ~
