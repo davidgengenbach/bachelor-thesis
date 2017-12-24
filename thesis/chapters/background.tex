@@ -364,6 +364,16 @@ In our work, we will use both the kernelized version of the \textit{SVM}, ie. le
 	\url{https://lear.inrialpes.fr/people/mairal/teaching/2015-2016/MVA/fichiers/mva_slides.pdf}
 }
 
+\todo{\textbf{Kernel trick}
+
+If the feature functions $\phi(x)$ are chosen with care one can calculate the scalar products without actually computing
+all features, therefore greatly reducing the computational complexity.
+The method used to avoid the explicit mapping is also called kernel trick. One uses learning algorithms that
+only require dot products between the vectors in the original input space, and chooses the mapping such that these
+high-dimensional dot products can be computed within the original space, by means of a kernel function.
+
+\url{http://intelligent-optimization.org/LIONbook/lionbook_3v0.pdf}}
+
 \labelsubsection{Graph Kernels}{subsec:graph_kernels}
 A graph kernel is simply a kernel that operates on graphs.
 

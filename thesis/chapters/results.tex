@@ -8,21 +8,24 @@ After that, we will gather our findings to form an judgement of the validity of 
 \todo{Comparison between text n-grams and concept maps/co-occurrence graphs}
 \todo{Look at concepts used in concept maps: frequency in whole corpus, ...}
 
+\labelsubsection{Answers}{subsec:answers}
+
 \subquestionref{question:structure_diversity}
 To investigate whether concept maps are useful for text classification, we first look at the structure of concept maps.
-Our hypothesis especially highlights the structure of the concept maps since it is one of the main differences to other text representation.
+Our hypothesis especially highlights the structure of the concept maps since it is one of the main differences to other text representations.
 Finding out whether the structure of concept maps is heterogeneous therefore is a first crucial step.
 
-In Table \ref{table:graph_statistics}, we gathered metrics about the connectedness of concept maps and co-occurrence graphs with window size 1 for comparison.
+In Table \ref{table:graph_statistics}, we gathered metrics about the connectedness of concept maps, providing the metrics for the co-occurrence graphs with window size 1 for comparison.
 One thing that immediately becomes apparent is the compression factor of the concept maps: on average, only approximately 8\% of the original text-content is retained in the concept maps.
 This compression is useful for tasks like text summarization where only important concepts should be kept from the underlying text.
 
-One consequence of the compression can be seen when looking at the connectedness of the concept maps.
+As a downside, one consequence of the compression can be seen when looking at the connectedness of the concept maps.
 On average, concept maps only have 1.36 edges per node. The minimum number of edges per node is 1 since we removed all unconnected nodes.
 So, concept maps do not only have few nodes, because of the compression, but also a relatively low number of edges between them.
 This is most likely due to the small length of the underlying texts.
 The shortness of the text results in a lower number of occurrences of some concept in the text, ie. most of the concepts occur only once in a text.
 To address this issue, we then searched for a dataset with longer texts per document.
+
 
 \begin{table}[htb!]
 	\centering
@@ -114,6 +117,8 @@ When the window size is 1, the graph is similar to a path, meaning that most of 
 		}%
 		\label{fig:percentage_degree}}
 \end{figure}
+
+\todo{Verdict!}
 
 \subquestionref{question:importance_structure}
 After investigating the structure of concept maps, we now aim to quantify the importance of the structure compared to the content.
