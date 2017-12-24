@@ -22,8 +22,6 @@ params_per_type:
               - 10
               use_directed:
               - true
-              use_early_stopping:
-              - false
             phi_picker:
               return_iteration:
               - stacked

@@ -75,7 +75,7 @@ def get_fast_wl_params(reduced=False, with_node_metrics=False):
         fast_wl__round_to_decimals=[10],
         fast_wl__same_label=[False],
         fast_wl__use_directed=[True],
-        fast_wl__use_early_stopping=[False],
+        fast_wl__use_early_stopping=[True],
 
         phi_picker__use_zeroth=[False, True],
         phi_picker__return_iteration=['stacked']
@@ -84,7 +84,6 @@ def get_fast_wl_params(reduced=False, with_node_metrics=False):
 
     if reduced:
         params['phi_picker__use_zeroth'] = [False]
-        params['fast_wl__round_to_decimals'] = [10]
         params['fast_wl__node_weight_function'] = [None]
 
     if not with_node_metrics:
