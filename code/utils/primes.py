@@ -18,11 +18,12 @@ def get_prime_range(start, end):
     return list(sympy.primerange(start, end + 1))
 
 
-def load_cache(cache_file=CACHE_FILE):
+def load_cache(cache_file=CACHE_FILE, force=False):
     global CACHE, _initialized
 
-    if _initialized:
+    if not force and _initialized:
         return
+
     if not os.path.exists(cache_file):
         CACHE = {}
         with open(cache_file, 'wb') as f:
@@ -58,4 +59,4 @@ def get_log_primes(range_start = None, range_end = None):
     return log_primes
 
 
-get_highest_prime_range()
+load_cache()

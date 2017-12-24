@@ -5,6 +5,7 @@ from utils import graph_helper
 import numpy as np
 import networkx as nx
 
+
 def iteration_weight_function_exponential(iteration:int):
     return int(np.ceil(
         (np.exp((iteration - 1))) + 1
@@ -33,7 +34,9 @@ class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Tran
         assert len(X)
         X, node_weight_factors = _retrieve_node_weights_and_convert_graphs(X, node_weight_function=self.node_weight_function, same_label=self.same_label, use_directed=self.use_directed)
 
+
         self.hashed_x = hash_dataset(X)
+
 
         phi_list, label_lookups, label_counters = fast_wl.transform(
             X,
@@ -46,7 +49,8 @@ class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Tran
             node_weight_iteration_weight_function=self.node_weight_iteration_weight_function
         )
 
-        self.phi_list = [x.T for x in phi_list]
+        #self.phi_list = [x.T for x in phi_list]
+        self.phi_list = phi_list
         self.phi_shape = self.phi_list[-1].shape
         self.label_lookups = label_lookups
         self.label_counters = label_counters
@@ -79,7 +83,7 @@ class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Tran
             node_weight_iteration_weight_function=self.node_weight_iteration_weight_function
         )
 
-        phi_list = [x.T for x in phi_list]
+        #phi_list = [x.T for x in phi_list]
 
         # Do NOT save label lookups and counters! This would effectively be fitting!
         return phi_list
@@ -105,10 +109,8 @@ def _retrieve_node_weights_and_convert_graphs(X, node_weight_function=None, same
     if not use_directed:
         X = [nx.Graph(x) for x in X]
         assert not np.any([x.is_directed() for x in X])
-
     node_weight_factors = get_node_weight_factors(X, metric=node_weight_function)
     X = graph_helper.convert_graphs_to_adjs_tuples(X, copy=True)
-
     if same_label:
         X = [(adj, ['dummy'] * len(labels)) for adj, labels in X]
 
