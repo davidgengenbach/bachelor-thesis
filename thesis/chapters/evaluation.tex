@@ -197,7 +197,7 @@ While the classes are nearly evenly distributed, some classes are highly correla
 
 We obtained the ng20 corpus from here\footnote{\url{http://scikit-learn.org/stable/modules/generated/sklearn.datasets.fetch\_20newsgroups.html\#sklearn.datasets.fetch_20newsgroups}}.
 
-\paragraph{nyt}
+\paragraph{nyt\_200}
 The documents in this dataset are articles published in the \textit{New York Times} newspaper in the time between 1987 and 2007.
 In total it contains about 1,8 million articles, covering a great number of topics.
 Each article has different attributes, examples ranging from the publish date, the author or the section where the article was posted on the \textit{New York Times} website.
@@ -246,22 +246,22 @@ This dataset consists of websites which have been downloaded from 4 american uni
 The webpages are grouped in seven classes. The distribution of this very skewed, for example with one class having over 3000 instances and another only a little over 100.
 We obtained a copy of this dataset from here\footnote{\url{http://www.cs.cmu.edu/afs/cs/project/theo-20/www/data/}}.
 
-\begin{figure}[htb!]
+\begin{table}[htb!]
 \centering
-\begin{tabular}{lrrrr}
-{} &  \# classes &  \# docs &  median \#words/doc &  \#uniq. words/\#words \\
+\begin{tabular}{lrrrrr}
+{} &  \# classes &  \# docs & \# words & median \#words/doc &  \#uniq. words/\#words \\
 \midrule
-ling-spam       & 2 & 2893 & 277 & 0.20 \\
-ng20            & 20 & 18846 & 79 & 0.07 \\
-reuters-21578   & 90 & 13328 & 94 & 0.07 \\
-review\_polarity & 2 & 2000 & 589 & 0.16 \\
-rotten\_imdb     & 2 & 10000 & 19 & 0.34 \\
-tagmynews       & 7 & 32600 & 24 & 0.11 \\
-webkb           & 7 & 8274 & 158 & 0.15 \\
+ling-spam       & 2 & 2893 &  1293k & 277 & 0.11 \\
+ng20            & 20 & 18846 &  3444k & 79 & 0.08 \\
+nyt\_200         & 6 & 1200 &  4721k & 3413 & 0.06 \\
+r8              & 8 & 7288 &  829k & 78 & 0.06 \\
+review\_polarity & 2 & 2000 &  1260k & 589 & 0.06 \\
+rotten\_imdb     & 2 & 10000 &  207k & 19 & 0.12 \\
+ted\_talks       & 4 & 682 &  1358k & 2035 & 0.09 \\
 \bottomrule
 \end{tabular}
-\caption[Statistics: Datasets]{Dataset statistics.}
-\end{figure}
+\caption[Statistics: Datasets]{Dataset statistics.}\label{table:dataset_statistics}
+\end{table}
 
 \labelsection{Methods}{subsec:methods}
 

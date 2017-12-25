@@ -428,7 +428,7 @@ While this is an exact, simple and fast algorithm, in most cases it is not of gr
 \paragraph{Simple Non-Structural Graph Kernel}
 Following is an example of a simple kernel which actually discards all structural information about the graph. This graph kernel only operates on the labels of the vertices:
 \begin{equation*}
-k_{common\_label}(G_1, G_2) = | l(G_1) \cap l(G_2) |
+k_{\mathrm{common\_label}}(G_1, G_2) = | l(G_1) \cap l(G_2) |
 \end{equation*}
 where $l(G)$ returns the set of labels for graph $G$.
 Therefor, this graph kernel counts the number of common labels of the two graphs. Under this kernel, two graphs are the same when they have the same node labels, completely ignoring the edges.
@@ -520,6 +520,7 @@ Our implementation also uses label compression, explained in Figure \ref{fig:wl_
 \end{figure}
 
 \todo{Mention convergence?}
+
 
 
 \labelsection{Graph Kernel Based Text Classification}{subsec:graph_kernel_based_text_classification}

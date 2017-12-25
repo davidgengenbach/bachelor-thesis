@@ -11,6 +11,8 @@ import numpy as np
 import sklearn
 import typing
 
+import tqdm
+
 _RESULT_CACHE = []
 _DF_ALL = None
 
@@ -81,7 +83,7 @@ def get_kernel_from_filename(filename: str) -> str:
     return '_'.join(parts)
 
 
-def get_results(folder=None, use_already_loaded=False, results_directory=RESULTS_DIR, log_progress=True, exclude_filter=None, filter_out_non_complete_datasets=4, remove_split_cols=True, remove_rank_cols=True, remove_fit_time_cols=True, filter_out_experiment=None, ignore_experiments=True, only_load_dataset=None):
+def get_results(folder=None, use_already_loaded=False, results_directory=RESULTS_DIR, log_progress=tqdm.tqdm_notebook, exclude_filter=None, include_filter=None, filter_out_non_complete_datasets=4, remove_split_cols=True, remove_rank_cols=True, remove_fit_time_cols=True, filter_out_experiment=None, ignore_experiments=True, only_load_dataset=None):
     global _DF_ALL, _RESULT_CACHE
 
     if not use_already_loaded:
@@ -105,9 +107,9 @@ def get_results(folder=None, use_already_loaded=False, results_directory=RESULTS
         result_files = [x for x in result_files if filename_utils.get_dataset_from_filename(x) in only_load_dataset]
 
     data_ = []
-    for result_file in helper.log_progress(result_files) if log_progress else result_files:
+    for result_file in log_progress(result_files) if log_progress else result_files:
+        if include_filter and include_filter not in result_file: continue
         if exclude_filter and exclude_filter in result_file: continue
-
         dataset_name = filename_utils.get_dataset_from_filename(result_file)
 
         if result_file in _RESULT_CACHE:
@@ -125,7 +127,6 @@ def get_results(folder=None, use_already_loaded=False, results_directory=RESULTS
         if 'results' in result_data:
             info = {'info__' + k: v for k, v in result_data.get('meta_data', result_data).items() if k != 'results'}
         result = result_data if 'params' in result_data else result_data['results']
-
         assert 'params' in result
 
         result = clean_result_keys(result)
@@ -185,7 +186,6 @@ def get_results(folder=None, use_already_loaded=False, results_directory=RESULTS
     for d in data_:
         result_df = pd.DataFrame(d)
         _DF_ALL = result_df if _DF_ALL is None else _DF_ALL.append(result_df)
-
     assert _DF_ALL is not None
     assert len(_DF_ALL)
 
@@ -278,11 +278,13 @@ def filter_out_datasets(df, fn):
     return df.groupby('dataset').filter(fn).reset_index(drop=True)
 
 
-def get_experiments_by_names(names: list) -> pd.DataFrame:
+def get_experiments_by_names(names: list, fill_na='-') -> pd.DataFrame:
     df = pd.DataFrame()
     for x in names:
         df_ = get_results(filter_out_experiment=x, filter_out_non_complete_datasets=False)
         df = df.append(df_)
+    if fill_na:
+        df = df.fillna(fill_na)
     return df
 
 

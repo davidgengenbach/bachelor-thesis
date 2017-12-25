@@ -1,12 +1,3 @@
-limit_dataset:
-- ling-spam
-- ng20
-- nyt_200
-- r8
-- review_polarity
-- rotten_imdb
-- tagmynews
-- ted_talks
 params_per_type:
   dummy_most_frequent:
     classifier:
