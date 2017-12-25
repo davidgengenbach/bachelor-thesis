@@ -11,7 +11,5 @@ params_per_type:
       - RemoveInfrequentGraphLabels
       max_occurrences:
       - 1
-      - 2
-      - 3
     normalizer:
     - MaxAbsScaler

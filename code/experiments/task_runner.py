@@ -92,7 +92,7 @@ def run_classification_task(task: ExperimentTask, cfo: ClassificationOptions, ex
         scoring=cfo.scoring,
         n_jobs=cfo.n_jobs,
         verbose=cfo.verbose,
-        refit=cfo.refit if should_refit else None
+        refit=cfo.refit if should_refit else False
     )
 
     if cfo.use_nested_cross_validation and not is_dummy:
