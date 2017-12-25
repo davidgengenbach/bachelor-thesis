@@ -8,14 +8,14 @@ params_per_type:
         - 10
         node_weight_function:
         - ~
-        round_to_decimals:
-        - 10
+        use_directed:
+        - true
       phi_picker:
         return_iteration:
         - stacked
         use_zeroth:
-        - True
-        - False
-    graph_preprocessing: ~
+        - true
+    graph_preprocessing:
+    - ~
     normalizer:
     - MaxAbsScaler

@@ -40,6 +40,7 @@ def get_args():
     # Options for Classifier and CV
     parser.add_argument('--scoring', type=str, nargs='+', default=['precision_macro', 'recall_macro', 'accuracy', 'f1_macro'])
     parser.add_argument('--refit', type=str, default='f1_macro')
+    parser.add_argument('--use_nested_cross_validation', type=helper.argparse_str2bool, nargs='?', const=True, default=False)
     parser.add_argument('--n_splits', type=int, default=3)
     parser.add_argument('--random_state', type=int, default=42)
     parser.add_argument('--create_predictions', type=helper.argparse_str2bool, nargs='?', const=True, default=True)
@@ -101,7 +102,7 @@ def start_tasks(args, all_tasks: typing.List[ExperimentTask], classification_opt
 
 
         # Do not process tasks that have already been calculated (unless args.force == True)
-        created_files = ['{}/{}'.format(args.results_folder, filename_utils.get_result_filename_for_task(task, experiment_config))]
+        created_files = ['{}/{}'.format(args.results_folder, filename_utils.get_result_filename_for_task(task, experiment_config, cfo=classification_options))]
         is_filtered_by_file_exists = (not args.force and np.any([os.path.exists(file) for file in created_files]))
 
         should_process = not np.any([

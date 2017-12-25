@@ -1,5 +1,5 @@
 import os
-from utils import dataset_helper
+from utils import dataset_helper, classification_options
 import re
 
 
@@ -42,7 +42,7 @@ def get_cooccurrence_words_from_filename(filename):
     return match[0][1]
 
 
-def get_result_filename_for_task(task, experiment_config:dict=None):
+def get_result_filename_for_task(task, experiment_config:dict=None, cfo: classification_options.ClassificationOptions = None):
     dataset = get_dataset_from_filename(task.name, ignore_subtype=False)
     file = remove_file_extension(get_filename_only(task.name))
     experiment_name = experiment_config.get('experiment_name', None) if experiment_config else None
@@ -55,6 +55,9 @@ def get_result_filename_for_task(task, experiment_config:dict=None):
 
     if experiment_name:
         parts.insert(1, experiment_name)
+
+    if cfo.use_nested_cross_validation:
+        parts.insert(-1, 'nested')
 
     if dataset != file:
         parts.append(file)

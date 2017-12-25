@@ -1,0 +1,16 @@
+limit_graph_type:
+- concept_map
+#- cooccurrence
+params_per_type:
+  graph:
+    feature_extraction:
+      fast_wl:
+        same_label:
+        - false
+      phi_picker:
+        use_zeroth:
+        - true
+    graph_preprocessing:
+    - ~
+    normalizer:
+    - MaxAbsScaler

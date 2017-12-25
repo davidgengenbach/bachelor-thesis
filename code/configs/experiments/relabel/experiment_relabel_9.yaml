@@ -1,0 +1,17 @@
+limit_graph_type:
+- concept_map
+params_per_type:
+  graph_relabeled:
+    feature_extraction:
+      phi_picker:
+        use_zeroth:
+        - true
+    graph_preprocessing:
+      VAL_:
+      - RelabelGraphsTransformer
+      threshold:
+      - 0.9
+      topn:
+      - 10
+    normalizer:
+    - MaxAbsScaler

@@ -8,5 +8,5 @@ DATASET_FOLDER = 'data/datasets'
 GRAPHS_FOLDER = 'data/graphs'
 CACHE_PATH = 'data/CACHE'
 
-EXPERIMENT_CONFIG_FOLDER = 'configs/param_grid_configs'
+EXPERIMENT_CONFIG_FOLDER = 'configs/experiments'
 EXPERIMENT_CONFIG_ALL = EXPERIMENT_CONFIG_FOLDER + '/all.yaml'

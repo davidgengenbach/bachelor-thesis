@@ -13,7 +13,8 @@ from .task_helper import ExperimentTask
 
 def run_classification_task(task: ExperimentTask, cfo: ClassificationOptions, experiment_config: dict):
     args = cfo
-    result_filename_tmpl = filename_utils.get_result_filename_for_task(task, experiment_config=experiment_config)
+    result_filename_tmpl = filename_utils.get_result_filename_for_task(task, experiment_config=experiment_config, cfo=cfo)
+
     result_file = '{}/{}'.format(cfo.results_folder, result_filename_tmpl)
     predictions_file = '{}/{}'.format(cfo.predictions_folder, result_filename_tmpl)
     classifier_file = '{}/{}'.format(cfo.classifier_folder, result_filename_tmpl)
@@ -64,15 +65,25 @@ def run_classification_task(task: ExperimentTask, cfo: ClassificationOptions, ex
             LOGGER.warning('Could not split dataset for predictions')
             LOGGER.exception(e)
 
-    if cfo.n_splits == -1:
-        _, _, _, _, X_train_i, X_test_i = train_test_split(X_train, Y_train, test_size=0.33, is_precomputed=is_precomputed)
-        cv = [(X_train_i, X_test_i)]
-    else:
-        cv = sklearn.model_selection.StratifiedKFold(
-            n_splits=cfo.n_splits,
-            random_state=cfo.random_state,
-            shuffle=True
-        )
+    def get_cv(splits):
+        if splits == -1:
+            _, _, _, _, X_train_i, X_test_i = train_test_split(X_train, Y_train, test_size=0.33, is_precomputed=is_precomputed)
+            cv = [(X_train_i, X_test_i)]
+        else:
+            cv = sklearn.model_selection.StratifiedKFold(
+                n_splits=cfo.n_splits,
+                random_state=cfo.random_state,
+                shuffle=True
+            )
+        return cv
+
+    cv = get_cv(cfo.n_splits)
+
+    should_refit = np.all([
+        not cfo.use_nested_cross_validation,
+        not is_dummy,
+        cfo.create_predictions or cfo.save_best_clf
+    ])
 
     gscv = GridSearchCV(
         estimator=estimator,
@@ -81,8 +92,18 @@ def run_classification_task(task: ExperimentTask, cfo: ClassificationOptions, ex
         scoring=cfo.scoring,
         n_jobs=cfo.n_jobs,
         verbose=cfo.verbose,
-        refit=cfo.refit
+        refit=cfo.refit if should_refit else None
     )
+
+    if cfo.use_nested_cross_validation and not is_dummy:
+        cv_nested = get_cv(cfo.n_splits_nested)
+
+        LOGGER.info('Using nested cross-validation')
+
+        scores = sklearn.model_selection.cross_validate(gscv, X, Y, scoring=cfo.scoring, cv=cv_nested, n_jobs=cfo.n_jobs, verbose=cfo.verbose, return_train_score=True)
+        result = dict(scores, **param_grid)
+        results_helper.save_results(result, result_file, args)
+        return
 
     gscv_result = gscv.fit(X_train, Y_train)
 
@@ -115,9 +136,6 @@ def run_classification_task(task: ExperimentTask, cfo: ClassificationOptions, ex
         except Exception as e:
             LOGGER.warning('Error while saving best estimator: {}'.format(e))
             LOGGER.exception(e)
-
-    if not cfo.keep_coefs:
-        remove_coefs_from_results(gscv_result.cv_results_)
 
     results_helper.save_results(gscv_result.cv_results_, result_file, args)
 

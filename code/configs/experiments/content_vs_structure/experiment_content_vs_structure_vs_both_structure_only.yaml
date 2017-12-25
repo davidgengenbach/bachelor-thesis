@@ -1,25 +1,13 @@
 limit_graph_type:
 - concept_map
+#- cooccurrence
 params_per_type:
   graph:
     feature_extraction:
       fast_wl:
-        h:
-        - 10
-        ignore_label_order:
-        - false
-        node_weight_function:
-        - ~
-        round_to_decimals:
-        - 10
         same_label:
-        - false
-        use_directed:
-        - false
         - true
       phi_picker:
-        return_iteration:
-        - stacked
         use_zeroth:
         - true
     graph_preprocessing:

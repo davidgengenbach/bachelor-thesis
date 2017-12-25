@@ -3,25 +3,13 @@ limit_graph_type:
 params_per_type:
   graph:
     feature_extraction:
-      fast_wl:
-        h:
-        - 10
-        node_weight_function:
-        - ~
-        same_label:
-        - false
       phi_picker:
-        return_iteration:
-        - stacked
         use_zeroth:
-        - false
         - true
     graph_preprocessing:
       VAL_:
       - RemoveInfrequentGraphLabels
       max_occurrences:
-      - 1
-      - 2
       - 3
     normalizer:
     - MaxAbsScaler

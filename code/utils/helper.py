@@ -28,7 +28,7 @@ def print_script_args_and_info(args):
 
     print('Arguments:\t')
     for key, val in vars(args).items():
-        print('\t{:26} {}'.format(key, val))
+        print('\t{:30} {}'.format(key, val))
     print()
 
 def argparse_str2bool(v):

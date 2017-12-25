@@ -8,15 +8,14 @@ params_per_type:
         - 10
         node_weight_function:
         - ~
-        round_to_decimals:
-        - 10
-        ignore_label_order:
-        - False
-        - True
+        use_directed:
+        - false
       phi_picker:
         return_iteration:
         - stacked
         use_zeroth:
-        - false
+        - true
+    graph_preprocessing:
+    - ~
     normalizer:
     - MaxAbsScaler

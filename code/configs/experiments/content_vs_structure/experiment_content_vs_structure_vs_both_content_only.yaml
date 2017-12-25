@@ -1,0 +1,27 @@
+limit_graph_type:
+- concept_map
+#- cooccurrence
+params_per_type:
+  graph_content_only:
+    graph_to_text:
+      use_edges:
+      - true
+      #- false
+    preprocessing:
+    - SimplePreProcessingTransformer
+    scaler:
+    - MaxAbsScaler
+    vectorizer:
+      VAL_:
+      - CountVectorizer
+      #- TfidfVectorizer
+      binary:
+      - true
+      #- false
+      ngram_range:
+      - &id001 !!python/tuple
+        - 1
+        - 1
+      - &id002 !!python/tuple
+        - 1
+        - 2

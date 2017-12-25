@@ -7,9 +7,11 @@ class ClassificationOptions(object):
             save_best_clf: bool = True,
             n_jobs: int = 1,
             n_splits: int = 3,
+            n_splits_nested: int = 3,
             prediction_test_size: float = 0.15,
             random_state: int = 42,
             refit: str = 'f1_macro',
+            use_nested_cross_validation: bool = False,
             scoring=['precision_macro', 'recall_macro', 'accuracy', 'f1_macro'],
             results_folder: str = 'data/results',
             predictions_folder: str = 'data/results/predictions',
@@ -31,6 +33,8 @@ class ClassificationOptions(object):
         self.verbose = verbose
         self.save_best_clf = save_best_clf
         self.classifier_folder = classifier_folder
+        self.use_nested_cross_validation = use_nested_cross_validation
+        self.n_splits_nested = n_splits_nested
 
         # This is just to ensure that all parameters have really been assigned to 'self'
         # (to avoid copy-paste errors)
