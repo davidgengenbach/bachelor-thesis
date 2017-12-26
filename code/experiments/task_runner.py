@@ -80,9 +80,9 @@ def run_classification_task(task: ExperimentTask, cfo: ClassificationOptions, ex
     cv = get_cv(cfo.n_splits)
 
     should_refit = np.all([
-        not cfo.use_nested_cross_validation,
+        #not cfo.use_nested_cross_validation,
         not is_dummy,
-        cfo.create_predictions or cfo.save_best_clf
+        #cfo.create_predictions or cfo.save_best_clf
     ])
 
     gscv = GridSearchCV(
@@ -100,7 +100,7 @@ def run_classification_task(task: ExperimentTask, cfo: ClassificationOptions, ex
 
         LOGGER.info('Using nested cross-validation')
 
-        scores = sklearn.model_selection.cross_validate(gscv, X, Y, scoring=cfo.scoring, cv=cv_nested, n_jobs=cfo.n_jobs, verbose=cfo.verbose, return_train_score=True)
+        scores = sklearn.model_selection.cross_validate(gscv, X, Y, scoring=cfo.scoring, cv=cv_nested, n_jobs=cfo.n_jobs_outer, verbose=cfo.verbose, return_train_score=True)
         result = dict(scores, **param_grid)
         results_helper.save_results(result, result_file, args)
         return

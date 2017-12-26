@@ -6,6 +6,7 @@ class ClassificationOptions(object):
             keep_coefs: bool = False,
             save_best_clf: bool = True,
             n_jobs: int = 1,
+            n_jobs_outer: int = 1,
             n_splits: int = 3,
             n_splits_nested: int = 3,
             prediction_test_size: float = 0.15,
@@ -23,6 +24,7 @@ class ClassificationOptions(object):
         self.force = force
         self.keep_coefs = keep_coefs
         self.n_jobs = n_jobs
+        self.n_jobs_outer = n_jobs_outer
         self.n_splits = n_splits
         self.prediction_test_size = prediction_test_size
         self.random_state = random_state

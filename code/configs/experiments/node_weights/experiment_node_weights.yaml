@@ -6,12 +6,12 @@ params_per_type:
       fast_wl:
         node_weight_function:
         - ~
-        #- nxgraph_pagerank_metric
         - nxgraph_degrees_metric
+        #- nxgraph_pagerank_metric
         node_weight_iteration_weight_function:
         - ~
-        - iteration_weight_function
-        - iteration_weight_function_exponential
+        #- iteration_weight_function
+        #- iteration_weight_function_exponential
       phi_picker:
         return_iteration:
         - stacked

@@ -178,10 +178,16 @@ This all indicates that the content of the graphs has a greater importance than 
 \todo{N-grams range?}
 
 \subquestionref{question:comparison_coo}
-Since we are mainly interested in the structure of concept maps and how they can be useful for text classification, we also establish a baseline to another graph representation for the text.
+As a baseline, we also look at another graph representation for text, namely co-occurrence graphs.
+The comparison is somewhat unfair since co-occurrence graphs retain much more of the content of the underlying text, yet it is interesting to compare the performance with concept maps.
+While both concept maps and co-occurrence graph are graph representations, they have several differences. While concept maps have directed edges with labels, co-occurrence edges are, in the plain version, undirected and have no edge labels.
+The node labels for concept maps also contain multiple words while co-occurrence graphs only have single-word labels.
+
+We use the comparison of co-occurrence graphs to concept maps to establish a baseline for graph representations.
 
 \todo{Co-occurrence:"Text kernel" performs nearly as well as normal text}
 \todo{Co-occurrence: only minor decrease (1\%) in performance when only using nouns}
+
 \begin{table}[htb!]
 \centering
 \begin{tabular}{lrrr}
@@ -198,7 +204,7 @@ webkb           &  0.2763 &  0.5082 &  0.5438 \\
 \end{table}
 
 \subquestionref{question:comparison_text}
-As one can see in Figure \ref{fig:results_cmap_vs_text}, the text-only- outperform graph-only approaches by a high margin.
+As one can see in Figure \ref{fig:results_cmap_vs_text}, the text-only approach outperforms graph-only approaches by a high margin.
 This is most likely due to the high compression factor of concept maps and co-occurrence graphs.
 
 \begin{figure}[htb!]
@@ -208,9 +214,64 @@ This is most likely due to the high compression factor of concept maps and co-oc
 \label{fig:results_cmap_vs_text}
 \end{figure}
 
-\subquestionref{question:multi_labels}
-As we can see in Figure \ref{?}, most concept map node labels consist of more than one word. 
+So, we see that graph-only approaches seem to perform worse than text-only approaches by default.
+When linearizing the graphs into text again and apply conventional text vectorizers, eg. BoW with Tfidf, we get the best results, also hinting to the fact that the structure is far harder to leverage than simple node counts.
+That said, we are interested in whether graph representations are useful in text classification, therefor we will also test the performance of graph-based approaches when combining them with conventional text approaches.
 
+\textbf{Summary:}
+In our experiments, the text-only approach performs far better than the graph-only approaches, both concept maps and co-occurrence graphs.
+
+\subquestionref{question:multi_labels}
+As we seek to leverage features special in concept maps, we further explore the node labels.
+In Figure \ref{?} we see, that most concept map node labels consist of more than one word.
+Yet, with the normal approach, like counting the node labels, these multi-word labels are treated as single labels, effectively discarding important information.
+In experiments for Question \ref{question:importance_structure} we actually implicitly used the multi-word labels since we un-rolled the graph into text again and then used conventional text vectorizer approaches, eg. BoW.
+There, we see an improvement over the graph based approach, possibly due to the multi-word labels being split.
+So, for our next graph-based approach, we also split the node labels and create new nodes out of them.
+This is done by splitting the node labels into individual words, than creating nodes with these single words and adding all the (directed) edges of the original node.
+New single word labels consisting of only a stopword are removed.
+See Figure \ref{fig:example_split_labels} for an example.
+
+\begin{figure}[htb!]
+	\centering
+	\begin{subfigure}[t]{.26\linewidth}	{\includegraphics[width=\linewidth]{assets/figures/tmp/graph_example_split_labels_before.pdf}}
+		\caption{Before}
+	\end{subfigure}
+\hspace{2cm}
+	\begin{subfigure}[t]{.3\linewidth}	{\includegraphics[width=\linewidth]{assets/figures/tmp/graph_example_split_labels_after.pdf}}
+		\caption{After}
+	\end{subfigure}
+	\caption[Example: Multi-word node labels Splitting]{Example for multi-word label splits. Here, both the ``concept maps" and ``multi-word concepts" node labels are  split.}\label{fig:example_split_labels}
+\end{figure}
+
+
+In Figure \ref{table:results_multi_label_split} we report the results when doing graph classification with and without multi-word label splitting.
+For this experiment, we use the Weisfeiler-Lehman graph kernel.
+As we can see, the splitting actually improves the performance quite a lot, consistently outperforming the baseline on all datasets.
+
+\begin{table}[htb!]
+	\centering
+\begin{tabular}{lrr}
+	{} &  Original &  Split \\
+	\midrule
+	ling-spam       & 0.783 & 0.924 \\
+	ng20            & 0.392 & 0.572 \\
+	nyt\_200         & 0.749 & 0.852 \\
+	r8              & 0.584 & 0.832 \\
+	review\_polarity & 0.574 & 0.699 \\
+	rotten\_imdb     & 0.600 & 0.790 \\
+	ted\_talks       & 0.211 & 0.404 \\
+	\bottomrule
+\end{tabular}
+\caption[Results: Multi-label split]{Results for multi-label node label split.}\label{table:results_multi_label_split}
+\end{table}
+
+When comparing these scores with node-label splitting with the results of the approaches we used in Question \ref{question:importance_structure}, we see that the node-label splitting nearly performs as well as the best approach, that is the content-only approach.
+The difference is quite small, ranging from 1\% to 3\% difference in F1 macro.
+
+\textbf{Summary:}
+Splitting the multi-word labels shows the greatest performance improvement, improvements ranging from a 10\% to 24\% better F1 macro score over the normal un-split approach.
+Comparing this improved score with the best graph kernel we saw till now, the linearized content-only approach from Question \ref{question:importance_structure}, the node-label splitting performs nearly as good.
 
 \subquestionref{question:edge_labels}
 In concept maps, an edge label can be combined with the label of its source and target nodes to form a sentence.

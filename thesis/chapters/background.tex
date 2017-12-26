@@ -158,13 +158,13 @@ Figure \ref{fig:cooccurrence_graphs} shows examples of co-occurrence graphs with
 
 \begin{figure}[htb!]%
     \centering
-    \begin{subfigure}[t]{0.33\linewidth}{\includegraphics[width=\linewidth]{assets/figures/cooccurrence/window_size_1.pdf}}%
+    \begin{subfigure}[t]{0.32\linewidth}{\includegraphics[width=\linewidth]{assets/figures/cooccurrence/window_size_1.pdf}}%
     \caption{Window size: 1}%
     \end{subfigure}
-    \begin{subfigure}[t]{0.33\linewidth}{\includegraphics[width=\linewidth]{assets/figures/cooccurrence/window_size_2.pdf}}%
+    \begin{subfigure}[t]{0.32\linewidth}{\includegraphics[width=\linewidth]{assets/figures/cooccurrence/window_size_2.pdf}}%
     \caption{Window size: 2}%
     \end{subfigure}
-    \begin{subfigure}[t]{0.33\linewidth}{\includegraphics[width=\linewidth]{assets/figures/cooccurrence/window_size_6.pdf}}%
+    \begin{subfigure}[t]{0.32\linewidth}{\includegraphics[width=\linewidth]{assets/figures/cooccurrence/window_size_6.pdf}}%
     \caption{Window size: 6}%
     \end{subfigure}
     \caption[Example: Co-Occurrence Graph]{Example for co-occurrence graphs. Generated from the sentence: ``Quotation is a serviceable substitute for wit". With increasing window size, the number of edges and therefor the connectedness of the co-occurrence graph also increases.}%
@@ -305,10 +305,10 @@ Note that both these kernels are indeed valid.
 That said, when using kernels in the real world, one can also use non-valid kernels, ie. kernels which are non-symmetric and/or return negative numbers. While such ``kernel" are not strictly valid, they can nevertheless perform good in real-world applications, even better than valid kernels.
 
 Kernels can be used in kernel methods for classification and other tasks.
-Prominent examples of kernel methods are the SVM, kernelized PCA and Gaussian Processes.
-Later, we will see an example of such kernel methods.
+Prominent examples of kernel methods include the \textit{SVM}, kernelized \textit{Principal Component Analysis} and \textit{Gaussian Processes}.
+In Section \ref{sec:kernel_method_and_kernel_trick}, we further explain kernel methods.
 
-For a subset of kernels, one can also create explicit feature vectors for a given object. In this case, the kernel can be written as an inner product on two fixed-size vectors:
+For a subset of kernels, one can also create explicit feature vectors, or feature maps, for a given object. In this case, the kernel can be rewritten as an inner product on two fixed-size vectors:
 
 \begin{equation*}
     k(X, X') = \langle \phi(X), \phi(X') \rangle
@@ -325,7 +325,7 @@ A_{i,j} = k(x_i, x_j)
 \end{equation*}
 So, the entry in the $i$-th row and $j$-th column signifies the similarity of $x_i$ and $x_j$ under the given kernel.
 
-When the explicit feature map $\phi(x)$ for each $x$ is given, one can also construct the gram matrix by stacking these vectors into a matrix $M_{\phi}$ and calculating the product on the transpose
+When the explicit feature map $\phi(x)$ for each $x$ is given, one can also construct the gram matrix by vertically stacking these feature vectors into a matrix $M_{\phi}$ and calculating the product on the transpose
 \begin{equation*}
 A = M_{\phi} M_{\phi}^T
 \end{equation*}
