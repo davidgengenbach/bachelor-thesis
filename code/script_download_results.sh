@@ -16,7 +16,7 @@ FOLDER_NAME="$(date "+%Y-%m-%d_%H-%M")"
 # If not KEEP_OLD, rename old folder and sync
 if [ -z "$KEEP_OLD" ]; then
     echo -e "########### INFO: using old folder, renaming\t($LAST_FOLDER -> $FOLDER_NAME)"
-    if [ ! "$LAST_FOLDER" = "$FOLDER_NAME" ]; then
+    if [ ! "$LAST_FOLDER" = "$FOLDER_NAME/" ]; then
         mv "$LAST_FOLDER" "$FOLDER_NAME" || true
     fi
 # If KEEP_OLD, keep the old folder and create a new one

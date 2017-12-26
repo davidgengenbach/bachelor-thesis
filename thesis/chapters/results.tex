@@ -118,10 +118,11 @@ When the window size is 1, the graph is similar to a path, meaning that most of 
 \end{figure}
 
 
-\textbf{Summary:}
+\answersummary{
 Concept maps have a relatively homogeneous structure.
 The bulk of its nodes have only a small number of neighbors.
 The degrees of nodes are quite low, also hinting that there are few recurring concepts.
+}
 
 \subquestionref{question:importance_structure}
 After investigating the structure of concept maps, we now aim to quantify the importance of the structure compared to the content.
@@ -169,12 +170,12 @@ The combined approach, ie. plain WL, performs better than the structure-only but
 While it is no surprise that removing the labels from the graphs results in a far lower classification score, the extent in which co-occurrence graphs still perform better than concept maps has to be noted.
 This could indicate that the structure of co-occurrence graphs, while relatively simple, is at least as, if not more, useful than the structure of concept maps.
 
-\textbf{Summary:}
+\answersummary{
 The content-only graph kernel which unrolls the graph into text, ie. linearizing it, and then using a conventional \textit{BoW} approach performs the best for both concept maps and co-occurrence graphs.
 Removing the content, ie. the labels, from the graphs and then running plain WL results in classification scores close to the most-frequent dummy classifier, which always predicts the most-frequent class and ignores features.
 When combining the both, content and structure, the score is not as good as content-only.
 This all indicates that the content of the graphs has a greater importance than the structure.
-
+}
 \todo{N-grams range?}
 
 \subquestionref{question:comparison_coo}
@@ -218,8 +219,9 @@ So, we see that graph-only approaches seem to perform worse than text-only appro
 When linearizing the graphs into text again and apply conventional text vectorizers, eg. BoW with Tfidf, we get the best results, also hinting to the fact that the structure is far harder to leverage than simple node counts.
 That said, we are interested in whether graph representations are useful in text classification, therefor we will also test the performance of graph-based approaches when combining them with conventional text approaches.
 
-\textbf{Summary:}
+\answersummary{
 In our experiments, the text-only approach performs far better than the graph-only approaches, both concept maps and co-occurrence graphs.
+}
 
 \subquestionref{question:multi_labels}
 As we seek to leverage features special in concept maps, we further explore the node labels.
@@ -234,11 +236,11 @@ See Figure \ref{fig:example_split_labels} for an example.
 
 \begin{figure}[htb!]
 	\centering
-	\begin{subfigure}[t]{.26\linewidth}	{\includegraphics[width=\linewidth]{assets/figures/tmp/graph_example_split_labels_before.pdf}}
+	\begin{subfigure}[t]{.4\linewidth}	{\includegraphics[width=\linewidth]{assets/figures/tmp/graph_example_split_labels_before.pdf}}
 		\caption{Before}
 	\end{subfigure}
 \hspace{2cm}
-	\begin{subfigure}[t]{.3\linewidth}	{\includegraphics[width=\linewidth]{assets/figures/tmp/graph_example_split_labels_after.pdf}}
+	\begin{subfigure}[t]{.4\linewidth}	{\includegraphics[width=\linewidth]{assets/figures/tmp/graph_example_split_labels_after.pdf}}
 		\caption{After}
 	\end{subfigure}
 	\caption[Example: Multi-word node labels Splitting]{Example for multi-word label splits. Here, both the ``concept maps" and ``multi-word concepts" node labels are  split.}\label{fig:example_split_labels}
@@ -269,12 +271,12 @@ As we can see, the splitting actually improves the performance quite a lot, cons
 When comparing these scores with node-label splitting with the results of the approaches we used in Question \ref{question:importance_structure}, we see that the node-label splitting nearly performs as well as the best approach, that is the content-only approach.
 The difference is quite small, ranging from 1\% to 3\% difference in F1 macro.
 
-\textbf{Summary:}
-Splitting the multi-word labels shows the greatest performance improvement, improvements ranging from a 10\% to 24\% better F1 macro score over the normal un-split approach.
-Comparing this improved score with the best graph kernel we saw till now, the linearized content-only approach from Question \ref{question:importance_structure}, the node-label splitting performs nearly as good.
+\answersummary{
+Splitting the multi-word labels shows the greatest performance improvement, ranging from a raise of 10\% to 24\% better F1 macro score over the normal un-split approach.
+Splitting the node labels and then using WL performs nearly as good as the best graph kernel we saw, the linearized content-only approach from Question \ref{question:importance_structure}.
+}
 
 \subquestionref{question:edge_labels}
-In concept maps, an edge label can be combined with the label of its source and target nodes to form a sentence.
 To evaluate how important the edge labels are, we first look at the occurrences of edge labels, ie. how often a unique edge label occurs in the concept maps of a whole dataset.
 In Table \ref{table:edge_label_occurrences} we see that, on average, 76\% of all unique edge labels occur only once per dataset. For comparison, the percentage of unique words which only occur once in a text, on average, is often well below 50\% for our datasets.
 
@@ -304,8 +306,8 @@ When examining the most occurring edge labels per dataset, most of these most-fr
 These most-frequent edge labels, together with the edge labels which occur only once, form the bulk of all edge labels.
 
 As a test for the importance of edge labels, we evaluate \textbf{(a)} a graph kernel which uses the edge labels against \textbf{(b)} a graph kernel which does not use edge labels.
-For both, \textbf{(a)} and \textbf{(b)}, we use a graph kernel which first converts the graphs into a set of labels and then counts the number of these labels for each graph.
-For \textbf{(a)} we use the edge labels, for \textbf{(b)} we omit them.
+For both, \textbf{(a)} and \textbf{(b)}, we use a graph kernel which first converts the graphs into a text and then vectorizes the text with BoW.
+For \textbf{(a)} we use the edge labels for the text, for \textbf{(b)} we omit them.
 
 \begin{table}[htb!]
 	\centering
@@ -313,20 +315,26 @@ For \textbf{(a)} we use the edge labels, for \textbf{(b)} we omit them.
 	{} & \multicolumn{2}{c}{edge labels} \\
 	dataset & without & with \\
 	\midrule
-	ling-spam  & 0.926 & \textbf{0.932} \\
-	ng20       & \textbf{0.595} & 0.592 \\
-	nyt\_middle & \textbf{0.795} & 0.793 \\
-	nyt\_small  & 0.720 &\textbf{ 0.740} \\
-	ted\_talks  & \textbf{0.455} & 0.418 \\
+		ling-spam       & 0.926 & \textbf{0.932} \\
+		ng20            & \textbf{0.595} & 0.592 \\
+		nyt\_200         & 0.875 & \textbf{0.886} \\
+		r8              & 0.855 & \textbf{0.857} \\
+		review\_polarity & 0.705 & \textbf{0.729} \\
+		rotten\_imdb     & 0.802 & \textbf{0.816} \\
+		ted\_talks       & \textbf{0.455} & 0.418 \\
 	\bottomrule
 \end{tabular}
 \caption[Results: Graph Kernel with and without edge labels]{Classification results for a graph kernel either using or omitting edge labels.}\label{table:edge_label_classification}
 \end{table}
 
-As we can see in Table \ref{table:edge_label_classification}, omitting or using the edge labels result in comparable performance.
-For some datasets, omitting the edge label actually improves the classification score.
+As we can see in Table \ref{table:edge_label_classification}, omitting or using the edge labels results in comparable performances.
+For some datasets, omitting the edge label actually even improves the classification score.
+These facts all indicate that edge labels, while crucial and useful for text-summarization and the subsequent use by a human, seem to have limited use in graph classification.
 
-\todo{These facts all indicate that edge labels, while crucial and useful for text-summarization and the subsequent use by a human, seem to have limited use in graph classification.}
+\answersummary{
+		The bulk of all edge labels either occur only once per dataset or consist of stopwords.
+		In our experiments, omitting or using the edge labels actually leads to comparable performances.
+}
 
 \subquestionref{question:infrequent_nodelabels}
 In Figure \ref{fig:percentage_distribution_concept_occurrences} we can see that, depending on the dataset, between 75\% to 90\% of all node labels occur only once per dataset.
@@ -343,6 +351,10 @@ In the context of WL, infrequent node labels might become a problem since a matc
 When simply creating a feature vector by counting the node labels in each graph, infrequent node labels would not pose a problem.
 WL on the other hand relies on exact matches of neighborhoods.
 Thus, a node label which only occurs once would ``taint" its neighborhood, effectively making matches in its neighborhoods impossible.
+
+\answersummary{
+	TODO	
+}
 
 \subquestionref{question:directed_vs_undirected}
 The concept maps we extracted have directed edges.
@@ -378,6 +390,10 @@ This is most likely due to the aforementioned property that the neighborhoods ar
 Note that using directed edges in WL could be compared with using n-grams: when the order of words/nodes is fixed in one direction, vertices with no outgoing edges do not have a neighborhood. Thus they are, for all WL iterations, considered to be the same label, ie. they get no new color assigned.
 Later on, we will also evaluate whether or how using (un-) directed edges affects the score when combining graph and text features.
 
+\answersummary{
+	TODO	
+}
+
 \subquestionref{question:concept_map_size}
 In most datasets, longer texts often result in higher classification performance.
 So, an interesting question is whether the size of a concept map also correlates with its classification performance, ie. whether ``bigger" graphs in terms of the number of nodes and edges are easier to classify.
@@ -401,8 +417,17 @@ For this dataset, the results indicate that classification performance indeed co
 In other datasets, this correlation is not as distinguished.
 \todo{Results for other datasets have to be inserted!}
 
+
+\answersummary{
+	TODO	
+}
+
 \subquestionref{question:dataset_diversity}
 \todo{?}
+
+\answersummary{
+	TODO	
+}
 
 \subquestionref{question:comparison_combined}
 As we have seen in the results of the last section, text-based approaches outperform graph-only approaches.
@@ -501,8 +526,23 @@ webkb
 \label{table:results_comparison_combined}
 \end{table}
 
+\answersummary{
+	TODO	
+}
+
 \subquestionref{question:comparison_runtime}
+Till now, we only looked at the classification performance of our classification approaches.
+Another aspect of great real-world importance is the runtime of the approaches.
+In this section, we report empirical data of the runtime of the used algorithms.
+The prominent and quite common text-vectorization algorithm \textit{BoW} has both great 
 \todo{?}
+\todo{Dimensionality reduction}
+
+\answersummary{
+	TODO	
+}
+
+\labelsubsection{Summary}{subsec:results_summary}
 
 \labelsection{Related And Intermediate Observations}{subsec:related_and_intermediate_observation}
 In this section we report observations which are not directly related to our questions or hypothesis, yet they nevertheless have provided us more insights into our analysis.
@@ -590,6 +630,8 @@ The node degree is an interesting metric for node weights since it actually enco
 \todo{Explain how to actually use the node weights.}
 \todo{Remark that the node weights could be seen as an additional metric of frequency: nodes with a higher degree have been in the text more frequently.}
 
+
+\iffalse
 Our other extension to the WL algorithm addresses problem \textbf{(1)}, the difficulty of having a match when the iteration increases.
 To solve this difficulty, we propose weighting the features of each iteration.
 The feature maps of WL consist of the concatenated feature maps for each iteration.
@@ -604,5 +646,6 @@ We now propose to weight the individual feature maps by the factor determined by
 \end{equation*}
 So, basically the function $f(h)$ works as a decaying factor to decreasing iterations $h$.
 When the function $f(h)$ increasing (steigend?), the increasing importance with higher iterations is encoded into the resulting feature map $\phi_f(G)$.
+\fi
 
 \todo{This is NOT a solution when feature-scaling is done.}

@@ -106,10 +106,15 @@ def get_results(folder=None, use_already_loaded=False, results_directory=RESULTS
     if only_load_dataset is not None:
         result_files = [x for x in result_files if filename_utils.get_dataset_from_filename(x) in only_load_dataset]
 
+
+
     data_ = []
     for result_file in log_progress(result_files) if log_progress else result_files:
         if include_filter and include_filter not in result_file: continue
         if exclude_filter and exclude_filter in result_file: continue
+
+        if '_nested_' in result_file: continue
+        
         dataset_name = filename_utils.get_dataset_from_filename(result_file)
 
         if result_file in _RESULT_CACHE:

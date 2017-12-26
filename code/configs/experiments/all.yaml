@@ -5,7 +5,6 @@ limit_dataset:
 - r8
 - review_polarity
 - rotten_imdb
-- tagmynews
 - ted_talks
 limit_graph_type:
 - cooccurrence

@@ -127,9 +127,8 @@ These pre-processing steps are similar to the pre-processing done in \cite{Cacho
 An example of pre-processing can be seen in Figure \ref{fig:preprocessing_example}.
 
 \begin{figure}[htb!]
-	\begin{subfigure}[b]{0.45\linewidth}
-\noindent\fbox{%
-\parbox{\textwidth}{%
+	\begin{subfigure}[b]{0.47\linewidth}
+\begin{mdframed}[nobreak=true]
 \textsf{I've heard *unconfirmed* rumours that there is a new Integra being released
 	for '94.
 	\\
@@ -140,15 +139,16 @@ An example of pre-processing can be seen in Figure \ref{fig:preprocessing_exampl
 	The local sales people know as much as I can throw them.
 	\\
 	\\
-	--Parms.}}}
+	--Parms.}
+\end{mdframed}
     \caption{Before}
     \end{subfigure}
-\hspace{0.5in}
-	\begin{subfigure}[b]{0.45\linewidth}
-\noindent\fbox{%
-\parbox{\textwidth}{%
-\textsf{i've heard unconfirmed rumours that there is a new integra being released for ' NUMBER. does anybody have any info on this? the local sales people know as much as i can throw them. parms.}}}
-\vspace{0.5in}
+\hspace{0.2in}
+	\begin{subfigure}[b]{0.47\linewidth}
+\begin{mdframed}[nobreak=true]
+\textsf{i've heard unconfirmed rumours that there is a new integra being released for ' NUMBER. does anybody have any info on this? the local sales people know as much as i can throw them. parms.}
+\end{mdframed}
+\vspace{0.4in}
     \caption{After}
     \end{subfigure}
 	\caption[Example: Pre-Processing]{Pre-processing example. Text taken from \textit{ng20} dataset.}\label{fig:preprocessing_example}
@@ -159,7 +159,7 @@ For the co-occurrence graphs, we also optionally filtered out the non-nouns to i
 \paragraph{Text-based representations}
 For the text classification pipeline, we used two \textit{Bag-Of-Words}, or \textit{BoW}, based text vectorization algorithms, namely
 \begin{itemize}
-\item{\textit{Word Frequency} (WF): this algorithm simply gathers all words in the corpus and creates a mapping between words and consecutive indices. Then it creates a vector representation for each text so that the i-th vector component is the count of the corresponding word in the text. Ie. $i$ is the index of the word in the mapping.}
+\item{\textit{Word Frequency} (Wf): this algorithm simply gathers all words in the corpus and creates a mapping between words and consecutive indices. Then it creates a vector representation for each text so that the i-th vector component is the count of the corresponding word in the text. Ie. $i$ is the index of the word in the mapping.}
 \item{\textit{Term-Frequency-Inverse-Document-Frequency} (TfIdf): this approach is an extension to the \textit{Word Frequency BoW} approach. Instead of using only the counts of a word in the text, this approach also incorporates the term frequency and the inverse document frequency of the words into the vector representation.}
 \end{itemize}
 Both approaches can also be extended by not only utilizing single words, or unigrams, but n-grams, too. A word n-gram consists of $n$ words that appear consecutively in the text.
@@ -167,6 +167,16 @@ For example, the sentence ``This is a sentence." has the following 2-grams, or b
 For our purposes, we looked at both uni-grams and bi-grams.
 Note that word n-grams do not take word inversion into account, ie. the bi-gram (a, b) is not the same as (b, a).
 
+\todo{\textbf{Problems of BoW: }
+	
+	Vocabulary: The vocabulary requires careful design, most specifically in order to manage the size, which impacts the sparsity of the document representations.
+	
+	Sparsity: Sparse representations are harder to model both for computational reasons (space and time complexity) and also for information reasons, where the challenge is for the models to harness so little information in such a large representational space.
+	
+	Meaning: Discarding word order ignores the context, and in turn meaning of words in the document (semantics). Context and meaning can offer a lot to the model, that if modeled could tell the difference between the same words differently arranged (``this is interesting" vs ``is this interesting"), synonyms (``old bike" vs ``used bike"), and much more.
+	
+	\url{https://machinelearningmastery.com/gentle-introduction-bag-words-model/}
+}
 \paragraph{Graph-based representations}
 To compare the performance of concept maps with other graphs, we generated co-occurrence graphs with window sizes $w \in \{1, 2, 3, 4\}$.
 We also evaluated the performance of co-occurrence graphs where only nouns are retained to mimic the compression factor of concept maps.

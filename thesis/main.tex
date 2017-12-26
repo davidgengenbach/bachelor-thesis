@@ -10,7 +10,15 @@
 \usepackage{enumitem}
 \usepackage[backgroundcolor=lightgray,bordercolor=white]{todonotes}
 \usepackage{cellspace}
+\usepackage{mdframed}
 
+\definecolor{davysgrey}{rgb}{0.33, 0.33, 0.33}
+\mdfsetup{%
+	linecolor=davysgrey,
+	linewidth=1pt,
+	%backgroundcolor=red!10,
+	roundcorner=4pt
+}
 
 \setenumerate{topsep=8pt,parsep=1pt}
 \setitemize{topsep=8pt,parsep=1pt}
