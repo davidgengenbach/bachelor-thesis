@@ -531,15 +531,52 @@ webkb
 }
 
 \subquestionref{question:comparison_runtime}
-Till now, we only looked at the classification performance of our classification approaches.
-Another aspect of great real-world importance is the runtime of the approaches.
-In this section, we report empirical data of the runtime of the used algorithms.
-The prominent and quite common text-vectorization algorithm \textit{BoW} has both great 
-\todo{?}
+Until now, we only looked at the classification scores of our classification approaches.
+Another aspect of great real-world importance is the runtime and memory consumption of these approaches.
+In table \ref{table:runtime_and_classifier_size}, we report empirical data on both the runtime and final classifier size of the used pipelines for each dataset.
+For this data, we use simple approaches for both graphs and texts: for the \textbf{texts} we vectorize the text documents with BoW with \textit{Tfidf}.
+For \textit{graphs}, we vectorize the graphs with the plain Weisfeiler-Lehman graph kernel with $h = 4$ iterations.
+For both the text- and graph approach, we then train a SVM on the whole dataset, then predict the labels for the whole dataset. Afterwards we save the models, ie. the internal coefficients of the SVM, and record the size of the saved model.
+We also record the runtime of both approaches.
+
+Note, that the reported runtime and memory consumption for the graph-based pipeline does not incorporate the creation of the concept maps, only the creation of the feature maps and subsequent training/prediction.
+The creation of concept maps from text with the code provided in \cite{Falke2017b} takes over a day for our datasets.
+For instance, the concept map creation for the texts in our smallest dataset, \textit{ling-dataset}, took over ??? hours and had a peak memory usage of ??? Megabyte.
+The runtime of the concept map creation could most likely be reduced by parallelizing parts of its pipeline.
+For example, the extraction of relevant concepts and their relation from a text is independent from the same extraction of another text, so this stage has neither data- nor functional dependencies.
+
+\todo{Add numbers for ling-spam}
+
 \todo{Dimensionality reduction}
 
+\begin{table}[htb!]
+	\centering
+	\begin{tabular}{lrrrr}
+		& \multicolumn{2}{c}{Classifier Size} &  \multicolumn{2}{c}{Runtime} \\
+		\midrule
+		&  Graph &  Text & Graph &  Text \\
+		\midrule
+		ling-spam       & 12 & 4 & 3 & 2 \\
+		ng20            & 725 & 29 & 49 & 9 \\
+		nyt\_200         & 338 & 9 & 9 & 7 \\
+		r8              & 117 & 3 & 11 & 1 \\
+		review\_polarity & 16 & 3 & 3 & 2 \\
+		rotten\_imdb     & 3 & 1 & 5 & 0 \\
+		ted\_talks       & 44 & 3 & 2 & 2 \\
+		\bottomrule
+	\end{tabular}
+\caption[Table: Runtime and Classifier size for graph- and text based classification.]{
+	Runtime and classifier size of text- and graph based classification.
+	The runtime is reported in \textit{seconds}, memory consumption in \textit{Megabyte}.
+}
+\label{table:runtime_and_classifier_size}
+\end{table}
+
 \answersummary{
-	TODO	
+	Graph-based classification using WL incurs both	a runtime and memory consumption overhead to text-based classification.
+	One explanation for both the higher memory consumption and runtime is the higher dimensionality of the feature vectors created by WL.
+	Applying dimensionality reduction, eg. \textit{PCA}, might be a solution to circumvent these issues.
+	The creation of concept maps from text also incurs a high runtime and memory consumption overhead.
 }
 
 \labelsubsection{Summary}{subsec:results_summary}

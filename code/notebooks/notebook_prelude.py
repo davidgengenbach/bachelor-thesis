@@ -12,10 +12,8 @@ from PIL import Image
 from preprocessing import preprocessing
 from sklearn import dummy
 from sklearn import metrics, pipeline, preprocessing, svm
+import transformers
 from transformers.pipelines import *
-from transformers.fast_wl_graph_kernel_transformer import FastWLGraphKernelTransformer
-from transformers.nx_graph_to_tuple_transformer import NxGraphToTupleTransformer
-from transformers.tuple_selector import TupleSelector
 from utils import results_helper, filename_utils, helper, graph_helper, helper, dataset_helper, cooccurrence
 import collections
 import copy
@@ -44,6 +42,11 @@ from utils.graph_helper import *
 import experiments
 from experiments import experiment_helper
 from itertools import chain
+
+import tqdm
+
+def log_progress_nb(*args):
+    return tqdm.tqdm_notebook(*args)
 
 
 EXPORT_DPI = 100
@@ -101,3 +104,7 @@ for dataset in DATASETS:
 TASK_TYPES = experiments.get_all_task_types()
 for task_type in TASK_TYPES:
     globals()['TASK_TYPE_{}'.format(task_type.upper())] = task_type
+
+def get_text_file_lines(file, remove_empty = True, strip=True):
+    with open(file) as f:
+        return [x.strip() if strip else x for x in f if not remove_empty or x.strip() != '']

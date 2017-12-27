@@ -34,9 +34,7 @@ class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Tran
         assert len(X)
         X, node_weight_factors = _retrieve_node_weights_and_convert_graphs(X, node_weight_function=self.node_weight_function, same_label=self.same_label, use_directed=self.use_directed)
 
-
         self.hashed_x = hash_dataset(X)
-
 
         phi_list, label_lookups, label_counters = fast_wl.transform(
             X,
