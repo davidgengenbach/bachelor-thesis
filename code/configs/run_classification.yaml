@@ -3,7 +3,6 @@ verbose: 1
 dry_run: false
 force: false
 n_jobs: 1
-random_state: 42
 
 # Classification options
 create_predictions: false

@@ -10,7 +10,6 @@ class ClassificationOptions(object):
             n_splits: int = 3,
             n_splits_nested: int = 3,
             prediction_test_size: float = 0.15,
-            random_state: int = 42,
             refit: str = 'f1_macro',
             use_nested_cross_validation: bool = False,
             scoring=['precision_macro', 'recall_macro', 'accuracy', 'f1_macro'],
@@ -27,7 +26,6 @@ class ClassificationOptions(object):
         self.n_jobs_outer = n_jobs_outer
         self.n_splits = n_splits
         self.prediction_test_size = prediction_test_size
-        self.random_state = random_state
         self.refit = refit
         self.scoring = scoring
         self.results_folder = results_folder

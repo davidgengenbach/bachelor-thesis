@@ -14,6 +14,7 @@ def get_params(reduced=False, with_node_weights=False):
     pipeline = sklearn.pipeline.Pipeline([
         ('graph_preprocessing', None),
         ('feature_extraction', fast_wl_estimator),
+        ('graph_postprocessing', None),
         ('normalizer', None),
         ('classifier', None)
     ])

@@ -1,0 +1,27 @@
+limit_graph_type:
+- concept_map
+#- cooccurrence
+params_per_type:
+  graph:
+    feature_extraction:
+      fast_wl:
+        h:
+        - 10
+        use_early_stopping:
+        - true
+      phi_picker:
+        return_iteration:
+        - stacked
+        use_zeroth:
+        - true
+    graph_preprocessing:
+    - ~
+    graph_postprocessing:
+      VAL_:
+      - TruncatedSVDWrapper
+      percentage_n_components:
+      - 0.1
+      n_iter:
+      - 5
+    normalizer:
+    - MaxAbsScaler

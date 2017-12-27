@@ -534,8 +534,8 @@ webkb
 Until now, we only looked at the classification scores of our classification approaches.
 Another aspect of great real-world importance is the runtime and memory consumption of these approaches.
 In table \ref{table:runtime_and_classifier_size}, we report empirical data on both the runtime and final classifier size of the used pipelines for each dataset.
-For this data, we use simple approaches for both graphs and texts: for the \textbf{texts} we vectorize the text documents with BoW with \textit{Tfidf}.
-For \textit{graphs}, we vectorize the graphs with the plain Weisfeiler-Lehman graph kernel with $h = 4$ iterations.
+For this data, we use simple approaches for both graphs and texts: for the \textbf{texts} we vectorize the text documents with BoW with Tfidf.
+For \textbf{graphs}, we vectorize the graphs with the plain Weisfeiler-Lehman graph kernel with $h = 4$ iterations.
 For both the text- and graph approach, we then train a SVM on the whole dataset, then predict the labels for the whole dataset. Afterwards we save the models, ie. the internal coefficients of the SVM, and record the size of the saved model.
 We also record the runtime of both approaches.
 
@@ -546,7 +546,6 @@ The runtime of the concept map creation could most likely be reduced by parallel
 For example, the extraction of relevant concepts and their relation from a text is independent from the same extraction of another text, so this stage has neither data- nor functional dependencies.
 
 \todo{Add numbers for ling-spam}
-
 \todo{Dimensionality reduction}
 
 \begin{table}[htb!]

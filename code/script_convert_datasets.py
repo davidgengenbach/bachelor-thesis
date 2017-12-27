@@ -17,9 +17,6 @@ def get_args():
                         type=float,
                         help="The percentage of data that is used for train, rest is used for test",
                         default=0.8)
-    parser.add_argument('--random_state_for_shuffle',
-                        type=int,
-                        default=42)
     parser.add_argument('--concat_train_instances',
                         action='store_true')
     parser.add_argument('--dataset_name',
@@ -46,7 +43,7 @@ def main():
     process(**args, args=args)
 
 
-def process(dataset_name, out_folder, train_size, random_state_for_shuffle, one_document_per_folder, force, args, concat_train_instances, shuffle, preprocess):
+def process(dataset_name, out_folder, train_size, one_document_per_folder, force, args, concat_train_instances, shuffle, preprocess):
     out_folder = os.path.join(out_folder, dataset_name)
 
     if not force and os.path.isdir(out_folder):
@@ -61,7 +58,7 @@ def process(dataset_name, out_folder, train_size, random_state_for_shuffle, one_
         X = [preprocessing.preprocess(x) for x in X]
 
     if shuffle:
-        data_train_X, data_test_X, data_train_Y, data_test_Y = dataset_helper.split_dataset(X, Y, random_state_for_shuffle=random_state_for_shuffle, train_size=train_size)
+        data_train_X, data_test_X, data_train_Y, data_test_Y = dataset_helper.split_dataset(X, Y, train_size=train_size)
     else:
         data_train_X, data_test_X, data_train_Y, data_test_Y = X, [], Y, []
 

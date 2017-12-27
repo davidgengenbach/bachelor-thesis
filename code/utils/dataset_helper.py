@@ -154,14 +154,13 @@ def get_w2v_embedding_for_dataset(dataset_name, embedding_folder='data/embedding
         return pickle.load(f)
 
 
-def split_dataset(X, Y, train_size=0.8, random_state_for_shuffle=42):
+def split_dataset(X, Y, train_size=0.8):
     """Returns a train/test split for the given dataset.
 
     Args:
         X (list): The docs/graphs
         Y (list of str): The labels
         train_size (float, optional): from 0.0 to 1.0, which percentage is used for train
-        random_state_for_shuffle (int, optional): Description
 
     Returns:
         tuple(list): four array corresponding to:
@@ -171,13 +170,11 @@ def split_dataset(X, Y, train_size=0.8, random_state_for_shuffle=42):
         return train_test_split(
             X, Y,
             train_size=train_size,
-            random_state=random_state_for_shuffle,
             stratify=Y
         )
     else:
         X_, Y_ = shuffle(
-            X, Y,
-            random_state=random_state_for_shuffle
+            X, Y
         )
         return X_, [], Y_, []
 

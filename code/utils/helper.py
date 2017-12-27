@@ -9,7 +9,9 @@ import numpy as np
 import itertools
 import os
 import argparse
-from utils import time_utils, git_utils
+from utils import time_utils, git_utils, constants
+
+np.random.seed(constants.RANDOM_SEED)
 
 DATASET_FOLDER = 'data/datasets'
 

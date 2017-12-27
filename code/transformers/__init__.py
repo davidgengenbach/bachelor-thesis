@@ -9,6 +9,7 @@ from . import relabel_graphs_transformer
 from . import remove_single_occurrence_graph_labels
 from . import simple_preprocessing_transformer
 from . import tuple_selector
+from . import truncated_svd_wrapper
 
 from .fast_wl_graph_kernel_transformer import FastWLGraphKernelTransformer
 from .gram_matrix_transformer import PhiListToGramMatrixTransformer
@@ -22,6 +23,7 @@ from .remove_single_occurrence_graph_labels import RemoveInfrequentGraphLabels
 from .remove_single_occurrence_graph_labels import RemoveInfrequentGraphLabels
 from .simple_preprocessing_transformer import SimplePreProcessingTransformer
 from .tuple_selector import TupleSelector
+from .truncated_svd_wrapper import TruncatedSVDWrapper
 
 import sklearn
 import sklearn.feature_extraction

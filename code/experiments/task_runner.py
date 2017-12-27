@@ -58,7 +58,6 @@ def run_classification_task(task: ExperimentTask, cfo: ClassificationOptions, ex
                 X,
                 Y,
                 test_size=cfo.prediction_test_size,
-                random_state=cfo.random_state,
                 is_precomputed=is_precomputed
             )
         except Exception as e:
@@ -72,7 +71,6 @@ def run_classification_task(task: ExperimentTask, cfo: ClassificationOptions, ex
         else:
             cv = sklearn.model_selection.StratifiedKFold(
                 n_splits=cfo.n_splits,
-                random_state=cfo.random_state,
                 shuffle=True
             )
         return cv
@@ -140,13 +138,12 @@ def run_classification_task(task: ExperimentTask, cfo: ClassificationOptions, ex
     results_helper.save_results(gscv_result.cv_results_, result_file, args)
 
 
-def train_test_split(X, Y, test_size: float = 0.15, random_state: int = 42, is_precomputed: bool = False):
+def train_test_split(X, Y, test_size: float = 0.15, is_precomputed: bool = False):
     def train_test_split(*Xs, Y=None):
         return sklearn.model_selection.train_test_split(
             *Xs,
             stratify=Y,
             test_size=test_size,
-            random_state=random_state
         )
 
     if is_precomputed:

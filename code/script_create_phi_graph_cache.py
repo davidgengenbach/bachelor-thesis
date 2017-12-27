@@ -90,8 +90,7 @@ def process_graph_cache_file(graph_cache_file, args):
 
             num_vertices = sum([len(labels) for _, labels in X_])
             test_size = 0.2
-            random_state = 42
-            X_train, X_test, Y_train, Y_test = sklearn.model_selection.train_test_split(np.copy(X_), np.copy(Y_), stratify=Y_, test_size=test_size, random_state=random_state)
+            X_train, X_test, Y_train, Y_test = sklearn.model_selection.train_test_split(np.copy(X_), np.copy(Y_), stratify=Y_, test_size=test_size)
 
             X_train, Y_train = sort(X_train, Y_train, by = Y_train)
             X_test, Y_test = sort(X_test, Y_test, by = Y_test)

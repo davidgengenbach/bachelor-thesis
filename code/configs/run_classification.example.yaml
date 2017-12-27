@@ -3,18 +3,17 @@ verbose: 1
 dry_run: false
 force: false
 n_jobs: 1
-random_state: 42
 
 # Classification options
-create_predictions: true
+create_predictions: false
 keep_coefs: false
-limit_dataset: [ling-spam]
+save_best_clf: false
 n_splits: 3
 prediction_test_size: 0.15
 refit: f1_macro
 scoring: [precision_macro, recall_macro, accuracy, f1_macro]
 
 # Task filters
-#task_name_filter: None
-#task_type_exclude_filter: None
-#task_type_include_filter: None
+#task_name_filter:
+#task_type_exclude_filter:
+#task_type_include_filter:

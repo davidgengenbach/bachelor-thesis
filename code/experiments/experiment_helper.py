@@ -6,6 +6,7 @@ import experiments
 from utils import dataset_helper, graph_metrics
 import sklearn
 import sklearn.preprocessing
+import sklearn.decomposition
 import sklearn.feature_extraction.text
 from glob import glob
 from utils import constants
@@ -19,6 +20,8 @@ PLACEHOLDER_LIST = dict(
     nxgraph_pagerank_metric=graph_metrics.nxgraph_pagerank_metric,
     MaxAbsScaler=sklearn.preprocessing.MaxAbsScaler,
     SVC=sklearn.svm.SVC,
+    PCA=sklearn.decomposition.PCA,
+    TruncatedSVD=sklearn.decomposition.TruncatedSVD,
     iteration_weight_function=transformers.fast_wl_graph_kernel_transformer.iteration_weight_function,
     iteration_weight_function_exponential=transformers.fast_wl_graph_kernel_transformer.iteration_weight_function_exponential
 )
