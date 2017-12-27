@@ -8,65 +8,67 @@
 \todo{Introduce earlier approaches/results and their weaknesses}
 \todo{Outlook}
 
-\labelsection{Motivation}{subsec:motivation}
-\todo{Applications also}
+%\labelsection{Motivation}{subsec:motivation}
 
 \paragraph{Text Classification}
 \todo{Text classification is important. Why?}
 \todo{Applications?}
+\todo{``text analysis, text categorization, information extraction,  and summarization"}
+\todo{More text available digitally}
 
 \paragraph{Graph Classification}
-\todo{Structured data}
-\todo{Sequences like strings/text or trees can all be expressed intuitive as graphs.}
-\todo{Relationships between entities}
-\todo{Applications}
+Trees, sequences, networks and other graphs occur in a lot of contexts.
+Because of their structured nature, graphs are perfect candidates to capture connected data, or datapoints with relations between them.
+Yet, operating on graphs is often challenging, precisely because of its structured and often non-linear nature.
+Graphs are often of non-fixed size and its structures can vary greatly.
+That said, finding ways to automatically process graphs becomes more important as graphs, as mentioned before, naturally appear in many fields.
+\todo{Especially graph classification, classification on/of graphs.}
+Applications of graph classification can range from classifying the toxicity of molecules to predicting friends for users in a social network.
+In Table \ref{table:graph_classification_examples} we gathered some example applications of graph classification.
 
-Following are some applications of graph classification:
-
-\begin{figure}[htb!]
+\begin{table}[htb!]
 \centering
+\renewcommand*{\arraystretch}{0.95}
 \begin{tabular}{llll}
-field & nodes & edges & classes \\
+Context & Vertices & Edges & Classes \\
 \midrule
-chemistry & atoms & bonds & toxicity (binary) \\
-biology & amino acids & spatial link & protein types \\ 
-social networks & users & 'are friends' or 'like the same content' & bot detection (binary) or user classification
-\end{tabular}
-\end{figure}
+Chemistry & Atoms & Bonds & Toxicity (binary) \\
+Biology & Amino Acids & Spatial Links & Protein Types \\ 
+Social Networks & Users & Are Friends & Bot Detection (binary) \\
+\bottomrule
+\end{tabular}%
+\caption[Table: Graph Classification Applications]{Graph classification applications.}%
+\label{table:graph_classification_examples}
+\end{table}
 
-As we will see later on, the graph classification task is also similar to the task of finding similar graphs for a given graph.
+As we will see later on, the graph classification task is also related to the task of finding similar graphs for a given graph.
+In Section \ref{subsec:graphs} we will introduce graphs more throughly.
 
 \labelsection{Hypothesis and Goals}{subsec:hypothesis_and_goals}
-In this work, we evaluate the usefulness of graph representations of text in the context of text classification. In particular, we work out how or whether the structure of so-called concept maps actually improve the classification performance.
-We will introduce concept maps in the next section.
-
+In this work, we evaluate the usefulness of graph representations of text in the context of text classification. In particular, we work out how or whether the structure of so-called concept maps could be leveraged  to improve text-based classification performance.
 The main hypothesis of this work is:
 \begin{quote}
 \hypothesis
 \end{quote}
 
-There are a great number of approaches for text classification, a lot of them based on counting the words of a text and learning a classifier with these frequencies and labels.
+There is a great number of approaches for text classification, a lot of them based on counting the words of a text and learning a classifier with these frequencies.
 Yet, these word-count based approaches often do not take the semantic or syntax of sentences into account, ie. text-based approaches often do not leverage the structure and meaning of sentences.
-A partial solution for this issue is solved by augmenting single-word counts with n-grams counts.
-N-grams are sequences of length $n$ of consecutive words in the text, therefore they capture word dependency and word order.
+There are partial solutions for this issue, for instance by augmenting single-word counts with n-grams counts.
+N-grams are sequences of length $n$ of consecutive words in the text, therefore they can capture word dependency and word order.
 Text-based approaches are widely used and achieve high performance both in compute time and classification scores.
 
-In this work, we explore how concept maps, and other graph representations like co-occurrence graphs, can improve classification scores.
-We choose concept maps as the preferred graph representation since they are specially created to capture important concepts and their relation to each other, therefore maybe also capturing the semantic of the underlying text.
-In the next sections, we will further explain graph representations and related concept. 
-We will also gain a better insight into the potential usefulness of concept maps in the context of text classification.
-
-\todo{Maybe some day concept maps will prevail as information representations and classification of graphs will become more important}
-\todo{``text analysis, text categorization, information extraction,  and summarization"}
+In this work, we explore how concept maps, and other graph representations like co-occurrence graphs, could improve these text-based classification.
+We choose concept maps as the preferred graph representation since they are specially created to capture important concepts and their relation to each other, therefore maybe also capturing the semantic of its underlying text.
+In the next sections, we will further explain graph representations for text and why they could be a viable addition to the toolbox in text classification.
 
 \labelsection{Thesis Structure}{subsec:thesis_structure}
 In the next section, \fullref{sec:background}, we will introduce the concepts used in the rest of this work.
 We also offer an overview over related work and the history of the field of text- and graph based classification.
 
-In section \fullref{sec:evaluation}, we further describe our hypothesis and outline questions regarding it. This section also covers the methodology and experiments we use to answer these questions.
+In Section \fullref{sec:evaluation}, we further describe our hypothesis and outline questions regarding it. This section also covers the methodology and experiments we use to answer these questions.
 
-Next, in section \fullref{sec:results}, we then provide the results to the questions we pose in the preceding chapter, interpreting them in the context of our hypothesis.
+Next, in Section \fullref{sec:results}, we then provide the results to the questions we pose in the preceding chapter, interpreting them in the context of our hypothesis.
 Here, we also provide other observations regarding our approach.
 
-Finally, in section \fullref{sec:conclusions}, we gather the results of the previous section into a more high-level picture.
-We close with finishing remarks regarding possible further work and interpret our results in the context of previous work.
+Finally, in Section \fullref{sec:conclusions}, we gather the results of previous sections into a more high-level picture.
+We close with finishing remarks regarding possible further work and also interpret our results in the context of previous work.

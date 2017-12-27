@@ -275,12 +275,12 @@ ted\_talks       & 4 & 682 &  1358k & 2035 & 0.09 \\
 
 \labelsection{Methods}{subsec:methods}
 
-\subsection{Cross-Validation And Model Selection}
+\labelsubsection{Cross-Validation And Model Selection}{subsec:cross_validation_and_model_selection}
 
 \paragraph{Cross-Validation}
 For all the classification tasks we use train-/validation- and test set splits.
-The split is done as follows: 85\% for train- and validation set together and 15\% for the test set.
-We then use stratified k-fold cross-validation to further split the train- and validation set. In our case, we used $k = 3$, meaning that $\frac{2}{3}$ of the dataset is used for training and model selection, and the rest to evaluate the final results.
+The split is done as follows: 80\% for train- and validation set together and 20\% for the test set.
+We then use stratified 3-fold cross-validation to further split the train- and validation set.
 The stratification ensures that the class distribution in the different sets is \textit{almost} the same as in the class distribution of the complete dataset.
 
 \paragraph{Model Selection}
@@ -288,7 +288,7 @@ Hyperparameter tuning, or model selection, is done using cross-validation on the
 So, the test set was \textbf{not} used for immediate evaluation or parameter tuning.
 The classification performance is only evaluated once on the test set to retrieve the final results we report here.
 
-For our experiments, we use the \textit{SVM} as classifier unless otherwise noted.
+For our experiments, we use the \textit{SVM}\cite{Cortes1995} as classifier unless otherwise noted.
 The parameters for the \textit{SVM} are reported in Table \ref{table:svm_parameters}.
 
 \begin{table}[htb!]
@@ -312,19 +312,26 @@ That said, the \textit{SVM} also has shown state-of-the-art performance in (text
 
 To increase the reproducibility of our results, we utilized the same random generator seed, 42, for all experiments, eg. when ``randomly" splitting the dataset in the train/validation/test splits or ``randomly" initializing the weights for a \textit{SVM}.
 
+We also looked into nested cross-validation to further de-bias our results. Yet, when inspecting the results from tests with nested cross-validation we saw that the standard deviations of the results are quite low, around 0.0005.
+This observation and the fact that nested cross-validation also increases the compute-time significantly, led us to abandon nested cross-validation for our experiments.
+
+\todo{Robustness of SVM: \cite{Joachims1998}}
+
 \subsection{Metrics}
 We evaluate a number of metrics for each classification task, namely: 
 recall, precision, accuracy and the F1-score. We mostly focus on the F1 macro score since it captures the overall performance of classification algorithms by merging two other metrics, namely precision and recall.
 For an overview and definition of the used metrics, please see Section \ref{subsec:classification_task}.
-We also report the standard deviation of each result alongside the score.
+We do not report standard deviations for our experiments since, as mentioned before, we do not use nested cross-validation, so we only have results on a single static test set.
+See the previous section for an more throughout explanation.
+
 To analyze the significance of a difference between two models, we use significance tests.
-An introduction to and example for significance tests are given in Section \ref{subsec:significance_test}.
+An introduction to and an example for significance tests are given in Section \ref{subsec:significance_test}.
 
 \subsection{Feature Scaling and Centering}
-Classifiers, especially \textit{SVMs}, profit from scaled and centered features, ie features which have a mean of 0 and are in the range of $[-1, 1]$.
+Classifiers, especially \textit{SVMs}, profit from scaled and centered features, ie.s features which have a mean of 0 and are in the range of $[-1, 1]$.
 
 \paragraph{Scaling}
-For our purposes, we scaled the feature vectors by using feature-wise scaling\footnote{Implementation: \url{http://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.MaxAbsScaler.html\#sklearn.preprocessing.MaxAbsScaler}}, ie. each vector index of the feature vector is scaled individually.
+For our purposes, we scaled the feature vectors by using feature-wise scaling\footnote{Implementation: \url{http://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.MaxAbsScaler.html\#sklearn.preprocessing.MaxAbsScaler}}.
 Given the feature vectors $\phi(d_i) = (f_1, f_2, \ldots, f_n)$ for each of the $N$ dataset instances $d_i$, we first find the maximum for each vector entry $f_x$ across the whole dataset. For instance, the maximum of first feature vector entry, $f_1$, is
 \begin{equation*}
 f_1^{\textrm{max}} = \max(\{\phi(d_i)_{1} | i = \{1, 2, \ldots, N\} \})

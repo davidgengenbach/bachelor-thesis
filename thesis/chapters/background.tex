@@ -2,7 +2,7 @@ In this chapter we will introduce the notations and concepts we will use in subs
 
 
 \labelsection{Texts}{subsec:texts}
-Text is ubiquitous and the task of automatically processing or classifying text has become more important as the volume of available texts grows daily.
+Text is ubiquitous and the task of automatically processing or classifying text has become more important as the volume of available texts grows daily \cite{Joachims1998}.
 While text is arguably the most prominent representation for information for humans, designing algorithms to automatically parse, ``understand" or classify text bear inherent complexities.
 Language is a highly complex method to convey information. 
 Text often creates its own context, eg. by mentioning some concept in the beginning of a text and only implicitly relating to it at the end. Or by using different words to represent the same concept.
@@ -185,11 +185,13 @@ For our comparison, we will also not use the edge weights since concept maps do 
 
 \labelsection{Classification Task}{subsec:classification_task}
 Classification using machine learning is the task of automatically assigning classes, or labels, to given datapoints.
-Given a dataset $D = \{(x_1, y_1), (x_2, y_2), \ldots, (x_n, y_n) \} \subseteq X \times Y$ of $n$ items where $(x_i, y_i)$ are dataset instances, the supervised classification task is to create a classifier which predicts a label $y' \in Y$ for a given $x \in X$.
-In this work, the labels $Y$ of the dataset are denoted with $Y_d = (y_1, y_2, \ldots, y_n )$, the predicted labels are denoted as $Y'_d = (y'_1, y'_2, \ldots, y'_n )$.
-When the number of classes $|Y| = 2$, the classification task is called binary classification. For higher $|Y|$ it is called multi-class classification.
+Given a dataset $D = \{(x_1, y_1), (x_2, y_2), \ldots, (x_n, y_n) \} \subseteq X \times Y$ of $n$ items where $(x_i, y_i)$ are dataset instances, the supervised single-label classification task is to create a classifier which automatically predicts a label $y' \in Y$ for a given $x \in X$.
+The labels $Y$ of dataset $D$ are denoted with $Y_D = (y_1, y_2, \ldots, y_n )$, the predicted labels are denoted as $Y'_D = (y'_1, y'_2, \ldots, y'_n )$.
+When the number of classes $|Y| = 2$, the classification task is called binary classification. For $|Y| > 2$ the task falls into the multi-class classification domain.
+In this work we will restrict ourself to single-label classification, in contrast to the multi-label classification task where each document can have one or more labels attached instead of only one per document.
+
 In Figure \ref{table:classification_notation} we summarize the classification notation.
-Our notations are similar to the notation in \cite[p.~11]{Bishop2006}.
+Our notation is similar to the notation used in \cite[p.~11]{Bishop2006}.
 
 \begin{figure}[htb!]
 	\centering
@@ -215,7 +217,14 @@ During prediction, that is when wanting to automatically assign a label to a (ne
 
 \labelsubsection{Classifiers}{subsec:classifiers}
 \todo{SVM, One-layer neural net, \ldots}
-In this work, we will mostly use a classifier algorithm called \textit{Support Vector Machine}, or \textit{SVM}.
+In this work, we will mostly use a classification algorithm called \textit{Support Vector Machine} \cite{Cortes1995}, or \textit{SVM}.
+The SVM has shown to be robust in its performance \cite{Joachims1998}, having not to deal with local optima as in neural networks or other machine learning algorithms.
+The SVM also exhibits state-of-the art performance on several tasks and is the go-to classification algorithm in a great number of previous works in the field \cite{Joachims1998, Vitale2012, Neuhaus2006a,Kriege2012, Koronacki2008}.
+
+For an more throughout explanation of the SVM and its advantages especially for the text classification task, please see \cite{Joachims1998}.
+We will also further explain the SVM and its parameters in Section \ref{subsec:cross_validation_and_model_selection}.
+
+\todo{one-vs-the-rest}
 
 \labelsubsection{Performance Metrics}{subsec:classification_metrics}
 The performance or score of a trained classifier is evaluated by comparing the labels it predicts, $y'_i$,  for datapoints $x_i$ with the real label $y_i$ in the dataset.
@@ -277,7 +286,7 @@ On the other hand, we will refer to the complexity or run-time of a classificati
 In most cases, texts and graphs are not of fixed size.
 However, most classification algorithms operate on fixed size vectors.
 Fortunately, there are several approaches to overcome this problem.
-One of the approaches to nevertheless classify non-fixed size objects are so-called kernels.
+One of the approaches to classify non-fixed size objects are so-called kernels.
 
 A kernel is a function $k$ which returns a measure of similarity between two objects:
 \begin{equation*}
@@ -291,12 +300,11 @@ A kernel function has to be \cite{Kriege2012}:
 \end{itemize}
 
 An interesting property of kernels is that they can be combined easily with symmetric operations \cite[p.~296]{Bishop2006}, eg. by adding or multiplicating the results of two kernel functions, $k_1$ and $k_2$:
-
 \begin{equation*}
 k_{combined}(x, x') = k_1(x, x') \cdot k_2(x, x')
 \end{equation*}
 
-One can easily confirm that when $k_1$ and $k_2$ are valid kernels, $k_{combined}$ is also a valid kernel.
+One can easily confirm that, when $k_1$ and $k_2$ are valid kernels, $k_{\mathrm{combined}}$ is also a valid kernel.
 This property enables composite kernels to capture multiple means of similarity in one metric.
 
 For example, a simple kernel on two numbers (or vectors) is $k(x, x') = | x \cdot x' |$, where $| \cdot |$ is the absolute value (or a norm).
@@ -435,22 +443,20 @@ Therefor, this graph kernel counts the number of common labels of the two graphs
 
 An extension to this graph kernel is using the Jaccard coefficient instead of simply counting the common node labels:
 \begin{equation*}
-k_{common\_label\_jaccard}(G_1, G_2) = \frac{| l(G_1) \cap l(G_2) |}{| l(G_1) \cup l(G_2) |}
+k_{\mathrm{common\_label\_jaccard}}(G_1, G_2) = \frac{| l(G_1) \cap l(G_2) |}{| l(G_1) \cup l(G_2) |}
 \end{equation*}
 This extension normalizes the function and confines the codomain of $k$ to $[0, 1]$.
 
 \paragraph{Simple Structure-Only Graph Kernel}
 An example for a graph kernel which only operates on the structure of the graph, is the following:
 \begin{equation*}
-k_{simple\_structure}(G_1, G_2) = \langle \phi(G_1), \phi(G_1) \rangle
+k_{\mathrm{simple\_structure}}(G_1, G_2) = \langle \phi(G_1), \phi(G_1) \rangle
 \end{equation*}
-with $\phi(G) = (n_{triangle}(G), n_{rectangle}(G))^T$. Here, $n_{triangle}$ is the number of the triangle subgraphs in $G$ and $n_{rectangle}$ the number of rectangle subgraphs in $G$.
+with $\phi(G) = (n_{\mathrm{triangle}}(G), n_{\mathrm{rectangle}}(G))^T$. Here, $n_{\mathrm{triangle}}$ is the number of the triangle subgraphs in $G$ and $n_{\mathrm{rectangle}}$ the number of rectangle subgraphs in $G$.
 This graph kernel is an example of a kernel where the explicit feature map $\phi(G)$ can be computed directly and completely independent of other graphs.
 It is also an example for a R-convolution kernel.
 
-The graphlet kernel is quite similar to this example kernel $k_{simple\_structure}$: instead of counting the number of triangles or rectangles, the graphlet graph kernel counts so-called graphlets.
-
-\todo{Explain graphlets}
+The graphlet kernel \cite{Shervashidze2009a} is quite similar to this example kernel $k_{\mathrm{simple\_structure}}$: instead of only counting the number of triangle and rectangle subgraphs, the graphlet graph kernel counts so-called graphlets \cite{Shervashidze2009a}.
 
 \paragraph{Random Walk Graph Kernel}
 This kernel does random walks on both graphs and returns the number of matching random walks between the two graphs:
@@ -490,7 +496,7 @@ One example of such an extension reduces the space requirement of the algorithm 
 In Figure \ref{fig:wl_example} we show an example of one WL iteration with label compression.
 
 In this work we will use a variant of the WL graph kernel called \textit{fast\_wl} which was introduced in \cite{Kersting2013}.
-This variant improves the run-time of the plain Weisfeiler-Lehman kernel by cleverly creating a hash of the neighbourhood to create the new coloring for the graph.
+This variant improves the run-time of the plain Weisfeiler-Lehman kernel by cleverly creating a hash of the neighborhood to create the new coloring for the graph.
 The results are exactly the same as with the plain Weisfeiler-Lehman kernel yet the calculation of the new labels is significantly faster.
 Our implementation also uses label compression, explained in Figure \ref{fig:wl_example}, to further speed up the calculation and assigning integer indices to the new labels, therefore enabling the creation of explicit feature maps $\phi(G)$.
 
@@ -501,35 +507,36 @@ Our implementation also uses label compression, explained in Figure \ref{fig:wl_
   \caption{Initial graphs}
   \end{subfigure}
   \begin{subfigure}[t]{0.49\linewidth}
-  {\includegraphics[width=\linewidth]{assets/figures/wl_examples/wl_iteration_1_stage_0_recolored}\label{fig:wl_example_1}}
+  {\includegraphics[width=\linewidth]{assets/figures/wl_examples/wl_iteration_1_stage_0_recolored}}
   \caption{$h=1$: After relabeling}
   \end{subfigure}
   \begin{subfigure}[t]{0.49\linewidth}
-  {\includegraphics[width=\linewidth]{assets/figures/wl_examples/wl_iteration_1_stage_1_compressed.pdf}\label{fig:wl_example_2}}
+  {\includegraphics[width=\linewidth]{assets/figures/wl_examples/wl_iteration_1_stage_1_compressed.pdf}}
   \caption{$h=1$: After label compression}
   \end{subfigure}
 \begin{subfigure}[t]{0.49\linewidth}
-{\includegraphics[width=\linewidth]{assets/figures/wl_examples/wl_iteration_2_stage_1_compressed.pdf}\label{fig:wl_example_2}}
+{\includegraphics[width=\linewidth]{assets/figures/wl_examples/wl_iteration_2_stage_1_compressed.pdf}}
 \caption{$h=2$: After label compression}
 \end{subfigure}
-  \caption[Example: Weisfeiler Lehman iteration]{Weisfeiler Lehman algorithm example. This examples shows one WL iteration with two graphs, $G_1$ and $G_2$. The initial graphs are shown in \textbf{(a)}. The first step of a WL iteration is relabeling the graph vertices by concatenating each node label with its sorted neighborhood labels. The finished relabeled graph is shown in \textbf{(b)}. As an extension to the plain Weisfeiler-Lehman algorithm, we also show the label compression step where the long labels, consisting of the node label and its neighborhood labels, get compressed into a smaller label by assigning each unique label a new number. Same multi-label labels in different graphs get the same new label. The result of this step is shown in \textbf{(c)}. Under \textbf{(a)},  \textbf{(b)} and \textbf{(d)} we also added the feature maps $\phi(G)$ for both graphs. Each entry in the vector corresponds to a label. If a vector entry is 1, the corresponding label is present in the graph. The inner product on the vectors of the graphs is the value of the Weisfeiler-Lehman graph kernel for these two graphs.
+	\caption[Example: Weisfeiler Lehman iteration]{Weisfeiler Lehman algorithm example. This examples shows one WL iteration with two graphs, $G_1$ and $G_2$. The initial graphs are shown in \textbf{(a)}. The first step of a WL iteration is relabeling the graph vertices by concatenating each node label with its sorted neighborhood labels. The finished relabeled graph is shown in \textbf{(b)}. As an extension to the plain Weisfeiler-Lehman algorithm, we also show the label compression step where the long labels, consisting of the node label and its neighborhood labels, get compressed into a smaller label by assigning each unique label a new number. Same multi-label labels in different graphs get the same new label. The result of this step is shown in \textbf{(c)}. Under \textbf{(a)},  \textbf{(b)} and \textbf{(d)} we also added the feature maps $\phi(G)$ for both graphs. Each entry in the vector corresponds to a label. If a vector entry is 1, the corresponding label is present in the graph. The inner product on the vectors of the graphs is the value of the Weisfeiler-Lehman graph kernel for these two graphs.
   In this case, the similarity before the iteration would be $\langle \phi(G_1), \phi(G_2) \rangle = \langle [1, 1, 1, 1, 0, 0, 0, 0], [1, 1, 1, 1, 0, 0, 0, 0] \rangle = 4$. After the relabeling, the value of the inner product is $2$.
   Before doing the WL iteration, the inner product on the feature maps simply returns the number of common labels. After the first iteration, the neighborhood of each node and therefor the structure of the graph is also reflected in the feature map - resulting in a lower similarity in out example.
   Notice that before the relabeling, ie. in \textbf{(a)}, the labels for the left-most node was the same for both graphs. After the first iterations, in \textbf{(b)} and \textbf{(c)}, they get different colors.
-  The same happens for the top-most node: after the second iteration, in \textbf{(d)}, the labels are also different since in iteration $h=2$ not only the immediate neighborhood has to be the same for a match, also the neighborhood of its neighborhood.}\label{fig:wl_example}
+  The same happens for the top-most node: after the second iteration, in \textbf{(d)}, the labels are also different since in iteration $h=2$ not only the immediate neighborhood has to be the same for a match, also the neighborhood of its neighborhood.}
+	\label{fig:wl_example}
 \end{figure}
 
 \todo{Mention convergence?}
 
-
-
 \labelsection{Graph Kernel Based Text Classification}{subsec:graph_kernel_based_text_classification}
-In this section, we will introduce related work and briefly recap the history of the field.
-In our work, we convert the task of classifying text into the problem of classifying graphs which are 
+The idea of converting the text classification task into a graph classification task has been explored before.
+In this section, we will briefly recap the history of this approach by means of explaining several papers using this approach.
+While most of the graph classification approaches are used in context where graphs are the default representation of the data at hand, here we mostly explore papers which also derive graphs from existing text.
+As we will see, several such graphs derived from text have been studied in the context of text classification.
+Yet, our approach differs in some ways from the previous work, namely that (1) we capitalize on concept maps, a graph representation which is known for its summarization capabilities, resulting in smaller graphs. Also (2) we explicitly compare our results with conventional text-based approaches that achieve state-of-the-art performance. And while others mainly used graph kernels which are not able to be easily combined with text-based approaches, we (3) also capitalize on the Weisfeiler-Lehman and other graph kernels which can generate explicit feature maps $\phi$ for a graph.
+This, in turn, enables us to explore an approach where we combine conventional text features, eg. \textit{BoW} frequencies, with features obtained from graph kernels.
+As far as we know, the combining of text- and graph features has not been done before.
 
-To convert the text classification task into the task of classifying graphs which are generated from the text
-\todo{How did the field evolve?}
-\todo{Hint related tasks}
 \todo{What is the most related work, how do they differ from our approach}
 \todo{Relate the other work to the new approach and work out their differences/results}
 \todo{Other approaches to graph classification}

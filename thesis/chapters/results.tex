@@ -619,17 +619,26 @@ So, \textbf{(1)} with higher iterations, the probability of having an exact matc
 
 Another difficulty arises for nodes with a high number of neighbors. \textbf{(2)} The probability of an exact match also decreases with a higher degree.
 
-These two difficulties, \textbf{(1)} the increased difficulty of a match with higher iterations and \textbf{(2)} the increased difficulty of a match for nodes with higher degrees, are not addressed when using Weisfeiler-Lehman in its plain version. Both difficulties are neither encoded in the features maps nor are they considered when creating the gram matrix.
+These two difficulties, \textbf{(1)} the increased difficulty of a match with higher iterations and \textbf{(2)} the increased difficulty of a match for nodes with higher degrees, are not addressed when using Weisfeiler-Lehman in its plain version. Both difficulties are encoded neither in the features maps nor are they considered when creating the gram matrix.
 
 As a possible solution for these difficulties, we propose an extension to the plain Weisfeiler-Lehman algorithm.
 Our extension augments the WL algorithm by adding node weights.
 For each of the nodes in all graphs, we first calculate node weights which encode the importance of the nodes or the difficulty of getting an exact match in WL.
-An example of such node weights are the node degree or node weights extracted with PageRank.
-The node degree is an interesting metric for node weights since it actually encodes the size of the immediate neighborhood of a node and therefore could possibly address both problem \textbf{(1)} and \textbf{(2)}.
+An example of such node weights are the node degrees or node weights extracted by the \textit{PageRank} algorithm \cite{Page1998}.
+The node degree is an interesting metric for node weights since it actually encodes the size of the immediate neighborhood of a node and therefore could possibly address both difficulty \textbf{(1)} and \textbf{(2)}.
 
+One could see our extension as similar to binary \textit{BoW}, ie. only using whether a word has occurred or not, and the extension by instead using the term frequency where also the number of occurrences is taken into account.
+\todo{Especially in the zero-th iteration of WL with our extension.}
+
+When using this extension, one has to be careful with feature scaling. As we use the node weights to scale individual features, using a separate scaler would effectively revert our weighting.
+
+\todo{Add example}
 \todo{Explain how to actually use the node weights.}
 \todo{Remark that the node weights could be seen as an additional metric of frequency: nodes with a higher degree have been in the text more frequently.}
 
+\paragraph{Experiment}
+To test our extension, we compare results of the plain WL algorithm and with our extension.
+We classify the concept graphs as we do in the other experiments.
 
 \iffalse
 Our other extension to the WL algorithm addresses problem \textbf{(1)}, the difficulty of having a match when the iteration increases.
