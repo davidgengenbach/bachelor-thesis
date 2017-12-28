@@ -275,7 +275,7 @@ ted\_talks       & 4 & 682 &  1358k & 2035 & 0.09 \\
 
 \labelsection{Methods}{subsec:methods}
 
-\labelsubsection{Cross-Validation And Model Selection}{subsec:cross_validation_and_model_selection}
+\labelsubsection{Cross-Validation and Model Selection}{subsec:cross_validation_and_model_selection}
 
 \paragraph{Cross-Validation}
 For all the classification tasks we use train-/validation- and test set splits.
@@ -310,19 +310,19 @@ The parameters for the \textit{SVM} are reported in Table \ref{table:svm_paramet
 We choose the \textit{SVM} as our classifier algorithm since it can be used for both classical, vector-based classification as well as for gram-based classification, making it an ideal candidate for our experiments.
 That said, the \textit{SVM} also has shown state-of-the-art performance in (text) classification and other domains.
 
-To increase the reproducibility of our results, we utilized the same random generator seed, 42, for all experiments, eg. when ``randomly" splitting the dataset in the train/validation/test splits or ``randomly" initializing the weights for a \textit{SVM}.
+To increase the reproducibility of our results, we utilized the same random generator seed, 42, for all experiments, eg. for ``randomly" splitting the dataset in the train/validation/test splits or ``randomly" initializing the coefficients for a \textit{SVM}.
 
-We also looked into nested cross-validation to further de-bias our results. Yet, when inspecting the results from tests with nested cross-validation we saw that the standard deviations of the results are quite low, around 0.0005.
+We also looked into nested cross-validation to further de-bias our results. Yet, when inspecting the results from tests with nested cross-validation we saw that the standard deviations of the results are quite low, around 0.001.
 This observation and the fact that nested cross-validation also increases the compute-time significantly, led us to abandon nested cross-validation for our experiments.
 
 \todo{Robustness of SVM: \cite{Joachims1998}}
 
 \subsection{Metrics}
-We evaluate a number of metrics for each classification task, namely: 
-recall, precision, accuracy and the F1-score. We mostly focus on the F1 macro score since it captures the overall performance of classification algorithms by merging two other metrics, namely precision and recall.
+As a classification metric, we mostly focus on the F1 macro score since it captures the overall performance of classification algorithms by merging two other metrics, precision and recall.
 For an overview and definition of the used metrics, please see Section \ref{subsec:classification_task}.
-We do not report standard deviations for our experiments since, as mentioned before, we do not use nested cross-validation, so we only have results on a single static test set.
-See the previous section for an more throughout explanation.
+We will provide all our results online\footnote{TODO} with additional metrics, like the accuracy, precision and recall.
+We do not report standard deviations for our experiments since we, as mentioned before, do not use nested cross-validation, so we only have results on a single static test set.
+See the previous Section \ref{subsec:cross_validation_and_model_selection} for a more throughout explanation.
 
 To analyze the significance of a difference between two models, we use significance tests.
 An introduction to and an example for significance tests are given in Section \ref{subsec:significance_test}.
