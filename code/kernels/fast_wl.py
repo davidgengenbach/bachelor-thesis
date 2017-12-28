@@ -28,7 +28,8 @@ def transform(
         node_weight_factors = None,
         use_early_stopping = True,
         fill_up_missing_iterations = False,
-        node_weight_iteration_weight_function=None
+        node_weight_iteration_weight_function=None,
+        truncate_to_highest_label=False
     ) -> tuple:
     assert len(graphs)
 
@@ -58,21 +59,23 @@ def transform(
 
     num_graphs = len(graphs)
     num_vertices = sum(len(x) for x in graph_labels)
+    phi_width = num_vertices * 5
 
-    phi_dim = phi_dim if phi_dim is not None else num_vertices * 5
-
-    assert phi_dim is not None
     assert len(graph_labels) == len(graphs)
     assert node_weight_factors is None or len(node_weight_factors) == len(graphs)
 
-    # The number of unique labels (= the total number of nodes in the graphs)
-    phi_shape = (num_graphs, phi_dim)
     # The upper bound up to which the prime numbers have to be retrieved
-    primes_needed = primes_arguments_required[int(np.ceil(np.log2(phi_dim))) + 1]
+    primes_needed = primes_arguments_required[int(np.ceil(np.log2(phi_width))) + 1]
     log_primes = primes.get_log_primes(1, primes_needed)
 
     if node_weight_factors is not None:
         node_weight_factors = [np.array(x, dtype=object) for x in node_weight_factors]
+
+    def get_phi_dim(iteration):
+        if phi_dim is None: return None
+        if isinstance(phi_dim, int):
+            return phi_dim
+        return phi_dim[iteration]
 
     def add_labels_to_phi_(labels_, iteration):
         data = []
@@ -95,38 +98,33 @@ def transform(
 
             row_ind += [graph_idx] * num_labels
             col_ind += list(labels)
-        return scipy.sparse.csr_matrix((data, (row_ind, col_ind)), shape=phi_shape, dtype=phi_dtype)
 
+        data, row_ind, col_ind = np.array(data), np.array(row_ind), np.array(col_ind)
 
-    def add_labels_to_phi(phi: scipy.sparse.spmatrix, graph_idx: int, labels: typing.Iterable, iteration: int):
-        if node_weight_factors is not None:
-            factor = node_weight_factors[graph_idx]
-            if node_weight_iteration_weight_function:
-                factor *= node_weight_iteration_weight_function(iteration)
-        else:
-            factor = 1
+        highest_label = np.max(col_ind) + 1
 
-        # The labels are all unique, so just set the entry for the labels to 1
-        if len(set(labels)) == len(labels):
-            if isinstance(factor, int):
-                phi[graph_idx, labels] = factor
+        phi_dim_ = get_phi_dim(iteration + 1)
+
+        if truncate_to_highest_label:
+            if phi_dim is None:
+                phi_width_ = highest_label
             else:
-                phi[graph_idx, labels] = factor[:,np.newaxis]
+                phi_width_ = phi_dim_
+
+                idxs = np.where(col_ind < phi_width_)
+                data = data[idxs]
+                row_ind = row_ind[idxs]
+                col_ind = col_ind[idxs]
         else:
-            if not isinstance(factor, (int, float)):
-                for l, f in zip(labels, factor):
-                    f = f - 1
-                    if f != 0:
-                        labels = np.concatenate((labels, [l] * f))
-            # There are duplicates in labels. Do a histogram of the labels. Unfortunately you can not just use np.add.at(...) for duplicate indices to be accumulated, since it does not work with sparse matrices
-            label_counter_ = collections.Counter(labels)
-            # new_label_indices: are the unique (!) indices in new_labels
-            # vals: are the number of occurrences of a index in new_labels
-            new_label_indices, vals = zip(*label_counter_.items())
-            phi[graph_idx, list(new_label_indices)] += np.matrix(list(vals), dtype=phi.dtype).T
+            phi_width_ = highest_label if phi_dim_ is None else phi_dim_
+
+        assert np.all(col_ind < phi_width_)
+        phi_shape_ = (num_graphs, phi_width_)
+
+        return scipy.sparse.csr_matrix((data, (row_ind, col_ind)), shape=phi_shape_, dtype=phi_dtype)
 
     # Just count the labels in the 0-th iteration. This corresponds to the graph_labels, but indexed correctly into phi
-    phi = add_labels_to_phi_(graph_labels, 0)
+    phi = add_labels_to_phi_(graph_labels, -1)
     phi_lists = [phi.tolil()]
 
     if round_signatures_to_decimals == -1:
@@ -156,7 +154,7 @@ def transform(
                     label_lookup[signature] = label_counter
                     label_counter += 1
                     # label_counter should NEVER be greater than the dimension of phi!
-                    assert label_counter <= phi_shape[1]
+                    #assert truncate_to_highest_label or label_counter <= phi_shape[1]
 
             # ... relabel the graphs with the new (compressed) labels
             new_labels = np.array([label_lookup[signature] for signature in signatures], dtype = labels_dtype)

@@ -19,7 +19,7 @@ def iteration_weight_constant(iteration: int, constant:int=1):
 
 
 class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.TransformerMixin):
-    def __init__(self, h=1, phi_dim=None, round_to_decimals=10, ignore_label_order=False, node_weight_function=None, node_weight_iteration_weight_function=iteration_weight_constant, use_early_stopping=True, same_label=False, use_directed=True):
+    def __init__(self, h=1, phi_dim=None, round_to_decimals=10, ignore_label_order=False, node_weight_function=None, node_weight_iteration_weight_function=iteration_weight_constant, use_early_stopping=True, same_label=False, use_directed=True, truncate_to_highest_label = False):
         self.h = h
         self.phi_dim = phi_dim
         self.round_to_decimals = round_to_decimals
@@ -29,6 +29,7 @@ class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Tran
         self.node_weight_iteration_weight_function = node_weight_iteration_weight_function
         self.same_label = same_label
         self.use_directed = use_directed
+        self.truncate_to_highest_label = truncate_to_highest_label
 
     def fit(self, X, y=None, **fit_params):
         assert len(X)
@@ -44,7 +45,8 @@ class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Tran
             ignore_label_order=self.ignore_label_order,
             node_weight_factors=node_weight_factors,
             use_early_stopping=self.use_early_stopping,
-            node_weight_iteration_weight_function=self.node_weight_iteration_weight_function
+            node_weight_iteration_weight_function=self.node_weight_iteration_weight_function,
+            truncate_to_highest_label=self.truncate_to_highest_label
         )
 
         #self.phi_list = [x.T for x in phi_list]
@@ -66,10 +68,15 @@ class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Tran
         # Use early stopping
         h = min(len(self.phi_list) - 1, self.h)
 
+
+        phi_dim = self.phi_dim
+        if self.phi_dim is None:
+            phi_dim = [phi.shape[1] for phi in self.phi_list]
+
         phi_list, label_lookups, label_counters = fast_wl.transform(
             X,
             h=h,
-            phi_dim=self.phi_dim,
+            phi_dim=phi_dim,
             round_signatures_to_decimals=self.round_to_decimals,
             ignore_label_order=self.ignore_label_order,
             node_weight_factors=node_weight_factors,
@@ -78,7 +85,8 @@ class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Tran
             # Also give the label lookups/counters from training
             label_lookups=[dict(l) for l in self.label_lookups],
             label_counters=self.label_counters,
-            node_weight_iteration_weight_function=self.node_weight_iteration_weight_function
+            node_weight_iteration_weight_function=self.node_weight_iteration_weight_function,
+            truncate_to_highest_label = self.truncate_to_highest_label
         )
 
         #phi_list = [x.T for x in phi_list]

@@ -72,6 +72,7 @@ def get_fast_wl_params(reduced=False, with_node_metrics=False):
             graph_metrics.nxgraph_pagerank_metric,
             None
         ],
+        fast_wl__truncate_to_highest_label=[True],
         fast_wl__phi_dim=[None],
         fast_wl__round_to_decimals=[10],
         fast_wl__same_label=[False],
