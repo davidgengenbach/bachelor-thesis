@@ -19,7 +19,7 @@ def iteration_weight_constant(iteration: int, constant:int=1):
 
 
 class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.TransformerMixin):
-    def __init__(self, h=1, phi_dim=None, round_to_decimals=10, ignore_label_order=False, node_weight_function=None, node_weight_iteration_weight_function=iteration_weight_constant, use_early_stopping=True, same_label=False, use_directed=True, truncate_to_highest_label = False):
+    def __init__(self, h=1, phi_dim=None, round_to_decimals=10, ignore_label_order=False, node_weight_function=None, node_weight_iteration_weight_function=iteration_weight_constant, use_early_stopping=True, same_label=False, use_directed=True, truncate_to_highest_label=True):
         self.h = h
         self.phi_dim = phi_dim
         self.round_to_decimals = round_to_decimals
@@ -86,7 +86,7 @@ class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Tran
             label_lookups=[dict(l) for l in self.label_lookups],
             label_counters=self.label_counters,
             node_weight_iteration_weight_function=self.node_weight_iteration_weight_function,
-            truncate_to_highest_label = self.truncate_to_highest_label
+            truncate_to_highest_label=self.truncate_to_highest_label
         )
 
         #phi_list = [x.T for x in phi_list]

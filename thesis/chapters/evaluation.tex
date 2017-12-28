@@ -162,10 +162,11 @@ For the text classification pipeline, we used two \textit{Bag-Of-Words}, or \tex
 \item{\textit{Word Frequency} (Wf): this algorithm simply gathers all words in the corpus and creates a mapping between words and consecutive indices. Then it creates a vector representation for each text so that the i-th vector component is the count of the corresponding word in the text. Ie. $i$ is the index of the word in the mapping.}
 \item{\textit{Term-Frequency-Inverse-Document-Frequency} (TfIdf): this approach is an extension to the \textit{Word Frequency BoW} approach. Instead of using only the counts of a word in the text, this approach also incorporates the term frequency and the inverse document frequency of the words into the vector representation.}
 \end{itemize}
-Both approaches can also be extended by not only utilizing single words, or unigrams, but n-grams, too. A word n-gram consists of $n$ words that appear consecutively in the text.
+Both approaches can also be extended by not only utilizing single words, or unigrams, but n-grams. A word n-gram consists of $n$ words that appear consecutively in the text.
 For example, the sentence ``This is a sentence." has the following 2-grams, or bigrams: $\{ (This, is), (is, a), (a, sentence) \}$.
-For our purposes, we looked at both uni-grams and bi-grams.
 Note that word n-grams do not take word inversion into account, ie. the bi-gram (a, b) is not the same as (b, a).
+Also note that adding n-grams to BoW feature vectors increases their dimensionality which in turn could lead to bigger classifier models and possibly over-fitting to these more specific n-gram features.
+For our purposes, we test only uni-gram and bi-gram frequencies since our classification performance seldom profited from adding higher n-gram ranges.
 
 \todo{\textbf{Problems of BoW: }
 	
@@ -178,11 +179,11 @@ Note that word n-grams do not take word inversion into account, ie. the bi-gram 
 	\url{https://machinelearningmastery.com/gentle-introduction-bag-words-model/}
 }
 \paragraph{Graph-based representations}
-To compare the performance of concept maps with other graphs, we generated co-occurrence graphs with window sizes $w \in \{1, 2, 3, 4\}$.
+To compare the performance of concept maps with other graphs, we generated co-occurrence graphs with window sizes $w \in \{1, 4\}$.
 We also evaluated the performance of co-occurrence graphs where only nouns are retained to mimic the compression factor of concept maps.
 
 For the extraction of the concept maps from the text, we used the implementation by Falke, introduced in \cite{Falke2017}.
-An explanation of the steps to create the concept maps is given in \ref{sec:implementation}.
+An explanation of the steps to create the concept maps is given in Section \ref{sec:implementation}.
 
 \labelsection{Datasets}{subsec:datasets}
 We chose a number of datasets, ranging from informal texts written by internet users, eg.  the \textit{ng20} internet forum corpus, to more structured texts, eg. the \textit{nyt} corpus.
