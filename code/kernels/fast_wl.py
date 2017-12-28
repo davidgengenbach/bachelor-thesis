@@ -91,7 +91,7 @@ def transform(
                 factor *= node_weight_iteration_weight_function(iteration)
 
             num_labels = len(labels)
-            if isinstance(factor, int):
+            if isinstance(factor, (int, float)):
                 data += [factor] * num_labels
             else:
                 data += list(factor)

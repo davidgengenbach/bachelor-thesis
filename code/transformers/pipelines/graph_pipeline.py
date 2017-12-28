@@ -72,12 +72,14 @@ def get_fast_wl_params(reduced=False, with_node_metrics=False):
             graph_metrics.nxgraph_pagerank_metric,
             None
         ],
+        fast_wl__node_weight_iteration_weight_function=[None],
         fast_wl__truncate_to_highest_label=[True],
         fast_wl__phi_dim=[None],
         fast_wl__round_to_decimals=[10],
         fast_wl__same_label=[False],
         fast_wl__use_directed=[True],
         fast_wl__use_early_stopping=[True],
+        fast_wl__norm=[None],
 
         phi_picker__use_zeroth=[False, True],
         phi_picker__return_iteration=['stacked']

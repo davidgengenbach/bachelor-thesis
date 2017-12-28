@@ -1,0 +1,15 @@
+params_per_type:
+  graph:
+    feature_extraction:
+      fast_wl:
+        norm:
+        - ~
+        - l1
+        - l2
+        - max
+      phi_picker:
+        use_zeroth:
+        - true
+    normalizer:
+    - ~
+    - MaxAbsScaler

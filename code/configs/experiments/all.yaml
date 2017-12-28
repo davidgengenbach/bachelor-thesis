@@ -49,12 +49,18 @@ params_per_type:
         - false
         node_weight_function:
         - NoneType
+        node_weight_iteration_weight_function:
+        - NoneType
+        norm:
+        - NoneType
         phi_dim:
         - 326445
         round_to_decimals:
         - 10
         same_label:
         - false
+        truncate_to_highest_label:
+        - true
         use_directed:
         - true
         use_early_stopping:
@@ -87,12 +93,18 @@ params_per_type:
               - false
               node_weight_function:
               - NoneType
+              node_weight_iteration_weight_function:
+              - NoneType
+              norm:
+              - NoneType
               phi_dim:
               - 65289
               round_to_decimals:
               - 10
               same_label:
               - false
+              truncate_to_highest_label:
+              - true
               use_directed:
               - true
               use_early_stopping:
@@ -156,12 +168,18 @@ params_per_type:
         - function
         - function
         - NoneType
+        node_weight_iteration_weight_function:
+        - NoneType
+        norm:
+        - NoneType
         phi_dim:
         - 326445
         round_to_decimals:
         - 10
         same_label:
         - false
+        truncate_to_highest_label:
+        - true
         use_directed:
         - true
         use_early_stopping:
@@ -185,12 +203,18 @@ params_per_type:
         - false
         node_weight_function:
         - NoneType
+        node_weight_iteration_weight_function:
+        - NoneType
+        norm:
+        - NoneType
         phi_dim:
         - 326445
         round_to_decimals:
         - 10
         same_label:
         - false
+        truncate_to_highest_label:
+        - true
         use_directed:
         - true
         use_early_stopping:
@@ -221,12 +245,18 @@ params_per_type:
         - false
         node_weight_function:
         - NoneType
+        node_weight_iteration_weight_function:
+        - NoneType
+        norm:
+        - NoneType
         phi_dim:
         - 326445
         round_to_decimals:
         - 10
         same_label:
         - false
+        truncate_to_highest_label:
+        - true
         use_directed:
         - true
         use_early_stopping:

@@ -172,7 +172,7 @@ This could indicate that the structure of co-occurrence graphs, while relatively
 
 \answersummary{
 The content-only graph kernel which unrolls the graph into text, ie. linearizing it, and then using a conventional \textit{BoW} approach performs the best for both concept maps and co-occurrence graphs.
-Removing the content, ie. the labels, from the graphs and then running plain WL results in classification scores close to the most-frequent dummy classifier, which always predicts the most-frequent class and ignores features.
+Removing the content, ie. the labels, from the graphs and then running plain WL results in classification scores close to the most-frequent dummy classifier.
 When combining the both, content and structure, the score is not as good as content-only.
 This all indicates that the content of the graphs has a greater importance than the structure.
 }
@@ -272,7 +272,7 @@ When comparing these scores with node-label splitting with the results of the ap
 The difference is quite small, ranging from 1\% to 3\% difference in F1 macro.
 
 \answersummary{
-Splitting the multi-word labels shows the greatest performance improvement, ranging from a raise of 10\% to 24\% better F1 macro score over the normal un-split approach.
+Splitting the multi-word labels shows the greatest performance improvement for WL, ranging from a raise of 10\% to 24\% better F1 macro score over the normal un-split approach.
 Splitting the node labels and then using WL performs nearly as good as the best graph kernel we saw, the linearized content-only approach from Question \ref{question:importance_structure}.
 }
 
@@ -332,7 +332,7 @@ For some datasets, omitting the edge label actually even improves the classifica
 These facts all indicate that edge labels, while crucial and useful for text-summarization and the subsequent use by a human, seem to have limited use in graph classification.
 
 \answersummary{
-		The bulk of all edge labels either occur only once per dataset or consist of stopwords.
+		The bulk of all edge labels either occurs only once per dataset or consists of stopwords.
 		In our experiments, omitting or using the edge labels actually leads to comparable performances.
 }
 
@@ -652,7 +652,7 @@ In the case of the split sets, it also marks the last label that has been encoun
 
 \todo{Usefulness of WL to get feeling for graph connectedness, uniqueness of structure, uniqueness of labels}
 
-\subsection{Weisfeiler-Lehman extension}
+\subsection{Weisfeiler-Lehman Node Weighting Extension}
 With increasing iterations $h$ of the Weisfeiler-Lehman algorithm, exact matches of subtrees of height $h$ become more improbable.
 In iteration 0, the Weisfeiler-Lehman only counts the number of node labels in the graphs, for iteration 1 it takes the immediate neighborhood of the nodes into account, for iteration 2 is takes the neighborhood of the neighborhood into account and so on.
 So, \textbf{(1)} with higher iterations, the probability of having an exact match decreases.
@@ -679,6 +679,23 @@ When using this extension, one has to be careful with feature scaling. As we use
 \paragraph{Experiment}
 To test our extension, we compare results of the plain WL algorithm and with our extension.
 We classify the concept graphs as we do in the other experiments.
+
+\begin{table}[htb!]
+	\centering
+\begin{tabular}{lrr}
+	{} &  plain &  node weights \\
+	\midrule
+	ling-spam       & \textbf{0.783} & 0.766 \\
+	ng20            & \textbf{0.392} & 0.387 \\
+	nyt\_200         & \textbf{0.733} & 0.661 \\
+	r8              & \textbf{0.609} & 0.575 \\
+	review\_polarity & 0.582 & \textbf{0.596} \\
+	rotten\_imdb     & 0.612 & \textbf{0.615} \\
+	ted\_talks       & 0.214 & \textbf{0.269} \\
+	\bottomrule
+\end{tabular}
+\caption[Results: Classification using node weight WL extension]{F1 macro classification results for node weight extension.}\label{table:wl_node_weight_extension}
+\end{table}
 
 \iffalse
 Our other extension to the WL algorithm addresses problem \textbf{(1)}, the difficulty of having a match when the iteration increases.

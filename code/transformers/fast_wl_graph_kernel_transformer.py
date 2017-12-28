@@ -1,4 +1,6 @@
 import sklearn
+import sklearn.preprocessing
+from sklearn.preprocessing import normalize
 
 from kernels import fast_wl
 from utils import graph_helper
@@ -6,20 +8,35 @@ import numpy as np
 import networkx as nx
 
 
-def iteration_weight_function_exponential(iteration:int):
+def iteration_weight_function_exponential(iteration: int):
     return int(np.ceil(
         (np.exp((iteration - 1))) + 1
     ))
 
-def iteration_weight_function(iteration:int):
+
+def iteration_weight_function(iteration: int):
     return iteration + 1
 
-def iteration_weight_constant(iteration: int, constant:int=1):
+
+def iteration_weight_constant(iteration: int, constant: int = 1):
     return constant
 
 
 class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.TransformerMixin):
-    def __init__(self, h=1, phi_dim=None, round_to_decimals=10, ignore_label_order=False, node_weight_function=None, node_weight_iteration_weight_function=iteration_weight_constant, use_early_stopping=True, same_label=False, use_directed=True, truncate_to_highest_label=True):
+    def __init__(
+            self,
+            h=1,
+            phi_dim=None,
+            round_to_decimals=10,
+            ignore_label_order=False,
+            node_weight_function=None,
+            node_weight_iteration_weight_function=iteration_weight_constant,
+            use_early_stopping: bool = True,
+            same_label: bool = False,
+            use_directed: bool = True,
+            truncate_to_highest_label: bool = True,
+            norm: str = None
+    ):
         self.h = h
         self.phi_dim = phi_dim
         self.round_to_decimals = round_to_decimals
@@ -30,6 +47,7 @@ class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Tran
         self.same_label = same_label
         self.use_directed = use_directed
         self.truncate_to_highest_label = truncate_to_highest_label
+        self.norm = norm
 
     def fit(self, X, y=None, **fit_params):
         assert len(X)
@@ -49,7 +67,9 @@ class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Tran
             truncate_to_highest_label=self.truncate_to_highest_label
         )
 
-        #self.phi_list = [x.T for x in phi_list]
+        phi_list = _normalize(phi_list, norm=self.norm)
+
+        # self.phi_list = [x.T for x in phi_list]
         self.phi_list = phi_list
         self.phi_shape = self.phi_list[-1].shape
         self.label_lookups = label_lookups
@@ -67,7 +87,6 @@ class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Tran
 
         # Use early stopping
         h = min(len(self.phi_list) - 1, self.h)
-
 
         phi_dim = self.phi_dim
         if self.phi_dim is None:
@@ -89,10 +108,18 @@ class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Tran
             truncate_to_highest_label=self.truncate_to_highest_label
         )
 
-        #phi_list = [x.T for x in phi_list]
+        phi_list = _normalize(phi_list, norm=self.norm)
+
+        # phi_list = [x.T for x in phi_list]
 
         # Do NOT save label lookups and counters! This would effectively be fitting!
         return phi_list
+
+
+def _normalize(phi_list, copy=False, norm=None):
+    if norm:
+        phi_list = [normalize(phi, norm=norm, copy=copy, axis=1) for phi in phi_list]
+    return phi_list
 
 
 def hash_dataset(X):
