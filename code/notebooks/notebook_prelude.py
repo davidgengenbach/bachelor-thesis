@@ -108,3 +108,7 @@ for task_type in TASK_TYPES:
 def get_text_file_lines(file, remove_empty = True, strip=True):
     with open(file) as f:
         return [x.strip() if strip else x for x in f if not remove_empty or x.strip() != '']
+
+def get_pickle(f):
+    with open(f, 'rb') as f:
+        return pickle.load(f)

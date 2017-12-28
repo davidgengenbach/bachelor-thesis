@@ -21,7 +21,8 @@ def remove_coefs(clf):
         'support_',
         'support_vectors_',
         'vocabulary_',
-        'lookup'
+        'lookup',
+        'labels_to_be_removed'
     ]:
         try:
             setattr(clf, x, None)
@@ -45,5 +46,4 @@ def remove_coefs_from_results(results):
             if isinstance(clf, dict):
                 for k, v in clf.items():
                     found |= remove_coefs(v)
-
     return found

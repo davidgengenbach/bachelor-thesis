@@ -544,7 +544,7 @@ This observation both give possible explanations for both the higher classifier 
 
 Note, that the reported runtime and memory consumption for the graph-based pipeline does not incorporate the creation of the concept maps, only the creation of the feature maps and subsequent training/prediction.
 The creation of concept maps from text with the code provided in \cite{Falke2017b} takes well over a day for our datasets.
-For instance, the concept map creation for the texts in one of the smaller datasets, \textit{ling-dataset}, took over ??? hours and had a peak memory usage of ??? Megabyte\footnote{Machine specification. CPU: \textit{Intel(R) Xeon(R) CPU X5650 \@ 2.67GHz, 6-Core}, RAM: \textit{190GB}}.
+For instance, the concept map creation for the documents  in one of the middle-sized datasets, \textit{ling-spam} with 1.2 million words in total and less than 2900 documents, took over 25 hours and had a peak memory usage of 83 Gigabyte\footnote{Machine specification. CPU: \textit{Intel(R) Xeon(R) CPU X5650 \@ 2.67GHz, 6-Core}, RAM: \textit{190GB}}.
 The runtime of the concept map creation could most likely be reduced by parallelizing parts of its pipeline.
 For example, the extraction of relevant concepts and their relation from a text is independent from the same extraction of another text, so this stage has neither data- nor functional dependencies.
 

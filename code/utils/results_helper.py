@@ -10,6 +10,7 @@ import typing
 import numpy as np
 import sklearn
 import typing
+import shutil
 
 from utils.logger import LOGGER
 import tqdm
@@ -150,7 +151,7 @@ def get_results(folder=None, use_already_loaded=False, results_directory=RESULTS
             if not git_commit == result_git_commit:
                 LOGGER.warning('Unmatching git commit for prediction/result file! Prediction: {}, Result: {}'.format(git_commit, result_git_commit))
             else:
-                prediction = r['results']['results']
+                prediction = r['results']
                 Y_real, Y_pred, X_test = prediction['Y_real'], prediction['Y_pred'], prediction['X_test']
                 scores = get_scores(Y_real, Y_pred)
                 for name, val in scores.items():
@@ -198,6 +199,9 @@ def get_results(folder=None, use_already_loaded=False, results_directory=RESULTS
 
         if dataset_name.endswith('-single') or dataset_name.endswith('-ana'):
             dataset_name = dataset_name.rsplit('-', 1)[0]
+
+        if 'time_checkpoints' in result_data:
+            result['timestamps'] = [result_data['time_checkpoints']] * num_results
 
         result['filename'] = result_file
         result['dataset'] = dataset_name
@@ -303,6 +307,35 @@ def get_predictions(folder: str = None, filenames: typing.Collection = None) -> 
         yield prediction_file, prediction
 
 
+def cleanup_outdated_predictions(results_folder: str=None, dry_run=True, ignore_filter: str = 'dummy'):
+    folder = 'data/results/{}'.format(results_folder) if results_folder else get_result_folders()[-1]
+    result_files = get_result_filenames_from_folder(folder)
+
+    for result_file in result_files:
+        if ignore_filter and ignore_filter in result_file: continue
+
+        prediction_file = '{}/predictions/{}'.format(folder, filename_utils.get_filename_only(result_file))
+        predictions_exist = os.path.exists(prediction_file)
+
+        if not predictions_exist:
+            LOGGER.warning('Did not find prediction file for: {}'.format(result_file))
+            continue
+
+        with open(result_file, 'rb') as f:
+            result_data = pickle.load(f)
+        with open(prediction_file, 'rb') as f:
+            r = pickle.load(f)
+
+        result_git_commit = result_data['meta_data']['git_commit']
+        git_commit = r['meta_data']['git_commit']
+        if result_git_commit != git_commit:
+            if dry_run:
+                LOGGER.info('Outdated prediction: {}. dry_run=True, so it will not get deleted'.format(prediction_file))
+                continue
+            LOGGER.info('Outdated prediction: {}. Deleting'.format(prediction_file))
+            os.remove(prediction_file)
+
+
 def filter_out_datasets(df, fn):
     return df.groupby('dataset').filter(fn).reset_index(drop=True)
 
@@ -314,15 +347,16 @@ def get_experiments_by_names(names: list, fill_na='-', **get_results_kwargs) -> 
         df = df.append(df_)
     if fill_na:
         df = df.fillna(fill_na)
-    return df
+    return df.reset_index()
 
 
-def save_results(gscv_result, filename, info=None, remove_coefs=True):
+def save_results(gscv_result, filename, info=None, remove_coefs=True, time_checkpoints=None):
     if remove_coefs:
         remove_coefs_from_results(gscv_result)
 
     dump_pickle_file(info, filename, dict(
-            results=gscv_result
+        results=gscv_result,
+        time_checkpoints=time_checkpoints
     ))
 
 

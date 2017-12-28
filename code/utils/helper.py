@@ -10,8 +10,7 @@ import itertools
 import os
 import argparse
 from utils import time_utils, git_utils, constants
-
-np.random.seed(constants.RANDOM_SEED)
+import random
 
 DATASET_FOLDER = 'data/datasets'
 
@@ -156,3 +155,12 @@ def log_progress(sequence, every=None, size=None, name='Items'):
             name=name,
             index=str(index or '?')
         )
+
+
+def set_random_seed(seed=None):
+    if seed is None:
+        seed = constants.RANDOM_SEED
+    np.random.seed(seed)
+    random.seed(seed)
+
+set_random_seed()

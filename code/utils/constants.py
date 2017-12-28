@@ -7,8 +7,10 @@ DATASETS_LIMITED = ['ng20', 'ling-spam']
 DATASET_FOLDER = 'data/datasets'
 GRAPHS_FOLDER = 'data/graphs'
 CACHE_PATH = 'data/CACHE'
+RESULTS_FOLDER = 'data/results'
 
 EXPERIMENT_CONFIG_FOLDER = 'configs/experiments'
 EXPERIMENT_CONFIG_ALL = EXPERIMENT_CONFIG_FOLDER + '/all.yaml'
+
 
 RANDOM_SEED = 42

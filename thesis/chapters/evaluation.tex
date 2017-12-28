@@ -219,7 +219,7 @@ For our purposes we only used articles with more than 3000 words and from the si
 Since the extraction of concept maps for documents of this document size takes a long time, we randomly selected 200 documents for each of the six labels, resulting in a dataset of 1200 articles.
 Besides the long texts, the other reason we chose this dataset is that it contains high-quality texts.
 The texts of most of other datasets we considered are gathered from posts by internet users and often lack basic punctuation or contain misspellings.
-This missing structure makes the extraction of concept maps harder since they concept map extraction relies on reliable part-of-speech tags which in turn profit from correct spelling and syntax. 
+This missing structure makes the extraction of concept maps harder since the concept map extraction relies on reliable part-of-speech tags which in turn profit from correct spelling and syntax. 
 
 We obtained our copy of the dataset from here\footnote{\url{https://catalog.ldc.upenn.edu/LDC2008T19} (This is a commercial dataset and has to be bought.)}.
 
@@ -262,16 +262,16 @@ We obtained a copy of this dataset from here\footnote{\url{http://www.cs.cmu.edu
 \begin{tabular}{lrrrrr}
 {} &  \# classes &  \# docs & \# words & median \#words/doc &  \#uniq. words/\#words \\
 \midrule
-ling-spam       & 2 & 2893 &  1293k & 277 & 0.11 \\
-ng20            & 20 & 18846 &  3444k & 79 & 0.08 \\
-nyt\_200         & 6 & 1200 &  4721k & 3413 & 0.06 \\
-r8              & 8 & 7288 &  829k & 78 & 0.06 \\
-review\_polarity & 2 & 2000 &  1260k & 589 & 0.06 \\
-rotten\_imdb     & 2 & 10000 &  207k & 19 & 0.12 \\
-ted\_talks       & 4 & 682 &  1358k & 2035 & 0.09 \\
+ling-spam       & 2 &  2.893 &  1.303k & 277 & 0.10 \\
+ng20            & 20 &  18.846 &  3.570k & 79 & 0.06 \\
+nyt\_200         & 6 &  1.200 &  4.735k & 3397 & 0.07 \\
+r8              & 8 &  7.288 &  855k & 82 & 0.06 \\
+review\_polarity & 2 &  2.000 &  1.248k & 584 & 0.07 \\
+rotten\_imdb     & 2 &  10.000 &  204k & 19 & 0.12 \\
+ted\_talks       & 4 &  682 &  1.353k & 2027 & 0.09 \\
 \bottomrule
 \end{tabular}
-\caption[Statistics: Datasets]{Dataset statistics.}\label{table:dataset_statistics}
+\caption[Statistics: Datasets]{Dataset statistics. \textit{\# words} in thousands.}\label{table:dataset_statistics}
 \end{table}
 
 \labelsection{Methods}{subsec:methods}

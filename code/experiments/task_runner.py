@@ -2,16 +2,19 @@ import os
 import numpy as np
 import sklearn
 from sklearn.model_selection import GridSearchCV
-from utils import filename_utils, results_helper
+from utils import filename_utils, results_helper, helper, constants
 from utils.classification_options import ClassificationOptions
 from utils.logger import LOGGER
 from utils.remove_coefs_from_results import remove_coefs_from_results
 from transformers.pipelines import pipeline_helper
 from . import task_helper
 from .task_helper import ExperimentTask
+from time import time
 
 
 def run_classification_task(task: ExperimentTask, cfo: ClassificationOptions, experiment_config: dict):
+    helper.set_random_seed()
+
     args = cfo
     result_filename_tmpl = filename_utils.get_result_filename_for_task(task, experiment_config=experiment_config, cfo=cfo)
 
@@ -22,7 +25,14 @@ def run_classification_task(task: ExperimentTask, cfo: ClassificationOptions, ex
     if not cfo.force and os.path.exists(result_file):
         return
 
+    time_checkpoints = {}
+
+    def add_time_checkpoint(name):
+        time_checkpoints[name] = time()
+
+    add_time_checkpoint('start')
     X, Y, estimator, param_grid = task.fn()
+    add_time_checkpoint('retrieved_data')
 
     # A good heuristic of whether it's a gram matrix is whether the dimensions are the same
     is_precomputed = isinstance(X, np.ndarray) and X.shape[0] == X.shape[1]
@@ -58,7 +68,7 @@ def run_classification_task(task: ExperimentTask, cfo: ClassificationOptions, ex
                 X,
                 Y,
                 test_size=cfo.prediction_test_size,
-                is_precomputed=is_precomputed
+                is_precomputed=is_precomputed,
             )
         except Exception as e:
             LOGGER.warning('Could not split dataset for predictions')
@@ -71,10 +81,12 @@ def run_classification_task(task: ExperimentTask, cfo: ClassificationOptions, ex
         else:
             cv = sklearn.model_selection.StratifiedKFold(
                 n_splits=cfo.n_splits,
-                shuffle=True
+                shuffle=True,
+                random_state=constants.RANDOM_SEED
             )
         return cv
 
+    add_time_checkpoint('split_data')
     cv = get_cv(cfo.n_splits)
 
     should_refit = np.all([
@@ -100,10 +112,12 @@ def run_classification_task(task: ExperimentTask, cfo: ClassificationOptions, ex
 
         scores = sklearn.model_selection.cross_validate(gscv, X, Y, scoring=cfo.scoring, cv=cv_nested, n_jobs=cfo.n_jobs_outer, verbose=cfo.verbose, return_train_score=True)
         result = dict(scores, **param_grid)
-        results_helper.save_results(result, result_file, args)
+        add_time_checkpoint('fitted_nested')
+        results_helper.save_results(result, result_file, args, time_checkpoints=time_checkpoints)
         return
 
     gscv_result = gscv.fit(X_train, Y_train)
+    add_time_checkpoint('fitted_gridsearch')
 
     if not is_dummy and cfo.create_predictions:
         if not len(X_test):
@@ -112,7 +126,7 @@ def run_classification_task(task: ExperimentTask, cfo: ClassificationOptions, ex
             try:
                 # Retrain the best classifier and get prediction on validation set
                 Y_test_pred = gscv_result.best_estimator_.predict(X_test)
-
+                add_time_checkpoint('predicted')
                 results_helper.save_results({
                     'gscv_result': remove_coefs_from_results(gscv_result.cv_results_),
                     'all_params': remove_coefs_from_results(param_grid),
@@ -120,8 +134,7 @@ def run_classification_task(task: ExperimentTask, cfo: ClassificationOptions, ex
                     'Y_real': Y_test,
                     'Y_pred': Y_test_pred,
                     'X_test': X_test,
-                }, predictions_file, args)
-
+                }, predictions_file, args, time_checkpoints=time_checkpoints)
             except Exception as e:
                 LOGGER.warning('Error while trying to retrain best classifier')
                 LOGGER.exception(e)
@@ -132,12 +145,13 @@ def run_classification_task(task: ExperimentTask, cfo: ClassificationOptions, ex
             results_helper.save_results({
                 'params': gscv_result.best_params_,
                 'classifier': best_estimator
-            }, classifier_file, args)
+            }, classifier_file, args, time_checkpoints=time_checkpoints)
         except Exception as e:
             LOGGER.warning('Error while saving best estimator: {}'.format(e))
             LOGGER.exception(e)
 
-    results_helper.save_results(gscv_result.cv_results_, result_file, args)
+    add_time_checkpoint('finished')
+    results_helper.save_results(gscv_result.cv_results_, result_file, args, time_checkpoints=time_checkpoints)
 
 
 def train_test_split(X, Y, test_size: float = 0.15, is_precomputed: bool = False):
@@ -146,6 +160,7 @@ def train_test_split(X, Y, test_size: float = 0.15, is_precomputed: bool = False
             *Xs,
             stratify=Y,
             test_size=test_size,
+            random_state=constants.RANDOM_SEED
         )
 
     if is_precomputed:
