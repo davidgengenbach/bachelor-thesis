@@ -1,5 +1,5 @@
 import collections
-from utils import helper, filename_utils, git_utils, time_utils
+from utils import helper, filename_utils, git_utils, time_utils, significance_test_utils
 from utils.remove_coefs_from_results import remove_coefs_from_results
 import pandas as pd
 from glob import glob
@@ -11,6 +11,7 @@ import numpy as np
 import sklearn
 import typing
 
+from utils.logger import LOGGER
 import tqdm
 
 _RESULT_CACHE = []
@@ -41,7 +42,7 @@ def remove_transformer_classes(d):
 replacements = [
     ('param_', ''),
     ('features__fast_wl_pipeline__feature_extraction__feature_extraction__', 'graph__'),
-    ('normalizer', ''),
+    #('normalizer', ''),
     ('preprocessing', 'text__preprocessing'),
     ('features__fast_wl_pipeline__feature_extraction__normalizer', 'graph__normalizer'),
     ('feature_extraction__fast_wl__', 'graph__fast_wl__'),
@@ -83,7 +84,7 @@ def get_kernel_from_filename(filename: str) -> str:
     return '_'.join(parts)
 
 
-def get_results(folder=None, use_already_loaded=False, results_directory=RESULTS_DIR, log_progress=tqdm.tqdm_notebook, exclude_filter=None, include_filter=None, filter_out_non_complete_datasets=4, remove_split_cols=True, remove_rank_cols=True, remove_fit_time_cols=True, filter_out_experiment=None, ignore_experiments=True, only_load_dataset=None):
+def get_results(folder=None, use_already_loaded=False, results_directory=RESULTS_DIR, log_progress=tqdm.tqdm_notebook, exclude_filter=None, include_filter=None, filter_out_non_complete_datasets=4, remove_split_cols=True, remove_rank_cols=True, remove_fit_time_cols=True, filter_out_experiment=None, ignore_experiments=True, only_load_dataset=None, fetch_predictions=False):
     global _DF_ALL, _RESULT_CACHE
 
     if not use_already_loaded:
@@ -116,6 +117,7 @@ def get_results(folder=None, use_already_loaded=False, results_directory=RESULTS
         if result_file in _RESULT_CACHE:
             continue
 
+
         _RESULT_CACHE.append(result_file)
 
         with open(result_file, 'rb') as f:
@@ -133,6 +135,27 @@ def get_results(folder=None, use_already_loaded=False, results_directory=RESULTS
         result = clean_result_keys(result)
         for idx, el in enumerate(result['params']):
             result['params'][idx] = clean_result_keys(el)
+
+        prediction_file = '{}/predictions/{}'.format(folder, filename_utils.get_filename_only(result_file))
+        predictions_exist = os.path.exists(prediction_file)
+
+        num_results = len(result['params'])
+        result['prediction_file_exists'] = [predictions_exist] * num_results
+
+        if fetch_predictions and predictions_exist:
+            with open(prediction_file, 'rb') as f:
+                r = pickle.load(f)
+            result_git_commit = result_data['meta_data']['git_commit']
+            git_commit = r['meta_data']['git_commit']
+            if not git_commit == result_git_commit:
+                LOGGER.warning('Unmatching git commit for prediction/result file! Prediction: {}, Result: {}'.format(git_commit, result_git_commit))
+            else:
+                prediction = r['results']['results']
+                Y_real, Y_pred, X_test = prediction['Y_real'], prediction['Y_pred'], prediction['X_test']
+                scores = get_scores(Y_real, Y_pred)
+                for name, val in scores.items():
+                    result['prediction_score_{}'.format(name)] = [val] * num_results
+
 
         is_graph_dataset = '_graph__dataset' in result_file or 'graph_combined__dataset' in result_file or '__graph_node_weights__dataset_' in result_file or 'graph_cooccurrence' in result_file or '__graph_structure_only__' in result_file or '_graph_relabel' in result_file or '__graph_content_only__' in result_file
         result['combined'] = 'graph_combined__dataset_' in result_file
@@ -213,6 +236,12 @@ def get_results(folder=None, use_already_loaded=False, results_directory=RESULTS
 
     return df_all.reset_index(drop=True)[prio_columns + columns + low_prio_columns]  # .set_index('filename')
 
+def get_scores(Y_true, Y_pred, metrics=significance_test_utils.metrics):
+    results = {}
+    for metric_name, fn in metrics:
+        results[metric_name] = fn(Y_true, Y_pred)
+    return results
+
 
 def get_result_folder_df(results_directory=RESULTS_DIR):
     """Collects all results folders and the number of result files in them and returns them as a pandas.DataFrame.
@@ -278,10 +307,10 @@ def filter_out_datasets(df, fn):
     return df.groupby('dataset').filter(fn).reset_index(drop=True)
 
 
-def get_experiments_by_names(names: list, fill_na='-') -> pd.DataFrame:
+def get_experiments_by_names(names: list, fill_na='-', **get_results_kwargs) -> pd.DataFrame:
     df = pd.DataFrame()
     for x in names:
-        df_ = get_results(filter_out_experiment=x, filter_out_non_complete_datasets=False)
+        df_ = get_results(filter_out_experiment=x, filter_out_non_complete_datasets=False, **get_results_kwargs)
         df = df.append(df_)
     if fill_na:
         df = df.fillna(fill_na)

@@ -114,11 +114,12 @@ def run_classification_task(task: ExperimentTask, cfo: ClassificationOptions, ex
                 Y_test_pred = gscv_result.best_estimator_.predict(X_test)
 
                 results_helper.save_results({
-                    'results': {
-                        'Y_real': Y_test,
-                        'Y_pred': Y_test_pred,
-                        'X_test': X_test
-                    }
+                    'gscv_result': remove_coefs_from_results(gscv_result.cv_results_),
+                    'all_params': remove_coefs_from_results(param_grid),
+                    'best_params': remove_coefs_from_results(gscv_result.best_params_),
+                    'Y_real': Y_test,
+                    'Y_pred': Y_test_pred,
+                    'X_test': X_test,
                 }, predictions_file, args)
 
             except Exception as e:
@@ -129,6 +130,7 @@ def run_classification_task(task: ExperimentTask, cfo: ClassificationOptions, ex
         best_estimator = gscv_result.best_estimator_
         try:
             results_helper.save_results({
+                'params': gscv_result.best_params_,
                 'classifier': best_estimator
             }, classifier_file, args)
         except Exception as e:
