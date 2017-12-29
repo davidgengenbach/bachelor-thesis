@@ -5,11 +5,11 @@ force: false
 n_jobs: 1
 
 # Classification options
-create_predictions: false
+create_predictions: true
 keep_coefs: false
 save_best_clf: false
-n_splits: 3
-prediction_test_size: 0.15
+n_splits: 4
+prediction_test_size: 0.20
 refit: f1_macro
 scoring: [precision_macro, recall_macro, accuracy, f1_macro]
 

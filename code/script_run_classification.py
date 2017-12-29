@@ -42,10 +42,10 @@ def get_args():
     parser.add_argument('--scoring', type=str, nargs='+', default=['precision_macro', 'recall_macro', 'accuracy', 'f1_macro'])
     parser.add_argument('--refit', type=str, default='f1_macro')
     parser.add_argument('--use_nested_cross_validation', type=helper.argparse_str2bool, nargs='?', const=True, default=False)
-    parser.add_argument('--n_splits', type=int, default=3)
+    parser.add_argument('--n_splits', type=int, default=4)
     parser.add_argument('--create_predictions', type=helper.argparse_str2bool, nargs='?', const=True, default=True)
     parser.add_argument('--save_best_clf', type=helper.argparse_str2bool, nargs='?', const=True, default=True)
-    parser.add_argument('--prediction_test_size', type=float, default=0.15)
+    parser.add_argument('--prediction_test_size', type=float, default=0.20)
     parser.add_argument('--keep_coefs', action='store_true')
 
     # Task filters
