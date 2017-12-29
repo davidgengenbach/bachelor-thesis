@@ -5,7 +5,7 @@ import copy
 
 NUM_TRAILS = 1000
 
-class TimeUtilsTest(unittest.TestCase):
+class SignificanceTestTest(unittest.TestCase):
 
     def _get_test_result(self, metric, same_label = True):
         y_true = ['a', 'b']

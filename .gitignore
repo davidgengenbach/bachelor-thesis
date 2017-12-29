@@ -3,6 +3,7 @@ notebooks/datasets
 __pycache__
 *.npy
 *.pyc
+code/configs/run_classification.yaml
 code/code.sublime-*
 code/data/*.bin
 code/tmp/

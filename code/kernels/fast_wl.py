@@ -162,17 +162,17 @@ def transform(
 
         phi = add_labels_to_phi_(graph_labels, i)
 
-        # ... save phi
-        phi_lists.append(phi.tolil())
-        # ... save label counters/lookups for later use
-        new_label_counters.append(label_counter)
-        new_label_lookups.append(label_lookup)
-
         # ... exit early when no new labels are found (= convergence)
         highest_label = np.max(phi.nonzero()[1])
         if use_early_stopping and last_highest_label == highest_label:
             break
         last_highest_label = highest_label
+
+        # ... save phi
+        phi_lists.append(phi.tolil())
+        # ... save label counters/lookups for later use
+        new_label_counters.append(label_counter)
+        new_label_lookups.append(label_lookup)
 
     if use_early_stopping and fill_up_missing_iterations:
         expected_elements = (h + 1)

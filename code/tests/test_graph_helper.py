@@ -3,15 +3,14 @@ import unittest
 import os
 
 import scipy
+import scipy.sparse
 import sklearn
 from transformers.phi_picker_transformer import PhiPickerTransformer
-from transformers.gram_matrix_transformer import PhiListToGramMatrixTransformer
 from transformers.fast_wl_graph_kernel_transformer import FastWLGraphKernelTransformer
 from sklearn import model_selection
 from sklearn import linear_model
 from sklearn import pipeline
 from sklearn import svm
-from kernels import fast_wl
 import numpy as np
 
 from utils import graph_helper, dataset_helper, filename_utils
@@ -61,7 +60,10 @@ class GraphHelperTestCase(unittest.TestCase):
         num_vertices = sum([len(labels) for _, labels in X])
 
         estimator = sklearn.pipeline.Pipeline([
-            ('fast_wl', FastWLGraphKernelTransformer(h=H, should_cast=False, remove_missing_labels = True, phi_dim = num_vertices)),
+            ('fast_wl', FastWLGraphKernelTransformer(
+                h=H,
+                phi_dim = num_vertices
+            )),
             ('phi_picker', PhiPickerTransformer(return_iteration='stacked')),
             #('gram_matrix', GramMatrixTransformer()),
             ('clf', sklearn.svm.LinearSVC(class_weight = 'balanced'))

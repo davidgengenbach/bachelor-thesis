@@ -1,4 +1,5 @@
 import networkx as nx
+from utils import dataset_helper, graph_helper
 from transformers.nx_graph_to_tuple_transformer import NxGraphToTupleTransformer
 
 tuple_trans = NxGraphToTupleTransformer()
@@ -18,3 +19,14 @@ def get_complete_graphs(num_graphs, as_tuples = False, num_nodes=5):
         tuple_trans.transform(graphs)
 
     return graphs
+
+X_graphs = None
+def get_graphs(dataset='ling-spam'):
+    global X_graphs
+    if X_graphs is not None:
+        return X_graphs
+
+    X, _ = dataset_helper.get_concept_map_for_dataset(dataset)
+    X = graph_helper.get_graphs_only(X)
+    X_graphs = X
+    return X
