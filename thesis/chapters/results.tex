@@ -445,7 +445,7 @@ With some datasets, the combined approach is slightly better than the text-only 
 To test whether this difference in performance is due to chance, we used the permutation test
 \todo{Add permutation test result}
 
-To better understand the performance when combining text- and graph features, we also train a one-layer neural network, ie. a \textit{Perceptron}, with the combined features. After training we investigate the weights.
+To better understand the performance when combining text- and graph features, we also train a one-layer neural network\footnote{Implementation: \url{http://scikit-learn.org/stable/modules/generated/sklearn.linear_model.SGDClassifier.html}} with the combined features using stochastic gradient descent. After training we investigate the weights.
 The weights, or coefficients, for each input feature are an indicator for the importance of that input feature.
 Thus we can look at weights for the text features and compare them to weights for graph features.
 This gives us an insight into the relative importance of text- and graph features.
@@ -586,6 +586,8 @@ ted\_talks       & 17 & 3 & 2 & 2 & 1 & 2 & 254 & 34 \\
 
 \labelsection{Related And Intermediate Observations}{subsec:related_and_intermediate_observation}
 In this section we report observations which are not directly related to our questions or hypothesis, yet they nevertheless have provided us more insights into our analysis.
+
+\todo{Better results on test set for graphs, worse for text?}
 
 \subsection{Weisfeiler-Lehman $\phi$ Feature Map Visualization}
 When debugging our Weisfeiler-Lehman implementation and extensions, we often wanted to see the effect on the feature vectors created by WL.

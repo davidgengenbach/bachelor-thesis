@@ -50,7 +50,7 @@ def randomization_test(y_true: typing.Iterable, y_pred_a: typing.Iterable, y_pre
     return metrics_
 
 
-def get_confidence(diff_global: float, diffs: typing.Iterable, num_trails: int, one_tail: bool=False):
+def get_confidence(diff_global: float, diffs: typing.Iterable, num_trails: int, one_tail: bool=True):
     if one_tail:
         if diff_global < 0:
             diff_global = -diff_global

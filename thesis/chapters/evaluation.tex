@@ -11,7 +11,7 @@ In this section, we introduce our methodology and explain the experiments we con
 Following are the questions we devised in order to understand and test our hypothesis which is:
 \begin{quote}\hypothesis\end{quote}
 
-We will provide a summary for each of the questions in the next chapter, revisiting the significance of the individual questions for our hypothesis.s
+We will provide a summary for each of the questions in the next chapter, revisiting the significance of the individual questions for our hypothesis.
 
 \labelsubsection{Questions}{subsec:questions}
 
@@ -34,33 +34,30 @@ For the \textbf{structure-and-content kernel}, we use the plain Weisfeiler-Lehma
 
 The difference in the results will give an additional insight into the structure of concept maps and their usefulness for classification.
 
-\todo{We also added an extension to the kernel by using node weights as weights for the labels. We first extracted a weight for each node by calculating the node degree.
-We added this extension to give additional weight to label matches of nodes with a greater number of neighbors, ie. higher degree, since matches with a greater neighborhood are far less often.
-Instead of the degree, one could also use another metric like PageRank and using the resulting node weights. Using node weights is a trade-off: giving the nodes more weight when they are more connect implies that words that occur often have a high importance!}
-
 \subquestion{How does the classification results of co-occurrence graphs compare to concept maps?}{question:comparison_coo}
 For this question, we compare the classification results for concept maps and co-occurrence graphs. As noted before, this comparison is slightly unfair since co-occurrence graphs have far more content than concept maps.
 Nevertheless, it is an interesting baseline for graph-based text-classification.
 
 \subquestion{How does the classification performance with concept maps compare to non-structural, text-based approaches?}{question:comparison_text}
 Here we test the classification performance of graph-based classification directly with the performance of text-only approaches.
-This will give us an insight into the usefulness of concept maps as a text-representation.
-This experiment will also serve as a baseline in later experiments.
+This experiment will serve as a baseline in later experiments.
 
 \subquestion{How useful are multi-word labels in concept maps?}{question:multi_labels}
 Concept map node labels often consist of more than one word which constitutes one of the differences to co-occurrence graphs and other graph text-representations.
 Yet, our default approach, ie. the Weisfeiler-Lehman graph kernel, does not leverage these multi-word labels.
-So, for this question, we evaluate other approaches which make use of the multi-word labels and evaluate the usefulness of them.
+So, for this questions we evaluate other approaches which make use of the multi-word labels and evaluate the usefulness of them.
 This approach will later on also be used for the combined classification of text and graph features.
 
 \subquestion{How diverse and useful are edge labels in concept maps?}{question:edge_labels}
 Another difference of concept maps to co-occurrence graphs is that the former have edge labels.
-For this question we evaluate the importance and role of the edge labels in graph classification. To make use of the edge label, we will also introduce the ``linearized" graph, ie. concept maps converted into text.
+For this question we evaluate the importance and role of these edge labels in graph classification.
+To make use of the edge label, we will also further introduce the linearized, or un-rolled, graph, ie. a graph converted into text.
 
 \subquestion{Does removing infrequent node labels from the concept map improve classification performance?}{question:infrequent_nodelabels}
-As with text, there are often a great number of words which only occur once in the whole dataset. The same applies to concept maps.
-In text-based classification approaches, infrequent words are often removed from the text for two reasons: (1) the resulting classifier has less trainable parameters thus complexity, (2) removing infrequent words greatly reduces the size of feature vectors which, in some cases, can prevent overfitting to too specific features.
-Another WL specific problem is that when a concept only occurs once and it is in the neighborhood of another node, matches in higher iterations of WL are impossible since the concept only occurs once and can not be in any other neighborhood apart from the only occurrence.
+As with text, there are often a great number of words which only occur once in the whole dataset.
+The same applies to concept maps.
+In text-based classification approaches, infrequent words are often removed from the text for two reasons: (1) the resulting classifier has less parameters to be trained, thus lower complexity, (2) removing infrequent words greatly reduces the size of feature vectors which, in some cases, can prevent overfitting to too specific features.
+Another WL specific problem of infrequent words is that when a concept only occurs once and it is in the neighborhood of another node, matches in higher iterations of WL are impossible since the concept only occurs once and can not be in any other neighborhood apart from the only occurrence.
 For this question, we will evaluate whether removing infrequent node labels will result in better scores.
 
 \subquestion{How does the performance of using the directed edges in concept maps compare to undirected edges?}{question:directed_vs_undirected}
@@ -285,12 +282,12 @@ We then use stratified 4-fold cross-validation to further split the train- and v
 The stratification ensures that the class distribution in the different sets is \textit{almost} the same as in the class distribution of the complete dataset.
 
 \paragraph{Model Selection}
-Hyperparameter tuning, or model selection, is done using cross-validation on the train-/ validation set, ie. we first trained classifiers for all hyperparameter choices on all $k$ train-/validation splits, and after finding the best hyper-parameters on these sets, we retrain the best classifier on the whole train-/validation set and then evaluate the performance on the test set \textbf{once}.
+Hyperparameter tuning, or model selection, is done using cross-validation on the train-/ validation set, ie. we first train classifiers for all hyperparameter choices on all $k$ train-/validation splits, and after finding the best hyper-parameters on these sets, we retrain the best classifier on the whole train-/validation set and then evaluate the performance on the test set \textbf{once}.
 So, the test set was \textbf{not} used for immediate evaluation or parameter tuning.
 The classification performance is only evaluated once on the test set to retrieve the final results we report here.
 
-For our experiments, we use the \textit{SVM}\cite{Cortes1995} as classifier unless otherwise noted.
-The parameters for the \textit{SVM} are reported in Table \ref{table:svm_parameters}.
+For our experiments, we use the \textit{SVM}\cite{Cortes1995} as classifier unless stated otherwise.
+The parameters for the \textit{SVM} are gathered in Table \ref{table:svm_parameters}.
 
 \begin{table}[htb!]
 	\centering
@@ -313,10 +310,10 @@ That said, the \textit{SVM} also has shown state-of-the-art performance in (text
 
 To increase the reproducibility of our results, we utilized the same random generator seed, 42, for all experiments, eg. for ``randomly" splitting the dataset in the train/validation/test splits or ``randomly" initializing the coefficients for a \textit{SVM}.
 
-We also looked into nested cross-validation to further de-bias our results. Yet, when inspecting the results from tests with nested cross-validation we saw that the standard deviations of the results are quite low, around 0.001.
+We also evaluated results obtained with nested cross-validation to further de-bias our results \cite{Varma2006}. Yet, when inspecting the results from tests with nested cross-validation we saw that the standard deviations of the results are relatively low, around 0.005.
 This observation and the fact that nested cross-validation also increases the compute-time significantly, led us to abandon nested cross-validation for our experiments.
 
-\todo{Robustness of SVM: \cite{Joachims1998}}
+\todo{Robustness of SVM: \cite{Joachims1998} ?}
 
 \subsection{Metrics}
 As a classification metric, we mostly focus on the F1 macro score since it captures the overall performance of classification algorithms by merging two other metrics, precision and recall.
@@ -329,10 +326,10 @@ To analyze the significance of a difference between two models, we use significa
 An introduction to and an example for significance tests are given in Section \ref{subsec:significance_test}.
 
 \subsection{Feature Scaling and Centering}
-Classifiers, especially \textit{SVMs}, profit from scaled and centered features, ie.s features which have a mean of 0 and are in the range of $[-1, 1]$.
+Classifiers, especially \textit{SVMs}, profit from scaled and centered features \cite{Graf2001}, ie.s features which have a mean of 0 and are in the range of $[-1, 1]$.
 
 \paragraph{Scaling}
-For our purposes, we scaled the feature vectors by using feature-wise scaling\footnote{Implementation: \url{http://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.MaxAbsScaler.html\#sklearn.preprocessing.MaxAbsScaler}}.
+For our purposes, we scaled the feature vectors by using feature-wise scaling\footnote{Implementation: \url{http://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.MaxAbsScaler.html\#sklearn.preprocessing.MaxAbsScaler}} \cite[p.~567]{Bishop2006}.
 Given the feature vectors $\phi(d_i) = (f_1, f_2, \ldots, f_n)$ for each of the $N$ dataset instances $d_i$, we first find the maximum for each vector entry $f_x$ across the whole dataset. For instance, the maximum of first feature vector entry, $f_1$, is
 \begin{equation*}
 f_1^{\textrm{max}} = \max(\{\phi(d_i)_{1} | i = \{1, 2, \ldots, N\} \})
@@ -344,15 +341,17 @@ The new, scaled feature vector is thus
 \phi_{\textrm{scaled}}(d_i) = (f_1 / |f_1^{\textrm{max}}|, f_2 / |f_2^{\textrm{max}}|, \ldots, f_n / |f_n^{\textrm{max}}|)
 \end{equation*}
 
+For WL, we also tried scaling the feature vectors to unit length. Yet we saw the same or even worse results than without unit-length scaling, so we did not apply it.
+Unit-length scaling is applied to single feature vectors, $\phi$, so that its length $||\phi||_{norm} = 1$ under some norm, eg. L1 or L2.
+
 \paragraph{Centering}
-Centering a vector means subtracting the mean of each feature entry, therefor effectively centering the mean of the feature vector to 0, ie. the average of each feature vector index is 0.
+Centering a vector means subtracting the mean of each feature entry  \cite[p.~567]{Bishop2006}, therefor effectively centering the mean of the feature vector to 0, ie. the average of each feature vector index is 0.
 Since we use only highly sparse and high-dimensional vectors, centering the feature vectors is not feasible since it would destroy the sparsity which in turn would make the subsequent computation too memory consuming if not impossible.
 This is due to the fact that centering a vector often means adding or subtracting another vector from it which creates non-zero entries for all entries.
 Only when the vector is already centered, the centering would not affect the sparsity.
 
-There are ways to circumvent this problem and nevertheless center sparse vectors, namely by augmenting the sparse vector data-structure by also saving the means for each feature entry.
-Yet, to our knowledge there is no implementation actually having this feature.
-\todo{I think this could work but did not find anything about it?}
+\todo{There are possible solutions to circumvent this problem and nevertheless center sparse vectors, namely by augmenting the sparse vector data-structure by also saving the means for each feature entry.
+Yet, to our knowledge there is no implementation actually having this feature.}
 
 Fortunately, since we have very sparse features, the mean for each feature is very close to zero.
 This is due to the fact that most features occur very infrequently. Together with the high number of elements in the dataset, the mean of each feature will be close to zero since the average, $\hat{f}_x$, for each feature $f_x$ is calculated by taking the sum of the feature for all elements and dividing it by the number of elements in the dataset
@@ -362,17 +361,15 @@ This is due to the fact that most features occur very infrequently. Together wit
 In our cases, $N > \sum_{d_n} (\phi(d_n)_x)$ is true for most of the features since most features occur quite infrequently and therefor the sum is also low.
 
 \labelsubsection{Significance tests}{subsec:significance_test}
-When comparing two models we use the permutation test, or exact test, to test the significance of the difference in performance of these two models.
-The permutation test tests whether the observed difference of the performances of the two approaches is a result of chance or really signifies a more fundamental difference.
+When comparing two models we use the permutation test \cite{Fisher1925}, or exact test, to test the significance of the difference in performance of these two models.
+The permutation test tests whether the observed difference of the performances of the two approaches is a result of chance or really signifies a more fundamental difference without assuming an underlying distribution of the differences that can be observed.
 The test only returns a probability for observing a given performance difference. The test does not give a definite answer whether the difference was due to chance.
-When the probability of observing the difference by chance is below a given threshold, the confidence, we say that the test indicates that the approaches really differ in their performance.
-
-Following is an example of a permutation test.
-
-\todo{One-tail vs. two-tail}
+When the probability of observing the difference by chance is below a given threshold, the confidence $p$, we say that the test indicates that the approaches significantly differ in their performance.
+For our purposes, ie. to test whether one classification approach is a significant improvement over another approach, we use the one-tailed version \cite{Kock2015} of the permutation test.
+We also provide the $p$ value for our tests.
 
 \paragraph{Example}
-In this example we will use the permutation test to test whether the 
+In this example we will use the two-tailed permutation test to test whether the 
   performances of two given classifiers, Model A and B, differ in a non-random way.
 In Figure \ref{fig:example_permutation_test} we depicted the steps in the permutation test. 
 In our example, the hypothesis is that Model A has a lower score than Model B.
@@ -398,9 +395,6 @@ $f_{higher}$ gives an intuition about the likelihood of observing the difference
 In the histogram of observed differences Figure \ref{fig:example_permutation_test} \textbf{\subref{fig:permutation_test_distribution}} this $f_{higher}$ corresponds to the ratio between the area of elements in the blue surface to total area of the histogram.
 In our example, $f_{higher}$ is 0.135, meaning that the probability to observe the score difference we see between the two models is 13.5\% when randomly exchanging the predictions of the two models.
 This is far too high to accept the hypothesis on ground of these predictions.
-
-\todo{What confidence interval did we choose?}
-\todo{\url{https://stats.stackexchange.com/questions/104040/resampling-simulation-methods-monte-carlo-bootstrapping-jackknifing-cross}}
 
 \begin{figure}[htb!]
   \begin{subfigure}[t]{0.29\linewidth}
@@ -430,12 +424,12 @@ This is far too high to accept the hypothesis on ground of these predictions.
 
 
 \labelsection{Implementation}{sec:implementation}
-We mostly used Python to implement most of the code required to run the experiments.
+We mostly used Python to implement the code required to run the experiments.
 The code and instructions on how set-up the experiments can be found on GitHub \footnote{\url{https://github.com/davidgengenbach/bachelor-thesis}}.
-\todo{Scikit-learn, networkx, \dots}
-\todo{Code by Tobias to extract concept maps}
+Our work heavily relies on open source software and in this form would not be possible without it.
+In particular, we implemented most of the experiments using \textit{scikit-learn} \cite{Pedregosa2012}, \textit{networkx} \cite{Hagberg2008} and \textit{pandas} \cite{McKinney2010}, \textit{numpy/scipy} \cite{VanderWalt2011}, \textit{SymPy} \cite{Meurer2017} and several open-source projects.
 
-\subsection{Concept Map Extraction}
+\paragraph{Concept Map Extraction}
 We used the code provided by Falke\footnote{\url{https://github.com/UKPLab/ijcnlp2017-cmaps}}  to create the concept maps.
 In this section we will briefly describe the steps the code performs. For a more detailed explanation, see \cite{Falke2017}.
 
@@ -446,5 +440,6 @@ This is done by extracting binary relations from the text. A binary relation con
 Also, a concept can consist of multiple words, eg. for ``David likes something else.", the concepts would be ``David" and ``something else".
 The extracted concepts are later used as node labels, and the relation between them as the edges between concepts.
 
-Next, the extracted relations get filtered so that only concepts are kept which contain at least one noun and which consist of fewer words than some a given threshold, in our case 10 words. This filtering is done to ensure the brevity and usefulness of the concepts.
+Next, the extracted relations get filtered so that only concepts are kept which contain at least one noun and which consist of fewer words than some a given threshold, in our case 10 words. This filtering is done to ensure the brevity and practical usefulness of the concepts when visualizing the graphs.
 \todo{This is somewhat similar to the original text, how to cite?}
+\todo{Last step that is not used for our work?}

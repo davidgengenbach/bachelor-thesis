@@ -171,6 +171,8 @@ Figure \ref{fig:cooccurrence_graphs} shows examples of co-occurrence graphs with
     \label{fig:cooccurrence_graphs}%
 \end{figure}
 
+\todo{Add example where there co-occurrences also with window size 1}
+
 Since co-occurrence graphs not only contain the words of the underlying text but also their co-occurrence, they capture not only the content of the text but also the relation between words of the text.
 Therefor they contain structural information about the text.
 But, given a co-occurrence graph, it is not possible to recover the underlying text since all information about word-order or sentence structure is omitted.
@@ -216,15 +218,12 @@ The classifier algorithm then, internally, creates a model of the data and often
 During prediction, that is when wanting to automatically assign a label to a (new) datapoint $x_i$, the new datapoint is fed into the classifier which in turn returns the predicted label, $y'_i$.
 
 \labelsubsection{Classifiers}{subsec:classifiers}
-\todo{SVM, One-layer neural net, \ldots}
 In this work, we will mostly use a classification algorithm called \textit{Support Vector Machine} \cite{Cortes1995}, or \textit{SVM}.
 The SVM has shown to be robust in its performance \cite{Joachims1998}, having not to deal with local optima as in neural networks or other machine learning algorithms.
 The SVM also exhibits state-of-the art performance on several tasks and is the go-to classification algorithm in a great number of previous works in the field \cite{Joachims1998, Vitale2012, Neuhaus2006a,Kriege2012, Koronacki2008}.
 
 For an more throughout explanation of the SVM and its advantages especially for the text classification task, please see \cite{Joachims1998}.
 We will also further explain the SVM and its parameters in Section \ref{subsec:cross_validation_and_model_selection}.
-
-\todo{one-vs-the-rest}
 
 \labelsubsection{Performance Metrics}{subsec:classification_metrics}
 The performance or score of a trained classifier is evaluated by comparing the labels it predicts, $y'_i$,  for datapoints $x_i$ with the real label $y_i$ in the dataset.
@@ -343,50 +342,32 @@ The gram matrix is symmetric by definition since the underlying kernel is also s
 We have seen that a kernel can be used to calculate a measure of similarity between two objects, eg. graphs.
 Some kernels can be expressed as an inner product $k(X, X') = \langle \phi(X), \phi(X') \rangle$ on two (implicit) vector representations of the objects $X$ and $X'$.
 In this case, the vector representations $\phi(X)$ can be used in conventional classification algorithms.
-Yet, calculating these representations is not always possible or feasible since the dimension of such a representation is quite high or even infinite.
-There is another approach for classification (and regression), the aforementioned kernel methods.
-Kernel methods\cite[p.~291]{Bishop2006} operate directly with the kernel and do not use the explicit feature representations $\phi(X)$.
+Yet, calculating these representations is not always possible or feasible since the dimension of such a representation is quite high or even infinite, making the calculation unfeasible.
+There is another approach for classification and other tasks, the aforementioned kernel methods.
+Kernel methods \cite[p.~291]{Bishop2006} operate directly with the kernel and do not use the explicit feature representations $\phi(X)$.
 Instead, kernel methods use the similarities $k(X, X')$ directly.
+This feature also enables kernel methods to operate on arbitrary objects, given that there exists a kernel operating on these objects.
 
-One popular example of a kernel method is the Support Vector Machine, or SVM.
+One popular example for a kernel method is the Support Vector Machine, or SVM.
 The SVM is able to use both vector representations of elements in the dataset or the pairwise similarities, the gram matrix, between them.
-At training time, the gram matrix $A$ of all objects in the training set, $d_{train} = \{X_1, X_2, \ldots, X_n\}$, is calculated.
+Some SVM implementations also allow to define the kernel directly, so the gram matrix does not have to be provided.
+At training time, the gram matrix $A$ of all objects in the training set, $D_{train} = \{X_1, X_2, \ldots, X_n\}$, is calculated.
 This gram matrix $A$ and the corresponding classes then get fed into the SVM which fits its coefficients to them.
-After training, to predict the label for a given instance $X_{test}$, the pairwise similarities of t$X_{test}$ and all training examples are calculated, resulting in a vector $v = (k(X_{test}, X_1), k(X_{test}, X_2), \ldots, k(X_{test}, X\_n))$.
+After training, to predict the label for a given instance $X_{test}$, the pairwise similarities of $X_{test}$ and all training examples, $\{X_1, X_2, \ldots, X_n\}$, are calculated, resulting in a vector $v = (k(X_{test}, X_1), k(X_{test}, X_2), \ldots, k(X_{test}, X_n))$.
+The vector $v$ contains the similarities of $X_{test}$ to all training instances.
 This vector $v$ is then fed into the SVM which predicts the label for $X_{test}$.
 Note that this kernel method approach does not use explicit feature maps of the instances, only their pairwise similarities.
-This feature of not needing to calculate the explicit feature map $\phi$ is called kernel trick \cite[p.~292]{Bishop2006}.
-Here, the explicit inner product on the two feature maps $\phi$ is not needed, only $k(X, X')$.
-The kernel trick also enables linear algorithms, such as the un-kernelized \textit{SVM}, to solve non-linear problems.
-Apart from the kernelized \textit{SVM}, the class of kernel methods also includes kernelized \textit{PCA}, kernelized \textit{k-Means}, \textit{Gaussian Processes}\cite[p.~303]{Bishop2006} and others.
+This feature of not needing to calculate the explicit feature map $\phi$ is called \textit{kernel trick} \cite[p.~292]{Bishop2006}.
+The kernel trick also enables linear algorithms, such as the un-kernelized \textit{SVM}, to solve non-linear problems, since the kernel can operate in higher-dimensional spaces	.
+The kernel trick can be applied to any algorithm where the core of the algorithm uses vector representations to calculate an inner product. These inner products on the vectors can be replaced with kernels, resulting in a kernelized version of the algorithm \cite{Wu}.
+Apart from the kernelized \textit{SVM}, the class of kernel methods also includes kernelized \textit{Principal Components Analysis} \cite{Scholkopf1998}, kernelized \textit{k-Means} \cite{Jain2010}, \textit{Gaussian Processes} \cite[p.~303]{Bishop2006} and others.
 
-In our work, we will use both the kernelized version of the \textit{SVM}, ie. learning with a gram matrix, as well as the version using an explicit feature map $\phi$.
-
-\todo{\textbf{Kernel trick}
-	
-	``Any algorithm to process finite-dimensional vectors that can be
-	expressed only in terms of pairwise inner products can be applied to
-	potentially infinite-dimensional vectors in the feature space of a p.d.
-	kernel by replacing each inner product evaluation by a kernel evaluation."
-	
-	\url{https://lear.inrialpes.fr/people/mairal/teaching/2015-2016/MVA/fichiers/mva_slides.pdf}
-}
-
-\todo{\textbf{Kernel trick}
-
-If the feature functions $\phi(x)$ are chosen with care one can calculate the scalar products without actually computing
-all features, therefore greatly reducing the computational complexity.
-The method used to avoid the explicit mapping is also called kernel trick. One uses learning algorithms that
-only require dot products between the vectors in the original input space, and chooses the mapping such that these
-high-dimensional dot products can be computed within the original space, by means of a kernel function.
-
-\url{http://intelligent-optimization.org/LIONbook/lionbook_3v0.pdf}}
+In our work, we will use both the kernelized version of the \textit{SVM}, ie. learning with the gram matrix, as well as the version using explicit feature maps $\phi$.
 
 \labelsubsection{Graph Kernels}{subsec:graph_kernels}
-A graph kernel is simply a kernel that operates on graphs.
-
+A graph kernel simply is a kernel that operates on graphs.
 Graph kernels that measure the similarity of two graphs are related to the isomorphism test \cite[p.~4]{Bondy1976} between two graphs.
-The graph isomorphism test returns whether two graphs are structurally the same.
+The (structural) graph isomorphism test returns whether two graphs are structurally the same.
 In this test, the labels of the vertices and edges are ignored. Otherwise the task would be far easier since one could simply compare the labels and edges of the graphs - when they are both exactly the same, the graphs are the same \cite[p.~4]{Bondy1976}.
 Instead, in the graph isomorphism test one has to find two mappings: one bijective mapping $\psi_{V}: V_1 \mapsto V_2$ from the vertices of the first graph to the vertices of the second graph and another bijective mapping $\psi_{E}: E_1 \mapsto E_2$ with the constraint:
 
@@ -407,8 +388,7 @@ One could use the graph isomorphism test, or a variant thereof, to create a grap
 Yet, as we noted before, the runtime of the graph isomorphism test is high and also, in the presented version, does not take edge or node labels into account.
 We will see other examples of graph kernels in the next paragraphs.
 Note that each graph kernel has different strengths and weaknesses, often being subject to a trade-off between accuracy versus compute time.
-So, when choosing a suitable kernel, the importance of each aspect of the graphs, eg. labels or structure, has to be assessed.
-
+So, when choosing a suitable kernel, the importance of each aspect of the graphs, eg. labels or structure, has to be assessed and the kernel constructed or chosen accordingly.
 
 \paragraph{Graph Kernel Categories}
 Several graph kernels have been proposed in the literature.
@@ -417,7 +397,7 @@ Categories of graph kernels include kernels based on shortest-paths \cite{Herman
 A great number of graph kernels have in common that they first create a decomposition of the graph into sub-structures, for example into subtrees, and then count the occurrences of these sub-structures in the graphs.
 The kernels of this kind are sometimes called R-Convolution graph kernels \cite{Namomsa1965a}.
 In the next section, we introduce some examples of graph kernels to get a feeling for the possibilities and trade-offs different approaches have.
-As mentioned before, any set of valid kernels can be combined easily to form a composite kernel.
+As mentioned before, any set of valid kernels can be combined easily to form a composite kernel \cite[p.~296]{Bishop2006}.
 So, any of the algorithms we will introduce in the next section can be combined and extended using other kernels.
 As we will also see in this next section, graph kernels can be quite diverse and capture different information of the objects they are operating on.
 The scope of a graph kernel can therefor also vary widely from only capturing narrow aspects of the graph to actually incorporating the complete graph structure and content.
@@ -440,6 +420,7 @@ k_{\mathrm{common\_label}}(G_1, G_2) = | l(G_1) \cap l(G_2) |
 \end{equation*}
 where $l(G)$ returns the set of labels for graph $G$.
 Therefor, this graph kernel counts the number of common labels of the two graphs. Under this kernel, two graphs are the same when they have the same node labels, completely ignoring the edges.
+While this kernel only compares vertex labels, edge labels could quite easily be added to the kernel definition.
 
 An extension to this graph kernel is using the Jaccard coefficient instead of simply counting the common node labels:
 \begin{equation*}
@@ -482,12 +463,17 @@ The resulting new label of $v$ is the sequence $(\pi_{i-1}(v), \pi_{i-1}(v_{neig
 After the iteration, a new labeling function is created accordingly: $\pi_i(v)$ now returns to the new label of $v$.
 So, for each iteration, a node gets the same label as another node if they have the same label and neighborhood.
 For the first iteration, the labels of a node consist of the immediate neighborhood.
-In the next iteration, the label of a node than encodes the neighborhood of the neighborhood, ie. 
+In the next iteration, the label of a node than encodes the neighborhood of the neighborhood, and so on.
+The Weisfeiler-Lehman graph kernel is said to have converged in iteration $h = i$ when the number of used labels does not increase in the next iteration, so
+\begin{equation*}
+\max(\{x | x = \pi_{i}(v), v \in V\}) = \max(\{x | x = \pi_{i  + 1}(v), v \in V\})
+\end{equation*}
 
 The Weisfeiler-Lehman graph kernel has been shown to achieve state-of-the-art performance on several datasets and applications.
 It takes into account both content and structure, while also performing good in terms of compute-time.
 
-\todo{Complexity? $\mathcal{O}(hm)$, where $h$ is the number of iterations and $m$ is the number of edges in the dataset.}
+The runtime complexity of the Weisfeiler-Lehman algorithm varies with different extensions.
+Reported complexities of the WL algorithm range from (1) $\mathcal{O}(hm)$ in \cite{Shervashidze2009} where $h$ is the number of iterations and $m$ stands for the number of edges in a graph and (2) the quasi-linear $\mathcal{O}((m + n) \log(n))$ in \cite{Kersting2013} where $n$ stands for the number of edges.
 
 It has to be noted that the Weisfeiler-Lehman does not use edge labels by default, but can be extended to do so.
 There are also several other extensions to the Weisfeiler-Lehman kernel in the literature.
@@ -496,8 +482,8 @@ One example of such an extension reduces the space requirement of the algorithm 
 In Figure \ref{fig:wl_example} we show an example of one WL iteration with label compression.
 
 In this work we will use a variant of the WL graph kernel called \textit{fast\_wl} which was introduced in \cite{Kersting2013}.
-This variant improves the run-time of the plain Weisfeiler-Lehman kernel by cleverly creating a hash of the neighborhood to create the new coloring for the graph.
-The results are exactly the same as with the plain Weisfeiler-Lehman kernel yet the calculation of the new labels is significantly faster.
+This variant improves the run-time of the plain Weisfeiler-Lehman kernel by cleverly creating a hash of the neighborhood to create the new coloring for the graph, resulting in the aforementioned $\mathcal{O}((m + n) \log(n))$ complexity.
+The results for this \textit{fast\_wl} variant are exactly the same as with the plain WL kernel, yet the calculation of the new labels is significantly faster.
 Our implementation also uses label compression, explained in Figure \ref{fig:wl_example}, to further speed up the calculation and assigning integer indices to the new labels, therefore enabling the creation of explicit feature maps $\phi(G)$.
 
 \begin{figure}[htb!]
@@ -526,20 +512,10 @@ Our implementation also uses label compression, explained in Figure \ref{fig:wl_
 	\label{fig:wl_example}
 \end{figure}
 
-\todo{Mention convergence?}
-
 \labelsection{Graph Kernel Based Text Classification}{subsec:graph_kernel_based_text_classification}
 The idea of converting the text classification task into a graph classification task has been explored before.
-In this section, we will briefly recap the history of this approach by means of explaining several papers using this approach.
+In this section, we will briefly recap the history of this approach by explaining several papers related to our work.
 While most of the graph classification approaches are used in context where graphs are the default representation of the data at hand, here we mostly explore papers which also derive graphs from existing text.
-As we will see, several such graphs derived from text have been studied in the context of text classification.
-Yet, our approach differs in some ways from the previous work, namely that (1) we capitalize on concept maps, a graph representation which is known for its summarization capabilities, resulting in smaller graphs. Also (2) we explicitly compare our results with conventional text-based approaches that achieve state-of-the-art performance. And while others mainly used graph kernels which are not able to be easily combined with text-based approaches, we (3) also capitalize on the Weisfeiler-Lehman and other graph kernels which can generate explicit feature maps $\phi$ for a graph.
-This, in turn, enables us to explore an approach where we combine conventional text features, eg. \textit{BoW} frequencies, with features obtained from graph kernels.
-As far as we know, the combining of text- and graph features has not been done before.
-
-\todo{What is the most related work, how do they differ from our approach}
-\todo{Relate the other work to the new approach and work out their differences/results}
-\todo{Mention \cite{Valerio2007} and their approach (``Reverse" classification: given a document, find a concept map)}
 
 \labelsubsection{Related Work}{subsection:related_work}
 
@@ -571,7 +547,7 @@ That said, this approach is quite similar to ours. In their approach, they also 
 In this paper, the authors generate co-occurrence graphs out of different text classification datasets.
 To classify the graphs, they introduce their own graph kernel which is also an instance of the aforementioned kernels that count the number of occurrences of sub-structures.
 In this case, the sub-structures this kernel counts are frequent subgraphs, ie. subgraphs that occur frequently in the graphs of the dataset.
-To get a set of most-frequent subgraphs in the dataset, they develop their own approach, using depth-first search and a labelling function for graphs that enables finding frequent subgraphs efficiently.
+To get a set of most-frequent subgraphs in the dataset, they develop their own approach, using depth-first search and a labeling function for graphs that enables finding frequent subgraphs efficiently.
 After extracting the sub-graphs from the dataset this way, they only retain subgraphs which occur more often in the dataset than some defined parameter, the support value.
 This significantly reduces the number of considered sub-graphs since most subgraphs occur quite infrequently.
 This extension is indeed needed since the number of possible sub-graphs grows super-linear with the number of nodes/edges and can render the subsequent counting of the sub-graphs in the dataset infeasible.
@@ -586,13 +562,13 @@ So, after extracting the main-core of each co-occurrence graph and determining t
 This results in feature maps $\phi_i$ which contain the counts of each most-frequent sub-graph per co-occurrence graph.
 These feature vectors together with the labels are then used to train a SVM and are used to subsequently predict new instances by creating their feature maps and then predicting the label with this trained SVM.
 
-The authors evaluated the classification performance of their approach on several datasets, namely the WebKB corpus, a subset of the reuters-21578 corpus (named R8), the ling-spam dataset and a corpus of Amazon reviews.
+The authors evaluated the classification performance of their approach on several datasets, namely the \textit{WebKB} corpus, a subset of the \textit{reuters-21578} corpus (named R8), the \textit{ling-spam} dataset and a corpus of \textit{Amazon reviews}.
 In our work, we also use these and other datasets. In later sections, we will introduce then more thoroughly.
 
 In the paper, the authors argue that only retaining the main-core does not greatly damage the classification performance, yet it significantly reduces the compute time.
 They also stress the importance of choosing an adequate support value for the sub-graph mining, mentioning the trade-off between performance and considered features. The process of choosing an adequate support value can be done unsupervised and gets treated similar to hyperparameter tuning of, for example, SVM hyperparameters.
 
-This paper is quite similar to our approach since it also poses the text classification task as a graph classification task. Yet, they consider only one type of graph, the co-occurrence graph of the underlying texts.
+This paper is quite similar to our approach since it also poses the text classification task as a graph classification task. Yet, they consider only one type of graph, the co-occurrence graph.
 Also, they do not evaluate the effect of combining text- and graph features.
 That said, they provide interesting comparisons of text- and graph based approaches, pointing out the similarity of n-grams with the relationships which are captured in co-occurrence graphs.
 
@@ -684,6 +660,8 @@ In both cases, the matrix $M$ aims to encode the similarities of the substructur
 
 The authors report an improvement of classification scores for several real-world datasets, comparing the scores of the plain version of a kernel with their augmented version.
 
-
 \labelsubsection{Summary}{subsection:related_work_summary}
-\todo{How does this approach differ from ours?}
+As we see, several such graphs have been studied in the context of text classification.
+Yet, our approach differs in some ways from the previous work, namely that (1) we capitalize on concept maps, a graph representation which is known for its summarization capabilities, resulting in smaller graphs. Also (2) we explicitly compare our results with conventional text-based approaches that achieve state-of-the-art performance. And while others mainly used graph kernels which are not able to be easily combined with text-based approaches, we (3) also capitalize on the Weisfeiler-Lehman and other graph kernels which can generate explicit feature maps $\phi$ for a graph.
+This, in turn, enables us to explore an approach where we combine conventional text features, eg. \textit{BoW} frequencies, with features obtained from graph kernels.
+As far as we know, the combining of text- and graph features has not been done before.
