@@ -9,21 +9,21 @@ import scipy.sparse
 
 class RemoveNewGraphNodes(sklearn.base.BaseEstimator, sklearn.base.TransformerMixin):
     def __init__(self, copy=True):
-        self.train_labels = None
         self.copy = copy
 
     def fit(self, X, *s):
-        self.train_labels = set(chain.from_iterable([_get_labels(x) for x in graph_helper.get_graphs_only(X)]))
+        self.train_labels_ = set(chain.from_iterable([_get_labels(x) for x in graph_helper.get_graphs_only(X)]))
         return self
 
     def transform(self, X, y=None, **fit_params):
         assert len(X)
 
         X = graph_helper.get_graphs_only(X)
+
         if self.copy:
             X = _copy_graphs(X)
 
-        X = [_keep_only_train_labels(x, self.train_labels) for x in X]
+        X = [_keep_only_train_labels(x, self.train_labels_) for x in X]
         return X
 
 
@@ -64,6 +64,7 @@ def _keep_only_train_labels(g, labels_to_keep):
     elif isinstance(g, nx.Graph):
         nodes = set(g.nodes())
         labels_to_remove = nodes - labels_to_keep
+        if not len(labels_to_remove): return g
         g.remove_nodes_from(labels_to_remove)
         return g
     else:

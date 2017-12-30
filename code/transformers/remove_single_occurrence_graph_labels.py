@@ -11,12 +11,11 @@ class RemoveInfrequentGraphLabels(sklearn.base.BaseEstimator, sklearn.base.Trans
     def __init__(self, copy=True, max_occurrences: int = 1):
         self.copy = copy
         self.max_occurrences = max_occurrences
-        self.labels_to_be_removed = None
 
     def fit(self, X, *s):
         labels = [_get_labels(x) for x in graph_helper.get_graphs_only(X)]
         occurrences = collections.Counter(chain.from_iterable(labels))
-        self.labels_to_be_removed = set([k for k, v in occurrences.items() if v <= self.max_occurrences])
+        self.labels_to_be_removed_ = set([k for k, v in occurrences.items() if v <= self.max_occurrences])
         return self
 
     def transform(self, X, y=None, **fit_params):
@@ -24,7 +23,7 @@ class RemoveInfrequentGraphLabels(sklearn.base.BaseEstimator, sklearn.base.Trans
         X = graph_helper.get_graphs_only(X)
         if self.copy:
             X = _copy_graphs(X)
-        X = [_remove_label(x, self.labels_to_be_removed) for x in X]
+        X = [_remove_label(x, self.labels_to_be_removed_) for x in X]
         return X
 
 

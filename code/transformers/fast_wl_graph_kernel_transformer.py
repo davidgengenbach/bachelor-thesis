@@ -82,8 +82,8 @@ class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Tran
         X, node_weight_factors = _retrieve_node_weights_and_convert_graphs(X, node_weight_function=self.node_weight_function, same_label=self.same_label, use_directed=self.use_directed)
 
         # Use already computed phi_list if the given X is the same as in fit()
-        if self.hashed_x == hash_dataset(X):
-            return self.phi_list
+        #if self.hashed_x == hash_dataset(X):
+        #    return self.phi_list
 
         # Use early stopping
         h = min(len(self.phi_list) - 1, self.h)
@@ -123,7 +123,7 @@ def _normalize(phi_list, copy=False, norm=None):
 
 
 def hash_dataset(X):
-    return ''.join([str(hash(''.join([str(a) for a in labels]))) for adj, labels in X])
+    return ''.join([str(hash(''.join([str(a) for a in labels]))) for adj, labels in X]) + str(len(X)) + str(X[int(len(X) / 2)][0].sum())
 
 
 def get_node_weight_factors(X, metric=None):

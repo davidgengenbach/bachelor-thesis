@@ -49,7 +49,7 @@ def transform(
             adj_dim = list(range(adj.shape[0]))
             adj[adj_dim, adj_dim] = 1
         adj = adj.tocsr()
-        adj.data = np.where(adj.data > 1, 0, 1)
+        adj.data = np.where(adj.data < 1, 0, 1)
         adjacency_matrices[idx] = adj
     # Relabel the graphs, mapping the string labels to unique IDs (ints)
     label_lookup, label_counter, graph_labels = relabel_graphs(graphs, label_counter = label_counters[0], label_lookup = label_lookups[0], labels_dtype = labels_dtype, append = append_to_labels)
@@ -102,7 +102,6 @@ def transform(
         data, row_ind, col_ind = np.array(data), np.array(row_ind), np.array(col_ind)
 
         highest_label = np.max(col_ind) + 1
-
         phi_dim_ = get_phi_dim(iteration + 1)
 
         if truncate_to_highest_label:
@@ -162,8 +161,10 @@ def transform(
 
         phi = add_labels_to_phi_(graph_labels, i)
 
+        non_zero = phi.nonzero()[1]
+
         # ... exit early when no new labels are found (= convergence)
-        highest_label = np.max(phi.nonzero()[1])
+        highest_label = np.max(phi.nonzero()[1]) if len(non_zero) else last_highest_label
         if use_early_stopping and last_highest_label == highest_label:
             break
         last_highest_label = highest_label

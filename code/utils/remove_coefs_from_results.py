@@ -22,8 +22,8 @@ def remove_coefs(clf):
         'support_vectors_',
         'vocabulary_',
         'lookup',
-        'labels_to_be_removed',
-        'train_labels'
+        'labels_to_be_removed_',
+        'train_labels_'
     ]:
         try:
             setattr(clf, x, None)
