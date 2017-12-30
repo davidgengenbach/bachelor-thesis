@@ -1,12 +1,8 @@
-limit_graph_type:
-- concept_map
-#- cooccurrence
 params_per_type:
   graph_content_only:
     graph_to_text:
       use_edges:
       - true
-      #- false
     preprocessing:
     - SimplePreProcessingTransformer
     scaler:

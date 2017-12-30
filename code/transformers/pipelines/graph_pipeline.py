@@ -80,17 +80,15 @@ def get_fast_wl_params(reduced=False, with_node_metrics=False):
         fast_wl__use_directed=[True],
         fast_wl__use_early_stopping=[True],
         fast_wl__norm=[None],
-
-        phi_picker__use_zeroth=[False, True],
+        phi_picker__use_zeroth=[True],
         phi_picker__return_iteration=['stacked']
     )
 
 
-    if reduced:
-        params['phi_picker__use_zeroth'] = [True]
-        params['fast_wl__node_weight_function'] = [None]
+    #if reduced:
+    #    params['phi_picker__use_zeroth'] = [True]
 
-    if not with_node_metrics:
+    if not with_node_metrics or reduced:
         params['fast_wl__node_weight_function'] = [None]
 
     return pipeline, params

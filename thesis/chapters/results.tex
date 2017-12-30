@@ -2,12 +2,6 @@
 In the next sections, we will investigate the questions we posed in the previous chapter.
 After that, we will gather our findings to form an judgment of the validity of our hypothesis.
 
-\todo{Observations + possible explanations}
-%\todo{How do the results relate to hypothesis?}
-\todo{Error analysis}
-%\todo{Comparison between text n-grams and concept maps/co-occurrence graphs}
-%\todo{Look at concepts used in concept maps: frequency in whole corpus, ...}
-
 \labelsubsection{Answers}{subsec:answers}
 
 \subquestionref{question:structure_diversity}
@@ -171,12 +165,11 @@ While it is no surprise that removing the labels from the graphs results in a fa
 This could indicate that the structure of co-occurrence graphs, while relatively simple, is at least as, if not more, useful than the structure of concept maps.
 
 \answersummary{
-The content-only graph kernel which unrolls the graph into text, ie. linearizing it, and then using a conventional \textit{BoW} approach performs the best for both concept maps and co-occurrence graphs.
+The content-only graph kernel, which un-rolls the graph into text and then uses a conventional \textit{BoW} approach, performs the best for both concept maps and co-occurrence graphs.
 Removing the content, ie. the labels, from the graphs and then running plain WL results in classification scores close to the most-frequent dummy classifier.
-When combining the both, content and structure, the score is not as good as content-only.
+When combining both, content and structure, the score is not as good as content-only.
 This all indicates that the content of the graphs has a greater importance than the structure.
 }
-\todo{N-grams range?}
 
 \subquestionref{question:comparison_coo}
 As a baseline, we also look at another graph representation for text, namely co-occurrence graphs.
@@ -409,7 +402,9 @@ Note that using directed edges in WL could be compared with using n-grams: when 
 Later on, we will also evaluate whether or how using (un-) directed edges affects the score when combining graph and text features.
 
 \answersummary{
-	TODO	
+ 	Using directed instead of un-directed edges most often results in significantly better performance when using the WL graph kernel.
+ 	A possible explanation for this better performance using directed edges is that neighborhood matches are far more easier since the neighborhood of a vertex is only defined through its outgoing edges, not the in-going as well.
+ 	The smaller neighborhood in turn makes exact matches of neighborhoods in different graphs more probable.
 }
 
 \subquestionref{question:concept_map_size}
@@ -433,19 +428,12 @@ In the next step, we look at the results for different graph sizes, binning them
 In Figure \ref{fig:graph_size_performance} we see an example for the \textit{ng20} dataset where we binned the different graph and text sizes and report the classification scores of documents with these sizes.
 For this dataset, the results indicate that classification performance indeed correlates with the number of nodes of the concept map.
 In other datasets, this correlation is not as distinguished.
-\todo{Results for other datasets have to be inserted!}
 
 
 \answersummary{
-	TODO	
+	TODO
 }
 
-\subquestionref{question:dataset_diversity}
-\todo{?}
-
-\answersummary{
-	TODO	
-}
 
 \subquestionref{question:comparison_combined}
 As we have seen in the results of the last section, text-based approaches outperform graph-only approaches.
@@ -601,6 +589,8 @@ ted\_talks       & 17 & 3 & 2 & 2 & 1 & 2 & 254 & 34 \\
 }
 
 \labelsubsection{Summary}{subsec:results_summary}
+\todo{Progression of first: analysis, then results}
+\todo{Mention pros/cons of graph based classification}
 
 \labelsection{Related And Intermediate Observations}{subsec:related_and_intermediate_observation}
 In this section we report observations which are not directly related to our questions or hypothesis, yet they nevertheless have provided us more insights into our analysis.

@@ -71,10 +71,10 @@ On the other hand, when a concept occurs multiple times in a text, the degree of
 These observations give rise to the question whether the size of the concept maps is correlated with the classification performance.
 In this experiment we look at the classification scores of concept maps created from texts with varying length.
 
-\subquestion{How different are the datasets and how does it affect the classification performance?}{question:dataset_diversity}
-The datasets we chose vary greatly in a lot of ways, some consisting of texts which are informal and written by internet users in online forums while other texts are written by journalists for newspapers.
-Other texts are small, others are long.
-For this question we evaluate the differences of all theses datasets which hopefully can give insights into the varying relative classification performance of our approaches on different datasets.
+%\subquestion{How different are the datasets and how does it affect the classification performance?}{question:dataset_diversity}
+%The datasets we chose vary greatly in a lot of ways, some consisting of texts which are informal and written by internet users in online forums while other texts are written by journalists for newspapers.
+%Other texts are small, others are long.
+%For this question we evaluate the differences of all theses datasets which hopefully can give insights into the varying relative classification performance of our approaches on different datasets.
 
 \subquestion{How useful are the concept maps combined with text classification?}{question:comparison_combined}
 This question aims to directly answer our hypothesis. 
@@ -428,7 +428,9 @@ This is far too high to accept the hypothesis on ground of these predictions.
 We mostly used Python to implement the code required to run the experiments.
 The code and instructions on how set-up the experiments can be found on GitHub \footnote{\url{https://github.com/davidgengenbach/bachelor-thesis}}.
 Our work heavily relies on open source software and in this form would not be possible without it.
-In particular, we implemented most of the experiments using \textit{scikit-learn} \cite{Pedregosa2012}, \textit{networkx} \cite{Hagberg2008} and \textit{pandas} \cite{McKinney2010}, \textit{numpy/scipy} \cite{VanderWalt2011}, \textit{SymPy} \cite{Meurer2017} and several open-source projects.
+In particular, we implemented most of the experiments using \textit{scikit-learn} \cite{Pedregosa2012}, \textit{networkx} \cite{Hagberg2008} and \textit{pandas} \cite{McKinney2010}, \textit{numpy/scipy} \cite{VanderWalt2011}, \textit{SymPy} \cite{Meurer2017} and several other open-source projects.
+
+All experiment definitions with all parameters are also provided online\footnote{\url{https://github.com/davidgengenbach/bachelor-thesis/tree/master/code/configs/experiments}} alongside the code.
 
 \paragraph{Concept Map Extraction}
 We used the code provided by Falke\footnote{\url{https://github.com/UKPLab/ijcnlp2017-cmaps}}  to create the concept maps.
@@ -436,11 +438,17 @@ In this section we will briefly describe the steps the code performs. For a more
 
 The input to the concept map extraction algorithm is a single text document. The output is a single concept map for this text document.
 
+\textbf{Extraction}:
 First, the algorithm extracts concepts and their relations to another.
 This is done by extracting binary relations from the text. A binary relation consists of three parts: two concepts and the relation between them. An example for a binary relation is ``David likes something", here ``David" and ``something`` are the concepts and ``likes" the relation them. Note that the binary relation is directed, eg. ``Something likes David" is not the same binary relation as ``David likes something."
 Also, a concept can consist of multiple words, eg. for ``David likes something else.", the concepts would be ``David" and ``something else".
 The extracted concepts are later used as node labels, and the relation between them as the edges between concepts.
 
+\textbf{Filtering}:
 Next, the extracted relations get filtered so that only concepts are kept which contain at least one noun and which consist of fewer words than some a given threshold, in our case 10 words. This filtering is done to ensure the brevity and practical usefulness of the concepts when visualizing the graphs.
-\todo{This is somewhat similar to the original text, how to cite?}
-\todo{Last step that is not used for our work?}
+After these steps, we can create and export the concept maps.
+
+\textbf{Summarization}:
+The original implementation also summarizes the resulting graphs by finding the most relevant sub-graph of the concept map.
+This is done to further summarize the graph and remove un-connected components from the graph, eg. connected components consisting of only two nodes.
+We skipped this step in our concept map creation since this additional filtering would result in much smaller graphs which would in turn harden our classification task further.

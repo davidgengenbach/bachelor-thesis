@@ -1,5 +1,3 @@
-limit_graph_type:
-- concept_map
 params_per_type:
   graph_relabeled:
     feature_extraction:
