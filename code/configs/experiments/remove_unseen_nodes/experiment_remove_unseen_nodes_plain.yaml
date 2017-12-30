@@ -1,0 +1,12 @@
+params_per_type:
+  graph:
+    feature_extraction:
+      phi_picker:
+        return_iteration:
+        - stacked
+        use_zeroth:
+        - true
+    graph_preprocessing:
+    - ~
+    graph_postprocessing:
+    - ~

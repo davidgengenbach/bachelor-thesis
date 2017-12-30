@@ -60,6 +60,9 @@ In text-based classification approaches, infrequent words are often removed from
 Another WL specific problem of infrequent words is that when a concept only occurs once and it is in the neighborhood of another node, matches in higher iterations of WL are impossible since the concept only occurs once and can not be in any other neighborhood apart from the only occurrence.
 For this question, we will evaluate whether removing infrequent node labels will result in better scores.
 
+\subquestion{Does merging infrequent concepts increase the classification score?}{question:relabeling_infrequent}
+To overcome the issue of infrequent concepts in concept maps, we merge infrequent concepts with more frequent concepts.
+
 \subquestion{How does the performance of using the directed edges in concept maps compare to undirected edges?}{question:directed_vs_undirected}
 Concept maps, in contrast to co-occurrence graphs, also have directed edges.
 To test the effect of using directed versus un-directed edges, we evaluate the classification performance for both cases.

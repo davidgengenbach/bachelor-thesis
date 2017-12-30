@@ -178,7 +178,6 @@ def convert_graphs_to_adjs_tuples(X, copy=False) -> typing.Iterable:
             graph = graph[0]
 
         nodes = sorted(graph.nodes())
-
         if len(nodes) == 0 or nx.number_of_edges(graph) == 0:
             out = (lil_matrix(1, 1), ['no_label'])
         else:

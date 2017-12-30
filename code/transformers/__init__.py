@@ -24,6 +24,7 @@ from .remove_single_occurrence_graph_labels import RemoveInfrequentGraphLabels
 from .simple_preprocessing_transformer import SimplePreProcessingTransformer
 from .tuple_selector import TupleSelector
 from .truncated_svd_wrapper import TruncatedSVDWrapper
+from .remove_new_graph_nodes import RemoveNewGraphNodes
 
 import sklearn
 import sklearn.feature_extraction
