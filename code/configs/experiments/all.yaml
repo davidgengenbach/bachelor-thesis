@@ -54,7 +54,7 @@ params_per_type:
         norm:
         - NoneType
         phi_dim:
-        - 326445
+        - NoneType
         round_to_decimals:
         - 10
         same_label:
@@ -76,12 +76,6 @@ params_per_type:
     normalizer:
     - MaxAbsScaler
   graph_combined:
-    classifier:
-      C:
-      - 0.001
-      - 0.01
-      - 0.1
-      - 1
     features:
       fast_wl_pipeline:
         feature_extraction:
@@ -98,7 +92,7 @@ params_per_type:
               norm:
               - NoneType
               phi_dim:
-              - 65289
+              - NoneType
               round_to_decimals:
               - 10
               same_label:
@@ -113,7 +107,7 @@ params_per_type:
               return_iteration:
               - stacked
               use_zeroth:
-              - false
+              - true
           graph_preprocessing:
           - NoneType
           normalizer:
@@ -173,7 +167,7 @@ params_per_type:
         norm:
         - NoneType
         phi_dim:
-        - 326445
+        - NoneType
         round_to_decimals:
         - 10
         same_label:
@@ -208,7 +202,7 @@ params_per_type:
         norm:
         - NoneType
         phi_dim:
-        - 326445
+        - NoneType
         round_to_decimals:
         - 10
         same_label:
@@ -250,7 +244,7 @@ params_per_type:
         norm:
         - NoneType
         phi_dim:
-        - 326445
+        - NoneType
         round_to_decimals:
         - 10
         same_label:

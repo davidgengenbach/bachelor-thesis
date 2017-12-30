@@ -87,7 +87,7 @@ def get_fast_wl_params(reduced=False, with_node_metrics=False):
 
 
     if reduced:
-        params['phi_picker__use_zeroth'] = [False]
+        params['phi_picker__use_zeroth'] = [True]
         params['fast_wl__node_weight_function'] = [None]
 
     if not with_node_metrics:

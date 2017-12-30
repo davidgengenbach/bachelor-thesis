@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import collections
 import typing
+from joblib import Parallel, delayed
 
 MetricFunction = typing.Callable[[typing.Iterable, typing.Iterable], float]
 
@@ -26,28 +27,35 @@ def get_transformed_results(result: Result):
     y_pred_a, y_pred_b = trans_enc.transform(y_pred_a), trans_enc.transform(y_pred_b)
     return np.array(y_true), np.array(y_pred_a), np.array(y_pred_b)
 
+def _get_shuffled_array(indices_, y_true, y_pred_a, y_pred_b, to_compare=0):
+    other_to_compare = (to_compare + 1) % 2
+    y_shuffled = np.empty(len(y_true), dtype=y_true.dtype)
+    y_shuffled[indices_ == to_compare] = y_pred_a[indices_ == to_compare]
+    y_shuffled[indices_ == other_to_compare] = y_pred_b[indices_ == other_to_compare]
+    return y_shuffled
 
-def randomization_test(y_true: typing.Iterable, y_pred_a: typing.Iterable, y_pred_b: typing.Iterable, metric: MetricFunction=sklearn.metrics.f1_score, num_trails:int=1000):
+def _get_permutated_result(y_true, y_pred_a, y_pred_b, metric):
+    # Generate a array with random 0s and 1s
+    # 0 means that the value at that index gets taken from y_pred_a, 1 means y_pred_b
+    indices = np.random.randint(0, 2, size=len(y_true))
+    # Pick an element either from y_pred_a or y_pred_b (= interchange them), depending on the value of the indices array
+    y_shuffled_a, y_shuffled_b = _get_shuffled_array(indices, y_true, y_pred_a, y_pred_b, to_compare=0), _get_shuffled_array(indices, y_true, y_pred_a, y_pred_b, to_compare=1)
+    # Calculate metric for both models (with interchanged elements)
+    metric_a, metric_b = metric(y_true, y_shuffled_a), metric(y_true, y_shuffled_b)
+    return metric_a, metric_b
+
+
+def randomization_test(y_true: typing.Iterable, y_pred_a: typing.Iterable, y_pred_b: typing.Iterable, metric: MetricFunction=f1, num_trails:int=1000, n_jobs: int=1, one_tail: bool=True):
     y_true, y_pred_a, y_pred_b = np.array(y_true), np.array(y_pred_a), np.array(y_pred_b)
-    metrics_ = np.empty((num_trails, 2), dtype=np.float64)
 
-    def get_shuffled_array(indices_, to_compare=0):
-        other_to_compare = (to_compare + 1) % 2
-        y_shuffled = np.empty(len(y_true), dtype=y_true.dtype)
-        y_shuffled[indices_ == to_compare] = y_pred_a[indices_ == to_compare]
-        y_shuffled[indices_ == other_to_compare] = y_pred_b[indices_ == other_to_compare]
-        return y_shuffled
-
-    for i in range(num_trails):
-        # Generate a array with random 0s and 1s
-        # 0 means that the value at that index gets taken from y_pred_a, 1 means y_pred_b
-        indices = np.random.randint(0, 2, size=len(y_true))
-        # Pick an element either from y_pred_a or y_pred_b (= interchange them), depending on the value of the indices array
-        y_shuffled_a, y_shuffled_b = get_shuffled_array(indices, to_compare=0), get_shuffled_array(indices, to_compare=1)
-        # Calculate metric for both models (with interchanged elements)
-        metric_a, metric_b = metric(y_true, y_shuffled_a), metric(y_true, y_shuffled_b)
-        metrics_[i, :] = [metric_a, metric_b]
-    return metrics_
+    results = Parallel(n_jobs=n_jobs)(delayed(_get_permutated_result)(y_true, y_pred_a, y_pred_b, metric) for i in range(num_trails))
+    metrics_ = np.array(results, dtype=np.float64)
+    diffs = metrics_[:, 0] - metrics_[:, 1]
+    score_a = metric(y_true, y_pred_a)
+    score_b = metric(y_true, y_pred_b)
+    global_difference = score_a - score_b
+    confidence = get_confidence(diff_global=global_difference, diffs=diffs, num_trails=num_trails, one_tail=one_tail)
+    return diffs, score_a, score_b, global_difference, confidence
 
 
 def get_confidence(diff_global: float, diffs: typing.Iterable, num_trails: int, one_tail: bool=True):

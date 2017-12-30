@@ -108,16 +108,9 @@ def get_task_text(dataset_name: str) -> ExperimentTask:
 def get_task_combined(graph_cache_file: str) -> ExperimentTask:
     def process() -> tuple:
         X, Y = graph_helper.get_combined_text_graph_dataset(graph_cache_file)
-
-        graphs = [g for (g, _, _) in X]
-        graph_helper.convert_graphs_to_adjs_tuples(graphs)
-        num_vertices = task_helper.get_num_vertices(graphs)
-
         X = [(graph, text) for (graph, text, _) in X]
 
         estimator, params = graph_pipeline.get_combined_params(text_reduced=True)
-        graph_pipeline.add_num_vertices_to_fast_wl_params(params, num_vertices=num_vertices)
-        params = dict(params, **dict(classifier__C=[1e-3, 1e-2, 1e-1, 1]))
         return ClassificationData(X, Y, estimator, params)
 
     return ExperimentTask('graph_combined', get_filename_only(graph_cache_file), process)

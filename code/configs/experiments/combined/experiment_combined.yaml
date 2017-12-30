@@ -1,20 +1,10 @@
 params_per_type:
-  dummy_most_frequent:
-    classifier:
-      strategy:
-      - most_frequent
   graph:
     feature_extraction:
-      fast_wl:
-        h:
-        - 10
-        node_weight_function:
-        - ~
       phi_picker:
         return_iteration:
         - stacked
         use_zeroth:
-        - false
         - true
     normalizer:
     - MaxAbsScaler
@@ -42,23 +32,9 @@ params_per_type:
       fast_wl_pipeline:
         feature_extraction:
           feature_extraction:
-            fast_wl:
-              h:
-              - 10
-              node_weight_function:
-              - ~
-              round_to_decimals:
-              - 10
-              use_directed:
-              - true
             phi_picker:
-              return_iteration:
-              - stacked
               use_zeroth:
-              - false
               - true
-          normalizer:
-          - MaxAbsScaler
       text:
         vectorizer:
           preprocessing:

@@ -13,20 +13,8 @@ params_per_type:
             add_self_links:
             - false
           feature_extraction:
-            fast_wl:
-              h:
-              - 10
-              node_weight_function:
-              - ~
-              round_to_decimals:
-              - 10
-              use_directed:
-              - true
             phi_picker:
-              return_iteration:
-              - stacked
               use_zeroth:
-              - false
               - true
           normalizer:
           - MaxAbsScaler

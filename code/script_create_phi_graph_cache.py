@@ -25,7 +25,7 @@ def get_args():
     parser = argparse.ArgumentParser(description='Create phi cache')
     parser.add_argument('--n_jobs', type=int, default=1)
     parser.add_argument('--wl_h', type=int, default=6)
-    parser.add_argument('--wl_sort_classes', action='store_true')
+    parser.add_argument('--wl_sort_classes', action='store_true', default=True)
     parser.add_argument('--force', action='store_true')
     parser.add_argument('--disable_wl', action='store_true')
     parser.add_argument('--disable_spgk', action='store_true')

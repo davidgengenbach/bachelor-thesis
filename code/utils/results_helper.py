@@ -86,6 +86,7 @@ def get_kernel_from_filename(filename: str) -> str:
 
 
 def get_results(folder=None, use_already_loaded=False, results_directory=RESULTS_DIR, log_progress=tqdm.tqdm_notebook, exclude_filter=None, include_filter=None, filter_out_non_complete_datasets=4, remove_split_cols=True, remove_rank_cols=True, remove_fit_time_cols=True, filter_out_experiment=None, ignore_experiments=True, only_load_dataset=None, fetch_predictions=False):
+    '''This function _seriously_ has to be refactored!'''
     global _DF_ALL, _RESULT_CACHE
 
     if not use_already_loaded:
@@ -155,6 +156,7 @@ def get_results(folder=None, use_already_loaded=False, results_directory=RESULTS
                 scores = get_scores(Y_real, Y_pred)
                 for name, val in scores.items():
                     result['prediction_score_{}'.format(name)] = [val] * num_results
+                result['prediction_file'] = [prediction_file] * num_results
 
 
         is_graph_dataset = '_graph__dataset' in result_file or 'graph_combined__dataset' in result_file or '__graph_node_weights__dataset_' in result_file or 'graph_cooccurrence' in result_file or '__graph_structure_only__' in result_file or '_graph_relabel' in result_file or '__graph_content_only__' in result_file
@@ -200,7 +202,14 @@ def get_results(folder=None, use_already_loaded=False, results_directory=RESULTS
             dataset_name = dataset_name.rsplit('-', 1)[0]
 
         if 'time_checkpoints' in result_data:
-            result['timestamps'] = [result_data['time_checkpoints']] * num_results
+            timestamps = result_data['time_checkpoints']
+            timestamps = sorted(timestamps.items(), key=lambda x: x[1])
+
+            start = timestamps[0][1]
+            end = timestamps[-1][1]
+
+            result['timestamps'] = [timestamps] * num_results
+            result['time'] = [end - start] * num_results
 
         result['filename'] = result_file
         result['dataset'] = dataset_name
@@ -277,6 +286,10 @@ def get_result_for_prediction(prediction_filename):
 
     with open(results_filename, 'rb') as f:
         return pickle.load(f)
+
+def get_prediction(filename):
+    print(filename)
+
 
 
 def get_predictions_files(folder: str = None):
@@ -359,6 +372,35 @@ def save_results(gscv_result, filename, info=None, remove_coefs=True, time_check
         results=gscv_result,
         time_checkpoints=time_checkpoints
     ))
+
+
+def calculate_significance(prediction_file_a, prediction_file_b, n_jobs=5, num_trails=5000, one_tail=False):
+    models = []
+    for idx, file in enumerate([prediction_file_a, prediction_file_b]):
+        if not os.path.exists(file):
+            raise FileNotFoundError('Not found: {}'.format(file))
+
+        with open(file, 'rb') as f:
+            predictions = pickle.load(f)
+
+        res = predictions['results']
+        Y_real, Y_pred, Y_test = [res[x] for x in ('Y_real', 'Y_pred', 'X_test')]
+        models.append(dict(
+            Y_real=Y_real,
+            Y_pred=Y_pred,
+            Y_test=Y_test
+        ))
+
+    model_a, model_b = models
+
+    if not np.array_equal(model_a['Y_real'], model_b['Y_real']):
+        raise Exception('Invalid models to compare: the Y_real labels must be the same for both labels!')
+
+    Y_real = model_a['Y_real']
+
+    test_result = significance_test_utils.randomization_test(y_true=Y_real, y_pred_a=models[0]['Y_pred'], y_pred_b=models[1]['Y_pred'], num_trails=num_trails, n_jobs=n_jobs, one_tail=one_tail)
+    diffs, score_a, score_b, global_difference, confidence = test_result
+    return test_result
 
 
 def dump_pickle_file(args, filename: str, data: dict, add_meta: bool = True):
