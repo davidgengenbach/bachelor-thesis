@@ -25,13 +25,12 @@ def get_args():
     parser = argparse.ArgumentParser(description='Create phi cache')
     parser.add_argument('--n_jobs', type=int, default=1)
     parser.add_argument('--wl_h', type=int, default=6)
-    parser.add_argument('--max_path_distance_to_add', type=int, default=2)
     parser.add_argument('--wl_sort_classes', action='store_true')
     parser.add_argument('--force', action='store_true')
     parser.add_argument('--disable_wl', action='store_true')
     parser.add_argument('--disable_spgk', action='store_true')
     parser.add_argument('--disable_simple_set_matching_kernel', action='store_true')
-    parser.add_argument('--disable_relabeling', action='store_true')
+    parser.add_argument('--wl_disable_relabeling', action='store_true')
     parser.add_argument('--limit_dataset', nargs='+', type=str, default=None)
     parser.add_argument('--spgk_depth', nargs='+', type=int, default=[1])
     parser.add_argument('--lookup_path', type=str, default='data/embeddings/graph-embeddings')
@@ -64,7 +63,7 @@ def process_graph_cache_file(graph_cache_file, args):
     label_lookup_files = glob('{}/{}.*.label-lookup.npy'.format(args.lookup_path, dataset))
 
     tuple_trans = NxGraphToTupleTransformer()
-    fast_wl_trans = FastWLGraphKernelTransformer(h=args.wl_h, use_early_stopping=False)
+    fast_wl_trans = FastWLGraphKernelTransformer(h=args.wl_h, use_early_stopping=False, truncate_to_highest_label=False)
 
     try:
         phi_graph_cache_file = graph_cache_file.replace('.npy', '.phi.npy')
@@ -123,7 +122,7 @@ def process_graph_cache_file(graph_cache_file, args):
                     pickle.dump((phi_train, phi_test, X_train, X_test, Y_train, Y_test), f)
 
             # With relabeling
-            if not args.disable_relabeling:
+            if not args.wl_disable_relabeling:
                 for label_lookup_file in label_lookup_files:
                     threshold = '.'.join(label_lookup_file.split('threshold-')[1].split('.')[:2])
                     topn = label_lookup_file.split('topn-')[1].split('.')[0]

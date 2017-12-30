@@ -137,9 +137,13 @@ def replace_placeholders(param_grid, placeholder_list=PLACEHOLDER_LIST):
 
 def get_all_param_grid_config_files(folder=constants.EXPERIMENT_CONFIG_FOLDER):
     out = {}
-    for file in glob('{}/*.yaml'.format(folder)):
+    for file in glob('{}/**/*.yaml'.format(folder), recursive=True):
         out[file] = get_experiment_config(file)
     return out
+
+def get_all_experiment_names():
+    experiments_names = [x.split('/')[-1].rsplit('.', 1)[0] for x in get_all_param_grid_config_files().keys() if not x.endswith('all.yaml')]
+    return experiments_names
 
 
 def get_experiment_config_for(experiment_name:str, folder=constants.EXPERIMENT_CONFIG_FOLDER):

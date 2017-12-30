@@ -96,7 +96,6 @@ def get_results(folder=None, use_already_loaded=False, results_directory=RESULTS
 
     folder = 'data/results/{}'.format(folder) if folder else result_folders[-1]
 
-    # Get all result files (pickled)
     result_files = get_result_filenames_from_folder(folder)
     if filter_out_experiment:
         result_files = [x for x in result_files if 'result___{}'.format(filter_out_experiment) in x]
@@ -213,8 +212,10 @@ def get_results(folder=None, use_already_loaded=False, results_directory=RESULTS
     for d in data_:
         result_df = pd.DataFrame(d)
         _DF_ALL = result_df if _DF_ALL is None else _DF_ALL.append(result_df)
-    assert _DF_ALL is not None
-    assert len(_DF_ALL)
+
+    if _DF_ALL is None or not len(_DF_ALL):
+        LOGGER.warning('Did not retrieve results! Aborting')
+        return None
 
     if filter_out_non_complete_datasets:
         # Only keep datasets where there are all three types (text, co-occurrence and concept-graph) of results
