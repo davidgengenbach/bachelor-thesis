@@ -35,7 +35,8 @@ class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Tran
             same_label: bool = False,
             use_directed: bool = True,
             truncate_to_highest_label: bool = True,
-            norm: str = None
+            norm: str = None,
+            use_cached: bool = False
     ):
         self.h = h
         self.phi_dim = phi_dim
@@ -48,6 +49,7 @@ class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Tran
         self.use_directed = use_directed
         self.truncate_to_highest_label = truncate_to_highest_label
         self.norm = norm
+        self.use_cached = use_cached
 
     def fit(self, X, y=None, **fit_params):
         assert len(X)
@@ -82,8 +84,8 @@ class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Tran
         X, node_weight_factors = _retrieve_node_weights_and_convert_graphs(X, node_weight_function=self.node_weight_function, same_label=self.same_label, use_directed=self.use_directed)
 
         # Use already computed phi_list if the given X is the same as in fit()
-        #if self.hashed_x == hash_dataset(X):
-        #    return self.phi_list
+        if self.use_cached and self.hashed_x == hash_dataset(X):
+            return self.phi_list
 
         # Use early stopping
         h = min(len(self.phi_list) - 1, self.h)

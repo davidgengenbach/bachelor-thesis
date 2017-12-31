@@ -27,11 +27,22 @@ def spgk(sp_g1, sp_g2, norm1, norm2):
 
 
 def transform(graphs, depth):
+    graphs = np.copy(graphs)
+    # "Repair" graph (remove self-loops and set weight of all edges to 1)
+    for x in graphs:
+        for u, v, edata in x.edges(data=True):
+            if 'weight' not in edata:
+                continue
+            edata['weight'] = 1
+        self_loop_edges = x.selfloop_edges()
+        if len(self_loop_edges):
+            x.remove_edges_from(self_loop_edges)
+
     sp = []
     norm = []
 
     for g in graphs:
-        current_sp = nx.all_pairs_dijkstra_path_length(g, cutoff=depth, weight = 'NO_WEIGHT_USED')
+        current_sp = nx.all_pairs_dijkstra_path_length(g, cutoff=depth, weight='NO_WEIGHT_USED')
         sp.append(current_sp)
 
         sp_g = nx.Graph()

@@ -142,9 +142,6 @@ def transform(
         for idx, (labels, adjacency_matrix) in enumerate(zip(graph_labels, adjacency_matrices)):
             # ... generate the signatures (see paper) for each graph
             signatures = np.around((labels + adjacency_matrix * log_primes[labels]), round_signatures_to_decimals).astype(np.float64)
-            print(i, idx, labels, signatures)
-            print(adjacency_matrix.todense())
-            print()
             if ignore_label_order:
                 signatures -= (labels * rounding_factor)
 

@@ -1,6 +1,4 @@
-\todo{Explain text classification task and its real world importance}
 \todo{Clearly state problem}
-\todo{Give a motivating example for the task}
 \todo{Explain difficulties of the task}
 \todo{Explain the research question and how it relates to the field}
 \todo{Hint how the presented approach is an improvement over the old approach}
@@ -8,9 +6,10 @@
 \todo{Introduce earlier approaches/results and their weaknesses}
 \todo{Outlook}
 
-%\labelsection{Motivation}{subsec:motivation}
-
 \paragraph{Text Classification}
+The need for automatic text classification appears in many fields as the number of digitally available texts grows daily.
+Especially text content created by a ever-growing number of users make manual classification infeasible if not impossible.
+
 \todo{Text classification is important. Why?}
 \todo{Applications?}
 \todo{``text analysis, text categorization, information extraction,  and summarization"}
@@ -20,10 +19,10 @@
 Trees, sequences, networks and other graphs occur in a lot of contexts.
 Because of their structured nature, graphs are perfect candidates to capture connected data, or datapoints with relations between them.
 Yet, operating on graphs is often challenging, precisely because of its structured and often non-linear nature.
-Graphs are often of non-fixed size and its structures can vary greatly.
-That said, finding ways to automatically process graphs becomes more important as graphs, as mentioned before, naturally appear in many fields.
-\todo{Especially graph classification, classification on/of graphs.}
-Applications of graph classification can range from classifying the toxicity of molecules to predicting friends for users in a social network.
+Graphs are often of non-fixed size and its structure can vary greatly.
+That said, finding ways to automatically process graphs becomes more important as graphs naturally appear in many fields.
+Especially the automatic classification of graphs has interesting applications.
+Applications of graph classification range from classifying the toxicity of molecules to predicting friends for users in a social network.
 In Table \ref{table:graph_classification_examples} we gathered some example applications of graph classification.
 
 \begin{table}[htb!]
@@ -41,11 +40,10 @@ Social Networks & Users & Are Friends & Bot Detection (binary) \\
 \label{table:graph_classification_examples}
 \end{table}
 
-As we will see later on, the graph classification task is also related to the task of finding similar graphs for a given graph.
 In Section \ref{subsec:graphs} we will introduce graphs more throughly.
 
 \labelsection{Hypothesis and Goals}{subsec:hypothesis_and_goals}
-In this work, we evaluate the usefulness of graph representations of text in the context of text classification. In particular, we work out how or whether the structure of so-called concept maps could be leveraged  to improve text-based classification performance.
+In this work, we evaluate the usefulness of graph representations of text in the context of text classification. In particular, we work out how or whether we can harness the structure of so-called concept maps to improve text-based classification performance.
 The main hypothesis of this work is:
 \begin{quote}
 \hypothesis
@@ -57,7 +55,7 @@ There are partial solutions for this issue, for instance by augmenting single-wo
 N-grams are sequences of length $n$ of consecutive words in the text, therefore they can capture word dependency and word order.
 Text-based approaches are widely used and achieve high performance both in compute time and classification scores.
 
-In this work, we explore how concept maps, and other graph representations like co-occurrence graphs, could improve these text-based classification.
+As a possible solution to issues with text-based classification, we explore how concept maps, and other graph representations like co-occurrence graphs, could improve text-based classification.
 We choose concept maps as the preferred graph representation since they are specially created to capture important concepts and their relation to each other, therefore maybe also capturing the semantic of its underlying text.
 In the next sections, we will further explain graph representations for text and why they could be a viable addition to the toolbox in text classification.
 
