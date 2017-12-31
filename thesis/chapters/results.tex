@@ -388,33 +388,40 @@ With directed edges, on the other hand, the neighbors $n_v$ of a node $v$ are on
 So, the size of neighborhoods per node are expected to decrease, since there is an additional constraint to what constitutes a neighbor.
 
 In Table \ref{table:results_directed_vs_undirected} we see the results of using WL with directed and un-directed edges.
-In all datasets, apart from the \textit{ng20} dataset, the directed edges outperform the un-directed approach.
+For all datasets, the directed edges outperform the un-directed ones.
 
 \begin{table}[htb!]
 	\centering
-\begin{tabular}{lrrr}
-	dataset &  un-directed & directed &  difference \\
+\begin{tabular}{lrr}
+	 &  un-directed & directed \\
 	\midrule
-	ling-spam       &  0.6793 &  \textbf{0.7661} &  0.0867 \\
-	ng20            &  \textbf{0.3923} &  0.3728 & -0.0195 \\
-	nyt\_80          &  0.5713 &  \textbf{0.6489} &  0.0776 \\
-	r8              &  0.4240 &  \textbf{0.5445} &  0.1206 \\
-	review\_polarity &  0.5135 & \textbf{ 0.5736 }&  0.0601 \\
-	rotten\_imdb     &  0.5274 &  \textbf{0.5484} &  0.0210 \\
-	tagmynews       &  0.3426 &  \textbf{0.3803} &  0.0377 \\
-	ted\_talks       &  0.1399 &  \textbf{0.1790} &  0.0391 \\
+ling-spam       & 0.748 & 0.816 \\
+ng20            & 0.416 & 0.419 \\
+nyt\_200         & 0.743 & 0.744 \\
+r8              & 0.576 & 0.677 \\
+review\_polarity & 0.581 & 0.609 \\
+rotten\_imdb     & 0.633 & 0.635 \\
+ted\_talks       & 0.219 & 0.244 \\
 	\bottomrule
 \end{tabular}
 \caption[Results: WL with directed and un-directed edges]{Classification results when using directed versus un-directed edges with WL.}\label{table:results_directed_vs_undirected}
 \end{table}
 
 This is most likely due to the aforementioned property that the neighborhoods are smaller with directed edges, making exact matches of neighborhoods more probable.
-Note that using directed edges in WL could be compared with using n-grams: when the order of words/nodes is fixed in one direction, vertices with no outgoing edges do not have a neighborhood. Thus they are, for all WL iterations, considered to be the same label, ie. they get no new color assigned.
+\iffalse
+Note that using directed edges in WL could be compared with using n-grams since they also are directed.
+Instead of word n-grams these are concept n-grams, consisting of three components, the two sink and target vertex labels plus the edge label between them.
+For bigger WL iterations, these concept 3-grams then capture longer $n$-grams and so on.
+\fi
+When the order of words/nodes is fixed in one direction, vertices with no outgoing edges do not have a neighborhood. Thus they are, for all WL iterations, considered to be the same label, ie. they get no new color assigned.
+
+As a result of these better classification results with directed edges, we will use the directed version of WL.
 Later on, we will also evaluate whether or how using (un-) directed edges affects the score when combining graph and text features.
 
+
 \answersummary{
- 	Using directed instead of un-directed edges most often results in significantly better performance when using the WL graph kernel.
- 	A possible explanation for this better performance using directed edges is that neighborhood matches are far more easier since the neighborhood of a vertex is only defined through its outgoing edges, not the in-going as well.
+ 	Using directed instead of un-directed edges results in significantly better performance with the WL graph kernel.
+ 	A possible explanation for this better performance is that neighborhood matches are far easier since the neighborhood of a vertex is only defined through its outgoing edges, and not the in-going as well.
  	The smaller neighborhood in turn makes exact matches of neighborhoods in different graphs more probable.
 }
 
@@ -422,6 +429,9 @@ Later on, we will also evaluate whether or how using (un-) directed edges affect
 In most datasets, longer texts often result in higher classification performance.
 So, an interesting question is whether the size of a concept map also correlates with its classification performance, ie. whether ``bigger" graphs in terms of the number of nodes and edges are easier to classify.
 To test this, we classify the graphs with our standard approach, using the Weisfeiler-Lehman graph kernel, then a SVM to classify the feature maps.
+For text, we extract the features with Tfidf-BoW, then also classify the features with a SVM.
+
+\iffalse
 In the next step, we look at the results for different graph sizes, binning them with quantiles, in our case 10 quantiles, or deciles.
 
 \begin{figure}[htb!]
@@ -436,19 +446,52 @@ In the next step, we look at the results for different graph sizes, binning them
 	\caption[Statistics: Histogram of classification performance per graph/text size]{Classification performance per graph/text size. The x-axis corresponds to the size of the graph/text, the y-axis for the classification performance for graphs/text of that size. Dataset: \textit{ng20}}\label{fig:graph_size_performance}
 \end{figure}
 
-In Figure \ref{fig:graph_size_performance} we see an example for the \textit{ng20} dataset where we binned the different graph and text sizes and report the classification scores of documents with these sizes.
-For this dataset, the results indicate that classification performance indeed correlates with the number of nodes of the concept map.
-In other datasets, this correlation is not as distinguished.
 
+In Figure \ref{fig:graph_size_performance} we see an example for the \textit{ng20} dataset where we binned the different graph and text sizes and report the classification scores of documents with these sizes.
+For the \textit{ng20} dataset, the results indicate that classification performance indeed correlates with the number of vertices.
+In other datasets, this correlation is not as distinguished.
+\fi
+
+In Table \ref{table:correlations_size} we report the Spearman rank correlations \cite{Hauke2011} between the accuracy, ie. whether the label for the document/graph was predicted right, and the size of the document/graph.
+Here, we also see a (weak) correlation for the graph sizes in some datasets.
+In the \textit{ling-spam} and \textit{ng20} dataset, the accuracy correlates far more with the document/graph size than in other datasets.
+It has to be noted that there is no partial similarity in accuracy, only 1 if the label was predicted right and 0 otherweise
+This might also explain that the relatively low correlation between the graph/document size and the accuracy, even in \textit{ng20}.
+
+These results also show the difference between our datasets: one observation for a dataset might not be consistent with observations from another dataset, eg. for our results the correlations are sometimes weak, sometimes practically not present at all.
+
+We also tested other metrics to find correlations, for instance the number of edges or the number of connected components, yet we could not see relevant correlations.
+
+\begin{table}[htb!]
+	\centering
+	\begin{tabular}{lrr}
+		&  \multicolumn{2}{c}{Spearman correlation} \\
+		&  Graph &  Text \\
+		\midrule
+		ling-spam       &  0.2135 &  0.1490 \\
+		ng20            &  0.2699 &  0.2415 \\
+		nyt\_200         & -0.1986 &  0.0077 \\
+		r8              & -0.0212 & -0.0499 \\
+		review\_polarity & -0.0311 & -0.0286 \\
+		rotten\_imdb     &  0.1680 &  0.0313 \\
+		ted\_talks       & -0.0232 & -0.0991 \\
+		\bottomrule
+	\end{tabular}
+	\caption[Table: Graph/text size correlations]{Spearman rank correlations between the accuracy and graph/text size. Graph size is the number of nodes in the graph, text size the number of words. The higher the absolute value of the Spearman correlation is to 1, the higher the correlation.
+	A positive correlation value between A and B means that if A increases, B also increases and vice versa.
+	A negative correlation means that when A increases, B decreases and vice versa.}%
+	\label{table:correlations_size}
+\end{table}
 
 \answersummary{
-	TODO
+	In some datasets, we see a correlation between the size of graph/documents and the prediction accuracy.
+	For other datasets, this correlation can not be measured distinctly.
+	Other metrics besides the document/graph size have been tested, yet not clear correlation could be found, also.
 }
 
-
 \subquestionref{question:comparison_combined}
-As we have seen in the results of the last section, text-based approaches outperform graph-only approaches.
 In this section we investigate how and whether the graph-based approaches improve the classification score when combined with text-based approaches.
+This is arguably the most interesting question since it will show the usefulness of concept maps in text classification.
 
 For the text features we vectorized the text with a bag-of-words approach. We also tried features with tfidf.
 For the graph features we used the Weisfeiler-Lehman algorithm since it is able to create feature map $\phi(G)$ for the graphs.
@@ -544,7 +587,7 @@ webkb
 \end{table}
 
 \answersummary{
-	TODO	
+	When combining the graph- and text features we do not achieve no significantly higher classification scores or even observe a degradation.
 }
 
 \subquestionref{question:comparison_runtime}
@@ -556,8 +599,8 @@ For \textbf{graphs}, we vectorize the graphs with the plain Weisfeiler-Lehman gr
 For both the text- and graph approach, we then train a SVM on the whole dataset, then predict the labels for the whole dataset. Afterwards we save the models, ie. the internal coefficients of the SVM, and record the size of the saved model.
 We also record the runtime of both approaches.
 
-As we can see, the graph kernel creates higher dimensional feature vectors for the objects than the text-based approach, ie. BoW. 
-This observation both give possible explanations for both the higher classifier model size and the run-time. Since not only does the 
+As we can see, the graph kernel creates higher dimensional feature vectors for the objects than the text-based BoW approach. 
+This observation both give possible explanations for both the higher classifier model size and the run-time.
 
 Note, that the reported runtime and memory consumption for the graph-based pipeline does not incorporate the creation of the concept maps, only the creation of the feature maps and subsequent training/prediction.
 The creation of concept maps from text with the code provided in \cite{Falke2017b} takes well over a day for our datasets.
@@ -595,13 +638,59 @@ ted\_talks       & 17 & 3 & 2 & 2 & 1 & 2 & 254 & 34 \\
 \answersummary{
 	Graph-based classification using WL incurs both	a runtime and memory consumption overhead to text-based classification.
 	One explanation for both the higher memory consumption and runtime is the higher dimensionality of the feature vectors created by WL.
-	Applying dimensionality reduction might be a solution to circumvent these issues, yet it has to be noted that the feature vectors are very sparse, thus \textit{PCA} is not an option.
+	Applying dimensionality reduction might be a solution to circumvent these issues, yet it has to be noted that the feature vectors are very sparse and are most likely not normalized, so \textit{PCA} is not an option.
 	The creation of concept maps from text also incurs a high runtime and memory consumption overhead.
 }
 
 \labelsubsection{Summary}{subsec:results_summary}
-\todo{Progression of first: analysis, then results}
+As we have observed in several of the answers, transforming the text classification task into graph classification and using concept maps is possible.
+While we see near state-to-the-art performance with the graph-based approaches, the graph-only performance still lags behind text-only performance as we have seen in the results of Question \ref{question:comparison_text}.
+We provided possible explanations in Question \ref{question:structure_diversity}, for example the low connectivity and the high compression factor of concept maps to name just a few.
+
+Questions \ref{question:importance_structure}, \ref{question:multi_labels}, \ref{question:edge_labels}, \ref{question:infrequent_nodelabels}, \ref{question:relabeling_infrequent} and  \ref{question:directed_vs_undirected} all contain approaches to improve the graph-only performance and create more meaningful graph features.
+While we, as said before, came close to the classification performance of the text-only approach, there most likely is only so much one can do to improve the classificatio score of concept maps.
+In some of these questions, we explored the particularities of concept maps, namely (1) the multi-word node labels, (2) the directed edges and (3) the edge labels.
+
+For (1), we tried splitting the multi-word concepts of the concept maps into single-word nodes.
+This resulted in a high increase in classification score.
+This was done in \ref{question:multi_labels}.
+
+In Question \ref{question:importance_structure}, we also split the multi-word concepts. We linearized the graph into text again, un-rolling the edges into sentences. Afterwards we used conventional, text-based approaches like BoW to classify the resulting text.
+This approach resulted in the best classification performance we achieved using the concept maps, except when combining the graph features with text features.
+This observation alludes to the explanation that the structure of concept maps is either not that important for classification or the structure could not be captured usefully using the graph-based approaches we tried.
+
+For (2), the directed edges, we compared the classification results of both directed and un-directed version of the concept maps.
+Using the directed edges outperformed the un-directed edges consistently and by a high margin.
+We also provided a possible explanation, namely that the neighborhood of a node are far smaller when using directed edges.
+Smaller neighborhoods in turn increase the likelihood for matched neighborhoods.
+
+For (3), the edge labels, in Question \ref{question:edge_labels} we first analyzed the distribution of occurrences of edge labels. Here, we observed that most edge labels occur either only once or very often.
+The top edge labels, ie. the edge labels which had the most occurrences in the concept maps of a dataset, were almost exclusively non-topic related words, like ``are" or ``is".
+Next, we linearized the concept map into text with (a) all words and (b) no edge labels.
+Finally, we used a Tfidf-BoW to create features and classify them.
+Using or omitting the edge labels resulted in nearly the performance, hinting to the observation that edge labels are not as important for the graph-based approach.
+
+Finally, for the last Question \ref{question:comparison_runtime}, we report the classification times and classifier model size of our graph- and text based approaches.
+Here, we observe that the runtime for our graph-based approaches is higher than that for the conventional text-based classification.
+We also saw the additional overhead produced by the need to generate the concept maps from the text.
+
+One thing to note, and this is common to all the questions and observations in this work, is that we evaluated our questions on multiple datasets. Often times, the observations differed quite heavily from dataset to dataset.
+For instance, the performance of one approach might show great improvement over another on one dataset, while showing a low performance on another dataset. 
+Especially when trying to find correlations and explanations for the performance of our approaches, the differing datasets proved to harden the task.
+This further highlights the importance of using model selection.
+Arguably more than in other domains,  graph-kernel based classification performance relies heavily on the used graphs, structure and particularities of the domain.
+We evaluated several other graph kernels, for instance shortest-path- or random-walk based graph kernels, and observed poorer performance than with our default graph kernel, Weisfeiler-Lehman.
+Yet, even the Weisfeiler-Lehman kernel with our extensions and several graph pre-processing approaches, we did not outperform the linearized graph approach, ie. where we un-roll the concept map into text then use a conventional BoW-based approach.
+A possible explanation for this observation is, that the concept maps are generated from the text by extracting multi-word concepts and their relation to each other from the text.
+In order for this approach to create structurally interesting concept maps, concepts have to occur multiple times.
+If that is not the case, that is when the concepts occur only once, the resulting concept maps consist of a number of connected components which contain only two nodes and one edge.
+These two-node connected components are like tri-grams, with multi-concepts and edge label instead of single-words.
+This structure is not particularly interesting.
+
+In the next Section \ref{sec:conclusions} we will further summarize our results and provide some approaches we have not tried yet which could further improve the classification scores.
+
 \todo{Mention pros/cons of graph based classification}
+\todo{Mention that the questions have not been answered in that order}
 
 \labelsection{Related And Intermediate Observations}{subsec:related_and_intermediate_observation}
 In this section we report observations which are not directly related to our questions or hypothesis, yet they nevertheless have provided us more insights into our analysis.

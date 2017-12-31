@@ -368,9 +368,9 @@ When comparing two models we use the permutation test \cite{Fisher1925}, or exac
 The permutation test tests whether the observed difference of the performances of the two approaches is a result of chance or really signifies a more fundamental difference without assuming an underlying distribution of the differences that can be observed.
 The test only returns a probability for observing a given performance difference. The test does not give a definite answer whether the difference was due to chance.
 When the probability of observing the difference by chance is below a given threshold, the confidence $p$, we say that the test indicates that the approaches significantly differ in their performance.
-For our purposes, ie. to test whether one classification approach is a significant improvement over another approach, we use the one-tailed version \cite{Kock2015} of the permutation test.
+For our purposes, ie. to test whether one classification approach is a significant improvement over another approach, we use the two-tailed version \cite{Kock2015} of the permutation test.
 We also provide the $p$ value for our tests.
-We say that a model is significantly better when the observed performance difference has a confidence $p < 0.05$.
+We say that a model is significantly better when the observed performance difference has a confidence of $p < 0.05$.
 
 \paragraph{Example}
 In this example we will use the two-tailed permutation test to test whether the 
