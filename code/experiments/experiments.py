@@ -36,7 +36,7 @@ def get_tasks() -> typing.List[ExperimentTask]:
     tasks += task_helper.get_tasks(graph_task_fns, graph_cache_files)
     tasks += task_helper.get_tasks([get_task_dummy, get_task_text], datasets)
     tasks += task_helper.get_tasks([get_gram_task], gram_cache_files)
-    tasks += task_helper.get_tasks([get_task_extra_graphs], ['MUTAG'])
+    tasks += task_helper.get_tasks([get_task_extra_graphs], graph_helper.get_all_graph_benchmark_dataset_names())
     return tasks
 
 

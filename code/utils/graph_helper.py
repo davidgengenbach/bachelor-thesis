@@ -360,18 +360,10 @@ def get_graphs_only(X) -> list:
 
 
 def get_mutag_enzyme_graphs(dataset='MUTAG', as_adj=True):
-    import scipy
-    import scipy.sparse
-
-    data = np.load('tests/data/{}.npz'.format(dataset))
-    A = scipy.sparse.csc_matrix((data['adj_data'], data['adj_indice'], data['adj_indptr']), shape=data['adj_shape'])
-    gr_id = data['graph_ind']  # n x 1 graph id array
-    node_label = data['responses']  # n x 1 node label array
-    graph_label = data['labels']  # N x 1 graph label array
-
+    A, gr_id, graph_label, node_label = get_graph_benchmark_dataset(dataset)
     graph_2_idx = collections.defaultdict(list)
     for idx, x in enumerate(gr_id):
-        graph_2_idx[int(x[0])].append(idx)
+        graph_2_idx[x].append(idx)
 
     for graph, idxs in graph_2_idx.items():
         assert list(sorted(idxs)) == idxs
@@ -380,17 +372,67 @@ def get_mutag_enzyme_graphs(dataset='MUTAG', as_adj=True):
 
     X, Y = [], []
     for idx, (graph, (min_, max_)) in enumerate(sorted(graph_2_idx.items(), key=lambda x: x[0])):
-        assert idx == graph - 1
+        assert idx == graph
         adj = A[min_:max_ + 1, min_:max_ + 1]
-        labels = node_label[min_:max_ + 1,0]
+        labels = node_label[min_:max_ + 1]
 
         x = (adj, labels)
         X.append(x)
 
-        y = graph_label[idx][0]
+        y = graph_label[idx]
         Y.append(y)
 
     if not as_adj:
         X = convert_adjs_tuples_to_graphs(X)
 
     return X, Y
+
+
+def get_graph_benchmark_dataset(dataset, folder='data/graph_only'):
+    import scipy
+    import scipy.sparse
+
+    folder = '{}/{}'.format(folder, dataset)
+    assert os.path.exists(folder)
+
+    def get_file(x):
+        return '{}/{}_{}'.format(folder, dataset, x)
+
+    files = {}
+    for name, file in [('A', 'A.txt'), ('graph_indicator', 'graph_indicator.txt'), ('graph_labels', 'graph_labels.txt'), ('node_attributes', 'node_attributes.txt'), ('node_labels', 'node_labels.txt')]:
+        file = get_file(file)
+        if not os.path.exists(file):
+            continue
+        with open(file) as f:
+            files[name] = f.read().strip()
+
+    # Convert A to sparse matrix
+    rows, cols = [], []
+    for line in files['A'].splitlines():
+        row, col = [int(x.strip()) for x in line.split(',')]
+        rows.append(row)
+        cols.append(col)
+    data = [1] * len(rows)
+    A = scipy.sparse.csr_matrix((data, (rows, cols)), dtype=np.uint8)
+
+    def get_as_array(x):
+        return np.array([int(y.strip()) for y in files[x].splitlines()])
+
+    # Graph indices
+    graph_indices = get_as_array('graph_indicator') - 1
+
+    # Graph labels
+    graph_labels = get_as_array('graph_labels')
+    assert np.max(graph_indices) == len(graph_labels) - 1
+
+    # Node labels
+    node_labels = get_as_array('node_labels')
+    return A, graph_indices, graph_labels, node_labels
+
+def get_all_graph_benchmark_dataset_names(has_node_label=True, folder='data/graph_only'):
+    folders = [x for x in glob('{}/*'.format(folder)) if os.path.isdir(x) and len(glob('{}/*_A.txt'.format(x)))]
+
+    if has_node_label:
+        folders = [x for x in folders if len(glob('{}/*_node_labels.txt'.format(x)))]
+
+    return list(sorted([x.rsplit('/', 1)[-1] for x in folders]))

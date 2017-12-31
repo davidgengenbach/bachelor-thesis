@@ -85,6 +85,13 @@ def get_kernel_from_filename(filename: str) -> str:
     return '_'.join(parts)
 
 
+def _get_experiment_name_from_filename(x):
+    filename = filename_utils.get_filename_only(x, with_extension=False)
+    parts = x.split('__')
+    if 'result___experiment' not in x or len(parts) < 4: return ''
+    return parts[1][1:].strip()
+
+
 def get_results(folder=None, use_already_loaded=False, results_directory=RESULTS_DIR, log_progress=tqdm.tqdm_notebook, exclude_filter=None, include_filter=None, filter_out_non_complete_datasets=4, remove_split_cols=True, remove_rank_cols=True, remove_fit_time_cols=True, filter_out_experiment=None, ignore_experiments=True, only_load_dataset=None, fetch_predictions=False):
     '''This function _seriously_ has to be refactored!'''
     global _DF_ALL, _RESULT_CACHE
@@ -99,7 +106,7 @@ def get_results(folder=None, use_already_loaded=False, results_directory=RESULTS
 
     result_files = get_result_filenames_from_folder(folder)
     if filter_out_experiment:
-        result_files = [x for x in result_files if 'result___{}'.format(filter_out_experiment) in x]
+        result_files = [x for x in result_files if _get_experiment_name_from_filename(x) == filter_out_experiment]
 
     if ignore_experiments and not filter_out_experiment:
         result_files = [x for x in result_files if 'experiment_' not in x]

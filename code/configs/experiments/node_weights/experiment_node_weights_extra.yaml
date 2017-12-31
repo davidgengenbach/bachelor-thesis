@@ -3,19 +3,18 @@ params_per_type:
     feature_extraction:
       fast_wl:
         h:
-        - 5
+        - 10
         node_weight_function:
-        - ~
-        - adj_degrees_metric
+        - adj_degrees_metric_max
         node_weight_iteration_weight_function:
         - ~
         - iteration_weight_function_exponential
         use_early_stopping:
-        - true
+        - false
       phi_picker:
         return_iteration:
         - stacked
         use_zeroth:
         - true
     normalizer:
-    - ~
+    - MaxAbsScaler

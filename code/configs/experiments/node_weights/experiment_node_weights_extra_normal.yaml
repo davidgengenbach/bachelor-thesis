@@ -1,15 +1,15 @@
 params_per_type:
-  graph_node_weights:
+  graph_extra:
     feature_extraction:
       fast_wl:
+        h:
+        - 10
         node_weight_function:
-        - nxgraph_degrees_metric
-        - nxgraph_degrees_metric_max
-        #- nxgraph_pagerank_metric
+        - ~
         node_weight_iteration_weight_function:
         - ~
-        #- iteration_weight_function
-        - iteration_weight_function_exponential
+        use_early_stopping:
+        - false
       phi_picker:
         return_iteration:
         - stacked
@@ -17,3 +17,4 @@ params_per_type:
         - true
     normalizer:
     - ~
+    - MaxAbsScaler

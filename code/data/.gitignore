@@ -1,7 +1,9 @@
 graphs
+graph_only/
 datasets_prepared
 embeddings/**/*.txt
 embeddings/**/*.bin
 embeddings/**/*.npy
 results/**/*.zip
 results/*
+!graph_only/download_*.sh

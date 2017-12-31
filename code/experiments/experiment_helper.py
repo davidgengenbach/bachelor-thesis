@@ -13,12 +13,14 @@ from utils import constants
 
 NEEDED_FIELDS = ['params_per_type']
 
-# These are field values for experiment yaml files that get replaced with their corresponding classe.
+# These are field values for experiment yaml files that get replaced with their corresponding class.
 # For example, "SVC" will be replaced with an instance of sklearn.svm.SCV
 PLACEHOLDER_LIST = dict(
     nxgraph_degrees_metric=graph_metrics.nxgraph_degrees_metric,
+    nxgraph_degrees_metric_max=graph_metrics.nxgraph_degrees_metric_max,
     nxgraph_pagerank_metric=graph_metrics.nxgraph_pagerank_metric,
     adj_degrees_metric=graph_metrics.adj_degrees_metric,
+    adj_degrees_metric_max=graph_metrics.adj_degrees_metric_max,
     MaxAbsScaler=sklearn.preprocessing.MaxAbsScaler,
     SVC=sklearn.svm.SVC,
     PCA=sklearn.decomposition.PCA,

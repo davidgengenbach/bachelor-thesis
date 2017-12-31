@@ -143,8 +143,11 @@ def get_node_weight_factors(X, metric=None):
 def _retrieve_node_weights_and_convert_graphs(X, node_weight_function=None, same_label=False, use_directed=True, use_nx=True):
     X = graph_helper.get_graphs_only(X)
     if not use_directed:
-        X = [nx.Graph(x) for x in X]
-        assert not np.any([x.is_directed() for x in X])
+        if use_nx:
+            X = [nx.Graph(x) for x in X]
+            assert not np.any([x.is_directed() for x in X])
+        else:
+            raise NotImplementedError('!use_directed and !use_nx not implemented')
     node_weight_factors = get_node_weight_factors(X, metric=node_weight_function)
     X = graph_helper.convert_graphs_to_adjs_tuples(X, copy=True)
     if same_label:
