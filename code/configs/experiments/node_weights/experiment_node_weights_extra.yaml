@@ -1,0 +1,21 @@
+params_per_type:
+  graph_extra:
+    feature_extraction:
+      fast_wl:
+        h:
+        - 5
+        node_weight_function:
+        - ~
+        - adj_degrees_metric
+        node_weight_iteration_weight_function:
+        - ~
+        - iteration_weight_function_exponential
+        use_early_stopping:
+        - true
+      phi_picker:
+        return_iteration:
+        - stacked
+        use_zeroth:
+        - true
+    normalizer:
+    - ~

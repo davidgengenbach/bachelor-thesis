@@ -6,6 +6,9 @@ import re
 def get_dataset_from_filename(filename: str, ignore_subtype = False) -> str:
     all_datasets = dataset_helper.get_all_available_dataset_names()
 
+
+    all_datasets += ['enzymes', 'MUTAG', 'mutag']
+
     filename = filename.split('/')[-1]
     candidates = sorted([dataset for dataset in all_datasets if dataset in filename])
     assert len(candidates) <= 3

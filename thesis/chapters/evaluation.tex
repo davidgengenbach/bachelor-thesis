@@ -34,13 +34,6 @@ For the \textbf{structure-and-content kernel}, we use the plain Weisfeiler-Lehma
 
 The difference in the results will give an additional insight into the structure of concept maps and their usefulness for classification.
 
-\subquestion{How does the classification results of co-occurrence graphs compare to concept maps?}{question:comparison_coo}
-For this question, we compare the classification results for concept maps and co-occurrence graphs. As noted before, this comparison is slightly unfair since co-occurrence graphs have far more content than concept maps.
-Nevertheless, it is an interesting baseline for graph-based text-classification.
-
-\subquestion{How does the classification performance with concept maps compare to non-structural, text-based approaches?}{question:comparison_text}
-Here we test the classification performance of graph-based classification directly with the performance of text-only approaches.
-This experiment will serve as a baseline in later experiments.
 
 \subquestion{How useful are multi-word labels in concept maps?}{question:multi_labels}
 Concept map node labels often consist of more than one word which constitutes one of the differences to co-occurrence graphs and other graph text-representations.
@@ -74,10 +67,13 @@ On the other hand, when a concept occurs multiple times in a text, the degree of
 These observations give rise to the question whether the size of the concept maps is correlated with the classification performance.
 In this experiment we look at the classification scores of concept maps created from texts with varying length.
 
-%\subquestion{How different are the datasets and how does it affect the classification performance?}{question:dataset_diversity}
-%The datasets we chose vary greatly in a lot of ways, some consisting of texts which are informal and written by internet users in online forums while other texts are written by journalists for newspapers.
-%Other texts are small, others are long.
-%For this question we evaluate the differences of all theses datasets which hopefully can give insights into the varying relative classification performance of our approaches on different datasets.
+\subquestion{How does the classification results of co-occurrence graphs compare to concept maps?}{question:comparison_coo}
+For this question, we compare the classification results for concept maps and co-occurrence graphs. As noted before, this comparison is slightly unfair since co-occurrence graphs have far more content than concept maps.
+Nevertheless, it is an interesting baseline for graph-based text-classification.
+
+\subquestion{How does the classification performance with concept maps compare to non-structural, text-based approaches?}{question:comparison_text}
+Here we test the classification performance of graph-based classification directly with the performance of text-only approaches.
+This experiment will serve as a baseline in later experiments.
 
 \subquestion{How useful are the concept maps combined with text classification?}{question:comparison_combined}
 This question aims to directly answer our hypothesis. 

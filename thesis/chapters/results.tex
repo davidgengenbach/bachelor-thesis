@@ -171,51 +171,6 @@ When combining both, content and structure, the score is not as good as content-
 This all indicates that the content of the graphs has a greater importance than the structure.
 }
 
-\subquestionref{question:comparison_coo}
-As a baseline, we also look at another graph representation for text, namely co-occurrence graphs.
-The comparison is somewhat unfair since co-occurrence graphs retain much more of the content of the underlying text, yet it is interesting to compare the performance with concept maps.
-While both concept maps and co-occurrence graph are graph representations, they have several differences. While concept maps have directed edges with labels, co-occurrence edges are, in the plain version, undirected and have no edge labels.
-The node labels for concept maps also contain multiple words while co-occurrence graphs only have single-word labels.
-
-We use the comparison of co-occurrence graphs to concept maps to establish a baseline for graph representations.
-
-\todo{Co-occurrence:"Text kernel" performs nearly as well as normal text}
-\todo{Co-occurrence: only minor decrease (1\%) in performance when only using nouns}
-
-\begin{table}[htb!]
-\centering
-\begin{tabular}{lrrr}
-&  concept\_map &  cooccurrence &   ratio \\
-\midrule
-ling-spam       &  0.7165 &  0.9112 &  0.7863 \\
-ng20            &  0.2904 &  0.3964 &  0.7325 \\
-review\_polarity &  0.5615 &  0.6656 &  0.8436 \\
-rotten\_imdb     &  0.5786 &  0.8070 &  0.7170 \\
-webkb           &  0.2763 &  0.5082 &  0.5438 \\
-\bottomrule
-\end{tabular}
-\caption[Results: Co-Occurrence vs. Concept Maps]{Comparison of co-occurrence results with concept maps}\label{table:comparison_results_cooccurrence}
-\end{table}
-
-\subquestionref{question:comparison_text}
-As one can see in Figure \ref{fig:results_cmap_vs_text}, the text-only approach outperforms graph-only approaches by a high margin.
-This is most likely due to the high compression factor of concept maps and co-occurrence graphs.
-
-\begin{figure}[htb!]
-\centering
-\missingfigure[figcolor=white]{}
-\caption[Results: Concept Maps vs. Text]{Comparison of concept maps with text}
-\label{fig:results_cmap_vs_text}
-\end{figure}
-
-So, we see that graph-only approaches seem to perform worse than text-only approaches by default.
-When linearizing the graphs into text again and apply conventional text vectorizers, eg. BoW with Tfidf, we get the best results, also hinting to the fact that the structure is far harder to leverage than simple node counts.
-That said, we are interested in whether graph representations are useful in text classification, therefor we will also test the performance of graph-based approaches when combining them with conventional text approaches.
-
-\answersummary{
-In our experiments, the text-only approach performs far better than the graph-only approaches, both concept maps and co-occurrence graphs.
-}
-
 \subquestionref{question:multi_labels}
 As we seek to leverage features special in concept maps, we further explore the node labels.
 In Figure \ref{?} we see, that most concept map node labels consist of more than one word.
@@ -487,6 +442,51 @@ We also tested other metrics to find correlations, for instance the number of ed
 	In some datasets, we see a correlation between the size of graph/documents and the prediction accuracy.
 	For other datasets, this correlation can not be measured distinctly.
 	Other metrics besides the document/graph size have been tested, yet not clear correlation could be found, also.
+}
+
+\subquestionref{question:comparison_coo}
+As a baseline, we also look at another graph representation for text, namely co-occurrence graphs.
+The comparison is somewhat unfair since co-occurrence graphs retain much more of the content of the underlying text, yet it is interesting to compare the performance with concept maps.
+While both concept maps and co-occurrence graph are graph representations, they have several differences. While concept maps have directed edges with labels, co-occurrence edges are, in the plain version, undirected and have no edge labels.
+The node labels for concept maps also contain multiple words while co-occurrence graphs only have single-word labels.
+
+We use the comparison of co-occurrence graphs to concept maps to establish a baseline for graph representations.
+
+\todo{Co-occurrence:"Text kernel" performs nearly as well as normal text}
+\todo{Co-occurrence: only minor decrease (1\%) in performance when only using nouns}
+
+\begin{table}[htb!]
+	\centering
+	\begin{tabular}{lrrr}
+		&  concept\_map &  cooccurrence &   ratio \\
+		\midrule
+		ling-spam       &  0.7165 &  0.9112 &  0.7863 \\
+		ng20            &  0.2904 &  0.3964 &  0.7325 \\
+		review\_polarity &  0.5615 &  0.6656 &  0.8436 \\
+		rotten\_imdb     &  0.5786 &  0.8070 &  0.7170 \\
+		webkb           &  0.2763 &  0.5082 &  0.5438 \\
+		\bottomrule
+	\end{tabular}
+	\caption[Results: Co-Occurrence vs. Concept Maps]{Comparison of co-occurrence results with concept maps}\label{table:comparison_results_cooccurrence}
+\end{table}
+
+\subquestionref{question:comparison_text}
+As one can see in Figure \ref{fig:results_cmap_vs_text}, the text-only approach outperforms graph-only approaches by a high margin.
+This is most likely due to the high compression factor of concept maps and co-occurrence graphs.
+
+\begin{figure}[htb!]
+	\centering
+	\missingfigure[figcolor=white]{}
+	\caption[Results: Concept Maps vs. Text]{Comparison of concept maps with text}
+	\label{fig:results_cmap_vs_text}
+\end{figure}
+
+So, we see that graph-only approaches seem to perform worse than text-only approaches by default.
+When linearizing the graphs into text again and apply conventional text vectorizers, eg. BoW with Tfidf, we get the best results, also hinting to the fact that the structure is far harder to leverage than simple node counts.
+That said, we are interested in whether graph representations are useful in text classification, therefor we will also test the performance of graph-based approaches when combining them with conventional text approaches.
+
+\answersummary{
+	In our experiments, the text-only approach performs far better than the graph-only approaches, both concept maps and co-occurrence graphs.
 }
 
 \subquestionref{question:comparison_combined}
@@ -804,7 +804,7 @@ We classify the concept graphs as we do in the other experiments.
 	ted\_talks       & 0.214 & \textbf{0.269} \\
 	\bottomrule
 \end{tabular}
-\caption[Results: Classification using node weight WL extension]{F1 macro classification results for node weight extension.}\label{table:wl_node_weight_extension}
+\caption[Results: Classification using node weight WL extension]{F1 macro classification results for  the node weight extension.}\label{table:wl_node_weight_extension}
 \end{table}
 
 \iffalse

@@ -316,15 +316,16 @@ def get_adjs_only(X, copy=True):
     return X_
 
 
-def get_graphs_with_mutag_enzyme_format(folder):
+def get_graphs_with_mutag_enzyme_format(folder, as_adj_tuple: bool=False):
     graphs = glob('{}/*.graph'.format(folder))
     X, Y = [], []
     for graph_file in graphs:
         with open(graph_file) as f:
             adj_matrix, vertices, clazz = _parse_graph(f.read())
-
         X.append((adj_matrix, vertices))
         Y.append(clazz)
+    if not as_adj_tuple:
+        X = convert_adjs_tuples_to_graphs(X)
     return X, Y
 
 
@@ -356,3 +357,40 @@ def get_graphs_only(X) -> list:
     X_ = [x for x, _ in X]
     assert isinstance(X_[0], nx.Graph)
     return X_
+
+
+def get_mutag_enzyme_graphs(dataset='MUTAG', as_adj=True):
+    import scipy
+    import scipy.sparse
+
+    data = np.load('tests/data/{}.npz'.format(dataset))
+    A = scipy.sparse.csc_matrix((data['adj_data'], data['adj_indice'], data['adj_indptr']), shape=data['adj_shape'])
+    gr_id = data['graph_ind']  # n x 1 graph id array
+    node_label = data['responses']  # n x 1 node label array
+    graph_label = data['labels']  # N x 1 graph label array
+
+    graph_2_idx = collections.defaultdict(list)
+    for idx, x in enumerate(gr_id):
+        graph_2_idx[int(x[0])].append(idx)
+
+    for graph, idxs in graph_2_idx.items():
+        assert list(sorted(idxs)) == idxs
+
+    graph_2_idx = {graph: (np.min(idxs), np.max(idxs)) for graph, idxs in graph_2_idx.items()}
+
+    X, Y = [], []
+    for idx, (graph, (min_, max_)) in enumerate(sorted(graph_2_idx.items(), key=lambda x: x[0])):
+        assert idx == graph - 1
+        adj = A[min_:max_ + 1, min_:max_ + 1]
+        labels = node_label[min_:max_ + 1,0]
+
+        x = (adj, labels)
+        X.append(x)
+
+        y = graph_label[idx][0]
+        Y.append(y)
+
+    if not as_adj:
+        X = convert_adjs_tuples_to_graphs(X)
+
+    return X, Y

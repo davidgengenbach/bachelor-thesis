@@ -36,6 +36,7 @@ def get_tasks() -> typing.List[ExperimentTask]:
     tasks += task_helper.get_tasks(graph_task_fns, graph_cache_files)
     tasks += task_helper.get_tasks([get_task_dummy, get_task_text], datasets)
     tasks += task_helper.get_tasks([get_gram_task], gram_cache_files)
+    tasks += task_helper.get_tasks([get_task_extra_graphs], ['MUTAG'])
     return tasks
 
 
@@ -153,3 +154,14 @@ def get_gram_task(gram_cache_file) -> ExperimentTask:
         return ClassificationData(K, Y, estimator, params)
 
     return ExperimentTask('graph_gram', get_filename_only(gram_cache_file), process)
+
+
+def get_task_extra_graphs(dataset: str) -> ExperimentTask:
+    def process() -> tuple:
+        #X, Y = graph_helper.get_graphs_with_mutag_enzyme_format('tests/data/{}'.format(dataset))
+        X, Y = graph_helper.get_mutag_enzyme_graphs(dataset)
+        X = graph_helper.get_graphs_only(X)
+        estimator, params = task_helper.get_graph_estimator_and_params(X, Y)
+        return ClassificationData(X, Y, estimator, params)
+
+    return ExperimentTask('graph_extra', dataset, process)

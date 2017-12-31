@@ -18,6 +18,7 @@ NEEDED_FIELDS = ['params_per_type']
 PLACEHOLDER_LIST = dict(
     nxgraph_degrees_metric=graph_metrics.nxgraph_degrees_metric,
     nxgraph_pagerank_metric=graph_metrics.nxgraph_pagerank_metric,
+    adj_degrees_metric=graph_metrics.adj_degrees_metric,
     MaxAbsScaler=sklearn.preprocessing.MaxAbsScaler,
     SVC=sklearn.svm.SVC,
     PCA=sklearn.decomposition.PCA,

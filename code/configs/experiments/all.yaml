@@ -69,7 +69,6 @@ params_per_type:
         return_iteration:
         - stacked
         use_zeroth:
-        - false
         - true
     graph_preprocessing:
     - NoneType
@@ -151,6 +150,40 @@ params_per_type:
       - &id002 !!python/tuple
         - 1
         - 2
+  graph_extra:
+    feature_extraction:
+      fast_wl:
+        h:
+        - 10
+        ignore_label_order:
+        - false
+        node_weight_function:
+        - NoneType
+        node_weight_iteration_weight_function:
+        - NoneType
+        norm:
+        - NoneType
+        phi_dim:
+        - NoneType
+        round_to_decimals:
+        - 10
+        same_label:
+        - false
+        truncate_to_highest_label:
+        - true
+        use_directed:
+        - true
+        use_early_stopping:
+        - true
+      phi_picker:
+        return_iteration:
+        - stacked
+        use_zeroth:
+        - true
+    graph_preprocessing:
+    - NoneType
+    normalizer:
+    - MaxAbsScaler
   graph_node_weights:
     feature_extraction:
       fast_wl:
@@ -182,7 +215,6 @@ params_per_type:
         return_iteration:
         - stacked
         use_zeroth:
-        - false
         - true
     graph_preprocessing:
     - NoneType
@@ -217,7 +249,6 @@ params_per_type:
         return_iteration:
         - stacked
         use_zeroth:
-        - false
         - true
     graph_preprocessing:
       VAL_:
@@ -259,7 +290,6 @@ params_per_type:
         return_iteration:
         - stacked
         use_zeroth:
-        - false
         - true
     graph_preprocessing:
     - NoneType
