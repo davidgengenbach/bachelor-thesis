@@ -328,11 +328,69 @@ As we can see, removing the node labels results in a lower score for most datase
 }
 
 \subquestionref{question:relabeling_infrequent}
-In the last question, we looked at infrequent node labels and removed them.
-For this question, we actually merge infrequent nodes with other, more frequent nodes.
+In the previous question, we looked at infrequent node labels and removed them.
+For this question, we actually merge infrequent nodes label with other, more frequent nodes labels.
+To do this, we have to find a measure of similarity between two node labels to determine whether they should be merged or not.
+There are a great number of approaches to define similarity between two word labels, eg. for example the edit distance between word sequences.
+For our purpose, we use word embeddings \cite{Mikolov2013,Pennington,Goldberg2014} to obtain a measure of similarity between multi-word labels.
+We leverage the pre-trained word embeddings introduced and provided in \cite{Pennington}.
+Each word $w$ in the vocabulary of the pre-trained word embedding has a relatively low-dimensional vector $v_w$ assigned, the embedding.
+Roughly speaking, the intuition of word embeddings is that when an word $w$ is semantically similar to another word $w'$, the distance $|| v_w - v_w' ||$ between their embeddings is low, while dissimilar words have higher distances.
+Pre-trained word embeddings, as a downside, have a fixed vocabulary.
+So, we actually have two problems when using word embeddings for our multi-word node labels, namely (1) we have multi-word labels, while our pre-trained word embeddings only contain single single-word embeddings, (2) some node labels will not be in the vocabulary of the pre-trained vocabulary.
+Preliminary tests show us that both problems, (1) and (2), are very common in our datasets and therefor must be addressed.
+
+\paragraph{Multi-Word and Missing Node Label Lookup}
+Our idea to solve these issues was to first create a Word2Vec \cite{Mikolov2013} word embedding \textit{(TrainedEmbedding)} from the texts in the datasets.
+In the next step, we resolve (1) multi-word labels and (2) labels which are not in the vocabulary of the pre-trained word embedding \textit{(Pretrained Embedding)}.
+For each node label $n$, (a) we split $n$ into single words if it is a multi-word label and then (b) obtain the embeddings for the single words from the \textit{(TrainedEmbedding)}, then (c) create the average of the found embeddings.
+If the node label contains only one word, we need not average the found embeddings.
+So, in this stage we have obtained a (multi-) word embedding $v_n$ for the node label $n$ from the  \textit{(TrainedEmbedding)}.
+Next, we search for similar words $ws$ to $v_n$ with the constraint that each word in $ws$ also has to be in the \textit{(Pretrained Embedding)}.
+We obtain the similar words by using the multi-word embedding $v_n$ to search for similar word embeddings in the \textit{(TrainedEmbedding)}.
+The similar words $ws$ also contain the similarity between the nodes, ie. their distance.
+We only keep the top $n$ similar words in $ws$. In our case, $n = 10$.
+
+So, at this stage, for each (multi-word) node label $n$ in the concept maps, we have similar words $ws_n$ which are both in the \textit{(Pretrained Embedding)} and the \textit{(TrainedEmbedding)}.
+Now, we solved both problems, (1) the multi-word labels and (2) words which are not in the vocabulary of the \textit{(Pretrained Embedding)}.
+
+\paragraph{Node Label Clustering}
+In the next step, we have to find node label sets which should be merged.
+For this, we greedily merge labels into clusters with unique identifiers, eg. consecutive numbers, where each label $n$ in a cluster have a similarity, or distance, greater than a given threshold, $t$, to \textit{any} node label in the cluster.
+After this step, each node label in the concept maps has a assigned cluster with one or more node labels in it.
+The intuition of these clusters is that a cluster only contains similar labels.
+This also means that we could merge the labels in some cluster.
+
+\paragraph{Infrequent Node Label Merging}
+So now, we actually can replace infrequent node labels with the cluster identifier.
+We also replace each node label in that cluster with 
+Assuming that both the \textit{(TrainedEmbedding)} and the \textit{(Pretrained Embedding)} actually capture semantical similarities, this new label will be semantically similar to the original, but infrequent node label.
+
+\paragraph{Discussion}
+As a side node: there are several assumptions made here for this approach to be useful, namely that a semantically meaningful word embedding for infrequent node labels can be obtained at all.
+When a node label only occurs once in the whole dataset, creating a meaningful word embedding for this single occurrence can be quite difficult since word embeddings actually work by defining a word by its context.
+Yet, in this instance, we have only one context since the node label occurs only once.
+That said, this caveat only applies partially since most of the node labels we merge actually are multi-word labels and the individual words in them occur, most likely, more than once.
+Another thing to keep in mind is that we used the complete text corpus to train our \textit{(TrainedEmbedding)}.
+This means that we did no trainings- and validation split nor cross-validation at all.
+This was done to reduce the already quite high compute time of training the embeddings and merging them.
+The results are most likely tainted by the omission of the clear separation between train- and test data.
+
+\paragraph{Results}
+After relabeling the infrequent labels as explained above, we then use our default approach, applying WL to the relabeled concept maps to obtain feature maps, then classifying them.
+As a baseline, we also apply the same approach to un-relabeled concept maps.
+In Table \ref{table:results_infrequent_relabeled} we report our results.
+
+
+\begin{table}[htb!]
+	\centering
+	\caption[Results: Merge infrequent nodes]{Classification results for relabeled concept maps.}\label{table:results_infrequent_relabeled}
+\end{table}
 
 \answersummary{
-	TODO	
+	After devising and applying an approach to merge (multi-word) node labels of concept maps, we classify them.
+	In most datasets, this results in a significant improvement in classification performance.
+	Nevertheless, there are also big caveats to this approach, for instance the additional overhead of computing word embeddings for the whole dataset.
 }
 
 \subquestionref{question:directed_vs_undirected}
@@ -447,19 +505,28 @@ We also tested other metrics to find correlations, for instance the number of ed
 }
 
 \subquestionref{question:comparison_coo}
-As a baseline, we also look at another graph representation for text, namely co-occurrence graphs.
-The comparison is somewhat unfair since co-occurrence graphs retain much more of the content of the underlying text, yet it is interesting to compare the performance with concept maps.
-While both concept maps and co-occurrence graph are graph representations, they have several differences. While concept maps have directed edges with labels, co-occurrence edges are, in the plain version, undirected and have no edge labels.
+As a baseline, we also look at another graph representation for text, co-occurrence graphs.
+The comparison between concept maps and co-occurrence graphs is somewhat unfair since co-occurrence graphs retain much more of the content of its underlying text.
+While both concept maps and co-occurrence graph are graph representations, they have several differences. While concept maps have directed edges with labels, co-occurrence edges are, in the our version, undirected and have no edge labels.
 The node labels for concept maps also contain multiple words while co-occurrence graphs only have single-word labels.
 
 We use the comparison of co-occurrence graphs to concept maps to establish a baseline for graph representations.
+Since our main hypothesis assumes that concept maps contain useful structural information, the co-occurrence graph is a good candidate for comparison, since its structure is quite simple and easily predictable.
+For window size $w=1$, the co-occurrence graphs have a quite linear structure. With higher window sizes, the co-occurrence graphs get more connected until they eventually become fully connected.
+So, in general, the structure of co-occurrence graphs is relatively simple and as such is a good baseline for our concept map based approach.
 
-\todo{Co-occurrence:"Text kernel" performs nearly as well as normal text}
-\todo{Co-occurrence: only minor decrease (1\%) in performance when only using nouns}
+In Table \ref{table:comparison_results_cooccurrence} we report our results.
+As we can see, classification using co-occurrence graphs performs significantly better than the concept map based approach.
+It also performs nearly as good as the conventional, text-based approach.
+Note that co-occurrence graphs contain far more information than concepts as seen in Table \ref{TODO}.
+While concept maps summarize the text by filtering out only important concepts, a co-occurrence graph actually contain all words of its underlying text.
+We also tried filtering out non-nouns out of the co-occurrence graphs to mimic the summarization by concept maps, yet, the results are nearly the same, 1-3\% difference in F1 macro at most and therefore still higher than with concept maps.
+However, since co-occurrence graphs contain more information, creating the feature maps also takes more compute time.
 
 \begin{table}[htb!]
 	\centering
 	\begin{tabular}{lrrr}
+		&  \multicolumn{2}{c}{F1 macro}} &  {}\\
 		&  concept\_map &  cooccurrence &   ratio \\
 		\midrule
 		ling-spam       &  0.7165 &  0.9112 &  0.7863 \\
@@ -472,9 +539,15 @@ We use the comparison of co-occurrence graphs to concept maps to establish a bas
 	\caption[Results: Co-Occurrence vs. Concept Maps]{Comparison of co-occurrence results with concept maps}\label{table:comparison_results_cooccurrence}
 \end{table}
 
+\answersummary{
+	Our results show significant higher scores of co-occurrence based classification over concept maps.
+	While co-occurrence graphs contain more inf
+	Yet, co-occurrence graphs arguably have a very simple structure.
+}
+
 \subquestionref{question:comparison_text}
 As one can see in Figure \ref{fig:results_cmap_vs_text}, the text-only approach outperforms graph-only approaches by a high margin.
-This is most likely due to the high compression factor of concept maps and co-occurrence graphs.
+This is most likely due to the high compression factor of both concept maps and co-occurrence graphs.
 
 \begin{figure}[htb!]
 	\centering
@@ -488,7 +561,7 @@ When linearizing the graphs into text again and apply conventional text vectoriz
 That said, we are interested in whether graph representations are useful in text classification, therefor we will also test the performance of graph-based approaches when combining them with conventional text approaches.
 
 \answersummary{
-	In our experiments, the text-only approach performs far better than the graph-only approaches, both concept maps and co-occurrence graphs.
+	In our experiments, the text-only approach performs far better than the graph-only approaches, for both concept maps and co-occurrence graphs.
 }
 
 \subquestionref{question:comparison_combined}
@@ -693,6 +766,7 @@ In the next Section \ref{sec:conclusions} we will further summarize our results 
 
 \todo{Mention pros/cons of graph based classification}
 \todo{Mention that the questions have not been answered in that order}
+\todo{Co-occurrence have little structure, why do they perform better?}
 
 \labelsection{Related And Intermediate Observations}{subsec:related_and_intermediate_observation}
 In this section we report observations which are not directly related to our questions or hypothesis, yet they nevertheless have provided us more insights into our analysis.

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import pickle
+import pickle, os
 
 from joblib import delayed, Parallel
 
@@ -27,6 +27,7 @@ def get_args():
 def main():
     args = get_args()
     helper.print_script_args_and_info(args)
+    os.makedirs(args.embeddings_result_folder, exist_ok=True)
 
     LOGGER.info('Loading pre-trained embedding')
 

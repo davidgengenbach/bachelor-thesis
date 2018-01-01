@@ -69,16 +69,20 @@ def get_embeddings_for_labels(labels, embedding, check_most_similar = False, res
                 if len(composite_vector.nonzero()[0]):
                     # Average the sum vector
                     composite_vector = composite_vector / c
+                    # Find similar vector in fallback lookup
                     most_similar = lookup_embedding.similar_by_vector(composite_vector, topn = topn)
             else:
+                # Find label lookup embedding
                 most_similar = lookup_embedding.similar_by_word(label, topn = topn)
 
             if len(most_similar):
                 similar_els[label] = most_similar
 
             most_similar_labels = [label for label, similarity in most_similar]
+            # If the lookup candidates are in the primary (pretrained) lookup...
             match = set(most_similar_labels) & set(restrict_vocab)
             if len(match):
+                # ... add the labels to the new lookup
                 most_similar_label_found = [label for label, similarity in most_similar if label in match][0]
                 embeddings[label] = embedding[most_similar_label_found]
                 lookup[label] = most_similar_label_found

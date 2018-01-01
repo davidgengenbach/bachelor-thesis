@@ -9,7 +9,7 @@ RSYNC_EXCLUDE="--exclude classifier --exclude _*"
 
 cd data/results
 
-LAST_FOLDER="$(find . -maxdepth 1 -type d -name '2017*' | sort -r | head -n1 | cut -c3-)/"
+LAST_FOLDER="$(find . -maxdepth 1 -type d -name '201*' | sort -r | head -n1 | cut -c3-)/"
 
 FOLDER_NAME="$(date "+%Y-%m-%d_%H-%M")"
 
@@ -36,7 +36,8 @@ if [ -z "$KEEP_OLD" ]; then
 else
     DELETE_OPTIONS='--delete'
 fi
-#DELETE_OPTIONS='--delete'
 
+#DELETE_OPTIONS='--delete'
 echo -e "########### INFO: rsyncing results\t\t($SERVER -> this host)"
-rsync $RSYNC_EXCLUDE -avz $SERVER:bachelor-thesis/code/data/results/ $FOLDER_NAME/ $DELETE_OPTIONS
+set -x
+rsync $RSYNC_EXCLUDE -avP $SERVER:bachelor-thesis/code/data/results/ $FOLDER_NAME/ $DELETE_OPTIONS

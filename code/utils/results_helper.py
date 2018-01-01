@@ -150,6 +150,9 @@ def get_results(folder=None, use_already_loaded=False, results_directory=RESULTS
         num_results = len(result['params'])
         result['prediction_file_exists'] = [predictions_exist] * num_results
 
+        if fetch_predictions and not predictions_exist:
+            LOGGER.warning('fetch_predictions=True but could not find prediction: {}'.format(prediction_file))
+
         if fetch_predictions and predictions_exist:
             with open(prediction_file, 'rb') as f:
                 r = pickle.load(f)
