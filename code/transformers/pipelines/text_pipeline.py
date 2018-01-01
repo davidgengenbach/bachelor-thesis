@@ -18,6 +18,7 @@ def get_params(reduced = False):
         ],
         vectorizer__ngram_range=[(1, 1), (1, 2)],
         vectorizer__binary=[True, False],
+        vectorizer__min_df=[2],
         preprocessing=[SimplePreProcessingTransformer()],
         scaler=[sklearn.preprocessing.MaxAbsScaler()]
     )

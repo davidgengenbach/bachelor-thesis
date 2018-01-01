@@ -1,0 +1,1 @@
+rm main.{out,log,synctex.*,toc,pdf,bcf}

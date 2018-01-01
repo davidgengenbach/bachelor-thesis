@@ -367,11 +367,11 @@ We also replace each node label in that cluster with
 Assuming that both the \textit{(TrainedEmbedding)} and the \textit{(Pretrained Embedding)} actually capture semantical similarities, this new label will be semantically similar to the original, but infrequent node label.
 
 \paragraph{Discussion}
-As a side node: there are several assumptions made here for this approach to be useful, namely that a semantically meaningful word embedding for infrequent node labels can be obtained at all.
+There are several assumptions made here for this approach to be useful, namely that a semantically meaningful word embedding for infrequent node labels can be obtained.
 When a node label only occurs once in the whole dataset, creating a meaningful word embedding for this single occurrence can be quite difficult since word embeddings actually work by defining a word by its context.
 Yet, in this instance, we have only one context since the node label occurs only once.
 That said, this caveat only applies partially since most of the node labels we merge actually are multi-word labels and the individual words in them occur, most likely, more than once.
-Another thing to keep in mind is that we used the complete text corpus to train our \textit{(TrainedEmbedding)}.
+Another important caveat to keep in mind is that we used the complete text corpus to train our \textit{(TrainedEmbedding)}.
 This means that we did no trainings- and validation split nor cross-validation at all.
 This was done to reduce the already quite high compute time of training the embeddings and merging them.
 The results are most likely tainted by the omission of the clear separation between train- and test data.
@@ -380,12 +380,28 @@ The results are most likely tainted by the omission of the clear separation betw
 After relabeling the infrequent labels as explained above, we then use our default approach, applying WL to the relabeled concept maps to obtain feature maps, then classifying them.
 As a baseline, we also apply the same approach to un-relabeled concept maps.
 In Table \ref{table:results_infrequent_relabeled} we report our results.
-
+For the experiments, we tested different thresholds $t \in \{0.5, 0.7, 0.9\}$ and $n=10$, that is we only considered the top-10 words when creating the new embeddings, see above.
 
 \begin{table}[htb!]
 	\centering
-	\caption[Results: Merge infrequent nodes]{Classification results for relabeled concept maps.}\label{table:results_infrequent_relabeled}
+	\begin{tabular}{lrrrr}
+		{} & \multicolumn{3}{c}{F1 Macro} &  \\
+		Threshold $t$ &         0.5 &   0.9 & Plain & p-value \\
+		\midrule
+		ling-spam       & \textbf{0.831} & 0.817 & 0.816 & 0.515 \\
+		ng20            & 0.377 & 0.383 & \textbf{*0.419} & 0.000 \\
+		nyt\_200         & 0.739 & 0.727 & \textbf{0.744} & 0.885 \\
+		r8              & \textbf{0.705} & 0.693 & 0.677 & 0.268 \\
+		review\_polarity & \textbf{0.616} & 0.606 & 0.609 & 0.780 \\
+		rotten\_imdb     & 0.577 & 0.605 & \textbf{0.635} & 0.194 \\
+		ted\_talks       & 0.281 & \textbf{0.317} & 0.244 & 0.188 \\
+		\bottomrule
+	\end{tabular}
+	\caption[Results: Merge infrequent nodes]{Classification results for relabeled concept maps. The $p$-value is obtained by a significance test between the plain and the best relabeled version, eg. 0.5 or 0.9. Plain corresponds to the un-relabeled approach.	}
+	\label{table:results_infrequent_relabeled}
 \end{table}
+
+As we can see, on some datasets, relabeling the nodes can improve the classification score, while others do not profit from this additional pre-processing step.
 
 \answersummary{
 	After devising and applying an approach to merge (multi-word) node labels of concept maps, we classify them.
@@ -526,14 +542,14 @@ However, since co-occurrence graphs contain more information, creating the featu
 \begin{table}[htb!]
 	\centering
 	\begin{tabular}{lrrr}
-		&  \multicolumn{2}{c}{F1 macro}} &  {}\\
+		{} &  \multicolumn{2}{c}{F1 macro} &  {} \\
 		&  concept\_map &  cooccurrence &   ratio \\
 		\midrule
-		ling-spam       &  0.7165 &  0.9112 &  0.7863 \\
-		ng20            &  0.2904 &  0.3964 &  0.7325 \\
-		review\_polarity &  0.5615 &  0.6656 &  0.8436 \\
-		rotten\_imdb     &  0.5786 &  0.8070 &  0.7170 \\
-		webkb           &  0.2763 &  0.5082 &  0.5438 \\
+		ling-spam       &  0.7165 &  \textbf{0.9112} &  0.7863 \\
+		ng20            &  0.2904 &  \textbf{0.3964} &  0.7325 \\
+		review\_polarity &  0.5615 &  \textbf{0.6656} &  0.8436 \\
+		rotten\_imdb     &  0.5786 &  \textbf{0.8070} &  0.7170 \\
+		webkb           &  0.2763 &  \textbf{0.5082} &  0.5438 \\
 		\bottomrule
 	\end{tabular}
 	\caption[Results: Co-Occurrence vs. Concept Maps]{Comparison of co-occurrence results with concept maps}\label{table:comparison_results_cooccurrence}

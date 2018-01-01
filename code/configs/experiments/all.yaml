@@ -123,6 +123,8 @@ params_per_type:
             binary:
             - true
             - false
+            min_df:
+            - 2
             ngram_range:
             - !!python/tuple
               - 1
@@ -143,6 +145,8 @@ params_per_type:
       binary:
       - true
       - false
+      min_df:
+      - 2
       ngram_range:
       - &id001 !!python/tuple
         - 1
@@ -307,6 +311,8 @@ params_per_type:
       binary:
       - true
       - false
+      min_df:
+      - 2
       ngram_range:
       - *id001
       - *id002
