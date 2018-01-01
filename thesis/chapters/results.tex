@@ -328,7 +328,9 @@ As we can see, removing the node labels results in a lower score for most datase
 }
 
 \subquestionref{question:relabeling_infrequent}
-As we have seen in the answer for the last question, 
+In the last question, we looked at infrequent node labels and removed them.
+For this question, we actually merge infrequent nodes with other, more frequent nodes.
+
 \answersummary{
 	TODO	
 }
@@ -793,6 +795,7 @@ We classify the concept graphs as we do in the other experiments.
 \begin{table}[htb!]
 	\centering
 \begin{tabular}{lrr}
+	{} & \multicolumn{2}{c}{F1 macro} \\
 	{} &  plain &  node weights \\
 	\midrule
 	ling-spam       & \textbf{0.783} & 0.766 \\

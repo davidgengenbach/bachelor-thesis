@@ -54,17 +54,22 @@ def get_embeddings_for_labels(labels, embedding, check_most_similar = False, res
             embeddings[label] = embedding[label]
             lookup[label] = label
         elif check_most_similar and (label in lookup_embedding or (solve_composite_labels and is_composite)):
+            most_similar = []
+            # Find composite average vector in fallback lookup
             if solve_composite_labels and label.count(' ') > 0:
                 label_parts = label.split(' ')
                 composite_vector = np.zeros(embedding_size, dtype=np.float128)
+                # Create sum of label parts
+                c = 0
                 for label_part in label_parts:
                     if label_part in lookup_embedding:
                         embedding_ = lookup_embedding[label_part]
                         composite_vector += embedding_
+                        c += 1
                 if len(composite_vector.nonzero()[0]):
+                    # Average the sum vector
+                    composite_vector = composite_vector / c
                     most_similar = lookup_embedding.similar_by_vector(composite_vector, topn = topn)
-                else:
-                    most_similar = []
             else:
                 most_similar = lookup_embedding.similar_by_word(label, topn = topn)
 
