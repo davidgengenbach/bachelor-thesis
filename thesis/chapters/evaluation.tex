@@ -75,15 +75,15 @@ Nevertheless, it is an interesting baseline for graph-based text-classification.
 Here we test the classification performance of graph-based classification directly with the performance of text-only approaches.
 This experiment will serve as a baseline in later experiments.
 
-\subquestion{How useful are the concept maps combined with text classification?}{question:comparison_combined}
-This question aims to directly answer our hypothesis. 
-When concept maps indeed have a structure that is useful for classification and which is not captured by text-only approaches, the classification performance should increase when combining graph- and text based approaches.
+\subquestion{How useful are features obtained from concept maps combined with text features for text classification?}{question:comparison_combined}
+This question aims to directly test our hypothesis. 
+When concept maps indeed have a structure that is useful for classification and when this structure is not captured by text-only approaches, the classification performance could increase when combining graph- and text based approaches.
 We test the performance of the combined text- and graph features by concatenating the vectors of both approaches and then training a classifier with these vectors.
 We also compare the results with both text-only and graph-only approaches.
 
 \subquestion{How does the compute time of graph-based- compare to text-based  approaches?}{question:comparison_runtime}
-Another important question concerns the complexity of our approach.
-While graph kernels like Weisfeiler-Lehman or the Random-Walk kernel have seen a rise in efficiency and improvement in runtime, there is still an overhead associated with creating concept maps.
+Another important question concerns the complexity or run-time of our approach.
+While graph kernels like the Weisfeiler-Lehman or the Random-Walk kernels haves seen a rise in efficiency and improvement in runtime, there is still also an overhead associated when generating concept maps.
 
 \hspace{2cm}
 \paragraph{Summary}
@@ -162,18 +162,32 @@ Both approaches can also be extended by not only utilizing single words, or unig
 For example, the sentence ``This is a sentence." has the following 2-grams, or bigrams: $\{ (This, is), (is, a), (a, sentence) \}$.
 Note that word n-grams do not take word inversion into account, ie. the bi-gram (a, b) is not the same as (b, a).
 Also note that adding n-grams to BoW feature vectors increases their dimensionality which in turn could lead to bigger classifier models and possibly over-fitting to these more specific n-gram features.
-For our purposes, we test only uni-gram and bi-gram frequencies since our classification performance seldom profited from adding higher n-gram ranges.
 
-\todo{\textbf{Problems of BoW: }
-	
-	Vocabulary: The vocabulary requires careful design, most specifically in order to manage the size, which impacts the sparsity of the document representations.
-	
-	Sparsity: Sparse representations are harder to model both for computational reasons (space and time complexity) and also for information reasons, where the challenge is for the models to harness so little information in such a large representational space.
-	
-	Meaning: Discarding word order ignores the context, and in turn meaning of words in the document (semantics). Context and meaning can offer a lot to the model, that if modeled could tell the difference between the same words differently arranged (``this is interesting" vs ``is this interesting"), synonyms (``old bike" vs ``used bike"), and much more.
-	
-	\url{https://machinelearningmastery.com/gentle-introduction-bag-words-model/}
-}
+For our purposes, we test only uni-gram and bi-gram frequencies since our classification performance seldom profited from adding higher n-gram ranges.
+Also, we filter out words which occur only once in the training set \cite{Heap2017}.
+This has multiple advantages: (1) the dimension of resulting feature vectors is significantly lower, especially when also applying the same principle to bi-grams where there are far more combinations which occur infrequently; (2) this in turn reduces both the fit and transform time; (3) the size of models, eg. number of weights of the classifier, is far smaller; (4) overfitting to too specific features \textit{might} be lessened.
+We also performed experiments to quantify the difference in performance when omitting infrequent words from the BoW approach and actually saw only insignificant differences.
+We report the results in Table \ref{table:results_min_df}.
+
+\begin{table}
+\centering
+\begin{tabular}{lrr}
+	{} & \multicolumn{2}{c}{F1 macro} \\
+	{} &                         $min_{wf} = 1$ &  $min_{wf} = 2$  \\
+	\midrule
+	ling-spam       & 0.983 & 0.986 \\
+	ng20            & 0.788 & 0.784 \\
+	nyt\_200         & 0.890 & 0.878 \\
+	r8              & 0.923 & 0.919 \\
+	review\_polarity & 0.867 & 0.875 \\
+	rotten\_imdb     & 0.888 & 0.886 \\
+	ted\_talks       & 0.453 & 0.466 \\
+	\bottomrule
+\end{tabular}
+\caption[Results: BoW minimum word frequency]{Classification results for BoW with (1) all labels and (2) only labels that occur more than once.}
+\label{table:results_min_df}
+\end{table}
+
 \paragraph{Graph-based representations}
 To compare the performance of concept maps with other graphs, we generated co-occurrence graphs with window sizes $w \in \{1, 4\}$.
 We also evaluated the performance of co-occurrence graphs where only nouns are retained to mimic the compression factor of concept maps.
@@ -182,11 +196,11 @@ For the extraction of the concept maps from the text, we used the implementation
 An explanation of the steps to create the concept maps is given in Section \ref{sec:implementation}.
 
 \labelsection{Datasets}{subsec:datasets}
-We chose a number of datasets, ranging from informal texts written by internet users, eg.  the \textit{ng20} internet forum corpus, to more structured texts, eg. the \textit{nyt} corpus.
+We evaluate our approaches and experiments on a number of datasets, ranging from informal texts written by internet users, eg.  the \textit{ng20} internet forum corpus, to more structured texts like the \textit{nyt} corpus.
 The texts of the corpora are also of varying length, enabling us to evaluate the effect of varying concept map sizes.
 
 We provide download links for all the datasets except for the commercial \textit{nyt} dataset.
-A script to download these datasets is also provided alongside the other code.
+A script to download these datasets is also provided alongside our other code.
 
 \paragraph{ling-spam}
 The Ling-Spam dataset was created and introduced by Androutsopoulos et al. in  \cite{Androutsopoulos2000}.
@@ -224,6 +238,7 @@ This dataset consists of news articles collected and published by Carnegie Group
  The class distribution of the \textit{reuters-21578} dataset is highly skewed, ie. the number of instances per class is not the same for all classes.
  Some of the articles have multiple classes assigned. For our purposes, that is single-label classification, we only used articles with one class.
  We also only use documents which consist of more than 20 words, so that meaningful concept maps can be created.
+Since the \textit{reuters-21578} dataset is quite big and also contains multi-label documents, ie. documents which have more than one class assigned, we do not actually use this dataset but use a subset which is described below.
 
 We obtained the \textit{reuters-21578} dataset from here\footnote{\url{http://www.nltk.org/book/ch02.html\#reuters-corpus}}.
 
@@ -243,15 +258,20 @@ Note that this dataset consists of short texts and can therefore be used to eval
 
 The dataset w as introduced in \cite{Pang2004}. We obtained our copy from the author's website\footnote{\url{http://www.cs.cornell.edu/people/pabo/movie-review-data/rotten\_imdb.tar.gz}}.
 
+\iffalse
 \paragraph{tagmynews}
 This corpus consists of summaries obtained from the RSS feeds of three news sites, namely \textit{nyt.com}, \textit{usatoday.com} and \textit{reuters.com}.
 The dataset was introduced in \cite{Vitale2012a}.
 We obtained the copy from the author's website\footnote{\url{http://acube.di.unipi.it/repo/news.gz}}.	
 
+
 \paragraph{webkb}
 This dataset consists of websites which have been downloaded from 4 american universities. It was collected 1977 during the \underline{W}orld \underline{W}ide \underline{K}nowledge \underline{B}ase project by the CMU Text Learning Group.
 The webpages are grouped in seven classes. The distribution of this very skewed, for example with one class having over 3000 instances and another only a little over 100.
 We obtained a copy of this dataset from here\footnote{\url{http://www.cs.cmu.edu/afs/cs/project/theo-20/www/data/}}.
+\fi
+
+\todo{ted\_talks dataset!}
 
 \begin{table}[htb!]
 \centering
@@ -300,7 +320,7 @@ The parameters for the \textit{SVM} are gathered in Table \ref{table:svm_paramet
 		Class weight & balanced \\
 		\bottomrule
 	\end{tabular}
-	\caption[Table: SVM parameters]{\textit{SVM} parameters. The \textit{C} parameter was tuned using cross-validation.}%
+	\caption[Table: SVM parameters]{\textit{SVM} parameters. The \textit{C} parameter was tuned using cross-validation. A more detailed explanation is available online\footnote{\url{http://scikit-learn.org/stable/modules/svm.html\#svm-classification}}}%
 	\label{table:svm_parameters}
 \end{table}
 
@@ -429,10 +449,27 @@ The code and instructions on how set-up the experiments can be found on GitHub \
 Our work heavily relies on open source software and in this form would not be possible without it.
 In particular, we implemented most of the experiments using \textit{scikit-learn} \cite{Pedregosa2012}, \textit{networkx} \cite{Hagberg2008} and \textit{pandas} \cite{McKinney2010}, \textit{numpy/scipy} \cite{VanderWalt2011}, \textit{SymPy} \cite{Meurer2017} and several other open-source projects.
 
-All experiment definitions with all parameters are also provided online\footnote{\url{https://github.com/davidgengenbach/bachelor-thesis/tree/master/code/configs/experiments}} alongside the code.
+In the core of our implementation are \textit{sci-kit learn} pipelines, classifiers, eg. \textit{SVMs}, and transformers, eg. \textit{TfidfVectorizer} or a \textit{StandardScaler}.
+Pipelines contain a number of transformers and can also consist of pipelines themselves.
+Each step in the pipeline retrieves the output of the previous step as input.
+The first transformer in a pipeline gets the user-provided input, eg. texts or graphs, as input.
+At the end of a pipeline, in the last step, is a classifier which also retrieves the output from the step before, that is vector representations of the user-provided input.
+We both use out-of-the-box transformers provided by the \textit{scikit-learn}, eg. the \textit{TfidfVectorizer} and the \textit{SVM}, and implement our own transformers, eg. our implementation of the Weisfeiler Lehman graph kernel.
+
+Each step in a pipeline can be parametrized, eg. the $C$ parameter of the SVM classifier can be provided.
+This in turn enables easy-to-implement parameter grid search which in turn can be easily parallelized.
+We augmented this existing framework provided by \textit{scikit-learn} with several additions.
+One of them providing the ability to define experiments, or test runs, with experiment definitions.
+Here, we can provide all pipeline parameters, eg. the Weisfeiler-Lehman iterations $h$ or the $C$ for the SVM, in a single file and also define the used transformers in a pipeline.
+Also, meta-parameters, for instance the number of cross-validation folds or the wanted classifier metrics should be evaluated on the test set, can be specified in these experiment definitions.
+We can also do model-selection with these experiment definitions by specifying multiple parameter combinations that should be evaluated with cross-validation.
+After finding the best parameter combination, these parameters are then evaluated once on a test set and the predictions results also saved to disk.
+This enables us to quickly explore new parameter combinations and clearly define our experiments in a single file.
+
+All experiment definitions with all parameters are provided online\footnote{\url{https://github.com/davidgengenbach/bachelor-thesis/tree/master/code/configs/experiments}} alongside the code.
 
 \paragraph{Concept Map Extraction}
-We used the code provided by Falke\footnote{\url{https://github.com/UKPLab/ijcnlp2017-cmaps}}  to create the concept maps.
+We used the code provided by Falke\footnote{\url{https://github.com/UKPLab/ijcnlp2017-cmaps}}  to create concept maps for our datasets.
 In this section we will briefly describe the steps the code performs. For a more detailed explanation, see \cite{Falke2017}.
 
 The input to the concept map extraction algorithm is a single text document. The output is a single concept map for this text document.
