@@ -1,9 +1,60 @@
+In our work, we conducted several experiments to test the usefulness of graph-representations of text, especially the concept map, for text classification.
+Our experiments ranged from gathering information about the structure of the graphs to actually performing the classification task with different parameters.
+For our graph-based classification, we mostly capitalized on graph kernels.
+Through all these experiments, we aimed to leverage the particular properties of concept maps, especially the structure.
+
+When directly comparing the performance of graph-based and conventional text-based classification, we saw that the text-only features outperformed the graph-based approach by a high margin, for both co-occurrence graphs and concept maps.
+This led us to change our hypothesis and look at the usefulness of graph representations of text in conjunction with text.
+So, our next approach was to combine text- and graph features and classify them together.
+This combined approach, while having a far higher runtime due to the increased dimension of the feature vectors, presented no significant improvement in classification scores over the text-only approach.
+On some datasets, the classification score even was a little lower than the text-only approach.
+This is most likely due to the high dimensionality of the combined features and the subsequent risk of overfitting to too specific features.
+
+However, after re-evaluating and extending our graph-based approach, we saw significant improvement in our graph-only classification performance.
+Especially splitting the multi-word node labels into single-word of concept maps resulted in significant improvement on all datasets.
+As another extension, we pre-processed the graphs by removing infrequent nodes to further reduce the dimensionality of the resulting feature vectors.
+Since we capitalized on the Weisfeiler-Lehman graph kernel to extract our graph features, our guess was that the removal of infrequent words could improve the quality of the features since WL, roughly speaking, counts the matching neighborhoods of nodes.
+So, a node label which only occurs infrequently could ``taint" its neighborhood, making an exact match of that neighborhood less likely.
+However, when classifying the graphs with the infrequent labels removed, we actually saw mixed results, ranging from great improvements on some datasets to lower scores on others.
+Another approach we evaluated was merging infrequent nodes by creating embeddings for each (multi-word) node label using both pre-trained embeddings and creating our own word2vec embeddings from the text.
+In the next step, we merged node labels with a similarity above some given threshold.
+We then assigned identifiers to the resulting label clusters.
+Finally, we relabeled each node in the concept with the identifier of its cluster.
+On most datasets, this approach improved the classification scores.
+
+Besides all these Weisfeiler-Lehman specific extensions and improvements, we also evaluated ``linearizing" the concept maps into text.
+By un-rolling the graph into text, we were able to perform text-based classification on them, which - surprisingly - provided the highest classification score we achieved using graphs.
+In the case of co-occurrence graphs, the performance actually was nearly as good as the text-only approach, which is kind of unsurprising since co-occurrence graphs capture nearly all information aside the word order which was not used by our uni-gram \textit{BoW} approach anyways.
+For concept maps, the classification scores also were the best for all tested graph-based approaches, yet still approximately 5-10\% lower in the F1 macro score than the results for both the co-occurrence graphs and the text-only approach.
+
+Besides all the different approaches and experiments, the importance of evaluating our classification scores on different datasets became immediately clear.
+One approach leading to a great improvement on some datasets, could actually lead to far lower scores other datasets.
+This once more highlights the importance of appropriate model-selection per dataset, especially when using a graph-based approach.
+Understanding the trade-offs of different graph kernels is crucial to achieve higher performance.
+The information graph kernels capture vary widely, ranging from simple exact matches of node labels to more sophisticated structural information.
+Therefore, knowing the structure and particularities of the processed graphs is essential to achieve higher classification performance.
+
+While we were not able to augment the text-based classification toolbox by another approach, that is graph-based features, we nonetheless seen a number of extensions to existing graph kernels which could be useful for other graph-based tasks.
+In our work, we started from text, created graph representations and then classified them to evaluate the usefulness of graph representations in text classification.
+However, concept maps and other graphs can also be created from scratch or generated automatically from non-text sources, eg. knowledge databases.
+While text is currently arguably the most important information medium, with the rise of more interactive media, concept maps might become of greater importance in the future.
+In contrast to most text, concept maps can exhibit a non-linear structure.
+For instance, to understand a paragraph at the end of a text, one often must have read the preceding text.
+The relations between concepts in a text are often implicit and have to be inferred from the context.
+In concept maps, on the other hand, the concepts have explicit relations to each other.
+One can start at every node of a concept map and explore the relationships between the concepts by following the edges.
+This enables the non-linear and visual exploration of the topic of a concept map.
+Adding information to texts can be quite laborious since one must find the appropriate section in the text where to add the new parts.
+Extending concept maps, on the other hand, is as easy as adding a new node or relation to the graph.
+The task of merging multiple concept maps with common concepts also is far easier since one must only merge the common nodes.
+All these properties lead to our opinion that concept maps might become an important information alongside text.
+So, while we were not able to achieve a classification score improvement by augmenting text classification with concept map based features, our observations and approaches nevertheless can be useful for graph-only classification.
+Especially when concept maps indeed become more important and are not created directly by text but generated from other information sources where the underlying text can not be used for classification.
+
 \todo{Revisit approach}
 \todo{Mention encountered difficulties/problems}
 \todo{Mention pros/cons}
 \todo{Repeat hypothesis and how it was (dis-) proved by the work}
-\todo{Rethink assumptions about the problem}
-\todo{Hint solutions}
 \todo{Clearly state conclusion!}
 \todo{Concept maps or other non-linear representations will most likely become more important}
 \todo{Other graph types}
@@ -14,3 +65,4 @@
 \todo{Mention \cite{Valerio2007} and their approach (``Reverse" classification: given a document, find a concept map)}
 \todo{Remove all nodes which did not occur in training}
 \todo{Look at one-layer neural net weights when only classifying graph-based}
+\todo{Merge concept maps}

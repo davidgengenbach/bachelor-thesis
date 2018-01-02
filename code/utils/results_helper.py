@@ -92,7 +92,7 @@ def _get_experiment_name_from_filename(x):
     return parts[1][1:].strip()
 
 
-def get_results(folder=None, use_already_loaded=False, results_directory=RESULTS_DIR, log_progress=tqdm.tqdm_notebook, exclude_filter=None, include_filter=None, filter_out_non_complete_datasets=4, remove_split_cols=True, remove_rank_cols=True, remove_fit_time_cols=True, filter_out_experiment=None, ignore_experiments=True, only_load_dataset=None, fetch_predictions=False):
+def get_results(folder=None, use_already_loaded=False, results_directory=RESULTS_DIR, log_progress=tqdm.tqdm_notebook, exclude_filter=None, include_filter=None, filter_out_non_complete_datasets=None  , remove_split_cols=True, remove_rank_cols=True, remove_fit_time_cols=True, filter_out_experiment=None, ignore_experiments=True, only_load_dataset=None, fetch_predictions=False):
     '''This function _seriously_ has to be refactored!'''
     global _DF_ALL, _RESULT_CACHE
 

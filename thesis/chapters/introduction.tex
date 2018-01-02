@@ -1,3 +1,25 @@
+Text is ubiquitous and to this date is arguably one of the most important information medium.
+Every day and in numerous domains, new texts are produced.
+Due to the number of digitally available text, processing texts automatically instead of manually becomes more appealing and in some cases even necessary.
+However and importantly, language itself is an inherently ambiguous information medium, which in turn significantly hardens the task of processing it automatically.
+Numerous approaches have been devised to nevertheless process text to solve several tasks, such as text classification/categorization, text analysis or summarization, to name just a few.
+\todo{Transition}
+Text classification, or categorization, is the task to predict the class of a text document based on its content.
+Here, the task of finding an appropriate representation of the text is crucial and can greatly influence the success of finding the fitting class.
+A lot of such text representations are based on counting the words of a text and representing the content of the text by these word counts.
+The \textit{Bag-Of-Word}, or BoW, representation is a widely used example of such a procedure.
+Despite or because of its simplicity, this representation has shown great real-world performance on a range of tasks, not limited to text classification.
+However, simple word-count based text representations come at the expense of losing information about its underlying text, eg. the sentence structure and word order.
+That said, there are several other, more sophisticated text representations, for instance 
+ co-occurrence graphs, concept maps, document embeddings or approaches where the text is parsed to obtain relational information between the words.
+Each of these representations also is subject to different trade-offs in its ability to capture the information needed for the task at hand.
+
+In our work, we are interested in graph-based text representations, especially concept maps, to overcome the aforementioned shortcomings of simple text representations like \textit{BoW}.
+We explore the usefulness of this more structured representation in the context of text classification.
+For this, we first generate concept maps for several text datasets and subsequently devise a number of experiments to gain a better insight into the information or structure of concept maps.
+Additionally, we capitalize on so-called graph kernels to process the graphs which in turn enables graph classification.
+So, at the core of this works stands the question, how we can use graph-based approaches to improve on current, conventional text representations like BoW.
+
 \todo{Clearly state problem}
 \todo{Explain difficulties of the task}
 \todo{Explain the research question and how it relates to the field}
@@ -5,22 +27,19 @@
 \todo{Hint the hypothesis}
 \todo{Introduce earlier approaches/results and their weaknesses}
 \todo{Outlook}
+\todo{Furthermore}
 
 \paragraph{Text Classification}
 The need for automatic text classification appears in many fields as the number of digitally available texts grows daily.
-Especially text content created by a ever-growing number of users make manual classification infeasible if not impossible.
-
-\todo{Text classification is important. Why?}
-\todo{Applications?}
-\todo{``text analysis, text categorization, information extraction,  and summarization"}
-\todo{More text available digitally}
+Consequently, there are numerous real-world applications for text classification, ranging from automatically determining whether a given email is spam or not, to classifying the news category of a given document.
+Finding ways to train a automatic classifier which can reliably and accurately classify raw texts therefor becomes appealing.
+There is a rich history of research on text classification and several approaches have been devised to automatically process natural language texts.
 
 \paragraph{Graph Classification}
 Trees, sequences, networks and other graphs occur in a lot of contexts.
 Because of their structured nature, graphs are perfect candidates to capture connected data, or datapoints with relations between them.
-Yet, operating on graphs is often challenging, precisely because of its structured and often non-linear nature.
-Graphs are often of non-fixed size and its structure can vary greatly.
-That said, finding ways to automatically process graphs becomes more important as graphs naturally appear in many fields.
+Yet, operating on graphs is often challenging, precisely because of its structured and often non-linear traits, since graphs are often of non-fixed size and their structure can vary greatly.
+Nevertheless, finding ways to automatically process graphs becomes more important as graphs naturally turn up in many contexts.
 Especially the automatic classification of graphs has interesting applications.
 Applications of graph classification range from classifying the toxicity of molecules to predicting friends for users in a social network.
 In Table \ref{table:graph_classification_examples} we gathered some example applications of graph classification.
@@ -60,13 +79,13 @@ We choose concept maps as the preferred graph representation since they are spec
 In the next sections, we will further explain graph representations for text and why they could be a viable addition to the toolbox in text classification.
 
 \labelsection{Thesis Structure}{subsec:thesis_structure}
-In the next section, \fullref{sec:background}, we will introduce the concepts used in the rest of this work.
+In the next section, \ref{sec:background} \fullref{sec:background}, we will introduce the concepts used in the rest of this work.
 We also offer an overview over related work and the history of the field of text- and graph based classification.
 
-In Section \fullref{sec:evaluation}, we further describe our hypothesis and outline questions regarding it. This section also covers the methodology and experiments we use to answer these questions.
+In Section \ref{sec:evaluation} \fullref{sec:evaluation}, we further describe our hypothesis and outline questions regarding it. This section also covers the methodology and experiments we use to answer these questions.
 
-Next, in Section \fullref{sec:results}, we then provide the results to the questions we pose in the preceding chapter, interpreting them in the context of our hypothesis.
-Here, we also provide other observations regarding our approach.
+Next, in Section \ref{sec:results} \fullref{sec:results}, we then provide the results to the questions posed in the preceding chapter, interpreting them in the context of our hypothesis.
+Here, we also provide related observations regarding our approach.
 
-Finally, in Section \fullref{sec:conclusions}, we gather the results of previous sections into a more high-level picture.
-We close with finishing remarks regarding possible further work and also interpret our results in the context of previous work.
+Finally, in Section \ref{sec:conclusions} \fullref{sec:conclusions}, we gather the results of previous sections into a more high-level picture.
+We close with finishing remarks concerning possible further work and also interpret our results in the context of previous work.
