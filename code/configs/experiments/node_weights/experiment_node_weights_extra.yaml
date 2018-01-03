@@ -2,8 +2,6 @@ params_per_type:
   graph_extra:
     feature_extraction:
       fast_wl:
-        h:
-        - 10
         node_weight_function:
         - adj_degrees_metric_max
         node_weight_iteration_weight_function:

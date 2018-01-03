@@ -315,12 +315,13 @@ The parameters for the \textit{SVM} are gathered in Table \ref{table:svm_paramet
 		\toprule
 		C & $\{0.01, 0.1, 1\}$ \\
 		Regularization & L2 \\
+		Kernel & linear \\
 		Optimization problem & dual \\
-		Stopping criteria tolerance & 0.0001 \\
+		Stopping criteria tolerance & 0.0005 \\
 		Class weight & balanced \\
 		\bottomrule
 	\end{tabular}
-	\caption[Table: SVM parameters]{\textit{SVM} parameters. The \textit{C} parameter was tuned using cross-validation. A more detailed explanation is available online\footnote{\url{http://scikit-learn.org/stable/modules/svm.html\#svm-classification}}}%
+	\caption[Table: SVM parameters]{\textit{SVM} parameters. The \textit{C} parameter is tuned using cross-validation. A more detailed explanation is available online\footnote{\url{http://scikit-learn.org/stable/modules/svm.html\#svm-classification}} and in \cite{Cortes1995}} %
 	\label{table:svm_parameters}
 \end{table}
 

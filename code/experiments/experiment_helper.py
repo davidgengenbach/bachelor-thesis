@@ -3,6 +3,7 @@ import os
 import transformers
 from transformers.pipelines import pipeline_helper
 import experiments
+from experiments import task_helper
 from utils import dataset_helper, graph_metrics
 import sklearn
 import sklearn.preprocessing
@@ -10,6 +11,8 @@ import sklearn.decomposition
 import sklearn.feature_extraction.text
 from glob import glob
 from utils import constants
+import collections
+
 
 NEEDED_FIELDS = ['params_per_type']
 
@@ -71,6 +74,28 @@ def get_all_task_type_params():
         task_type_params[task.type] = params
         del X, Y, estimator, params
     return task_type_params
+
+
+def prepare_param_grid(task, param_grid, experiment_config):
+    experiment_params = dict()
+    if experiment_config:
+        assert task.type in experiment_config['params_per_type']
+        experiment_params = pipeline_helper.flatten_nested_params(experiment_config['params_per_type'][task.type])
+
+    param_grid = pipeline_helper.flatten_nested_params(param_grid)
+
+    # Merge param_grid with classifiers
+    param_grid = task_helper.add_classifier_to_params(param_grid)
+
+    # Overwrite default param_grid with the parameters specified in experiment_config
+    param_grid = dict(param_grid, **experiment_params)
+
+    # Remove "voided" params
+    param_grid = {k: v for k, v in param_grid.items() if v is not None}
+
+    # Instantiate classes, eg. SVM or RelabelTransformer
+    param_grid = {k: [x() if isinstance(x, type) else x for x in v] for k, v in param_grid.items()}
+    return param_grid
 
 
 def get_all_task_typ_params_flat(task_type_params: dict = None, remove_complex_types=True):
@@ -138,14 +163,16 @@ def replace_placeholders(param_grid, placeholder_list=PLACEHOLDER_LIST):
     return out_param_grid
 
 
-def get_all_param_grid_config_files(folder=constants.EXPERIMENT_CONFIG_FOLDER):
+def get_all_param_grid_config_files(folder=constants.EXPERIMENT_CONFIG_FOLDER, filter_out_disabled=True):
     out = {}
     for file in glob('{}/**/*.yaml'.format(folder), recursive=True):
+        if filter_out_disabled and '.disabled.' in file or 'all_experiments' in file:
+            continue
         out[file] = get_experiment_config(file)
     return out
 
 def get_all_experiment_names():
-    experiments_names = [x.split('/')[-1].rsplit('.', 1)[0] for x in get_all_param_grid_config_files().keys() if not x.endswith('all.yaml')]
+    experiments_names = [x.split('/')[-1].rsplit('.', 1)[0] for x in get_all_param_grid_config_files().keys() if not x.endswith('all.yaml') and not x.endswith('all_experiments.yaml')]
     return experiments_names
 
 
@@ -153,3 +180,31 @@ def get_experiment_config_for(experiment_name:str, folder=constants.EXPERIMENT_C
     file = '{}/{}.yaml'.format(folder, experiment_name)
     assert os.path.exists(file)
     return get_experiment_config(file)
+
+
+def save_all_experiment_params():
+    all_tasks = experiments.get_all_tasks()
+
+    tasks = {}
+    for task in all_tasks:
+        if task.name in tasks: continue
+        tasks[task.type] = task
+
+    all_experiments = get_all_param_grid_config_files()
+
+    experiments_ = collections.defaultdict(dict)
+    for name, experiment_config in all_experiments.items():
+        if '/all' in name: continue
+        for task_name, task in tasks.items():
+            if task.type not in experiment_config['params_per_type']: continue
+            _, _, _, params = task.fn()
+            merged_param_grid = prepare_param_grid(task, params, experiment_config)
+            experiments_[name][task.type] = merged_param_grid
+
+    out = {}
+    for experiment_config, param_vals in experiments_.items():
+        a = get_all_task_typ_params_flat(param_vals)
+        out[experiment_config.split('/', 2)[2]] = a
+
+    with open('configs/experiments/all_experiments.yaml', 'w') as f:
+        yaml.dump(out, f, default_flow_style=False)

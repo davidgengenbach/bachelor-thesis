@@ -43,6 +43,8 @@ def remove_transformer_classes(d):
 replacements = [
     ('param_', ''),
     ('features__fast_wl_pipeline__feature_extraction__feature_extraction__', 'graph__'),
+    ('features__fast_wl_pipeline__feature_extraction__', ''),
+    ('graph_preprocessing', 'graph__preprocessing'),
     #('normalizer', ''),
     ('preprocessing', 'text__preprocessing'),
     ('features__fast_wl_pipeline__feature_extraction__normalizer', 'graph__normalizer'),
@@ -177,20 +179,10 @@ def get_results(folder=None, use_already_loaded=False, results_directory=RESULTS
 
             result['type'] = 'cooccurrence' if is_cooccurrence_dataset else 'concept_map'
             result['lemmatized'] = '_lemmatized_' in result_file
-            result['same_label'] = 'same_label' in result_file
 
             result['kernel'] = get_kernel_from_filename(result_file)
             if 'graph__fast_wl__node_weight_function' in result:
                 result['graph__fast_wl__node_weight_function'] = ['none' if x is None else x.__name__ for x in result.get('graph__fast_wl__node_weight_function')]
-
-            is_relabeled = 'relabeled' in result_file
-            result['relabeled'] = is_relabeled
-            if is_relabeled:
-                #topn = result_file.split('topn-')[1].split('_')[0]
-                #threshold = result_file.split('threshold-')[1].split('_')[0]
-                #result['topn'] = int(topn)
-                #result['threshold'] = float(threshold)
-                pass
 
             # Co-Occurrence
             if is_cooccurrence_dataset:
@@ -205,8 +197,6 @@ def get_results(folder=None, use_already_loaded=False, results_directory=RESULTS
         else:
             result['type'] = 'text'
             result['words'] = ['all' for x in result['params']]
-
-        result['is_ana'] = '-ana' in result_file
 
         if dataset_name.endswith('-single') or dataset_name.endswith('-ana'):
             dataset_name = dataset_name.rsplit('-', 1)[0]

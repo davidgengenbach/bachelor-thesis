@@ -1,9 +1,5 @@
 params_per_type:
   graph:
-    feature_extraction:
-      phi_picker:
-        use_zeroth:
-        - True
     graph_preprocessing:
       VAL_:
       - GraphMultiWordLabelSplitter

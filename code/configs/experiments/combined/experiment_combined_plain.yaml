@@ -10,7 +10,6 @@ params_per_type:
           vectorizer:
             VAL_:
             - CountVectorizer
-            - TfidfVectorizer
             binary:
             - true
             ngram_range:

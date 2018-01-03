@@ -1,13 +1,7 @@
 params_per_type:
   graph:
-    feature_extraction:
-      phi_picker:
-        use_zeroth:
-        - true
     graph_preprocessing:
       VAL_:
       - RemoveInfrequentGraphLabels
       max_occurrences:
       - 1
-    normalizer:
-    - MaxAbsScaler

@@ -15,9 +15,9 @@ params_per_type:
       - true
       #- false
       ngram_range:
-      - &id001 !!python/tuple
+      - !!python/tuple
         - 1
         - 1
-      - &id002 !!python/tuple
+      - !!python/tuple
         - 1
         - 2

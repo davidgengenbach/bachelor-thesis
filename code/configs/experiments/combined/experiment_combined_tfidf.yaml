@@ -1,17 +1,6 @@
 params_per_type:
   graph_combined:
     features:
-      fast_wl_pipeline:
-        feature_extraction:
-          graph_preprocessing:
-            VAL_:
-            - GraphMultiWordLabelSplitter
-            remove_old_composite_labels:
-            - true
-            add_self_links:
-            - false
-          normalizer:
-          - MaxAbsScaler
       text:
         vectorizer:
           preprocessing:
@@ -20,11 +9,9 @@ params_per_type:
           - MaxAbsScaler
           vectorizer:
             VAL_:
-            - CountVectorizer
             - TfidfVectorizer
             binary:
             - true
-            - false
             ngram_range:
             - !!python/tuple
               - 1

@@ -1,5 +1,4 @@
 limit_graph_type:
-#- cooccurrence
 - concept_map
 params_per_type:
   graph_content_only:

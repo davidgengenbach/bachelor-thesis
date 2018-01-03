@@ -1,0 +1,1398 @@
+combined/experiment_combined_infrequent_removed.yaml:
+  graph_combined:
+    classifier:
+      C:
+      - 0.01
+      - 0.1
+      - 1
+      VAL_:
+      - LinearSVC
+      class_weight:
+      - balanced
+      max_iter:
+      - 5000
+      tol:
+      - 0.0001
+    features:
+      fast_wl_pipeline:
+        feature_extraction:
+          feature_extraction:
+            fast_wl:
+              h:
+              - 10
+              ignore_label_order:
+              - false
+              node_weight_function:
+              - null
+              node_weight_iteration_weight_function:
+              - null
+              norm:
+              - null
+              phi_dim:
+              - null
+              round_to_decimals:
+              - 10
+              same_label:
+              - false
+              truncate_to_highest_label:
+              - true
+              use_directed:
+              - true
+              use_early_stopping:
+              - true
+            phi_picker:
+              return_iteration:
+              - stacked
+              use_zeroth:
+              - true
+          graph_preprocessing:
+            VAL_:
+            - RemoveInfrequentGraphLabels
+            max_occurrences:
+            - 1
+          normalizer:
+          - MaxAbsScaler
+      text:
+        vectorizer:
+          preprocessing:
+          - SimplePreProcessingTransformer
+          scaler:
+          - MaxAbsScaler
+          vectorizer:
+            VAL_:
+            - CountVectorizer
+            - TfidfVectorizer
+            binary:
+            - true
+            - false
+            min_df:
+            - 2
+            ngram_range:
+            - !!python/tuple
+              - 1
+              - 1
+combined/experiment_combined_plain.yaml:
+  graph_combined:
+    classifier:
+      C:
+      - 0.01
+      - 0.1
+      - 1
+      VAL_:
+      - LinearSVC
+      class_weight:
+      - balanced
+      max_iter:
+      - 5000
+      tol:
+      - 0.0001
+    features:
+      fast_wl_pipeline:
+        feature_extraction:
+          feature_extraction:
+            fast_wl:
+              h:
+              - 10
+              ignore_label_order:
+              - false
+              node_weight_function:
+              - null
+              node_weight_iteration_weight_function:
+              - null
+              norm:
+              - null
+              phi_dim:
+              - null
+              round_to_decimals:
+              - 10
+              same_label:
+              - false
+              truncate_to_highest_label:
+              - true
+              use_directed:
+              - true
+              use_early_stopping:
+              - true
+            phi_picker:
+              return_iteration:
+              - stacked
+              use_zeroth:
+              - true
+          graph_preprocessing:
+          - null
+          normalizer:
+          - MaxAbsScaler
+      text:
+        vectorizer:
+          preprocessing:
+          - SimplePreProcessingTransformer
+          scaler:
+          - MaxAbsScaler
+          vectorizer:
+            VAL_:
+            - CountVectorizer
+            binary:
+            - true
+            min_df:
+            - 2
+            ngram_range:
+            - !!python/tuple
+              - 1
+              - 1
+combined/experiment_combined_same_label.yaml:
+  graph_combined:
+    classifier:
+      C:
+      - 0.01
+      - 0.1
+      - 1
+      VAL_:
+      - LinearSVC
+      class_weight:
+      - balanced
+      max_iter:
+      - 5000
+      tol:
+      - 0.0001
+    features:
+      fast_wl_pipeline:
+        feature_extraction:
+          feature_extraction:
+            fast_wl:
+              h:
+              - 10
+              ignore_label_order:
+              - false
+              node_weight_function:
+              - null
+              node_weight_iteration_weight_function:
+              - null
+              norm:
+              - null
+              phi_dim:
+              - null
+              round_to_decimals:
+              - 10
+              same_label:
+              - true
+              truncate_to_highest_label:
+              - true
+              use_directed:
+              - true
+              use_early_stopping:
+              - true
+            phi_picker:
+              return_iteration:
+              - stacked
+              use_zeroth:
+              - true
+          graph_preprocessing:
+          - null
+          normalizer:
+          - MaxAbsScaler
+      text:
+        vectorizer:
+          preprocessing:
+          - SimplePreProcessingTransformer
+          scaler:
+          - MaxAbsScaler
+          vectorizer:
+            VAL_:
+            - CountVectorizer
+            - TfidfVectorizer
+            binary:
+            - true
+            - false
+            min_df:
+            - 2
+            ngram_range:
+            - !!python/tuple
+              - 1
+              - 1
+combined/experiment_combined_tfidf.yaml:
+  graph_combined:
+    classifier:
+      C:
+      - 0.01
+      - 0.1
+      - 1
+      VAL_:
+      - LinearSVC
+      class_weight:
+      - balanced
+      max_iter:
+      - 5000
+      tol:
+      - 0.0001
+    features:
+      fast_wl_pipeline:
+        feature_extraction:
+          feature_extraction:
+            fast_wl:
+              h:
+              - 10
+              ignore_label_order:
+              - false
+              node_weight_function:
+              - null
+              node_weight_iteration_weight_function:
+              - null
+              norm:
+              - null
+              phi_dim:
+              - null
+              round_to_decimals:
+              - 10
+              same_label:
+              - false
+              truncate_to_highest_label:
+              - true
+              use_directed:
+              - true
+              use_early_stopping:
+              - true
+            phi_picker:
+              return_iteration:
+              - stacked
+              use_zeroth:
+              - true
+          graph_preprocessing:
+          - null
+          normalizer:
+          - MaxAbsScaler
+      text:
+        vectorizer:
+          preprocessing:
+          - SimplePreProcessingTransformer
+          scaler:
+          - MaxAbsScaler
+          vectorizer:
+            VAL_:
+            - TfidfVectorizer
+            binary:
+            - true
+            min_df:
+            - 2
+            ngram_range:
+            - !!python/tuple
+              - 1
+              - 1
+combined/experiment_combined_with_splitted_words.yaml:
+  graph_combined:
+    classifier:
+      C:
+      - 0.01
+      - 0.1
+      - 1
+      VAL_:
+      - LinearSVC
+      class_weight:
+      - balanced
+      max_iter:
+      - 5000
+      tol:
+      - 0.0001
+    features:
+      fast_wl_pipeline:
+        feature_extraction:
+          feature_extraction:
+            fast_wl:
+              h:
+              - 10
+              ignore_label_order:
+              - false
+              node_weight_function:
+              - null
+              node_weight_iteration_weight_function:
+              - null
+              norm:
+              - null
+              phi_dim:
+              - null
+              round_to_decimals:
+              - 10
+              same_label:
+              - false
+              truncate_to_highest_label:
+              - true
+              use_directed:
+              - true
+              use_early_stopping:
+              - true
+            phi_picker:
+              return_iteration:
+              - stacked
+              use_zeroth:
+              - true
+          graph_preprocessing:
+            VAL_:
+            - GraphMultiWordLabelSplitter
+            add_self_links:
+            - false
+            remove_old_composite_labels:
+            - true
+          normalizer:
+          - MaxAbsScaler
+      text:
+        vectorizer:
+          preprocessing:
+          - SimplePreProcessingTransformer
+          scaler:
+          - MaxAbsScaler
+          vectorizer:
+            VAL_:
+            - CountVectorizer
+            - TfidfVectorizer
+            binary:
+            - true
+            - false
+            min_df:
+            - 2
+            ngram_range:
+            - !!python/tuple
+              - 1
+              - 1
+content_vs_structure/experiment_content_vs_structure_vs_both_both.yaml:
+  graph:
+    classifier:
+      C:
+      - 0.01
+      - 0.1
+      - 1
+      VAL_:
+      - LinearSVC
+      class_weight:
+      - balanced
+      max_iter:
+      - 5000
+      tol:
+      - 0.0001
+    feature_extraction:
+      fast_wl:
+        h:
+        - 10
+        ignore_label_order:
+        - false
+        node_weight_function:
+        - null
+        node_weight_iteration_weight_function:
+        - null
+        norm:
+        - null
+        phi_dim:
+        - null
+        round_to_decimals:
+        - 10
+        same_label:
+        - false
+        truncate_to_highest_label:
+        - true
+        use_directed:
+        - true
+        use_early_stopping:
+        - true
+      phi_picker:
+        return_iteration:
+        - stacked
+        use_zeroth:
+        - true
+    graph_preprocessing:
+    - null
+    normalizer:
+    - MaxAbsScaler
+content_vs_structure/experiment_content_vs_structure_vs_both_content_only.yaml:
+  graph_content_only:
+    classifier:
+      C:
+      - 0.01
+      - 0.1
+      - 1
+      VAL_:
+      - LinearSVC
+      class_weight:
+      - balanced
+      max_iter:
+      - 5000
+      tol:
+      - 0.0001
+    graph_to_text:
+      use_edges:
+      - true
+    preprocessing:
+    - SimplePreProcessingTransformer
+    scaler:
+    - MaxAbsScaler
+    vectorizer:
+      VAL_:
+      - CountVectorizer
+      binary:
+      - true
+      min_df:
+      - 2
+      ngram_range:
+      - !!python/tuple
+        - 1
+        - 1
+      - !!python/tuple
+        - 1
+        - 2
+content_vs_structure/experiment_content_vs_structure_vs_both_structure_only.yaml:
+  graph:
+    classifier:
+      C:
+      - 0.01
+      - 0.1
+      - 1
+      VAL_:
+      - LinearSVC
+      class_weight:
+      - balanced
+      max_iter:
+      - 5000
+      tol:
+      - 0.0001
+    feature_extraction:
+      fast_wl:
+        h:
+        - 10
+        ignore_label_order:
+        - false
+        node_weight_function:
+        - null
+        node_weight_iteration_weight_function:
+        - null
+        norm:
+        - null
+        phi_dim:
+        - null
+        round_to_decimals:
+        - 10
+        same_label:
+        - true
+        truncate_to_highest_label:
+        - true
+        use_directed:
+        - true
+        use_early_stopping:
+        - true
+      phi_picker:
+        return_iteration:
+        - stacked
+        use_zeroth:
+        - true
+    graph_preprocessing:
+    - null
+    normalizer:
+    - MaxAbsScaler
+edge_labels/experiment_edge_labels_with_edge.yaml:
+  graph_content_only:
+    classifier:
+      C:
+      - 0.01
+      - 0.1
+      - 1
+      VAL_:
+      - LinearSVC
+      class_weight:
+      - balanced
+      max_iter:
+      - 5000
+      tol:
+      - 0.0001
+    graph_to_text:
+      use_edges:
+      - true
+    preprocessing:
+    - SimplePreProcessingTransformer
+    scaler:
+    - MaxAbsScaler
+    vectorizer:
+      VAL_:
+      - CountVectorizer
+      binary:
+      - true
+      min_df:
+      - 2
+      ngram_range:
+      - !!python/tuple
+        - 1
+        - 1
+edge_labels/experiment_edge_labels_without_edge.yaml:
+  graph_content_only:
+    classifier:
+      C:
+      - 0.01
+      - 0.1
+      - 1
+      VAL_:
+      - LinearSVC
+      class_weight:
+      - balanced
+      max_iter:
+      - 5000
+      tol:
+      - 0.0001
+    graph_to_text:
+      use_edges:
+      - false
+    preprocessing:
+    - SimplePreProcessingTransformer
+    scaler:
+    - MaxAbsScaler
+    vectorizer:
+      VAL_:
+      - CountVectorizer
+      binary:
+      - true
+      min_df:
+      - 2
+      ngram_range:
+      - !!python/tuple
+        - 1
+        - 1
+fast_wl_normalization/experiment_fast_wl_normalization.yaml:
+  graph:
+    classifier:
+      C:
+      - 0.01
+      - 0.1
+      - 1
+      VAL_:
+      - LinearSVC
+      class_weight:
+      - balanced
+      max_iter:
+      - 5000
+      tol:
+      - 0.0001
+    feature_extraction:
+      fast_wl:
+        h:
+        - 10
+        ignore_label_order:
+        - false
+        node_weight_function:
+        - null
+        node_weight_iteration_weight_function:
+        - null
+        norm:
+        - null
+        - l1
+        - l2
+        - max
+        phi_dim:
+        - null
+        round_to_decimals:
+        - 10
+        same_label:
+        - false
+        truncate_to_highest_label:
+        - true
+        use_directed:
+        - true
+        use_early_stopping:
+        - true
+      phi_picker:
+        return_iteration:
+        - stacked
+        use_zeroth:
+        - true
+    graph_preprocessing:
+    - null
+    normalizer:
+    - null
+    - MaxAbsScaler
+min_df/experiment_min_df_1.yaml:
+  text:
+    classifier:
+      C:
+      - 0.01
+      - 0.1
+      - 1
+      VAL_:
+      - LinearSVC
+      class_weight:
+      - balanced
+      max_iter:
+      - 5000
+      tol:
+      - 0.0001
+    preprocessing:
+    - SimplePreProcessingTransformer
+    scaler:
+    - MaxAbsScaler
+    vectorizer:
+      VAL_:
+      - TfidfVectorizer
+      binary:
+      - false
+      min_df:
+      - 1
+      ngram_range:
+      - !!python/tuple
+        - 1
+        - 1
+      - !!python/tuple
+        - 1
+        - 2
+min_df/experiment_min_df_2.yaml:
+  text:
+    classifier:
+      C:
+      - 0.01
+      - 0.1
+      - 1
+      VAL_:
+      - LinearSVC
+      class_weight:
+      - balanced
+      max_iter:
+      - 5000
+      tol:
+      - 0.0001
+    preprocessing:
+    - SimplePreProcessingTransformer
+    scaler:
+    - MaxAbsScaler
+    vectorizer:
+      VAL_:
+      - TfidfVectorizer
+      binary:
+      - false
+      min_df:
+      - 2
+      ngram_range:
+      - !!python/tuple
+        - 1
+        - 1
+      - !!python/tuple
+        - 1
+        - 2
+node_weights/experiment_node_weights.yaml:
+  graph_node_weights:
+    classifier:
+      C:
+      - 0.01
+      - 0.1
+      - 1
+      VAL_:
+      - LinearSVC
+      class_weight:
+      - balanced
+      max_iter:
+      - 5000
+      tol:
+      - 0.0001
+    feature_extraction:
+      fast_wl:
+        h:
+        - 10
+        ignore_label_order:
+        - false
+        node_weight_function:
+        - function
+        - function
+        node_weight_iteration_weight_function:
+        - null
+        - function
+        norm:
+        - null
+        phi_dim:
+        - null
+        round_to_decimals:
+        - 10
+        same_label:
+        - false
+        truncate_to_highest_label:
+        - true
+        use_directed:
+        - true
+        use_early_stopping:
+        - true
+      phi_picker:
+        return_iteration:
+        - stacked
+        use_zeroth:
+        - true
+    graph_preprocessing:
+    - null
+    normalizer:
+    - null
+node_weights/experiment_node_weights_extra.yaml:
+  graph_extra:
+    classifier:
+      C:
+      - 0.01
+      - 0.1
+      - 1
+      VAL_:
+      - LinearSVC
+      class_weight:
+      - balanced
+      max_iter:
+      - 5000
+      tol:
+      - 0.0001
+    feature_extraction:
+      fast_wl:
+        h:
+        - 10
+        ignore_label_order:
+        - false
+        node_weight_function:
+        - function
+        node_weight_iteration_weight_function:
+        - null
+        - function
+        norm:
+        - null
+        phi_dim:
+        - null
+        round_to_decimals:
+        - 10
+        same_label:
+        - false
+        truncate_to_highest_label:
+        - true
+        use_directed:
+        - true
+        use_early_stopping:
+        - false
+      phi_picker:
+        return_iteration:
+        - stacked
+        use_zeroth:
+        - true
+    graph_preprocessing:
+    - null
+    normalizer:
+    - MaxAbsScaler
+node_weights/experiment_node_weights_extra_normal.yaml:
+  graph_extra:
+    classifier:
+      C:
+      - 0.01
+      - 0.1
+      - 1
+      VAL_:
+      - LinearSVC
+      class_weight:
+      - balanced
+      max_iter:
+      - 5000
+      tol:
+      - 0.0001
+    feature_extraction:
+      fast_wl:
+        h:
+        - 10
+        ignore_label_order:
+        - false
+        node_weight_function:
+        - null
+        node_weight_iteration_weight_function:
+        - null
+        norm:
+        - null
+        phi_dim:
+        - null
+        round_to_decimals:
+        - 10
+        same_label:
+        - false
+        truncate_to_highest_label:
+        - true
+        use_directed:
+        - true
+        use_early_stopping:
+        - false
+      phi_picker:
+        return_iteration:
+        - stacked
+        use_zeroth:
+        - true
+    graph_preprocessing:
+    - null
+    normalizer:
+    - null
+    - MaxAbsScaler
+relabel/experiment_relabel_5.yaml:
+  graph_relabeled:
+    classifier:
+      C:
+      - 0.01
+      - 0.1
+      - 1
+      VAL_:
+      - LinearSVC
+      class_weight:
+      - balanced
+      max_iter:
+      - 5000
+      tol:
+      - 0.0001
+    feature_extraction:
+      fast_wl:
+        h:
+        - 10
+        ignore_label_order:
+        - false
+        node_weight_function:
+        - null
+        node_weight_iteration_weight_function:
+        - null
+        norm:
+        - null
+        phi_dim:
+        - null
+        round_to_decimals:
+        - 10
+        same_label:
+        - false
+        truncate_to_highest_label:
+        - true
+        use_directed:
+        - true
+        use_early_stopping:
+        - true
+      phi_picker:
+        return_iteration:
+        - stacked
+        use_zeroth:
+        - true
+    graph_preprocessing:
+      VAL_:
+      - RelabelGraphsTransformer
+      dataset:
+      - ted_talks
+      threshold:
+      - 0.5
+      topn:
+      - 10
+    normalizer:
+    - MaxAbsScaler
+relabel/experiment_relabel_7.yaml:
+  graph_relabeled:
+    classifier:
+      C:
+      - 0.01
+      - 0.1
+      - 1
+      VAL_:
+      - LinearSVC
+      class_weight:
+      - balanced
+      max_iter:
+      - 5000
+      tol:
+      - 0.0001
+    feature_extraction:
+      fast_wl:
+        h:
+        - 10
+        ignore_label_order:
+        - false
+        node_weight_function:
+        - null
+        node_weight_iteration_weight_function:
+        - null
+        norm:
+        - null
+        phi_dim:
+        - null
+        round_to_decimals:
+        - 10
+        same_label:
+        - false
+        truncate_to_highest_label:
+        - true
+        use_directed:
+        - true
+        use_early_stopping:
+        - true
+      phi_picker:
+        return_iteration:
+        - stacked
+        use_zeroth:
+        - true
+    graph_preprocessing:
+      VAL_:
+      - RelabelGraphsTransformer
+      dataset:
+      - ted_talks
+      threshold:
+      - 0.7
+      topn:
+      - 10
+    normalizer:
+    - MaxAbsScaler
+relabel/experiment_relabel_9.yaml:
+  graph_relabeled:
+    classifier:
+      C:
+      - 0.01
+      - 0.1
+      - 1
+      VAL_:
+      - LinearSVC
+      class_weight:
+      - balanced
+      max_iter:
+      - 5000
+      tol:
+      - 0.0001
+    feature_extraction:
+      fast_wl:
+        h:
+        - 10
+        ignore_label_order:
+        - false
+        node_weight_function:
+        - null
+        node_weight_iteration_weight_function:
+        - null
+        norm:
+        - null
+        phi_dim:
+        - null
+        round_to_decimals:
+        - 10
+        same_label:
+        - false
+        truncate_to_highest_label:
+        - true
+        use_directed:
+        - true
+        use_early_stopping:
+        - true
+      phi_picker:
+        return_iteration:
+        - stacked
+        use_zeroth:
+        - true
+    graph_preprocessing:
+      VAL_:
+      - RelabelGraphsTransformer
+      dataset:
+      - ted_talks
+      threshold:
+      - 0.9
+      topn:
+      - 10
+    normalizer:
+    - MaxAbsScaler
+remove_infrequent/experiment_remove_infrequent_nodelabels_1.yaml:
+  graph:
+    classifier:
+      C:
+      - 0.01
+      - 0.1
+      - 1
+      VAL_:
+      - LinearSVC
+      class_weight:
+      - balanced
+      max_iter:
+      - 5000
+      tol:
+      - 0.0001
+    feature_extraction:
+      fast_wl:
+        h:
+        - 10
+        ignore_label_order:
+        - false
+        node_weight_function:
+        - null
+        node_weight_iteration_weight_function:
+        - null
+        norm:
+        - null
+        phi_dim:
+        - null
+        round_to_decimals:
+        - 10
+        same_label:
+        - false
+        truncate_to_highest_label:
+        - true
+        use_directed:
+        - true
+        use_early_stopping:
+        - true
+      phi_picker:
+        return_iteration:
+        - stacked
+        use_zeroth:
+        - true
+    graph_preprocessing:
+      VAL_:
+      - RemoveInfrequentGraphLabels
+      max_occurrences:
+      - 1
+    normalizer:
+    - MaxAbsScaler
+remove_infrequent/experiment_remove_infrequent_nodelabels_3.yaml:
+  graph:
+    classifier:
+      C:
+      - 0.01
+      - 0.1
+      - 1
+      VAL_:
+      - LinearSVC
+      class_weight:
+      - balanced
+      max_iter:
+      - 5000
+      tol:
+      - 0.0001
+    feature_extraction:
+      fast_wl:
+        h:
+        - 10
+        ignore_label_order:
+        - false
+        node_weight_function:
+        - null
+        node_weight_iteration_weight_function:
+        - null
+        norm:
+        - null
+        phi_dim:
+        - null
+        round_to_decimals:
+        - 10
+        same_label:
+        - false
+        truncate_to_highest_label:
+        - true
+        use_directed:
+        - true
+        use_early_stopping:
+        - true
+      phi_picker:
+        return_iteration:
+        - stacked
+        use_zeroth:
+        - true
+    graph_preprocessing:
+      VAL_:
+      - RemoveInfrequentGraphLabels
+      max_occurrences:
+      - 3
+    normalizer:
+    - MaxAbsScaler
+remove_unseen_nodes/experiment_remove_unseen_nodes.yaml:
+  graph:
+    classifier:
+      C:
+      - 0.01
+      - 0.1
+      - 1
+      VAL_:
+      - LinearSVC
+      class_weight:
+      - balanced
+      max_iter:
+      - 5000
+      tol:
+      - 0.0001
+    feature_extraction:
+      fast_wl:
+        h:
+        - 10
+        ignore_label_order:
+        - false
+        node_weight_function:
+        - null
+        node_weight_iteration_weight_function:
+        - null
+        norm:
+        - null
+        phi_dim:
+        - null
+        round_to_decimals:
+        - 10
+        same_label:
+        - false
+        truncate_to_highest_label:
+        - true
+        use_directed:
+        - true
+        use_early_stopping:
+        - true
+      phi_picker:
+        return_iteration:
+        - stacked
+        use_zeroth:
+        - true
+    graph_postprocessing:
+    - null
+    graph_preprocessing:
+    - RemoveNewGraphNodes
+    normalizer:
+    - MaxAbsScaler
+split_multi_words/experiment_split_multi_words_with_splitted.yaml:
+  graph:
+    classifier:
+      C:
+      - 0.01
+      - 0.1
+      - 1
+      VAL_:
+      - LinearSVC
+      class_weight:
+      - balanced
+      max_iter:
+      - 5000
+      tol:
+      - 0.0001
+    feature_extraction:
+      fast_wl:
+        h:
+        - 10
+        ignore_label_order:
+        - false
+        node_weight_function:
+        - null
+        node_weight_iteration_weight_function:
+        - null
+        norm:
+        - null
+        phi_dim:
+        - null
+        round_to_decimals:
+        - 10
+        same_label:
+        - false
+        truncate_to_highest_label:
+        - true
+        use_directed:
+        - true
+        use_early_stopping:
+        - true
+      phi_picker:
+        return_iteration:
+        - stacked
+        use_zeroth:
+        - true
+    graph_preprocessing:
+      VAL_:
+      - GraphMultiWordLabelSplitter
+      add_self_links:
+      - false
+      remove_old_composite_labels:
+      - true
+    normalizer:
+    - MaxAbsScaler
+split_multi_words/experiment_split_multi_words_without_splitter.yaml:
+  graph:
+    classifier:
+      C:
+      - 0.01
+      - 0.1
+      - 1
+      VAL_:
+      - LinearSVC
+      class_weight:
+      - balanced
+      max_iter:
+      - 5000
+      tol:
+      - 0.0001
+    feature_extraction:
+      fast_wl:
+        h:
+        - 10
+        ignore_label_order:
+        - false
+        node_weight_function:
+        - null
+        node_weight_iteration_weight_function:
+        - null
+        norm:
+        - null
+        phi_dim:
+        - null
+        round_to_decimals:
+        - 10
+        same_label:
+        - false
+        truncate_to_highest_label:
+        - true
+        use_directed:
+        - true
+        use_early_stopping:
+        - true
+      phi_picker:
+        return_iteration:
+        - stacked
+        use_zeroth:
+        - true
+    normalizer:
+    - MaxAbsScaler
+text/experiment_text_plain.yaml:
+  text:
+    classifier:
+      C:
+      - 0.01
+      - 0.1
+      - 1
+      VAL_:
+      - LinearSVC
+      class_weight:
+      - balanced
+      max_iter:
+      - 5000
+      tol:
+      - 0.0001
+    preprocessing:
+    - SimplePreProcessingTransformer
+    scaler:
+    - MaxAbsScaler
+    vectorizer:
+      VAL_:
+      - CountVectorizer
+      binary:
+      - true
+      - false
+      min_df:
+      - 2
+      ngram_range:
+      - !!python/tuple
+        - 1
+        - 1
+      - !!python/tuple
+        - 1
+        - 2
+text/experiment_text_tfidf.yaml:
+  text:
+    classifier:
+      C:
+      - 0.01
+      - 0.1
+      - 1
+      VAL_:
+      - LinearSVC
+      class_weight:
+      - balanced
+      max_iter:
+      - 5000
+      tol:
+      - 0.0001
+    preprocessing:
+    - SimplePreProcessingTransformer
+    scaler:
+    - MaxAbsScaler
+    vectorizer:
+      VAL_:
+      - TfidfVectorizer
+      binary:
+      - true
+      - false
+      min_df:
+      - 2
+      ngram_range:
+      - !!python/tuple
+        - 1
+        - 1
+      - !!python/tuple
+        - 1
+        - 2
+use_directed/experiment_use_directed_directed.yaml:
+  graph:
+    classifier:
+      C:
+      - 0.01
+      - 0.1
+      - 1
+      VAL_:
+      - LinearSVC
+      class_weight:
+      - balanced
+      max_iter:
+      - 5000
+      tol:
+      - 0.0001
+    feature_extraction:
+      fast_wl:
+        h:
+        - 10
+        ignore_label_order:
+        - false
+        node_weight_function:
+        - null
+        node_weight_iteration_weight_function:
+        - null
+        norm:
+        - null
+        phi_dim:
+        - null
+        round_to_decimals:
+        - 10
+        same_label:
+        - false
+        truncate_to_highest_label:
+        - true
+        use_directed:
+        - true
+        use_early_stopping:
+        - true
+      phi_picker:
+        return_iteration:
+        - stacked
+        use_zeroth:
+        - true
+    graph_preprocessing:
+    - null
+    normalizer:
+    - MaxAbsScaler
+use_directed/experiment_use_directed_undirected.yaml:
+  graph:
+    classifier:
+      C:
+      - 0.01
+      - 0.1
+      - 1
+      VAL_:
+      - LinearSVC
+      class_weight:
+      - balanced
+      max_iter:
+      - 5000
+      tol:
+      - 0.0001
+    feature_extraction:
+      fast_wl:
+        h:
+        - 10
+        ignore_label_order:
+        - false
+        node_weight_function:
+        - null
+        node_weight_iteration_weight_function:
+        - null
+        norm:
+        - null
+        phi_dim:
+        - null
+        round_to_decimals:
+        - 10
+        same_label:
+        - false
+        truncate_to_highest_label:
+        - true
+        use_directed:
+        - false
+        use_early_stopping:
+        - true
+      phi_picker:
+        return_iteration:
+        - stacked
+        use_zeroth:
+        - true
+    graph_preprocessing:
+    - null
+    normalizer:
+    - MaxAbsScaler

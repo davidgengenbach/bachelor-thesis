@@ -57,7 +57,7 @@ def unflatten_params(params: dict)->dict:
 
 
 def is_complex_type(x):
-    return not isinstance(x, (int, float, str, bool, tuple))
+    return not isinstance(x, (int, float, str, bool, tuple, type(None)))
 
 def remove_complex_types(params):
     out = {}

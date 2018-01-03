@@ -2,19 +2,12 @@ params_per_type:
   graph_extra:
     feature_extraction:
       fast_wl:
-        h:
-        - 10
         node_weight_function:
         - ~
         node_weight_iteration_weight_function:
         - ~
         use_early_stopping:
         - false
-      phi_picker:
-        return_iteration:
-        - stacked
-        use_zeroth:
-        - true
     normalizer:
     - ~
     - MaxAbsScaler

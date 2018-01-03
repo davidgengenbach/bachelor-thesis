@@ -8,6 +8,7 @@ from utils.logger import LOGGER
 from utils.remove_coefs_from_results import remove_coefs_from_results
 from transformers.pipelines import pipeline_helper
 from . import task_helper
+from . import experiment_helper
 from .task_helper import ExperimentTask
 from time import time
 
@@ -40,23 +41,9 @@ def run_classification_task(task: ExperimentTask, cfo: ClassificationOptions, ex
     # This is also a heuristic
     is_dummy = 'classifier__strategy' in param_grid
 
-    experiment_params = dict()
-    if experiment_config:
-        assert task.type in experiment_config['params_per_type']
-        experiment_params = pipeline_helper.flatten_nested_params(experiment_config['params_per_type'][task.type])
+    # Add classifiers, instantiate transformer classes and merge with experiment config
+    param_grid = experiment_helper.prepare_param_grid(task, param_grid, experiment_config)
 
-    param_grid = pipeline_helper.flatten_nested_params(param_grid)
-
-    # Merge param_grid with classifiers
-    param_grid = task_helper.add_classifier_to_params(param_grid)
-
-    # Overwrite default param_grid with the parameters specified in experiment_config
-    param_grid = dict(param_grid, **experiment_params)
-
-    # Remove "voided" params
-    param_grid = {k: v for k, v in param_grid.items() if v is not None}
-
-    param_grid = {k: [x() if isinstance(x, type) else x for x in v] for k, v in param_grid.items()}
     LOGGER.info('ParamGrid: {}\n\n'.format(pipeline_helper.remove_complex_types(param_grid)))
 
     X_train, Y_train, X_test, Y_test, train_i, test_i = X, Y, [], [], range(len(X)), []

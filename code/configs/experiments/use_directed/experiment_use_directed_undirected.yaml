@@ -2,10 +2,6 @@ params_per_type:
   graph:
     feature_extraction:
       fast_wl:
-        h:
-        - 10
-        node_weight_function:
-        - ~
         use_directed:
         - false
       phi_picker:

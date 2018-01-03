@@ -7,7 +7,6 @@ params_per_type:
         use_zeroth:
         - true
     graph_preprocessing:
-    - ~
     - RemoveNewGraphNodes
     graph_postprocessing:
     - ~
