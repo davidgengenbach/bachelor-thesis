@@ -1,0 +1,21 @@
+params_per_type:
+  text:
+    preprocessing:
+    - SimplePreProcessingTransformer
+    scaler:
+    - MaxAbsScaler
+    vectorizer:
+      VAL_:
+      - CountVectorizer
+      binary:
+      - true
+      - false
+      min_df:
+      - 2
+      ngram_range:
+      - !!python/tuple
+        - 1
+        - 1
+      - !!python/tuple
+        - 1
+        - 2

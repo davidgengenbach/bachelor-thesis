@@ -17,12 +17,12 @@ In text classification, for instance, massive amounts of text make manual assign
 Numerous text processing and classification approaches have been proposed in the literature and have shown good accuracy in real-world scenarios.
 
 Since text is most often of non-fixed size, several fixed-size representations have been proposed and employed to enable machine text processing.
-One common approach to represent texts is by counting all unique words in a text. The counts of unique words can then be, together with a fixed-size vocabulary, transformed into fixed-size representations, or vectors.
-With this approach, some information about the text is omitted, namely the sentence structure, word-order, word-dependency to name just a few. 
+One common approach to represent texts is by counting all unique words in a text. The counts of unique words can then be, together with a fixed-size vocabulary, transformed into fixed-size vector representations.
+With this approach, some information about the text is omitted, namely the sentence structure, word-order, word-dependency to name just a few \cite{Chowdhury2003}.
 So, after transforming a text into this representation, recovering the original text becomes impossible.
 That said, while this representation is quite simple and does not capture all information of the text, when using it in the context of text-classification, these representations actually perform very well.
-Such representations provide an easy-to-implement baseline and starting point for further improvements.
-For example, one extension to this representation does not only use the simple one-word counts but also counts word pairs or consecutive word sequences. These sequences are called $n$-grams, where $n$ stands for the size of such the sequence, eg. $2$-grams consist of 2 words and so on.
+Count-based text representations provide an easy-to-implement baseline and starting point for further improvements.
+For example, one extension to this representation does not only gathers the simple one-word counts but also word pairs or consecutive word sequences. These sequences are called $n$-grams, where $n$ stands for the size of such the sequence, eg. $2$-grams consist of 2 words and so on.
 In section \ref{sec:evaluation} we will explain these text-based approaches more throughly.
 
 For an recent survey of the history and challenges of natural language processing, see \cite{Chowdhury2003,DeCastilho2014}.
@@ -79,7 +79,7 @@ $c(v)$ & Connected component of $v$ \\
 \end{figure}
 
 \subsection{Concept Map}
-A concept map is a directed graph where the nodes are concepts. In our case, the concept maps are automatically constructed from text, yet it is also possible to create them manually.
+A concept map is a directed graph where the nodes are concepts. In our case, the concept maps are automatically constructed from text, yet one can also create them manually.
 In our work, concepts are important tokens in the text and consist of one or more words of the underlying text.
 An edge between two concepts show that these concepts are related to each other. Edges can have labels also.
 For an example of a concept map, see Figure \ref{fig:concept_map}.

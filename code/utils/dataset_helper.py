@@ -130,7 +130,8 @@ def get_concept_map_for_dataset(dataset_name: str, graphs_only: bool=False):
     return X, Y
 
 def get_dataset_names_with_concept_map(limit_datasets: typing.Iterable=None):
-    return [x for x in get_all_available_dataset_names(limit_datasets=limit_datasets) if len(get_all_cached_graph_datasets(x, graph_type=TYPE_CONCEPT_MAP))]
+    all_graph_datasets = [filename_utils.get_dataset_from_filename(x) for x in get_all_cached_graph_datasets(graph_type=TYPE_CONCEPT_MAP)]
+    return [x for x in get_all_available_dataset_names(limit_datasets=limit_datasets) if x in all_graph_datasets]
 
 
 def get_all_gram_datasets(dataset_name=None, cache_path=CACHE_PATH):
