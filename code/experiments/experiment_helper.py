@@ -25,6 +25,7 @@ PLACEHOLDER_LIST = dict(
     adj_degrees_metric=graph_metrics.adj_degrees_metric,
     adj_degrees_metric_max=graph_metrics.adj_degrees_metric_max,
     MaxAbsScaler=sklearn.preprocessing.MaxAbsScaler,
+    DummyClassifier=sklearn.dummy.DummyClassifier,
     SVC=sklearn.svm.SVC,
     PCA=sklearn.decomposition.PCA,
     TruncatedSVD=sklearn.decomposition.TruncatedSVD,

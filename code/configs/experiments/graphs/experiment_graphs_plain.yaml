@@ -1,0 +1,15 @@
+params_per_type:
+  graph:
+    feature_extraction:
+      fast_wl:
+        ignore_label_order:
+        - false
+      phi_picker:
+        return_iteration:
+        - stacked
+        use_zeroth:
+        - true
+    graph_preprocessing:
+    - NoneType
+    normalizer:
+    - MaxAbsScaler

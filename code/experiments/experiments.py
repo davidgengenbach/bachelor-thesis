@@ -164,4 +164,4 @@ def get_task_extra_graphs(dataset: str) -> ExperimentTask:
         estimator, params = task_helper.get_graph_estimator_and_params(X, Y)
         return ClassificationData(X, Y, estimator, params)
 
-    return ExperimentTask('graph_extra', dataset, process)
+    return ExperimentTask('graph_extra', 'graph_extra_' + dataset, process)

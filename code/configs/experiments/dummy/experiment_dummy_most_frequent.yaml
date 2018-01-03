@@ -1,0 +1,11 @@
+params_per_type:
+  dummy_most_frequent:
+    classifier:
+      C: null
+      VAL_:
+      - DummyClassifier
+      class_weight: null
+      max_iter: null
+      strategy:
+      - uniform
+      tol: null
