@@ -10,6 +10,6 @@ params_per_type:
         use_zeroth:
         - true
     graph_preprocessing:
-    - NoneType
+    - ~
     normalizer:
     - MaxAbsScaler

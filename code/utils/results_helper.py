@@ -374,33 +374,6 @@ def save_results(gscv_result, filename, info=None, remove_coefs=True, time_check
     ))
 
 
-def calculate_significance(prediction_file_a, prediction_file_b, n_jobs=5, num_trails=5000, one_tail=False):
-    models = []
-    for idx, file in enumerate([prediction_file_a, prediction_file_b]):
-        if not os.path.exists(file):
-            raise FileNotFoundError('Not found: {}'.format(file))
-
-        with open(file, 'rb') as f:
-            predictions = pickle.load(f)
-
-        res = predictions['results']
-        Y_real, Y_pred, Y_test = [res[x] for x in ('Y_real', 'Y_pred', 'X_test')]
-        models.append(dict(
-            Y_real=Y_real,
-            Y_pred=Y_pred,
-            Y_test=Y_test
-        ))
-
-    model_a, model_b = models
-
-    if not np.array_equal(model_a['Y_real'], model_b['Y_real']):
-        raise Exception('Invalid models to compare: the Y_real labels must be the same for both labels!')
-
-    Y_real = model_a['Y_real']
-
-    test_result = significance_test_utils.randomization_test(y_true=Y_real, y_pred_a=models[0]['Y_pred'], y_pred_b=models[1]['Y_pred'], num_trails=num_trails, n_jobs=n_jobs, one_tail=one_tail)
-    diffs, score_a, score_b, global_difference, confidence = test_result
-    return test_result
 
 
 def dump_pickle_file(args, filename: str, data: dict, add_meta: bool = True):

@@ -3,12 +3,10 @@ params_per_type:
     feature_extraction:
       fast_wl:
         node_weight_function:
-        - nxgraph_degrees_metric
-        - nxgraph_degrees_metric_max
-        #- nxgraph_pagerank_metric
+        - adj_degrees_metric
+        - adj_degrees_metric_max
         node_weight_iteration_weight_function:
         - ~
         - iteration_weight_function_exponential
     normalizer:
     - ~
-    - MaxAbsScaler

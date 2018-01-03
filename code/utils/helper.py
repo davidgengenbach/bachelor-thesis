@@ -156,6 +156,18 @@ def log_progress(sequence, every=None, size=None, name='Items'):
             index=str(index or '?')
         )
 
+def print_timestamps(t, width=30, only_total=False):
+    from utils import time_utils
+    timestamps = sorted(t.items(), key=lambda x: x[1])
+    print('Total: {}'.format(time_utils.seconds_to_human_readable(timestamps[-1][1] - timestamps[0][1])))
+    if only_total: return
+    for idx, (name, time_) in enumerate(timestamps[:-1]):
+        next_time = timestamps[idx + 1][1]
+        print(name.center(width))
+        print('|'.center(width))
+        print(time_utils.seconds_to_human_readable(next_time - time_).center(width))
+        print('|'.center(width))
+    print(timestamps[-1][0].center(width))
 
 def set_random_seed(seed=None):
     if seed is None:
@@ -164,3 +176,5 @@ def set_random_seed(seed=None):
     random.seed(seed)
 
 set_random_seed()
+
+

@@ -3,9 +3,9 @@ params_per_type:
     feature_extraction:
       fast_wl:
         node_weight_function:
-        - NoneType
+        - ~
         node_weight_iteration_weight_function:
-        - NoneType
+        - ~
     normalizer:
     - ~
     - MaxAbsScaler

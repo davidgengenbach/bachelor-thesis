@@ -60,7 +60,7 @@ def get_task_dummy(dataset_name: str) -> typing.Iterable[ExperimentTask]:
             )
             return ClassificationData(X, Y, estimator, params)
 
-        tasks.append(ExperimentTask('dummy_{}'.format(strategy), dataset_name, process))
+        tasks.append(ExperimentTask('dummy_{}'.format(strategy), 'dummy_' + dataset_name, process))
     return tasks
 
 
@@ -103,7 +103,7 @@ def get_task_text(dataset_name: str) -> ExperimentTask:
         estimator, params = text_pipeline.get_params(reduced=False)
         return ClassificationData(X, Y, estimator, params)
 
-    return ExperimentTask('text', dataset_name, process)
+    return ExperimentTask('text', 'text_' + dataset_name, process)
 
 
 def get_task_combined(graph_cache_file: str) -> ExperimentTask:

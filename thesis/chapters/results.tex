@@ -165,10 +165,10 @@ While it is no surprise that removing the labels from the graphs results in a fa
 This could indicate that the structure of co-occurrence graphs, while relatively simple, is at least as, if not more, useful than the structure of concept maps.
 
 \answersummary{
-The content-only graph kernel, which un-rolls the graph into text and then uses a conventional \textit{BoW} approach, performs the best for both concept maps and co-occurrence graphs.
-Removing the content, ie. the labels, from the graphs and then running plain WL results in classification scores close to the most-frequent dummy classifier.
-When combining both, content and structure, the score is not as good as content-only.
-This all indicates that the content of the graphs has a greater importance than the structure.
+The content-only graph kernel, which un-rolls the graph into text and then uses a conventional uni-gram \textit{BoW} approach, performs the best for both concept maps and co-occurrence graphs.
+Removing the content, ie. the labels, from the graphs and then running WL results in classification scores close to the most-frequent dummy classifier.
+When combining both, content and structure, the score is lower as content-only.
+This all indicates that the content of the graphs has a greater importance than the structure since the structure gets discarded by the content-only approach and still performs the best.
 }
 
 \subquestionref{question:multi_labels}
@@ -180,12 +180,12 @@ In Figure \ref{fig:statistics_percentage_multi_word_labels} we see, that most co
 	\caption[Statistics: Percentage multi-word node labels]{Percentage of multi-word to single-word node labels per dataset.}\label{fig:statistics_percentage_multi_word_labels}
 \end{figure}
 
-Yet, with the normal approach, like counting the node labels, these multi-word labels are treated as single labels, effectively discarding important information.
-In experiments for Question \ref{question:importance_structure} we actually implicitly used the multi-word labels since we un-rolled the graph into text again and then used conventional text vectorizer approaches, eg. BoW.
-There, we see an improvement over the graph based approach, possibly due to the multi-word labels being split.
-So, for our next graph-based approach, we also split the node labels and create new nodes out of them.
+However, with the normal approach, like counting the node labels, these multi-word labels are treated as single labels, effectively discarding important information.
+In the experiments of the last question, Question \ref{question:importance_structure}, we actually implicitly used the multi-word labels since we un-rolled the graph into text again and then used conventional text vectorizer, ie. BoW.
+In these experiments, we saw an improvement over the graph based approach, possibly due to the multi-word labels being split.
+So, for our next graph-based approach, we also split nodes with multi-word labels into multiple single-word nodes.
 This is done by splitting the node labels into individual words, than creating nodes with these single words and adding all the (directed) edges of the original node.
-New single word labels consisting of only a stopword are removed.
+When a resulting single-word label is a stopword, the corresponding node is removed from the graph.
 See Figure \ref{fig:example_split_labels} for an example.
 
 \begin{figure}[htb!]
@@ -202,8 +202,8 @@ See Figure \ref{fig:example_split_labels} for an example.
 
 
 In Figure \ref{table:results_multi_label_split} we report the results when doing graph classification with and without multi-word label splitting.
-For this experiment, we use the Weisfeiler-Lehman graph kernel.
-As we can see, the splitting actually improves the performance quite a lot, consistently outperforming the baseline on all datasets.
+For this experiment, we use the Weisfeiler-Lehman graph kernel to extract the feature maps.
+As we can see, the splitting actually improves the performance quite a lot, consistently outperforming the non-split version on all datasets.
 
 \begin{table}[htb!]
 	\centering
@@ -222,11 +222,12 @@ As we can see, the splitting actually improves the performance quite a lot, cons
 \caption[Results: Multi-label split]{Results for multi-label node label split.}\label{table:results_multi_label_split}
 \end{table}
 
-When comparing these scores with node-label splitting with the results of the approaches we used in Question \ref{question:importance_structure}, we see that the node-label splitting nearly performs as well as the best approach, that is the content-only approach.
+The classification scores for this multi-word splitting nearly performs as well as the linearized, BoW approach from the previous question, Question \ref{question:importance_structure}.
 The difference is quite small, ranging from 1\% to 3\% difference in F1 macro.
+However, it has to be noted that splitting the multi-word node labels, and subsequently extracting features with WL, produces higher dimensional feature vectors than the un-split approach.
 
 \answersummary{
-Splitting the multi-word labels shows the greatest performance improvement for WL, ranging from a raise of 10\% to 24\% better F1 macro score over the normal un-split approach.
+Splitting the multi-word labels shows the greatest performance improvement for WL, ranging from a raise of 10\% to 24\% better F1 macro score over the un-split approach.
 Splitting the node labels and then using WL performs nearly as good as the best graph kernel we saw, the linearized content-only approach from Question \ref{question:importance_structure}.
 }
 
@@ -260,14 +261,14 @@ When examining the most occurring edge labels per dataset, most of these most-fr
 These most-frequent edge labels, together with the edge labels which occur only once, form the bulk of all edge labels.
 
 As a test for the importance of edge labels, we evaluate \textbf{(a)} a graph kernel which uses the edge labels against \textbf{(b)} a graph kernel which does not use edge labels.
-For both, \textbf{(a)} and \textbf{(b)}, we use a graph kernel which first converts the graphs into a text and then vectorizes the text with BoW.
+For both, \textbf{(a)} and \textbf{(b)}, we use a graph kernel which first converts the graphs into a text and then vectorizes the text with BoW, introduced in Question \ref{question:importance_structure}.
 For \textbf{(a)} we use the edge labels for the text, for \textbf{(b)} we omit them.
 
 \begin{table}[htb!]
 	\centering
 \begin{tabular}{lrrr}
-	{} & \multicolumn{2}{c}{edge labels}  & p-value \\
-	dataset & without & with \\
+	{} & \multicolumn{2}{c}{Edge Labels}  & p-value \\
+	{}	& without & with & {} \\
 	\midrule
 		ling-spam       & \textbf{0.898} & 0.896 & 0.830 \\
 		ng20            & 0.620 & \textbf{0.624} & 0.502 \\
@@ -468,6 +469,7 @@ So, an interesting question is whether the size of a concept map also correlates
 To test this, we classify the graphs with our standard approach, using the Weisfeiler-Lehman graph kernel, then a SVM to classify the feature maps.
 For text, we extract the features with Tfidf-BoW, then also classify the features with a SVM.
 
+% IGNORED
 \iffalse
 In the next step, we look at the results for different graph sizes, binning them with quantiles, in our case 10 quantiles, or deciles.
 
@@ -484,7 +486,6 @@ In the next step, we look at the results for different graph sizes, binning them
 \end{figure}
 
 
-In Figure \ref{fig:graph_size_performance} we see an example for the \textit{ng20} dataset where we binned the different graph and text sizes and report the classification scores of documents with these sizes.
 For the \textit{ng20} dataset, the results indicate that classification performance indeed correlates with the number of vertices.
 In other datasets, this correlation is not as distinguished.
 \fi
@@ -492,10 +493,10 @@ In other datasets, this correlation is not as distinguished.
 In Table \ref{table:correlations_size} we report the Spearman rank correlations \cite{Hauke2011} between the accuracy, ie. whether the label for the document/graph was predicted right, and the size of the document/graph.
 Here, we also see a (weak) correlation for the graph sizes in some datasets.
 In the \textit{ling-spam} and \textit{ng20} dataset, the accuracy correlates far more with the document/graph size than in other datasets.
-It has to be noted that there is no partial similarity in accuracy, only 1 if the label was predicted right and 0 otherweise
+It has to be noted that there is no partial similarity in accuracy, only 1 if the label was predicted right and 0 otherwise.
 This might also explain that the relatively low correlation between the graph/document size and the accuracy, even in \textit{ng20}.
 
-These results also show the difference between our datasets: one observation for a dataset might not be consistent with observations from another dataset, eg. for our results the correlations are sometimes weak, sometimes practically not present at all.
+These results also highlights another finding: one observation for some dataset might not be consistent with observations from another dataset, eg. for our results the correlations are sometimes weak, sometimes practically not present at all.
 
 We also tested other metrics to find correlations, for instance the number of edges or the number of connected components, yet we could not see relevant correlations.
 
@@ -523,27 +524,28 @@ We also tested other metrics to find correlations, for instance the number of ed
 \answersummary{
 	In some datasets, we see a correlation between the size of graph/documents and the prediction accuracy.
 	For other datasets, this correlation can not be measured distinctly.
-	Other metrics besides the document/graph size have been tested, yet not clear correlation could be found, also.
+	The results vary widely across datasets. 
 }
 
 \subquestionref{question:comparison_coo}
-As a baseline, we also look at another graph representation for text, co-occurrence graphs.
+As a baseline, we also look at another graph representation for text, namely co-occurrence graphs.
 The comparison between concept maps and co-occurrence graphs is somewhat unfair since co-occurrence graphs retain much more of the content of its underlying text.
 While both concept maps and co-occurrence graph are graph representations, they have several differences. While concept maps have directed edges with labels, co-occurrence edges are, in the our version, undirected and have no edge labels.
-The node labels for concept maps also contain multiple words while co-occurrence graphs only have single-word labels.
+The node labels for concept maps also contain multiple words while co-occurrence graphs have single-word labels per definition.
 
 We use the comparison of co-occurrence graphs to concept maps to establish a baseline for graph representations.
-Since our main hypothesis assumes that concept maps contain useful structural information, the co-occurrence graph is a good candidate for comparison, since its structure is quite simple and easily predictable.
-For window size $w=1$, the co-occurrence graphs have a quite linear structure. With higher window sizes, the co-occurrence graphs get more connected until they eventually become fully connected.
-So, in general, the structure of co-occurrence graphs is relatively simple and as such is a good baseline for our concept map based approach.
+Since our main hypothesis assumes that concept maps contain useful structural information, the co-occurrence graph is a good candidate for comparison, since its structure is quite simple.
+For window size $w=1$, the co-occurrence graphs have a mainly linear structure. With higher window sizes, the co-occurrence graphs get more connected until they eventually become fully connected.
 
 In Table \ref{table:comparison_results_cooccurrence} we report our results.
 As we can see, classification using co-occurrence graphs performs significantly better than the concept map based approach.
 It also performs nearly as good as the conventional, text-based approach.
-Note that co-occurrence graphs contain far more information than concepts as seen in Table \ref{TODO}.
-While concept maps summarize the text by filtering out only important concepts, a co-occurrence graph actually contain all words of its underlying text.
-We also tried filtering out non-nouns out of the co-occurrence graphs to mimic the summarization by concept maps, yet, the results are nearly the same, 1-3\% difference in F1 macro at most and therefore still higher than with concept maps.
-However, since co-occurrence graphs contain more information, creating the feature maps also takes more compute time.
+Note that co-occurrence graphs contain far more information than concepts, as seen in Table \ref{table:graph_statistics}.
+Concept maps summarize the text by filtering out only important concepts.
+Conversely, co-occurrence graphs actually contain all words of its underlying text.
+We also tried filtering out non-nouns out of the co-occurrence graphs to mimic the summarization by concept maps. 
+The results are nearly the same, 1-3\% difference in F1 macro at most and therefore still higher than with concept maps.
+That said, because co-occurrence graphs contain more information, creating the feature maps with WL also takes more compute time.
 
 \begin{table}[htb!]
 	\centering
@@ -563,9 +565,10 @@ However, since co-occurrence graphs contain more information, creating the featu
 
 \answersummary{
 	Our results show significant higher scores of co-occurrence based classification over concept maps.
-	While co-occurrence graphs contain more inf
 	Yet, co-occurrence graphs arguably have a very simple structure.
+	TODO
 }
+\todo{!}
 
 \subquestionref{question:comparison_text}
 As one can see in Figure \ref{fig:results_cmap_vs_text}, the text-only approach outperforms graph-only approaches by a high margin.
