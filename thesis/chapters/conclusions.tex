@@ -46,8 +46,10 @@ One can start at every node of a concept map and explore the relationships betwe
 This enables the non-linear and visual exploration of the topic of a concept map.
 Adding information to texts can be quite laborious since one must find the appropriate section in the text where to add the new parts.
 Extending concept maps, on the other hand, is as easy as adding a new node or relation to the graph.
-The task of merging multiple concept maps with common concepts also is far easier since one must only merge the common nodes.
-All these properties lead to our opinion that concept maps might become an important information alongside text.
+The merge multiple concept maps with common concepts also is far easier since one must only merge the common nodes
+
+All these properties lead to our opinion that concept maps might become an important information medium alongside text.
+
 So, while we were not able to achieve a classification score improvement by augmenting text classification with concept map based features, our observations and approaches nevertheless can be useful for graph-only classification.
 Especially when concept maps indeed become more important and are not created directly by text but generated from other information sources where the underlying text can not be used for classification.
 
@@ -57,12 +59,39 @@ Especially when concept maps indeed become more important and are not created di
 \todo{Repeat hypothesis and how it was (dis-) proved by the work}
 \todo{Clearly state conclusion!}
 \todo{Concept maps or other non-linear representations will most likely become more important}
-\todo{Other graph types}
+\todo{Personalized concept maps}
+
 \todo{Take-aways? Difference of datasets!}
 
 \labelsection{Future Work}{subsec:future_work}
+There are several aspects which have not been covered in this work.
+New graph kernels and approaches to graph processing appear constantly which could also be explored in their usefulness for text-classification.
+In our work, we capitalized on the Weisfeiler-Lehman graph kernel, not only because its ability to extract explicit feature maps which in turn could be combined with text features, eg. from BoW.
+However, there are numerous other graph kernels which might prove to be more useful for our task.
+Applying them with their different extensions to better suit the particularities of concept maps could result in the performance improvement we could not achieve with our approach.
+As we have seen, selecting an appropriate graph kernel is one of the most important aspects when doing kernel-based graph processing.
+
+Another possible future work would be to further explore the information captured by concept maps and assess differences in different concept map extraction algorithms.
+
+As a more far-fetching idea, one could also research how the modifiability and composability of concept maps can be harnessed more effectively in the learning context to enable more personalized learning experiences.
+For example, when a person wants to learn about some topic using a concept map, he/she most likely has some previous knowledge about that topic.
+Providing him/her the same information as everyone else might be traditionally the way to go. 
+However, providing the person with a more personalized concept map could prove to be useful in removing a lot of information overhead and enhance the learning experience.
+Such a personalized concept map could, for example, omit information the user has explored before and has previous knowledge about.
+Or, add connections to other topics the person already knows as an entry point.
+Also, learning the learning preferences of a user, or giving him options to easily modify/extend a given concept map semi-automatically could benefit concept maps becoming a more important information medium.
+Observations about the behavior of users of such a learning system in turn could give better insight into possible improvements to automatic concept map creation.
+For all this, the main difference to text as an information medium is that concept maps are easily modifiable.
+In our work, we used single concept maps and classified them.
+However, in the extended approach we proposed above, the concept maps would all be interconnected, effectively creating a big knowledge network in which the user can explore given topics in a non-linear way.
+Here, a new task arises, namely to classify subgraphs of the big concept map which can be provide the entry point for a given topic, maybe also under user-provided constraints, eg. the previous knowledge of the user.
+In contrast to concept maps, texts are often linear, meaning that one has to read preceding sections/paragraphs to understand some text passage.
+Concept maps, on the other hand, provide several entry points, the concept nodes, for users.
+Leveraging this aspect in learning contexts might prove useful and could improve the usefulness of concept maps in other domains.
+
 \todo{Further explore the different datasets and find correlations for performance differences}
 \todo{Mention \cite{Valerio2007} and their approach (``Reverse" classification: given a document, find a concept map)}
-\todo{Remove all nodes which did not occur in training}
 \todo{Look at one-layer neural net weights when only classifying graph-based}
 \todo{Merge concept maps}
+\todo{Other graph types}
+\todo{Concept maps}

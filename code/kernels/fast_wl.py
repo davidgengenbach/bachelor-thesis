@@ -161,8 +161,12 @@ def transform(
 
         non_zero = phi.nonzero()[1]
 
+        if not len(non_zero):
+            print("WARNING: fast_wl created phi without entries, h={}".format(i))
+
         # ... exit early when no new labels are found (= convergence)
-        highest_label = np.max(phi.nonzero()[1]) if len(non_zero) else last_highest_label
+        highest_label = np.max(non_zero) if len(non_zero) else last_highest_label
+
         if use_early_stopping and last_highest_label == highest_label:
             break
         last_highest_label = highest_label
