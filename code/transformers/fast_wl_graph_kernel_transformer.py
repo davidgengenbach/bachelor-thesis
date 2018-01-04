@@ -8,14 +8,8 @@ import numpy as np
 import networkx as nx
 
 
-def iteration_weight_function_exponential(iteration: int):
-    return int(np.ceil(
-        (np.exp((iteration - 1))) + 1
-    ))
-
-
 def iteration_weight_function(iteration: int):
-    return iteration + 1
+    return iteration + 2
 
 
 def iteration_weight_constant(iteration: int, constant: int = 1):
@@ -58,7 +52,6 @@ class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Tran
         X, node_weight_factors = _retrieve_node_weights_and_convert_graphs(X, node_weight_function=self.node_weight_function, same_label=self.same_label, use_directed=self.use_directed, use_nx=self.use_nx)
 
         self.hashed_x = hash_dataset(X)
-
         phi_list, label_lookups, label_counters = fast_wl.transform(
             X,
             h=self.h,
@@ -73,9 +66,7 @@ class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Tran
 
         phi_list = _normalize(phi_list, norm=self.norm)
 
-        # self.phi_list = [x.T for x in phi_list]
         self.phi_list = phi_list
-        self.phi_shape = self.phi_list[-1].shape
         self.label_lookups = label_lookups
         self.label_counters = label_counters
 
@@ -104,10 +95,9 @@ class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Tran
             ignore_label_order=self.ignore_label_order,
             node_weight_factors=node_weight_factors,
             use_early_stopping=False,
-            append_to_labels=True,
             # Also give the label lookups/counters from training
             label_lookups=[dict(l) for l in self.label_lookups],
-            label_counters=self.label_counters,
+            label_counters=self.label_counters[:],
             node_weight_iteration_weight_function=self.node_weight_iteration_weight_function,
             truncate_to_highest_label=self.truncate_to_highest_label
         )

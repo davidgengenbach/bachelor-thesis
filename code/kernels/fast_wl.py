@@ -7,6 +7,7 @@ from scipy.sparse import lil_matrix, dok_matrix
 from utils import primes
 import collections
 import typing
+from itertools import chain
 
 # https://oeis.org/A033844
 primes_arguments_required_ = [2, 3, 7, 19, 53, 131, 311, 719, 1619, 3671, 8161, 17863, 38873, 84017, 180503, 386093, 821641, 1742537, 3681131, 7754077, 16290047, 34136029, 71378569, 148948139, 310248241, 645155197, 1339484197, 2777105129, 5750079047, 11891268401, 24563311309, 50685770167, 104484802057, 215187847711]
@@ -21,9 +22,7 @@ def transform(
         phi_dim: int = None,
         labels_dtype: np.dtype = np.uint32,
         phi_dtype: np.dtype = np.uint32,
-        used_matrix_type: scipy.sparse.spmatrix = lil_matrix,
         round_signatures_to_decimals: int = 1,
-        append_to_labels: bool = True,
         ignore_label_order = False,
         node_weight_factors = None,
         use_early_stopping = True,
@@ -52,7 +51,7 @@ def transform(
         adj.data = np.where(adj.data < 1, 0, 1)
         adjacency_matrices[idx] = adj
     # Relabel the graphs, mapping the string labels to unique IDs (ints)
-    label_lookup, label_counter, graph_labels = relabel_graphs(graphs, label_counter = label_counters[0], label_lookup = label_lookups[0], labels_dtype = labels_dtype, append = append_to_labels)
+    label_lookup, label_counter, graph_labels = relabel_graphs(graphs, label_counter = label_counters[0], label_lookup = label_lookups[0], labels_dtype = labels_dtype)
     # Save the label_lookups/label_counters for later use
     new_label_lookups = [label_lookup]
     new_label_counters = [label_counter]
@@ -78,17 +77,18 @@ def transform(
         return phi_dim[iteration]
 
     def add_labels_to_phi_(labels_, iteration):
+
         data = []
         row_ind = []
         col_ind = []
+        iteration_factor = node_weight_iteration_weight_function(iteration) if node_weight_iteration_weight_function else 1
         for graph_idx, labels in enumerate(labels_):
             if node_weight_factors is not None:
                 factor = node_weight_factors[graph_idx]
             else:
                 factor = 1
 
-            if node_weight_iteration_weight_function:
-                factor *= node_weight_iteration_weight_function(iteration)
+            factor *= iteration_factor
 
             num_labels = len(labels)
             if isinstance(factor, (int, float)):
@@ -99,7 +99,7 @@ def transform(
             row_ind += [graph_idx] * num_labels
             col_ind += list(labels)
 
-        data, row_ind, col_ind = np.array(data), np.array(row_ind), np.array(col_ind)
+        data, row_ind, col_ind = np.array(data, dtype=np.float64), np.array(row_ind), np.array(col_ind)
 
         highest_label = np.max(col_ind) + 1
         phi_dim_ = get_phi_dim(iteration + 1)
@@ -150,11 +150,9 @@ def transform(
                 if signature not in label_lookup:
                     label_lookup[signature] = label_counter
                     label_counter += 1
-                    # label_counter should NEVER be greater than the dimension of phi!
-                    #assert truncate_to_highest_label or label_counter <= phi_shape[1]
-
+            
             # ... relabel the graphs with the new (compressed) labels
-            new_labels = np.array([label_lookup[signature] for signature in signatures], dtype = labels_dtype)
+            new_labels = np.array([label_lookup[signature] for signature in signatures], dtype=labels_dtype)
             graph_labels[idx] = new_labels
 
         phi = add_labels_to_phi_(graph_labels, i)
@@ -195,13 +193,15 @@ def transform(
     return phi_lists, new_label_lookups, new_label_counters
 
 
-def relabel_graphs(graphs: collections.abc.Iterable, label_counter: int = 0, label_lookup: dict = {}, labels_dtype: np.dtype = np.uint32, append: bool = True):
-    labels = [[] for i in range(len(graphs))]
+def relabel_graphs(graphs: typing.Union[typing.Iterable, typing.Sized], label_counter: int = 0, label_lookup: dict = None, labels_dtype: np.dtype = np.uint32):
+    labels = [[]] * len(graphs)
     nodes = [nodes for adjs, nodes in graphs]
+    label_lookup = label_lookup or {}
     for idx, nodes_ in enumerate(nodes):
         for label in nodes_:
-            if append and label not in label_lookup:
-                label_lookup[label] = label_counter
+            new_label = label_lookup.get(label, label_counter)
+            if new_label == label_counter:
+                label_lookup[label] = new_label
                 label_counter += 1
         labels[idx] = np.array([label_lookup[x] for x in nodes_], dtype=labels_dtype)
     return label_lookup, label_counter, labels

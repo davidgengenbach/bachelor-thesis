@@ -30,7 +30,6 @@ PLACEHOLDER_LIST = dict(
     PCA=sklearn.decomposition.PCA,
     TruncatedSVD=sklearn.decomposition.TruncatedSVD,
     iteration_weight_function=transformers.fast_wl_graph_kernel_transformer.iteration_weight_function,
-    iteration_weight_function_exponential=transformers.fast_wl_graph_kernel_transformer.iteration_weight_function_exponential
 )
 
 # Add the names of the own transformers

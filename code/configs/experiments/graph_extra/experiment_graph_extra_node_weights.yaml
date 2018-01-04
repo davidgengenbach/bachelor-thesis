@@ -7,6 +7,6 @@ params_per_type:
         - adj_degrees_metric_max
         node_weight_iteration_weight_function:
         - ~
-        - iteration_weight_function_exponential
+        - iteration_weight_function
     normalizer:
     - ~

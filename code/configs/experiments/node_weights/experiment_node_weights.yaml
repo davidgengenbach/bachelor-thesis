@@ -8,8 +8,7 @@ params_per_type:
         #- nxgraph_pagerank_metric
         node_weight_iteration_weight_function:
         - ~
-        #- iteration_weight_function
-        - iteration_weight_function_exponential
+        - iteration_weight_function
       phi_picker:
         return_iteration:
         - stacked
