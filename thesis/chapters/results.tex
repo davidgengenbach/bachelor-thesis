@@ -601,11 +601,9 @@ The interpretability of this approach would be far lower since both graph- and t
 In Table \ref{table:results_comparison_combined} we see the classification scores for the combined features for both co-occurrence graphs and concept maps.
 
 As we see, the performance of the combined approached compared the text-only approach is comparable.
-With some datasets, the combined approach is slightly better than the text-only approach. Especially for the ng20 dataset, we see an improvement of ca. 3\% over the text-only approach.
-To test whether this difference in performance is due to chance, we used the permutation test
-\todo{Add permutation test result}
+With some datasets, the combined approach is slightly better than the text-only approach.
 
-To better understand the performance when combining text- and graph features, we also train a one-layer neural network\footnote{Implementation: \url{http://scikit-learn.org/stable/modules/generated/sklearn.linear_model.SGDClassifier.html}} with the combined features using stochastic gradient descent. After training we investigate the weights.
+To better understand the classification performance when combining text- and graph features, we also train a one-layer neural network\footnote{Implementation: \url{http://scikit-learn.org/stable/modules/generated/sklearn.linear_model.SGDClassifier.html}} with the combined features using stochastic gradient descent. After training we investigate the weights.
 The weights, or coefficients, for each input feature are an indicator for the importance of that input feature.
 Thus we can look at weights for the text features and compare them to weights for graph features.
 This gives us an insight into the relative importance of text- and graph features.
@@ -626,7 +624,7 @@ For our purposes, we do not look at single features, or input neurons, but on a 
 Figure \ref{fig:combined_coefs_l1_l2_regularization} then shows an example of a weight analysis for the \textit{ng20} dataset and for two regularizations, namely \textit{L1} and \textit{L2}.
 
 Both regularization terms are used to discourage ``big" weights, effectively forcing the training algorithm to chose important features to generalize the data instead of over-fitting the data.
-While both \textit{L1} and \textit{L2} regularization discourage big weights, \textit{L1} penalizes small weights harder than \textit{L2}, leading to sparser models \cite{HonglakLeeAlexisBattleRajatRaina2006}.
+While both \textit{L1} and \textit{L2} regularization discourage big weights, \textit{L1} penalizes small weights harder than \textit{L2}, leading to more zero coefficients \cite[p.~13]{Hastie2009}.
 Therefore, the selection of important features is enforced more with \textit{L1} regularization.
 We leverage this phenomenon to analyze how important the features, graph and text, are for classification.
 When looking at the absolute sum of the weights of the trained one-layer neural net, we discover that using \textit{L1} regularization results in the text features becoming more important than graph features for classification.
@@ -646,14 +644,11 @@ Thus the contribution by graph features to the end result is even lower than the
 		\label{fig:combined_coefs_l1_l2_regularization}}
 \end{figure}
 
-Another interesting result of this weight analysis is the importance the neural net assigns to the different Weisfeiler-Lehman iterations. In our example, we chose $h = 5$ as our WL iterations. The higher the iteration, the bigger the neighborhood that is considered by WL.
-When looking at the importance of the first iteration and \textit{L1} regularization, \textit{Graph 1} in Figure \ref{fig:combined_coefs_l1_l2_regularization}, we see that while the neural net nearly discourages all higher WL iterations by assigning low weights, it assigns higher importance to the first iteration of WL, $941$ versus $15$.
+Another interesting result of this weight analysis is the importance the neural net assigns to the different Weisfeiler-Lehman iterations. In our example, we chose $h = 5$ for our WL iterations. The higher the iteration, the bigger the neighborhood that is considered by WL.
+When looking at the importance of the first iteration and \textit{L1} regularization, \textit{Graph 1} in Figure \ref{fig:combined_coefs_l1_l2_regularization}, we see that while the neural net nearly discourages all higher WL iterations by assigning low weights, it assigns higher importance to the first iteration of WL.
 The first iteration of WL takes only the immediate neighborhood into account, therefore matches are far more probable than matches in higher iterations.
 In our example in Figure \ref{fig:combined_coefs_l1_l2_regularization}, \textit{L1}- outperformed \textit{L2} regularization by a high margin, approximately 7\% difference in the \textit{F1} macro score.
-Yet it has to be noted that no hyper-parameter tuning was performed and only a simple train-/test split was used.
-
-\todo{Cite where it is said that l1 regularization produces sparse features}
-
+However, it has to be noted that no hyper-parameter tuning was performed and only a simple train-/test split was used.
 
 \begin{table}[htb!]
 \centering
@@ -682,12 +677,14 @@ webkb
           & text only & \multicolumn{2}{c}{ 0.702095 }\\	
 \bottomrule
 \end{tabular}
-\caption[Results: Combined text- and graph features]{Comparison of classification using both concept maps and text. TODO: Add standard deviations}%
+\caption[Results: Combined text- and graph features]{Comparison of classification using both concept maps and text.}%
 \label{table:results_comparison_combined}
 \end{table}
 
 \answersummary{
-	When combining the graph- and text features we do not achieve no significantly higher classification scores or even observe a degradation.
+	When combining the graph- and text features we do not achieve no significantly higher classification scores and even observe a degradation.
+	Examining the weights of one-layer neural net shows us that, when training on combined text- and graph feature, graph features get lower absolute weights assigned.
+	A possible explanation is that the graph features are not as important for the combined text- and graph feature classification.
 }
 
 \subquestionref{question:comparison_runtime}
@@ -701,15 +698,15 @@ We also record the runtime of both approaches.
 
 As we can see, the graph kernel creates higher dimensional feature vectors for the objects than the text-based BoW approach. 
 This observation both give possible explanations for both the higher classifier model size and the run-time.
+One could circumvent the higher dimensionality of features extracted by WL by applying dimensionality reduction.
+Yet, this would also incur an additional compute overhead and add complexity to the approach.
+Preliminary tests with truncated SVD \cite{Mathematics2009} and PCA \cite{Jolliffe2002} to reduce the dimensionality of the graph features resulted in out-of-memory exceptions.
 
 Note, that the reported runtime and memory consumption for the graph-based pipeline does not incorporate the creation of the concept maps, only the creation of the feature maps and subsequent training/prediction.
 The creation of concept maps from text with the code provided in \cite{Falke2017b} takes well over a day for our datasets.
 For instance, the concept map creation for the documents  in one of the middle-sized datasets, \textit{ling-spam} with 1.2 million words in total and less than 2900 documents, took over 25 hours and had a peak memory usage of 83 Gigabyte\footnote{Machine specification. CPU: \textit{2 $\times$ Intel(R) Xeon(R) CPU X5650 \@ 2.67GHz, 6-Core}, RAM: \textit{190GB}}.
 The runtime of the concept map creation could most likely be reduced by parallelizing parts of its pipeline.
 For example, the extraction of relevant concepts and their relation from a text is independent from the same extraction of another text, so this stage has neither data- nor functional dependencies.
-
-\todo{Add numbers for ling-spam}
-\todo{Dimensionality reduction}
 
 \begin{table}[htb!]
 	\centering
@@ -881,30 +878,55 @@ When using this extension, one has to be careful with feature scaling. As we use
 \todo{Explain how to actually use the node weights.}
 
 \paragraph{Experiment}
-To test our extension, we compare results of the plain WL algorithm and with our extension.
-We classify the concept graphs as we do in the other experiments.
+To test our extension, we compare results of the WL algorithm with and without our extension.
+We classify our concept maps datasets as well as a number of other graph benchmark datasets, obtained from \cite{Kersting2016}.
+For statistics about the additional datasets, please consult the authors website\footnote{\url{https://ls11-www.cs.tu-dortmund.de/staff/morris/graphkerneldatasets}}.
+We used only datasets from the website that have more than 1000 graphs and node labels.
 
 \begin{table}[htb!]
 	\centering
-\begin{tabular}{lrr}
-	{} & \multicolumn{2}{c}{F1 macro} \\
-	{} &  plain &  node weights \\
+\begin{tabular}{lrrr}
+	{} & \multicolumn{2}{c}{F1 macro} & {p-value} \\
+	{} &  plain &  node weights &  \\
 	\midrule
-	ling-spam       & \textbf{0.783} & 0.766 \\
-	ng20            & \textbf{0.392} & 0.387 \\
-	nyt\_200         & \textbf{0.733} & 0.661 \\
-	r8              & \textbf{0.609} & 0.575 \\
-	review\_polarity & 0.582 & \textbf{0.596} \\
-	rotten\_imdb     & 0.612 & \textbf{0.615} \\
-	ted\_talks       & 0.214 & \textbf{0.269} \\
+	ling-spam       & \textbf{0.8160} & 0.7760 & 0.0542 \\
+	ng20            & \textbf{0.4188} & 0.4127 & 0.2340 \\
+	nyt\_200         &\textbf{ 0.7436} & 0.7150 & 0.3421 \\
+	r8              & \textbf{0.6772} & 0.6467 & 0.1270 \\
+	review\_polarity & \textbf{0.6094} & 0.6045 & 0.8406 \\
+	rotten\_imdb     & \textbf{0.6346} & 0.6338 & 0.8728 \\
+	ted\_talks       & 0.2436 & \textbf{0.2984} & 0.2605 \\
+	\midrule
+	AIDS             & 0.9560 & \textbf{*0.9841} & 0.0146 \\
+	DD               & 0.6602 & \textbf{*0.7733} & 0.0002 \\
+	Mutagenicity     & \textbf{0.7702} & 0.7625 & 0.3007 \\
+	NCI1             & \textbf{0.8425} & 0.8334 & 0.2821 \\
+	NCI109           & \textbf{0.7929} & 0.7877 & 0.4971 \\
+	PROTEINS         & 0.7266 & \textbf{0.7317} & 0.8554 \\
+	%PROTEINS\_full    & 0.7266 & \textbf{0.7317} & 0.8574 \\
+	Tox21\_AHR        & 0.7009 & \textbf{0.7056} & 0.6705 \\
+	Tox21\_AR         & \textbf{0.8147} & 0.7978 & 0.1172 \\
+	Tox21\_AR-LBD     & \textbf{*0.8477} & 0.8284 & 0.2318 \\
+	Tox21\_ARE        & 0.6722 & \textbf{0.6917} & 0.1378 \\
+	Tox21\_ATAD5      & \textbf{0.7456} & 0.7426 & 0.7449 \\
+	Tox21\_ER         & \textbf{0.6860} & 0.6747 & 0.0868 \\
+	Tox21\_ER\_LBD     & \textbf{0.7335} & 0.7180 & 0.0648 \\
+	Tox21\_HSE        & 0.6156 & \textbf{*0.6499} & 0.0384 \\
+	Tox21\_MMP        & 0.7663 & \textbf{0.7682} & 0.7874 \\
+	Tox21\_PPAR-gamma & \textbf{0.7006} & 0.6910 & 0.7970 \\
+	Tox21\_aromatase  & 0.6571 & \textbf{0.6876} & 0.1642 \\
+	Tox21\_p53        & 0.7214 & \textbf{0.7375} & 0.3403 \\
 	\bottomrule
 \end{tabular}
 \caption[Results: Classification using node weight WL extension]{F1 macro classification results for  the node weight extension.}\label{table:wl_node_weight_extension}
 \end{table}
 
-\iffalse
-Our other extension to the WL algorithm addresses problem \textbf{(1)}, the difficulty of having a match when the iteration increases.
-To solve this difficulty, we propose weighting the features of each iteration.
+As we can see, the classification performance of our extension varies greatly per dataset.
+Especially on the concept maps, our WL extension does not perform as good the plain WL graph kernel.
+On the graph benchmark datasets on the other hand, we can also observe significant improvements.
+ 
+\if
+We also tried another extension to the Weisfeiler-Lehman graph kernel, namely augmenting the default node label counts with a iteration factor.
 The feature maps of WL consist of the concatenated feature maps for each iteration.
 For this extension, we propose weighting the feature maps of each iteration $h$ by a factor given by a function $f(h)$.
 So, for a feature map, $\phi(G)$, of a graph $G$ for $h=2$ iterations, the feature map can be decomposed into the feature maps of each of the two $h$ iterations:
@@ -916,5 +938,6 @@ We now propose to weight the individual feature maps by the factor determined by
 \phi_{f}(G)=(f(1) \cdot \phi_{h=1}(G), f(2) \cdot \phi_{h=2}(G))
 \end{equation*}
 So, basically the function $f(h)$ works as a decaying factor to decreasing iterations $h$.
-When the function $f(h)$ increasing (steigend?), the increasing importance with higher iterations is encoded into the resulting feature map $\phi_f(G)$.
+When the function $f(h)$ increasing, the increasing importance with higher iterations is encoded into the resulting feature map $\phi_f(G)$.
+Of course, also this extension 
 \fi

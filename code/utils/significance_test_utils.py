@@ -20,7 +20,6 @@ f1: MetricFunction = functools.partial(sklearn.metrics.f1_score, average='macro'
 
 metrics: typing.Iterable[typing.Tuple[str, MetricFunction]] = [('accuracy', accuracy), ('recall_macro', recall), ('f1_macro', f1)]
 
-
 def get_confidences(df, model_selection_attr, model_selection_vals, performance_attr='prediction_score_f1_macro', log_progress=None, **test_params):
     data = collections.defaultdict(list)
     for dataset, df_ in log_progress(df.groupby('dataset')) if log_progress else df.groupby('dataset'):
@@ -32,7 +31,11 @@ def get_confidences(df, model_selection_attr, model_selection_vals, performance_
 
         prediction_filenames = [best.loc[best[model_selection_attr] == name].iloc[0].prediction_file for name in model_selection_vals]
 
-        diffs, score_a, score_b, global_difference, confidence = calculate_significance(prediction_filenames[0], prediction_filenames[1], **test_params)
+        prediction_a, prediction_b = prediction_filenames
+        if prediction_a == prediction_b:
+            print('Warning: Same prediction file given for both models: {}'.format(prediction_a))
+        
+        diffs, score_a, score_b, global_difference, confidence = calculate_significance(prediction_a, prediction_b, **test_params)
 
         data['dataset'].append(dataset)
         data['filenames'].append(prediction_filenames)

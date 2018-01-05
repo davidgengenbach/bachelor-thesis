@@ -1,5 +1,5 @@
 import collections
-from utils import helper, filename_utils, git_utils, time_utils, significance_test_utils
+from utils import helper, filename_utils, git_utils, time_utils, significance_test_utils, constants
 from utils.remove_coefs_from_results import remove_coefs_from_results
 import pandas as pd
 from glob import glob
@@ -76,7 +76,7 @@ def get_kernel_from_filename(filename: str) -> str:
         parts.append('simple_set_matching')
     if 'graph_text_' in filename or 'graph_content_only' in filename:
         parts.append('text')
-    if 'combined' in filename or '__graph__' in filename or 'graph_structure_only' in filename or 'graph_relabel' in filename:
+    if 'combined' in filename or '__graph__' in filename or 'graph_structure_only' in filename or 'graph_relabel' in filename or '_graph_extra_' in filename:
         parts.append('wl')
     if 'node_weight' in filename:
         parts.append('wl_nodeweight')
@@ -171,9 +171,15 @@ def get_results(folder=None, use_already_loaded=False, results_directory=RESULTS
                 result['prediction_file'] = [prediction_file] * num_results
 
 
-        is_graph_dataset = '_graph__dataset' in result_file or 'graph_combined__dataset' in result_file or '__graph_node_weights__dataset_' in result_file or 'graph_cooccurrence' in result_file or '__graph_structure_only__' in result_file or '_graph_relabel' in result_file or '__graph_content_only__' in result_file
+        graph_file_types = [constants.TYPE_CONCEPT_MAP, constants.TYPE_COOCCURRENCE, 'graph_extra']
+        is_graph_dataset = False
+        for x in graph_file_types:
+            if '_{}_'.format(x) in result_file:
+                is_graph_dataset = True
+                break
+
+        #is_graph_dataset = '_graph__dataset' in result_file or 'graph_combined__dataset' in result_file or '__graph_node_weights__dataset_' in result_file or 'graph_cooccurrence' in result_file or '__graph_structure_only__' in result_file or '_graph_relabel' in result_file or '__graph_content_only__' in result_file
         result['combined'] = 'graph_combined__dataset_' in result_file
-        result['kernel'] = 'unknown'
         if is_graph_dataset:
             is_cooccurrence_dataset = 'cooccurrence' in result_file
 
