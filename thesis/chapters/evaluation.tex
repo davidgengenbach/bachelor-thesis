@@ -271,7 +271,17 @@ The webpages are grouped in seven classes. The distribution of this very skewed,
 We obtained a copy of this dataset from here\footnote{\url{http://www.cs.cmu.edu/afs/cs/project/theo-20/www/data/}}.
 \fi
 
-\todo{ted\_talks dataset!}
+\paragraph{ted\_talks}
+This corpus consists of video transcripts from TED talks\footnote{\url{https://www.ted.com/}} released under the Creative Commons License\footnote{\url{https://www.ted.com/about/our-organization/our-policies-terms/ted-talks-usage-policy\#h2--ted-talks-under-creative-commons-license}}.
+We obtained the transcripts from Kaggle\footnote{\url{https://www.kaggle.com/rounakbanik/ted-talks}}.
+The transcripts had no labels attached, only an URL to the corresponding video.
+Each TED talk video has one or more tags attached, which we automatically crawled from the video URL.
+Since there are possible multiple tags per video, we had to filter out specific tags since our task entails multi-class-, not multi-label classification.
+To filter out the tags, we first looked at the most-frequent tags and create a correlation, or co-occurrence, matrix of these tags to find out how often these tags co-occur.
+We then selected a subset of four tags, namely $Y = (\mathrm{economics, environment, brain, entertainment})$  which were loosely correlated.
+We discarded all transcripts with tags $y$ which contain more than one of the tags $Y$, ie. $|Y \cap y| > 1$.
+All tags besides $Y$ were ignored.
+The resulting datasets contains 682 documents, containing a large number of words per document.
 
 \begin{table}[htb!]
 \centering
@@ -327,13 +337,16 @@ The parameters for the \textit{SVM} are gathered in Table \ref{table:svm_paramet
 
 We choose the \textit{SVM} as our classifier algorithm since it can be used for both classical, vector-based classification as well as for gram-based classification, making it an ideal candidate for our experiments.
 That said, the \textit{SVM} also has shown state-of-the-art performance in (text) classification and other domains.
+In contrast to other learning algorithms, eg. a neural net, SVMs are also more robust in their convergence \cite{Joachims1998}.
 
 To increase the reproducibility of our results, we utilized the same random generator seed, 42, for all experiments, eg. for ``randomly" splitting the dataset in the train/validation/test splits or ``randomly" initializing the coefficients for a \textit{SVM}.
 
-We also evaluated results obtained with nested cross-validation to further de-bias our results \cite{Varma2006}. Yet, when inspecting the results from tests with nested cross-validation we saw that the standard deviations of the results are relatively low, around 0.005.
+We also evaluated results obtained with nested cross-validation to further de-bias our results \cite{Varma2006}. Yet, when inspecting the results from tests with nested cross-validation we saw that the standard deviations of the results are relatively low.
 This observation and the fact that nested cross-validation also increases the compute-time significantly, led us to abandon nested cross-validation for our experiments.
+However, to be able comparing the results of two different models, we consistently used the permutation significance test. 
+Interpreting the resulting confidence value dampens the effect of not doing nested cross-validation.
 
-\todo{Robustness of SVM: \cite{Joachims1998} ?}
+\todo{More elegant sentence, please?}
 
 \subsection{Metrics}
 As a classification metric, we mostly focus on the F1 macro score since it captures the overall performance of classification algorithms by merging two other metrics, precision and recall.
