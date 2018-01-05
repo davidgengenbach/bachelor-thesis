@@ -1,41 +1,35 @@
-Text is ubiquitous and to this date is arguably one of the most important information media.
+Text is ubiquitous and to this date is arguably one of the most important information mediums.
 Every day and in numerous domains, new texts are produced.
 Due to the number of digitally available text, processing texts automatically instead of manually becomes more appealing and in some cases necessary.
-However and importantly, language itself is an inherently ambiguous information medium, which in turn significantly hardens the task of processing it automatically.
-Numerous approaches have been devised to nevertheless extract information from text to solve several tasks, such as text classification/categorization, text analysis or summarization, to name just a few.
+However, language itself is an inherently ambiguous information medium, which in turn significantly hardens the task of processing it automatically.
+Still, numerous approaches have been devised to extract information from text to solve different natural language processing tasks, such as text classification/categorization \cite[p.~575]{Manning2000}, summarization \cite{Mani1999} or language translation \cite{Weaver1955}, to name but a few.
 \todo{Transition}
-Text classification, or categorization, is the task to predict the class of a text document based on its content.
-Here, the task of finding an appropriate representation of the text is crucial and can greatly influence the success of solving the task.
-A lot of more conventional text representations are based on counting the words of a text and representing the text content by these word counts.
-The \textit{Bag-Of-Word}, or BoW, representation is a widely used example of such a procedure.
-Despite not being lossless, this representation has shown great real-world performance on a range of tasks, not limited to text classification.
-However, simple word-count based text representations come at the expense of losing information about its underlying text, eg. the sentence structure and word order.
+Text classification \cite[p.~232]{Manning2000}, or categorization, is the task of predicting the class of a text document based on its content.
+Here, finding an appropriate representation of text is crucial and can greatly influence the success of solving the task.
+Conventional text representations are based on counting the words of a text and representing the text content by these word counts.
+The \textit{Bag-Of-Word}, or BoW \cite[p.~237]{Manning2000}, representation is a widely used example of such a procedure which has shown great real-world performance on a range of tasks, not limited to text classification.
+However, simple word-count based text representations come at the expense of losing information about their underlying text, for example the sentence structure and word order.
 That said, there are several other, more sophisticated text representations, for instance 
- co-occurrence graphs, concept maps, document embeddings or approaches where the text is parsed to obtain relational information between the words.
-Each of these representations also is subject to different trade-offs, for instance in the ability to capture the needed information and compute time.
+ co-occurrence graphs \cite{Rousseau2013}, concept maps \cite{Novak2008,Falke2017b} or document embeddings \cite{Dai2015,Lau2016}.
+Each of these representations is also subject to different trade-offs, for instance in the ability to capture the needed information versus compute time.
 
-In our work, we are interested in graph-based text representations, especially concept maps, to overcome the aforementioned shortcomings of simple text representations like \textit{BoW}.
-We explore the usefulness of more structured graph representations in the context of text classification.
-For this, we first generate so-called concept maps for several text datasets and subsequently devise a number of experiments to gain a better insight into the retained information and structure of concept maps.
-Additionally, we capitalize on so-called graph kernels to process the graphs which in turn enables us to perform graph classification.
-So, at the core of this works stands the question, how we can use graph-based approaches to improve on current, conventional text representations like BoW.
-There has been eager development in the natural language processing since finding a useful text representation goes hand in hand with higher task performance.
-Especially text classification is a task of great real-world importance for several commercial enterprises.
+In our work, we are interested in graph-based text representations, especially concept maps \cite{Novak2008}, to overcome the aforementioned shortcomings of simple text representations like \textit{BoW}.
+%We explore the usefulness of more structured graph representations in the context of text classification.
+For this, we first generate concept maps for several text datasets and subsequently devise a number of experiments to gain a better insight into the retained information and structure of these concept maps.
+Additionally, we capitalize on so-called graph kernels \cite{Kulharia2008} to operate on the concept maps which in turn enables us to perform graph classification.
+At the core of this works stands the question how we can use graph-based approaches to improve on current, conventional text representations like BoW.
+%There has been on-going and eager development in natural language processing since finding a useful text representation goes hand in hand with higher task performance.
 
-\todo{Clearly state problem}
-\todo{Explain difficulties of the task}
-\todo{Explain the research question and how it relates to the field}
-\todo{Hint how the presented approach is an improvement over the old approach}
-\todo{Hint the hypothesis}
-\todo{Introduce earlier approaches/results and their weaknesses}
 \todo{Outlook}
 \todo{Furthermore}
+\todo{Colocations}
 
 \paragraph{Text Classification}
 The need for automatic text classification appears in many fields as the number of digitally available texts grows daily and makes manually classifying infeasible if not impossible.
-There are numerous real-world applications for text classification, ranging from automatically determining whether a given email is spam or not, to classifying the news category of text documents.
+There are numerous real-world applications for text classification, ranging from automatically determining whether a given email is spam or not \cite{Yu2008}, to sentiment analysis \cite{Liu2012}.
 Finding ways to train an automatic classifier which can reliably and accurately classify raw texts therefor becomes appealing.
 There is a rich history of research on text classification and several approaches have been devised to automatically process natural language texts.
+For an overview and introduction into natural language processing, see \cite{Manning2000}.
 
 \paragraph{Graph Classification}
 Trees, sequences, networks and other graphs occur in a lot of contexts.
@@ -49,12 +43,12 @@ In Table \ref{table:graph_classification_examples} we gathered some example appl
 \begin{table}[htb!]
 \centering
 \renewcommand*{\arraystretch}{0.95}
-\begin{tabular}{llll}
-Context & Vertices & Edges & Classes \\
+\begin{tabular}{llllr}
+Context & Vertices & Edges & Classes &  \\
 \midrule
-Chemistry & Atoms & Bonds & Toxicity (binary) \\
-Biology & Amino Acids & Spatial Links & Protein Types \\ 
-Social Networks & Users & Are Friends & Bot Detection (binary) \\
+Chemistry & Atoms & Bonds & Toxicity (binary) & \cite{Mahe2005} \\
+Biology & Amino Acids & Spatial Links & Protein Types & \cite{Vazquez2008} \\ 
+Social Networks & Users & Are Friends & Bot Detection (binary) & \cite{Wang2014} \\
 \bottomrule
 \end{tabular}%
 \caption[Table: Graph Classification Applications]{Graph classification applications.}%
@@ -73,12 +67,12 @@ The main hypothesis of this work is:
 
 There are a great number of approaches for text classification, a lot of them based on counting the words of a text and learning a classifier with these frequencies.
 Yet, these word-count based approaches often do not take the semantic or syntax of sentences into account, ie. text-based approaches often do not leverage the structure and meaning of sentences.
-There are partial solutions for this issue, for instance by augmenting single-word counts with n-grams counts.
-N-grams are sequences of length $n$ of consecutive words in the text, therefore they can capture word dependency and word order.
+There are partial solutions for this issue, for instance by augmenting single-word counts with n-grams \cite[p.~191]{Manning2000} counts.
+N-grams are sequences of length $n$ of consecutive words in the text, therefore they can, in principle, capture word dependency and word order.
 However, their usefulness is limited as they also incur a significant cost by increasing the dimensionality of the resulting BoW feature vectors.
-That said, text-based approaches are widely used and achieve high performance both in compute time and classification scores.
+That said, count-based text representations are widely used and achieve high performance both in compute time and classification scores.
 
-As a possible solution to the aforementioned issues in conventional count-based representations, we explore how concept maps, and other graph representations like co-occurrence graphs, could improve upon or augment existing text classification approaches.
+In our work, as a possible solution to the aforementioned issues in conventional count-based representations, we explore how concept maps, and other graph representations like co-occurrence graphs, could improve upon or augment existing text classification approaches.
 We choose concept maps as our preferred graph representation since they are specially created to capture important concepts and their relation to each other, therefore might also capturing the semantic and other structure of its underlying text.
 In the next sections, we will further explain graph representations for text and why they could be a viable addition to the toolbox in text classification.
 

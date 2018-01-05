@@ -101,17 +101,6 @@ The co-occurrence graphs also have a simple structure.
 Co-occurrence graphs are always connected, ie. the number of connected components is 1, or 0 in the case of an empty graph.
 When the window size is 1, the graph is similar to a path, meaning that most of the nodes have a degree $< 2$. With increasing window size, the graph also gets more connected.
 
-\begin{figure}[htb!]
-	\centering
-	{\includegraphics[width=0.9\linewidth]{assets/figures/percentage_degree.pdf}%
-		\caption[Statistics: Distribution of concept map node degrees]{%
-			Distribution of concept map node degrees per datasets. $|d_v| = n$ stands for the percentage of nodes with degree $n$.
-			We can see that well over 90\% of all nodes have a degree of $3$ or less.
-		}%
-		\label{fig:percentage_degree}}
-\end{figure}
-
-
 \answersummary{
 Concept maps have a relatively homogeneous structure.
 The bulk of its nodes have only a small number of neighbors.
@@ -124,7 +113,7 @@ The content, that is the node and edge labels, of concept maps are also captured
 For this, we compare the results of using graph kernels which use \textbf{(a)} only the content, \textbf{(b)} only the structure and \textbf{(c)} both content and structure.
 
 For \textbf{(a)} (content only), we use a kernel that discards all edges and uses only the labels of nodes and edges. Next, we create a bag-of-words vector representation out of the labels and edges.
-In this step, we also evaluated using not only single words and counting them, but also using word n-grams of size 2, or bigrams.
+In this step, we also evaluated using not only single words and counting them, but also using word n-grams of size 2, or bi-grams.
 For this, we create pairs of words by joining node labels together that have an edge between them.
 The resulting vector representations of the graph then get fed into a conventional classifier, in our case a SVM.
 

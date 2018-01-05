@@ -17,7 +17,7 @@ class SignificanceTestTest(unittest.TestCase):
             y_b = ['b', 'a']
 
         result = significance_test_utils.Result(y_true, [y_a, y_b])
-        y_true, y_pred_a, y_pred_b = significance_test_utils.get_transformed_results(result)
+        y_true, y_pred_a, y_pred_b = significance_test_utils._get_transformed_results(result)
         metrics = significance_test_utils.randomization_test(y_true, y_pred_a=y_pred_a, y_pred_b=y_pred_b, metric=metric, num_trails=NUM_TRAILS)
         diffs = metrics[:, 0] - metrics[:, 1]
         return diffs
