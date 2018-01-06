@@ -761,17 +761,16 @@ Here, we observe that the runtime for our graph-based approaches is higher than 
 We also saw the additional overhead produced by the need to generate the concept maps from the text.
 
 One thing to note, and this is common to all the questions and observations in this work, is that we evaluated our questions on multiple datasets. Often times, the observations differed quite heavily from dataset to dataset.
-For instance, the performance of one approach might show great improvement over another on one dataset, while showing a low performance on another dataset. 
+For instance, the performance of one WL extensions might show great improvement over another on one dataset, while showing a low performance on another dataset. 
 Especially when trying to find correlations and explanations for the performance of our approaches, the differing datasets proved to harden the task.
 This further highlights the importance of using model selection.
-Arguably more than in other domains,  graph-kernel based classification performance relies heavily on the used graphs, structure and particularities of the domain.
+Arguably more than in other domains,  graph-kernel based classification performance relies heavily on the used graphs, structure, graph kernels and particularities of the domain.
 We evaluated several other graph kernels, for instance shortest-path- or random-walk based graph kernels, and observed poorer performance than with our default graph kernel, Weisfeiler-Lehman.
 Yet, even the Weisfeiler-Lehman kernel with our extensions and several graph pre-processing approaches, we did not outperform the linearized graph approach, ie. where we un-roll the concept map into text then use a conventional BoW-based approach.
 A possible explanation for this observation is, that the concept maps are generated from the text by extracting multi-word concepts and their relation to each other from the text.
 In order for this approach to create structurally interesting concept maps, concepts have to occur multiple times.
 If that is not the case, that is when the concepts occur only once, the resulting concept maps consist of a number of connected components which contain only two nodes and one edge.
 These two-node connected components are like tri-grams, with multi-concepts and edge label instead of single-words.
-This structure is not particularly interesting.
 
 In the next Section \ref{sec:conclusions} we will further summarize our results and provide some approaches we have not tried yet which could further improve the classification scores.
 
@@ -783,6 +782,7 @@ In the next Section \ref{sec:conclusions} we will further summarize our results 
 In this section we report observations which are not directly related to our hypothesis, but have provided us valuable insights into our analysis.
 
 \subsection{Weisfeiler-Lehman $\phi$ Feature Map Visualization}
+\todo{Add to appendix?}
 When debugging our Weisfeiler-Lehman implementation and extensions, we often wanted to see the effect on the resulting feature vectors.
 For this, we plotted the feature vector $\phi(G)$ for each graph $G$ for several WL iterations.
 In Figure \ref{fig:phi_distribution_example} we see an example of such a $\phi$ distribution plot.
@@ -870,7 +870,7 @@ When using this extension, one has to be careful with feature scaling. As we use
 To test our extension, we compare results of the WL algorithm with and without our extension.
 We classify our concept maps datasets as well as a number of other graph benchmark datasets, obtained from \cite{Kersting2016}.
 For statistics about the additional datasets, please consult the authors website\footnote{\url{https://ls11-www.cs.tu-dortmund.de/staff/morris/graphkerneldatasets}}.
-We used only datasets from the website that have more than 1000 graphs and node labels.
+We used only datasets from the website consisting of more than 1000 graphs and node labels.
 
 \begin{table}[htb!]
 	\centering

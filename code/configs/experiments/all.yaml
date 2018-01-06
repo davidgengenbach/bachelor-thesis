@@ -48,13 +48,13 @@ params_per_type:
         ignore_label_order:
         - false
         node_weight_function:
-        - NoneType
+        - null
         node_weight_iteration_weight_function:
-        - NoneType
+        - null
         norm:
-        - NoneType
+        - null
         phi_dim:
-        - NoneType
+        - null
         round_to_decimals:
         - 10
         same_label:
@@ -71,7 +71,7 @@ params_per_type:
         use_zeroth:
         - true
     graph_preprocessing:
-    - NoneType
+    - null
     normalizer:
     - MaxAbsScaler
   graph_combined:
@@ -85,13 +85,13 @@ params_per_type:
               ignore_label_order:
               - false
               node_weight_function:
-              - NoneType
+              - null
               node_weight_iteration_weight_function:
-              - NoneType
+              - null
               norm:
-              - NoneType
+              - null
               phi_dim:
-              - NoneType
+              - null
               round_to_decimals:
               - 10
               same_label:
@@ -108,7 +108,7 @@ params_per_type:
               use_zeroth:
               - true
           graph_preprocessing:
-          - NoneType
+          - null
           normalizer:
           - MaxAbsScaler
       text:
@@ -126,7 +126,7 @@ params_per_type:
             min_df:
             - 2
             ngram_range:
-            - !!python/tuple
+            - &id001 !!python/tuple
               - 1
               - 1
   graph_content_only:
@@ -148,10 +148,10 @@ params_per_type:
       min_df:
       - 2
       ngram_range:
-      - &id001 !!python/tuple
-        - 1
-        - 1
       - &id002 !!python/tuple
+        - 1
+        - 1
+      - &id003 !!python/tuple
         - 1
         - 2
   graph_extra:
@@ -162,13 +162,13 @@ params_per_type:
         ignore_label_order:
         - false
         node_weight_function:
-        - NoneType
+        - null
         node_weight_iteration_weight_function:
-        - NoneType
+        - null
         norm:
-        - NoneType
+        - null
         phi_dim:
-        - NoneType
+        - null
         round_to_decimals:
         - 10
         same_label:
@@ -185,7 +185,7 @@ params_per_type:
         use_zeroth:
         - true
     graph_preprocessing:
-    - NoneType
+    - null
     normalizer:
     - MaxAbsScaler
   graph_node_weights:
@@ -198,13 +198,13 @@ params_per_type:
         node_weight_function:
         - function
         - function
-        - NoneType
+        - null
         node_weight_iteration_weight_function:
-        - NoneType
+        - null
         norm:
-        - NoneType
+        - null
         phi_dim:
-        - NoneType
+        - null
         round_to_decimals:
         - 10
         same_label:
@@ -221,7 +221,7 @@ params_per_type:
         use_zeroth:
         - true
     graph_preprocessing:
-    - NoneType
+    - null
     normalizer:
     - MaxAbsScaler
   graph_relabeled:
@@ -232,13 +232,13 @@ params_per_type:
         ignore_label_order:
         - false
         node_weight_function:
-        - NoneType
+        - null
         node_weight_iteration_weight_function:
-        - NoneType
+        - null
         norm:
-        - NoneType
+        - null
         phi_dim:
-        - NoneType
+        - null
         round_to_decimals:
         - 10
         same_label:
@@ -273,13 +273,13 @@ params_per_type:
         ignore_label_order:
         - false
         node_weight_function:
-        - NoneType
+        - null
         node_weight_iteration_weight_function:
-        - NoneType
+        - null
         norm:
-        - NoneType
+        - null
         phi_dim:
-        - NoneType
+        - null
         round_to_decimals:
         - 10
         same_label:
@@ -296,9 +296,43 @@ params_per_type:
         use_zeroth:
         - true
     graph_preprocessing:
-    - NoneType
+    - null
     normalizer:
     - MaxAbsScaler
+  graph_text_combined:
+    features:
+      fast_wl_pipeline:
+        feature_extraction:
+          preprocessing:
+          - SimplePreProcessingTransformer
+          scaler:
+          - MaxAbsScaler
+          vectorizer:
+            VAL_:
+            - CountVectorizer
+            binary:
+            - true
+            - false
+            min_df:
+            - 2
+            ngram_range:
+            - *id001
+      text:
+        vectorizer:
+          preprocessing:
+          - SimplePreProcessingTransformer
+          scaler:
+          - MaxAbsScaler
+          vectorizer:
+            VAL_:
+            - CountVectorizer
+            binary:
+            - true
+            - false
+            min_df:
+            - 2
+            ngram_range:
+            - *id001
   text:
     preprocessing:
     - SimplePreProcessingTransformer
@@ -314,5 +348,5 @@ params_per_type:
       min_df:
       - 2
       ngram_range:
-      - *id001
       - *id002
+      - *id003

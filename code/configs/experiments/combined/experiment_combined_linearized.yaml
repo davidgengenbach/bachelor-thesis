@@ -1,0 +1,11 @@
+params_per_type:
+  graph_text_combined:
+    features:
+      fast_wl_pipeline:
+        feature_extraction:
+          preprocessing:
+          - SimplePreProcessingTransformer
+      text:
+        vectorizer:
+          preprocessing:
+          - SimplePreProcessingTransformer

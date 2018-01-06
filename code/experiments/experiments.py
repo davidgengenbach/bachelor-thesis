@@ -114,7 +114,17 @@ def get_task_combined(graph_cache_file: str) -> ExperimentTask:
         estimator, params = graph_pipeline.get_combined_params(text_reduced=True)
         return ClassificationData(X, Y, estimator, params)
 
-    return ExperimentTask('graph_combined', get_filename_only(graph_cache_file), process)
+    def process_graph_to_text() -> tuple:
+        X, Y = graph_helper.get_combined_text_graph_dataset(graph_cache_file)
+        X = [(graph, text) for (graph, text, _) in X]
+        estimator, params = graph_pipeline.get_combined_params_to_text()
+        return ClassificationData(X, Y, estimator, params)
+
+
+    return [
+        ExperimentTask('graph_combined', get_filename_only(graph_cache_file), process),
+        ExperimentTask('graph_text_combined', get_filename_only(graph_cache_file), process_graph_to_text),
+    ]
 
 
 def get_task_graphs(graph_cache_file: str) -> ExperimentTask:

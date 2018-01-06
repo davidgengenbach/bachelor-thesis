@@ -1,4 +1,5 @@
 import sklearn
+import transformers
 from transformers.pipelines import text_pipeline
 from transformers.tuple_selector import TupleSelector
 from transformers.phi_picker_transformer import PhiPickerTransformer
@@ -24,6 +25,34 @@ def get_params(reduced=False, with_node_weights=False):
         feature_extraction=fast_wl_params,
         graph_preprocessing=[None],
         normalizer=[sklearn.preprocessing.MaxAbsScaler()]
+    ))
+
+    return pipeline, params
+
+
+def get_combined_params_to_text():
+    text_estimator_graph, text_params_graph = text_pipeline.get_params(reduced=True)
+    text_estimator_graph.steps.insert(0, ('graph_to_text', transformers.GraphToTextTransformer()))
+    text_estimator, text_params = text_pipeline.get_params(reduced=True)
+    combined_features = sklearn.pipeline.FeatureUnion([
+        ('text', sklearn.pipeline.Pipeline([
+            ('selector', TupleSelector(tuple_index=1)),
+            ('vectorizer', text_estimator),
+        ])),
+        ('fast_wl_pipeline', sklearn.pipeline.Pipeline([
+            ('selector', TupleSelector(tuple_index=0, v_stack=False)),
+            ('feature_extraction', text_estimator_graph),
+        ]))
+    ])
+    pipeline = sklearn.pipeline.Pipeline([
+        ('features', combined_features),
+        ('classifier', None)
+    ])
+
+    # Params
+    params = pipeline_helper.flatten_nested_params(dict(
+        features__fast_wl_pipeline__feature_extraction=text_params_graph,
+        features__text__vectorizer=text_params
     ))
 
     return pipeline, params
