@@ -10,9 +10,9 @@ class TruncatedSVDWrapper(sklearn.base.BaseEstimator, sklearn.base.TransformerMi
     def fit(self, X, y=None, **fit_params):
         num_features = X.shape[1]
         n_components = int(self.percentage_n_components * num_features)
-        self.trans = sklearn.decomposition.TruncatedSVD(n_components=n_components, n_iter=self.n_iter)
-        self.trans.fit(X.tocsr(), y)
+        self.trans_ = sklearn.decomposition.TruncatedSVD(n_components=n_components, n_iter=self.n_iter)
+        self.trans_.fit(X.tocsr(), y)
         return self
 
     def transform(self, X, y=None, **fit_params):
-        return self.trans.transform(X.tocsr())
+        return self.trans_.transform(X.tocsr())

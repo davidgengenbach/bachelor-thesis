@@ -16,7 +16,7 @@ class RelabelGraphsTransformer(sklearn.base.BaseEstimator, sklearn.base.Transfor
         self.remove_unseen = remove_unseen
 
     def fit(self, X, y=None, **fit_params):
-        self.lookup = get_lookup_from_file(self.dataset, self.threshold, self.topn, X, remove_unseen=self.remove_unseen, max_occurrence=self.max_occurrence)
+        self.lookup_ = get_lookup_from_file(self.dataset, self.threshold, self.topn, X, remove_unseen=self.remove_unseen, max_occurrence=self.max_occurrence)
         return self
 
     def transform(self, X, y=None, **fit_params):
@@ -27,12 +27,12 @@ class RelabelGraphsTransformer(sklearn.base.BaseEstimator, sklearn.base.Transfor
         if is_nx_graph:
             for graph in X:
                 nodes = set(graph.nodes())
-                rename_dict = {node: str(self.lookup.get(str(node), str(node))).strip() for node in nodes}
+                rename_dict = {node: str(self.lookup_.get(str(node), str(node))).strip() for node in nodes}
                 graph = nx.relabel_nodes(graph, rename_dict)
                 out.append(graph)
         else:
             for idx, (adj, nodes) in enumerate(X):
-                relabeled_nodes = [str(self.lookup.get(label, label)).strip() for label in nodes]
+                relabeled_nodes = [str(self.lookup_.get(label, label)).strip() for label in nodes]
                 out.append((adj, relabeled_nodes))
         return out
 

@@ -597,10 +597,8 @@ In this paper, the text classification task is also converted into a graph class
 The authors create a graph of the underlying text by extracting so-called \underline{D}iscourse \underline{R}epresentation \underline{S}tructures, or DRS, which capture the semantic relationships in the sentences of the underlying text.
 A DRS consists of two parts, namely a set discourse referents, or entities, and conditions on these entities.
 The example given in the paper constructs the DRS for the sentence ``He throws the ball", which results in the DRS with the entities $\{\text{He}, \text{ball}, \text{throws}\}$ which get renamed to $\{x1, x2, x3\}$.
-The conditions then define the meaning or relationship of the items. In the given example the DRS conditions are $\{\text{male}(x1), \text{ball}(x2), \text{throws}(x3), \text{event}(x3), \text{agent}(x3, x1), \text{patient}(x3, x2)\}$.
-
-\todo{How to cite this example?}
-
+The conditions of the DRS then define the meaning or relationship between entities.
+For the mentioned example, the DRS conditions are $\{\text{male}(x1), \text{ball}(x2), \text{throws}(x3), \text{event}(x3), \text{agent}(x3, x1), \text{patient}(x3, x2)\}$.
 To construct a graph from the extracted DRSs, the entities become vertices and the conditions become edges between them.
 A unary condition on a vertex, for instance $\text{male}(x1)$, becomes a loop for the node $x1$.
 Conditions on two entities become directed edges, going from the entity of the first argument to the second condition argument, for example the condition $\text{agent}(x3, x1)$ creates a node from $x3$ to $x1$.
@@ -623,8 +621,6 @@ The authors explain the reason for this small number of considered documents and
 They also acknowledge that they do not provide baseline results or comparisons between different approaches to text-classification or results with other graph kernels.
 
 That said, this work is also similar to our approach in the sense that they also use graphs representations of texts to classify.
-
-\todo{Maybe create similar kernel which does link prediction by defining edge equality through similar source/destination node labels?}
 
 \paragraph{``Deep Graph Kernels" \cite{Yanardag2015}}
 In this paper, the authors introduce an extension for existing kernels for which the explicit feature map $\phi$ can be calculated.
@@ -661,7 +657,7 @@ In both cases, the matrix $M$ aims to encode the similarities of the substructur
 The authors report an improvement of classification scores for several real-world datasets, comparing the scores of the plain version of a kernel with their augmented version.
 
 \labelsubsection{Summary}{subsection:related_work_summary}
-As we see, several such graphs have been studied in the context of text classification.
-Yet, our approach differs in some ways from the previous work, namely that (1) we capitalize on concept maps, a graph representation which is known for its summarization capabilities, resulting in smaller graphs. Also (2) we explicitly compare our results with conventional text-based approaches that achieve state-of-the-art performance. And while others mainly used graph kernels which are not able to be easily combined with text-based approaches, we (3) also capitalize on the Weisfeiler-Lehman and other graph kernels which can generate explicit feature maps $\phi$ for a graph.
-This, in turn, enables us to explore an approach where we combine conventional text features, eg. \textit{BoW} frequencies, with features obtained from graph kernels.
-As far as we know, the combining of text- and graph features has not been done before.
+As we see, several graph representations for text have been studied in the context of text classification.
+Yet, our approach differs in some crucial ways from the previous work, namely that (1) we capitalize on concept maps, a graph representation which is known for its summarization capabilities, resulting in smaller graphs. Also (2) we explicitly compare our results with conventional text-based approaches that achieve state-of-the-art performance.
+And while others mainly used graph kernels which are not able to be easily combined with text-based approaches, we (3) capitalize on graph kernels where the explicit feature map $\phi$ can be generated.
+This, in turn, enables us to explore an approach where we combine conventional text features, eg. \textit{BoW}, with features obtained from these graph kernels.

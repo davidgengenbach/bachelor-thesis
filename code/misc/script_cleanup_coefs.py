@@ -14,7 +14,7 @@ from utils.remove_coefs_from_results import remove_coefs_from_results
 import pickle
 import tqdm
 
-for folder in [constants.RESULTS_FOLDER, results_helper.get_result_folders()[-1]]:
+for folder in [constants.RESULTS_FOLDER] + results_helper.get_result_folders():
     result_files = glob('{}/*.npy'.format(folder))
 
     print('Processing folder: {:50} ({} items)'.format(folder, len(result_files)))

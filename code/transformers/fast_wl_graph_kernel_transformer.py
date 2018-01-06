@@ -66,10 +66,9 @@ class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Tran
 
         phi_list = _normalize(phi_list, norm=self.norm)
 
-        self.phi_list = phi_list
-        self.label_lookups = label_lookups
-        self.label_counters = label_counters
-
+        self.phi_list_ = phi_list
+        self.label_lookups_ = label_lookups
+        self.label_counters_ = label_counters
         return self
 
     def transform(self, X, y=None, **fit_params):
@@ -78,14 +77,14 @@ class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Tran
 
         # Use already computed phi_list if the given X is the same as in fit()
         if self.use_cached and self.hashed_x == hash_dataset(X):
-            return self.phi_list
+            return self.phi_list_
 
         # Use early stopping
-        h = min(len(self.phi_list) - 1, self.h)
+        h = min(len(self.phi_list_) - 1, self.h)
 
         phi_dim = self.phi_dim
         if self.phi_dim is None:
-            phi_dim = [phi.shape[1] for phi in self.phi_list]
+            phi_dim = [phi.shape[1] for phi in self.phi_list_]
 
         phi_list, label_lookups, label_counters = fast_wl.transform(
             X,
@@ -96,8 +95,8 @@ class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Tran
             node_weight_factors=node_weight_factors,
             use_early_stopping=False,
             # Also give the label lookups/counters from training
-            label_lookups=[dict(l) for l in self.label_lookups],
-            label_counters=self.label_counters[:],
+            label_lookups=[dict(l) for l in self.label_lookups_],
+            label_counters=self.label_counters_[:],
             node_weight_iteration_weight_function=self.node_weight_iteration_weight_function,
             truncate_to_highest_label=self.truncate_to_highest_label
         )
@@ -144,3 +143,6 @@ def _retrieve_node_weights_and_convert_graphs(X, node_weight_function=None, same
         X = [(adj, ['dummy'] * len(labels)) for adj, labels in X]
 
     return X, node_weight_factors
+
+def iteration_weight_function_exponential(*a):
+    raise NotImplementedError('Exponential function not implemented.')

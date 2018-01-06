@@ -21,15 +21,26 @@ def remove_coefs(clf):
         'support_',
         'support_vectors_',
         'vocabulary_',
-        'lookup',
+        'lookup_',
         'labels_to_be_removed_',
-        'train_labels_'
+        'train_labels_',
+        'label_lookups_',
+        'label_lookups_',
+        'phi_list_'
     ]:
         try:
             setattr(clf, x, None)
             found = True
         except:
             pass
+
+    for c in dir(clf):
+        if c.endswith('_') and not c.startswith('_'):
+            try:
+                setattr(clf, c, None)
+                found = True
+            except:
+                pass
 
     return found
 

@@ -589,8 +589,10 @@ For other graph kernels where an explicit feature map $\phi(G)$ can not be calcu
 The interpretability of this approach would be far lower since both graph- and text-features would be merged together in a single number without being able to distinguish the relative importance of the text- and graph features after creating the gram matrix.
 In Table \ref{table:results_comparison_combined} we see the classification scores for the combined features for both co-occurrence graphs and concept maps.
 
-As we see, the performance of the combined approached compared the text-only approach is comparable.
+As we see, the classification performances of the combined- and text-only approach are comparable.
 With some datasets, the combined approach is slightly better than the text-only approach.
+
+\todo{Add the influence of using different WL extensions}
 
 To better understand the classification performance when combining text- and graph features, we also train a one-layer neural network\footnote{Implementation: \url{http://scikit-learn.org/stable/modules/generated/sklearn.linear_model.SGDClassifier.html}} with the combined features using stochastic gradient descent. After training we investigate the weights.
 The weights, or coefficients, for each input feature are an indicator for the importance of that input feature.
