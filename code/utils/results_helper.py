@@ -128,7 +128,10 @@ def get_results(
                     break
             return is_graph_dataset_
 
-        result['combined'] = 'graph_combined__dataset_' in result_file
+        result['combined'] = np.any([
+            'graph_combined__dataset_' in result_file,
+            'graph_text_combined__dataset_' in result_file
+        ])
 
         # TEXT
         if is_graph_dataset():
