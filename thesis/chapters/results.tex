@@ -191,26 +191,27 @@ Additionally, we also evaluate the stemming or lemmatizing [p.~4]\cite{Manning20
 	\caption[Example: Multi-word node labels Splitting]{Example for multi-word label splits. Here, both the ``concept maps" and ``multi-word concepts" node labels are  split.}\label{fig:example_split_labels}
 \end{figure}
 
-
 In Figure \ref{table:results_multi_label_split} we report the results when doing graph classification with and without multi-word label splitting.
 For this experiment, we use the Weisfeiler-Lehman graph kernel to extract the feature maps.
 As we can see, the splitting actually improves the performance quite a lot, consistently outperforming the non-split version on all datasets.
+On some datasets, the additional stemming of single-word labels after splitting also further improves the score.
 
 \begin{table}[htb!]
 	\centering
-\begin{tabular}{lrr}
-	{} &  Original &  Split \\
+\begin{tabular}{lrrrr}
+	{} & \multicolumn{3}{c}{F1 macro}  &   \\
+	 &  Un-Split  &  Un-Stemmed &  Stemmed &   $p$-Value  \\
 	\midrule
-	ling-spam       & 0.783 & 0.924 \\
-	ng20            & 0.392 & 0.572 \\
-	nyt\_200         & 0.749 & 0.852 \\
-	r8              & 0.584 & 0.832 \\
-	review\_polarity & 0.574 & 0.699 \\
-	rotten\_imdb     & 0.600 & 0.790 \\
-	ted\_talks       & 0.211 & 0.404 \\
+	ling-spam       & 0.8160 & 0.8835 & \textbf{0.9131} & 0.0008 \\
+	ng20            & 0.4188 & 0.5680 & \textbf{0.5741} & 0.0001 \\
+	nyt\_200         & 0.7436 & \textbf{0.8464} & 0.8294 & 0.0001 \\
+	r8              & 0.6772 & \textbf{0.8599} & 0.8441 & 0.0001 \\
+	review\_polarity & 0.6094 & \textbf{0.7150} & 0.6699 & 0.0036 \\
+	rotten\_imdb     & 0.6346 & \textbf{0.7805} & 0.7775 & 0.0001 \\
+	ted\_talks       & 0.2436 & 0.3934 & \textbf{0.4126} & 0.0035 \\
 	\bottomrule
 \end{tabular}
-\caption[Results: Multi-label split]{Results for multi-label node label split.}\label{table:results_multi_label_split}
+\caption[Results: Multi-label split]{Results for multi-label node label split. The $p$-value is calculated with the best split-word approach, ie. stemmed and un-stemmed, versus the plain version.}\label{table:results_multi_label_split}
 \end{table}
 
 The classification scores for this multi-word splitting nearly performs as well as the linearized, BoW approach from the previous Question \ref{question:importance_structure}, ranging from 1\% to 3\% difference in F1 macro.
@@ -645,31 +646,22 @@ However, it has to be noted that no hyper-parameter tuning was performed and onl
 
 \begin{table}[htb!]
 \centering
-\begin{tabular}{llcc}
-  &  & \multicolumn{2}{c}{Graph type} \\
-   dataset   & &  Concept Map &  Co-Occurrence \\
-\midrule
-ling-spam 
-          & graph only &  0.741138 &  0.794719\\
-          & combined &  0.986928 &  0.977104\\
-          & text only & \multicolumn{2}{c}{ 0.966179 }\\
-\midrule
-ng20 
-          & graph only &  0.263055 &  0.511980\\
-          & combined &  0.738239 &  0.690968\\
-          & text only & \multicolumn{2}{c}{ 0.681245 }\\
-\midrule
-reuters-21578 
-          & graph only &  0.085752 &  0.229710\\
-          & combined &  0.264947 &  0.291086\\
-          & text only & \multicolumn{2}{c}{ 0.320838 }\\
-\midrule
-webkb 
-          & graph only &  0.222296 &  0.472485\\
-          & combined &  0.722667 &  0.741964\\
-          & text only & \multicolumn{2}{c}{ 0.702095 }\\	
-\bottomrule
+\begin{tabular}{lrrrrrrrrr}
+	\toprule
+	{} & \multicolumn{9}{c}{F1 macro} \\
+	type & \multicolumn{4}{c}{Concept Map} & \multicolumn{4}{c}{Co-Occurrence} &  Text \\
+	&     Plain & Split & To-Text & Infrequent &   Plain & Split & To-Text & Infrequent &  \\
+	\midrule
+	ling-spam       & 0.990 & 0.986 & 0.980 & 0.990 & 0.984 & 0.997 & 0.994 & 0.997 & 0.990 \\
+	ng20            & 0.791 & 0.737 & 0.756 & 0.781 & 0.672 & 0.694 & 0.712 & 0.694 & 0.781 \\
+	nyt\_200         & 0.917 & 0.891 & 0.904 & 0.888 & 0.875 & 0.892 & 0.921 & 0.892 & 0.921 \\
+	r8              & 0.921 & 0.929 & 0.931 & 0.929 & 0.914 & 0.931 & 0.939 & 0.933 & 0.921 \\
+	review\_polarity & 0.870 & 0.837 & 0.850 & 0.880 & 0.855 & 0.850 & 0.857 & 0.850 & 0.877 \\
+	rotten\_imdb     & 0.885 & 0.877 & 0.883 & 0.890 & 0.910 & 0.907 & 0.913 & 0.904 & 0.886 \\
+	ted\_talks       & 0.481 & 0.433 & 0.436 & 0.468 & 0.442 & 0.482 & 0.485 & 0.491 & 0.464 \\
+	\bottomrule
 \end{tabular}
+
 \caption[Results: Combined text- and graph features]{Comparison of classification using both concept maps and text.}%
 \label{table:results_comparison_combined}
 \end{table}

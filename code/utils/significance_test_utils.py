@@ -22,11 +22,11 @@ f1: MetricFunction = functools.partial(sklearn.metrics.f1_score, average='macro'
 metrics: typing.Iterable[typing.Tuple[str, MetricFunction]] = [('accuracy', accuracy), ('recall_macro', recall), ('f1_macro', f1)]
 
 
-def get_confidences(df, model_selection_attr, model_selection_vals, performance_attr='prediction_score_f1_macro', log_progress=None, **test_params):
+def get_confidences(df, model_selection_attr, model_selection_vals, performance_attr='prediction_score_f1_macro', groupby_attr=None, log_progress=None, **test_params):
     data = collections.defaultdict(list)
     for dataset, df_ in log_progress(df.groupby('dataset')) if log_progress else df.groupby('dataset'):
         print('Calculating confidence for "{}"'.format(dataset))
-        best = df_.loc[df_.groupby(model_selection_attr)[performance_attr].idxmax()]
+        best = df_.loc[df_.groupby(model_selection_attr if not groupby_attr else groupby_attr)[performance_attr].idxmax()]
 
         if len(best) != 2:
             print('\tToo many/too few models for dataset "{}". Expected 2, got {}. Skipping.'.format(dataset, len(best)))
