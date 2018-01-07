@@ -177,6 +177,8 @@ This is done by splitting the node labels into individual words, than creating n
 When a resulting single-word label is a stopword, the corresponding node is removed from the graph.
 See Figure \ref{fig:example_split_labels} for an example.
 
+Additionally, we also evaluate the stemming or lemmatizing [p.~4]\cite{Manning2000} the split single-words.
+
 \begin{figure}[htb!]
 	\centering
 	\begin{subfigure}[t]{.4\linewidth}	{\includegraphics[width=\linewidth]{assets/figures/tmp/graph_example_split_labels_before.pdf}}
@@ -214,7 +216,6 @@ As we can see, the splitting actually improves the performance quite a lot, cons
 The classification scores for this multi-word splitting nearly performs as well as the linearized, BoW approach from the previous Question \ref{question:importance_structure}, ranging from 1\% to 3\% difference in F1 macro.
 However, it has to be noted that splitting the multi-word node labels, and subsequently extracting features with WL, produces higher dimensional feature vectors than the un-split approach.
 
-One additional step to further increase the likelihood of matches between the single-word nodes would be to lemmatize or stem [p.~4]\cite{Manning2000} the individual words.
 
 \answersummary{
 Splitting the multi-word labels shows the greatest performance improvement for WL, ranging from a raise of 10\% to 24\% better F1 macro score over the un-split approach.
