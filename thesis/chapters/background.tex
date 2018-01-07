@@ -79,7 +79,7 @@ $c(v)$ & Connected component of $v$ \\
 \end{figure}
 
 \subsection{Concept Map}
-A concept map is a directed graph where the nodes are concepts. In our case, the concept maps are automatically constructed from text, yet one can also create them manually.
+A concept map \cite{Novak1984, Kinchin2000, Falke2017b,Gulrandhe2015, Valerio2008} is a directed graph where the nodes are concepts. In our case, the concept maps are automatically constructed from text, yet one can also create them manually.
 In our work, concepts are important tokens in the text and consist of one or more words of the underlying text.
 An edge between two concepts show that these concepts are related to each other. Edges can have labels also.
 For an example of a concept map, see Figure \ref{fig:concept_map}.
@@ -143,14 +143,13 @@ Figure \ref{fig:concept_map_linearization} shows an example of such an unrolled 
 \end{figure}
 
 While text is currently arguably the most common medium for information storage, due to the rise of more interactive information mediums, eg. computers, concept maps might become more important in the future.
-There are several advantages of concept maps over text, being more structured and visual being to name just a few.
-Concept maps therefore have the potential to become a crucial part in the context of information representation and/or learning.
+There are several advantages of concept maps over text, being more structured and visual just to name a few.
 
 In Chapter \ref{sec:implementation} we introduce the concept map extraction implementation we use and further explain the steps in creating the concept maps automatically from given.
 
 \subsection{Co-Occurrence Graph}
-A co-occurrence graph, or graph-of-words, is generated from a text by creating a graph with all the words of the underlying text as nodes.
-There is an edge between two nodes if the labels of the source and target node co-occur in the text.
+A co-occurrence graph \cite{Novak1984, Rousseau2015a, Nikolentzos2017a}, or graph-of-words, is generated from a text by creating a graph with all the words of the underlying text as nodes.
+In the next step, an edge between two nodes is added if the words corresponding to the nodes co-occur in the text.
 Two words co-occur when the distance between the words in the text is below a given threshold, the window size.
 Co-occurrence graphs can have edge weights corresponding to the counts of the co-occurrence of the words in the text.
 
@@ -167,17 +166,15 @@ Figure \ref{fig:cooccurrence_graphs} shows examples of co-occurrence graphs with
 	\begin{subfigure}[t]{0.32\linewidth}{\includegraphics[width=\linewidth]{assets/figures/tmp/cooccurrence_graphs_example/window_size_6.pdf}}%
     \caption{Window size: 6}%
     \end{subfigure}
-    \caption[Example: Co-Occurrence Graph]{Example for co-occurrence graphs. Generated from a quote by Jorge Luis Borges\footnote{\url{https://en.wikiquote.org/wiki/Jorge\_Luis\_Borges}}: ``Universal history is the history of a few metaphors". With increasing window size, the number of edges and therefor the connectedness of the co-occurrence graph also increases.}%
+    \caption[Example: Co-Occurrence Graph]{Example for co-occurrence graphs. Generated from a quote by Jorge Luis Borges\footnote{\url{https://en.wikiquote.org/wiki/Jorge\_Luis\_Borges}}: ``Universal history is the history of a few metaphors".
+    	With increasing window size, the number of edges and thus also connectedness of the co-occurrence graph increases.}%
     \label{fig:cooccurrence_graphs}%
 \end{figure}
 
-\todo{Add example where there co-occurrences also with window size 1}
-
-Since co-occurrence graphs not only contain the words of the underlying text but also their co-occurrence, they capture not only the content of the text but also the relation between words of the text.
-Therefor they contain structural information about the text.
+Since co-occurrence graphs not only contain the words of the underlying text but also their co-occurrence, they are able to capture structural information about the text.
 But, given a co-occurrence graph, it is not possible to recover the underlying text since all information about word-order or sentence structure is omitted.
 That said, one could augment co-occurrence graphs by using directed edges and therefor keep the word-order intact.
-Yet, even with this augmentation one can not reconstruct the original text.
+However, even with this extension, one can not reconstruct the original text.
 
 Because of their similarity to concept maps, we will use co-occurrence maps as a baseline for the graph classification.
 It has to be noted that this comparison is not entirely fair since co-occurrence graphs contain all words of the text and there is only a small loss of information.
@@ -283,9 +280,8 @@ On the other hand, we will refer to the complexity or run-time of a classificati
 
 \labelsection{Kernels}{subsec:kernel}
 In most cases, texts and graphs are not of fixed size.
-However, most classification algorithms operate on fixed size vectors.
-Fortunately, there are several approaches to overcome this problem.
-One of the approaches to classify non-fixed size objects are so-called kernels.
+Most classification algorithms, however, operate on fixed sized vectors.
+Fortunately, there exist several approaches to overcome this problem, one of them being so-called kernels \cite{Kriege2012}\cite[p.~295]{Bishop2006}.
 
 A kernel is a function $k$ which returns a measure of similarity between two objects:
 \begin{equation*}
@@ -311,8 +307,9 @@ Another example of a kernel between strings is $k(s, s') = \delta(s = s')$, wher
 Note that both these kernels are indeed valid.
 That said, when using kernels in the real world, one can also use non-valid kernels, ie. kernels which are non-symmetric and/or return negative numbers. While such ``kernel" are not strictly valid, they can nevertheless perform good in real-world applications, even better than valid kernels.
 
-Kernels can be used in kernel methods for classification and other tasks.
-Prominent examples of kernel methods include the \textit{SVM}, kernelized \textit{Principal Component Analysis} and \textit{Gaussian Processes}.
+While it is not immediately clear, how one might use kernels instead of a vector representations, we will see that kernels indeed can be utilized to enable operating on non-vector based data, such as graphs or strings.
+For this, we will introduce several so-called kernel methods, a class of algorithms that can be used for a variety of tasks by using kernels at their core.
+Prominent examples of kernel methods include the \textit{SVM}, kernelized \textit{Principal Component Analysis} \cite{Scholkopf1998} and \textit{Gaussian Processes} \cite[p.~303]{Bishop2006}.
 In Section \ref{sec:kernel_method_and_kernel_trick}, we further explain kernel methods.
 
 For a subset of kernels, one can also create explicit feature vectors, or feature maps, for a given object. In this case, the kernel can be rewritten as an inner product on two fixed-size vectors:
@@ -323,10 +320,15 @@ For a subset of kernels, one can also create explicit feature vectors, or featur
 
 Here, $\phi(X)$ returns a fixed-size vector representation of the object $X$ and is the main part of the kernel.
 This $\phi(X)$ can then be used in all vector-based classification algorithms, not only kernel methods.
-An example for such a kernel is the string kernel which counts the number of occurrences of words in a given text, then creates a vector representation by giving each word an index in the vector and setting this index to the number of occurrences of that word. The inner product of two of these vector representations then create a kernel.
+An example for such a kernel is the Bag-of-Words kernel on text.
+Here, the kernel counts the frequency of words in a given text, then creates a vector with these counts.
+The inner product of two of the vector representations of two texts then creates a kernel.
+Since word counts are always $\geq 0$, the inner product on the vector presentations $\phi$ indeed results in a valid kernel.
+
+For an overview over kernels, we recommend \cite[p.~293]{Bishop2006}.
 
 \paragraph{Gram matrix}
-A gram matrix, or kernel matrix, for a given kernel is a matrix $A$ for a set of objects, $D = (x_1, x_2, \ldots, x_n)$ where the entries are the pairwise similarities between all these objects in the dataset:
+A gram matrix \cite[p.~293]{Bishop2006}, or kernel matrix, for a given kernel is a matrix $A$ for a set of objects, $D = (x_1, x_2, \ldots, x_n)$ where the entries are the pairwise similarities between all these objects in the dataset:
 \begin{equation*}
 A_{i,j} = k(x_i, x_j)
 \end{equation*}
@@ -384,7 +386,7 @@ Instead, in the graph isomorphism test one has to find two mappings: one bijecti
 If such a mapping exists, the two graphs are called isomorphic.
 While the complexity of the graph isomorphism test is not known yet, it is suspected to lie in P or it may also be NP-complete \cite{Hido2009,Kulharia2008}.
  
-One could use the graph isomorphism test, or a variant thereof, to create a graph kernel $k_{isomorphism}$ by returning 1 if the two graphs are isomorphic and 0 otherwise.
+One could use the graph isomorphism test, or a variant thereof, to create a graph kernel $k_{\textrm{isomorphism}}$ by returning 1 if the two graphs are isomorphic and 0 otherwise.
 Yet, as we noted before, the runtime of the graph isomorphism test is high and also, in the presented version, does not take edge or node labels into account.
 We will see other examples of graph kernels in the next paragraphs.
 Note that each graph kernel has different strengths and weaknesses, often being subject to a trade-off between accuracy versus compute time.
@@ -511,6 +513,8 @@ Our implementation also uses label compression, explained in Figure \ref{fig:wl_
   The same happens for the top-most node: after the second iteration, in \textbf{(d)}, the labels are also different since in iteration $h=2$ not only the immediate neighborhood has to be the same for a match, also the neighborhood of its neighborhood.}
 	\label{fig:wl_example}
 \end{figure}
+
+\todo{Use early stopping!}
 
 \labelsection{Graph Kernel Based Text Classification}{subsec:graph_kernel_based_text_classification}
 The idea of converting the text classification task into a graph classification task has been explored before.

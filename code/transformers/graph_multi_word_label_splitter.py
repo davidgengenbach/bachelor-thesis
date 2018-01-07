@@ -3,14 +3,17 @@ import collections
 import nltk
 from nltk.corpus import stopwords
 import networkx as nx
+from utils import graph_helper
+from itertools import chain
 
 
 class GraphMultiWordLabelSplitter(sklearn.base.BaseEstimator, sklearn.base.TransformerMixin):
-    def __init__(self, remove_old_composite_labels=True, remove_stopwords=True, add_self_links=False, copy=True):
+    def __init__(self, remove_old_composite_labels=True, remove_stopwords=True, add_self_links=False, copy=True, lemmatizer_or_stemmer=None):
         self.remove_old_composite_labels = remove_old_composite_labels
         self.copy = copy
         self.remove_stopwords = remove_stopwords
         self.add_self_links = add_self_links
+        self.lemmatizer_or_stemmer = lemmatizer_or_stemmer
 
     def fit(self, X, y=None, **fit_params):
         return self
@@ -22,6 +25,15 @@ class GraphMultiWordLabelSplitter(sklearn.base.BaseEstimator, sklearn.base.Trans
         stopwords_ = self.get_stopwords()
 
         X_ = [g.copy() for g in X] if self.copy else X
+
+        all_labels = graph_helper.get_all_node_labels(X)
+        if self.lemmatizer_or_stemmer:
+            fn = self.lemmatizer_or_stemmer.lemmatize if hasattr(self.lemmatizer_or_stemmer, 'lemmatize') else self.lemmatizer_or_stemmer.stem
+            all_labels_splitted = list(chain.from_iterable([str(x).split() for x in all_labels]))
+            lookup = {k: fn(k) for k in all_labels_splitted}
+            lookup = {k: v for k, v in lookup.items() if k != v}
+        else:
+            lookup = {}
 
         for graph in X_:
             nodes = sorted(graph.nodes())
@@ -44,7 +56,7 @@ class GraphMultiWordLabelSplitter(sklearn.base.BaseEstimator, sklearn.base.Trans
                     if self.add_self_links:
                         for word2 in split:
                             if word == word2: continue
-                            new_edges.append((word, word2, dict(name='ADDED')))
+                            new_edges.append((lookup.get(word, word), lookup.get(word2, word2), dict(name='ADDED')))
 
                     for target, data, direction in node_edges:
                         source_ = word if direction else target
@@ -52,7 +64,9 @@ class GraphMultiWordLabelSplitter(sklearn.base.BaseEstimator, sklearn.base.Trans
                         candidates_source = mapping.get(source_, [source_])
                         candidates_target = mapping.get(target_, [target_])
                         for s in candidates_source:
+                            s = lookup.get(s, s)
                             for t in candidates_target:
+                                t = lookup.get(t, t)
                                 if s in stopwords_ or t in stopwords_: continue
                                 new_edges.append((s, t, data))
 

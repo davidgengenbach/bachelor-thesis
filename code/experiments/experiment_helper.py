@@ -12,6 +12,7 @@ import sklearn.feature_extraction.text
 from glob import glob
 from utils import constants
 import collections
+from nltk.stem import LancasterStemmer
 
 
 NEEDED_FIELDS = ['params_per_type']
@@ -19,6 +20,7 @@ NEEDED_FIELDS = ['params_per_type']
 # These are field values for experiment yaml files that get replaced with their corresponding class.
 # For example, "SVC" will be replaced with an instance of sklearn.svm.SCV
 PLACEHOLDER_LIST = dict(
+    LancasterStemmer=LancasterStemmer,
     nxgraph_degrees_metric=graph_metrics.nxgraph_degrees_metric,
     nxgraph_degrees_metric_max=graph_metrics.nxgraph_degrees_metric_max,
     nxgraph_pagerank_metric=graph_metrics.nxgraph_pagerank_metric,

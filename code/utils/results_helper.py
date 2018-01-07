@@ -289,6 +289,9 @@ def get_experiments_by_names(names: list, fill_na='-', **get_results_kwargs) -> 
     df = pd.DataFrame()
     for x in names:
         df_ = get_results(filter_out_experiment=x, **get_results_kwargs)
+        if df_ is None or not len(df_):
+            print('Warning: could not receive experiments for: {}'.format(x))
+            continue
         df = df.append(df_)
     if fill_na:
         df = df.fillna(fill_na)

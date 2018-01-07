@@ -1,0 +1,13 @@
+params_per_type:
+  graph:
+    graph_preprocessing:
+      VAL_:
+      - GraphMultiWordLabelSplitter
+      remove_old_composite_labels:
+      - true
+      add_self_links:
+      - false
+      lemmatizer_or_stemmer:
+      - LancasterStemmer
+    normalizer:
+    - MaxAbsScaler

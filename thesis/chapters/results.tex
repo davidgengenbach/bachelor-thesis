@@ -211,9 +211,10 @@ As we can see, the splitting actually improves the performance quite a lot, cons
 \caption[Results: Multi-label split]{Results for multi-label node label split.}\label{table:results_multi_label_split}
 \end{table}
 
-The classification scores for this multi-word splitting nearly performs as well as the linearized, BoW approach from the previous question, Question \ref{question:importance_structure}.
-The difference is quite small, ranging from 1\% to 3\% difference in F1 macro.
+The classification scores for this multi-word splitting nearly performs as well as the linearized, BoW approach from the previous Question \ref{question:importance_structure}, ranging from 1\% to 3\% difference in F1 macro.
 However, it has to be noted that splitting the multi-word node labels, and subsequently extracting features with WL, produces higher dimensional feature vectors than the un-split approach.
+
+One additional step to further increase the likelihood of matches between the single-word nodes would be to lemmatize or stem [p.~4]\cite{Manning2000} the individual words.
 
 \answersummary{
 Splitting the multi-word labels shows the greatest performance improvement for WL, ranging from a raise of 10\% to 24\% better F1 macro score over the un-split approach.
@@ -822,7 +823,7 @@ This line signifies the highest $\phi$ index where there was a non-zero entry.
 It also serves as a marker of the last compressed label number which was assigned in this dataset.
 
 While this kind of plot is useful for analyzing the whole datasets at once, it becomes especially interesting when splitting the dataset into sets, eg. by splitting it into a stratified train- and test set.
-When creating the feature maps $\phi$ for the graphs in the train set, for each WL iteration $h$ we save the multi-label-lookup which we can then use to create the feature maps for the test set.
+When creating the feature maps $\phi$ for the graphs in the train set, for each WL iteration $h$ we save the multi-label-lookup which we is then used to create the feature maps for the test set.
 The multi-label lookup therefor acts as a kind of continuation, saving the state of the WL iteration with all encountered labels.
 Then, when creating the feature maps for the test set, we use the multi-label lookups to generate the feature maps in the same way, now for the graphs in the test set.
 When plotting the train- and test set feature maps separated we can get interesting insights into the dataset and the concept maps.
@@ -841,13 +842,16 @@ For an example, see Figure \ref{fig:phi_distribution_train_test}.
 
 While the train set looks nearly the same as if plotting the simple dataset without the split, the test set differs quite a bit.
 Notice how, in the test set, there are ``clusters" around some regions for each of the classes. 
-Keep in mind that the $y$-position of the point signifies the index $i$ in $\phi(G)$ for that graph.
+Keep in mind that the $y$-position of the point signifies a non-zero entry at index $i$ in $\phi(G)$ for that graph.
 Because of the aforementioned implementation, we now are able to see a pattern for each of the classes, namely the clusters.
 For the test set, we can also see how many new labels have been found in a given iteration.
 As we said before, the horizontal green line, in both plots, signifies the last label that has been encountered.
 In the case of the split sets, it also marks the last label that has been encountered in the train set.
+All points, that is labels, above this line have are new to the test set and do not occur in the train set.
 
-\todo{Usefulness of WL to get feeling for graph connectedness, uniqueness of structure, uniqueness of labels}
+Plotting the $\phi$ distribution like so, we gain a better insight into the graph connectedness and the similarity or uniqueness of neighborhoods.
+When WL converges at iteration $h$, so when the height of the green line does not change from iteration $h-1$ to $h$, this means that all neighborhoods that are different, have been marked as so and got a unique label.
+If the number of labels is equal to the number of vertices, all neighborhoods are different.
 
 \subsection{Weisfeiler-Lehman Node Weighting Extension}
 With increasing iterations $h$ of the Weisfeiler-Lehman algorithm, exact matches of subtrees of height $h$ become more difficult.
@@ -914,7 +918,7 @@ We used only datasets from the website consisting of more than 1000 graphs and n
 
 As we can see, the classification performance of our extension varies greatly per dataset.
 Especially on the concept maps, our WL extension does not perform as good the plain WL graph kernel.
-On the graph benchmark datasets on the other hand, we can also observe significant improvements.
+On some of the graph benchmark datasets, we can also observe significant improvements.
  
 \if
 We also tried another extension to the Weisfeiler-Lehman graph kernel, namely augmenting the default node label counts with a iteration factor.

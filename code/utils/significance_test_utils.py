@@ -25,26 +25,32 @@ metrics: typing.Iterable[typing.Tuple[str, MetricFunction]] = [('accuracy', accu
 def get_confidences(df, model_selection_attr, model_selection_vals, performance_attr='prediction_score_f1_macro', log_progress=None, **test_params):
     data = collections.defaultdict(list)
     for dataset, df_ in log_progress(df.groupby('dataset')) if log_progress else df.groupby('dataset'):
+        print('Calculating confidence for "{}"'.format(dataset))
         best = df_.loc[df_.groupby(model_selection_attr)[performance_attr].idxmax()]
 
         if len(best) != 2:
-            print('\tToo many/too few models. Got {}, expected 2. Skipping. Dataset: {}'.format(len(best), dataset))
+            print('\tToo many/too few models for dataset "{}". Expected 2, got {}. Skipping.'.format(dataset, len(best)))
             continue
 
-        if not model_selection_attr in best:
-            print('\tCould no find model_selection_attr: {}'.format(model_selection_attr))
+        if model_selection_attr not in best:
+            print('\tCould no find model_selection_attr={}. Skipping.'.format(model_selection_attr))
             continue
 
-        prediction_filenames = [best.loc[best[model_selection_attr] == name].iloc[0].prediction_file for name in model_selection_vals]
+        df_predictions = [best.loc[best[model_selection_attr] == name] for name in model_selection_vals]
 
-        prediction_a, prediction_b = prediction_filenames
+        if not np.all([len(x) for x in df_predictions]):
+            print('\tCould not find two elements with model_selection_vals={}. Skipping.'.format(model_selection_vals))
+            continue
+
+        prediction_a, prediction_b = [df___.iloc[0].prediction_file for df___ in df_predictions]
         if prediction_a == prediction_b:
-            print('Warning: Same prediction file given for both models: {}'.format(prediction_a))
+            print('\tWarning: Same prediction file given for both models: {}'.format(prediction_a))
 
         diffs, score_a, score_b, global_difference, confidence = calculate_significance_from_prediction_files(prediction_a, prediction_b, **test_params)
 
         data['dataset'].append(dataset)
-        data['filenames'].append(prediction_filenames)
+        data['filename_a'].append(prediction_a)
+        data['filename_b'].append(prediction_b)
         data['diffs'].append(diffs)
         data['scores'].append([score_a, score_b])
         data['global_difference'].append(global_difference)
@@ -70,7 +76,6 @@ def calculate_significance_from_prediction_files(prediction_file_a, prediction_f
         ))
 
     model_a, model_b = models
-
     if not np.array_equal(model_a['Y_real'], model_b['Y_real']):
         raise Exception('Invalid models to compare: the Y_real labels must be the same for both labels!')
 

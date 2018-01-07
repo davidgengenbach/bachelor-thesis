@@ -120,7 +120,6 @@ def get_task_combined(graph_cache_file: str) -> ExperimentTask:
         estimator, params = graph_pipeline.get_combined_params_to_text()
         return ClassificationData(X, Y, estimator, params)
 
-
     return [
         ExperimentTask('graph_combined', get_filename_only(graph_cache_file), process),
         ExperimentTask('graph_text_combined', get_filename_only(graph_cache_file), process_graph_to_text),
