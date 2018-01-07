@@ -12,15 +12,23 @@ import sklearn.feature_extraction.text
 from glob import glob
 from utils import constants
 import collections
+import nltk.stem
 from nltk.stem import LancasterStemmer
+import functools
 
 
 NEEDED_FIELDS = ['params_per_type']
+
+def SnowballStemmer(language='english', ignore_stopwords=True):
+    return nltk.stem.SnowballStemmer(language, ignore_stopwords=ignore_stopwords)
 
 # These are field values for experiment yaml files that get replaced with their corresponding class.
 # For example, "SVC" will be replaced with an instance of sklearn.svm.SCV
 PLACEHOLDER_LIST = dict(
     LancasterStemmer=LancasterStemmer,
+    PorterStemmer=nltk.stem.PorterStemmer,
+    WordNetLemmatizer=nltk.stem.WordNetLemmatizer,
+    SnowballStemmer=SnowballStemmer,
     nxgraph_degrees_metric=graph_metrics.nxgraph_degrees_metric,
     nxgraph_degrees_metric_max=graph_metrics.nxgraph_degrees_metric_max,
     nxgraph_pagerank_metric=graph_metrics.nxgraph_pagerank_metric,

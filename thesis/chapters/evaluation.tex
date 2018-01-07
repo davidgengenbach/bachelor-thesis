@@ -172,6 +172,7 @@ We report the results in Table \ref{table:results_min_df}.
 \begin{table}
 \centering
 \begin{tabular}{lrr}
+\toprule
 	{} & \multicolumn{2}{c}{F1 macro} \\
 	{} &                         $min_{wf} = 1$ &  $min_{wf} = 2$  \\
 	\midrule
@@ -286,6 +287,7 @@ The resulting datasets contains 682 documents, containing a large number of word
 \begin{table}[htb!]
 \centering
 \begin{tabular}{lrrrrr}
+\toprule
 {} &  \# classes &  \# docs & \# words & median \#words/doc &  \#uniq. words/\#words \\
 \midrule
 ling-spam       & 2 &  2.893 &  1.303k & 277 & 0.10 \\
@@ -321,6 +323,7 @@ The parameters for the \textit{SVM} are gathered in Table \ref{table:svm_paramet
 \begin{table}[htb!]
 	\centering
 	\begin{tabular}{ll}
+\toprule
 		\textit{SVM} parameter & Value  \\
 		\toprule
 		C & $\{0.01, 0.1, 1\}$ \\

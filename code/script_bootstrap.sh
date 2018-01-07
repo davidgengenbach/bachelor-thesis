@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# Exit on error
+set -e
+
 THIS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 sep() {
@@ -25,6 +28,7 @@ sep
 echo "## Downloading language model (en) and nltk stopwords"
 python3 -m spacy download en > /dev/null
 python3 -c 'import nltk; nltk.download("stopwords")'
+python3 -c 'import nltk; nltk.download("wordnet")'
 
 sep
 echo "## Downloading datasets"

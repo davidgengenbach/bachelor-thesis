@@ -9,5 +9,8 @@ params_per_type:
       - false
       lemmatizer_or_stemmer:
       - LancasterStemmer
+      - PorterStemmer
+      - WordNetLemmatizer
+      - SnowballStemmer
     normalizer:
     - MaxAbsScaler

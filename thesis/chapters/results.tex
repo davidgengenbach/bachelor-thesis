@@ -26,6 +26,7 @@ We do not use this additional subgraph extraction step as this would further dec
 \begin{table}[htb!]
 	\centering
 	\begin{tabular}{lrrrrrr}
+\toprule
 		{} &  \multicolumn{2}{c}{\#nodes/\#words} &  \multicolumn{2}{c}{\#edges/\#nodes} & \multicolumn{2}{c}{\#nodes/graph} \\
 		{} & cmap &  coo & cmap & coo & cmap & coo\\
 		\midrule
@@ -54,6 +55,7 @@ In Figure \ref{fig:graph_examples} shows examples of concept maps and co-occurre
 \begin{table}[htb!]
 \centering
 \begin{tabular}{lrrrr}
+\toprule
 	{} &  $|s_c|=2$ &  $|s_c|=3$ &  $|s_c|=4$ & $|s_{all}| > 1$ \\
 	\midrule
 	ling-spam       & 63.8 & 19.5 & 6.9 & 89.6 \\
@@ -74,7 +76,7 @@ In Figure \ref{fig:graph_examples} shows examples of concept maps and co-occurre
 \begin{figure}[htb!]
 \centering
 \includegraphics[width=0.8\linewidth]{assets/figures/hist-connected-components-ling-spam-CMap.pdf}
-\caption[Statistics: Histogram of connected components per concept map]{Histogram of connected components per concept map. From the \textit{ling-spam} dataset.}\label{fig:histogram_connected_components}
+\caption[Statistics: Histogram of connected components per concept map]{Histogram of connected components per concept map. Dataset: \textit{ling-spam}.}\label{fig:histogram_connected_components}
 \end{figure}
 
 \begin{figure}[htb!]
@@ -86,8 +88,8 @@ In Figure \ref{fig:graph_examples} shows examples of concept maps and co-occurre
 
 \begin{figure}[htb!]
 \centering
-\includegraphics[width=0.7\linewidth]{assets/figures/examples_graphs.pdf}
-\caption[Examples: Graph types]{Graph examples per type. Three random examples are shown per type. $w$ stands for the window size of the co-occurrence grpah. The concept map examples all have more than one connected component, while all co-occurrence graphs have only one. The shown graphs were randomly chosen from all graphs with $5 \leq |V| \leq 10$.Dataset: \textit{ng20}}\label{fig:graph_examples}
+\includegraphics[width=0.8\linewidth]{assets/figures/examples_graphs.pdf}
+\caption[Examples: Graph types]{Graph examples per type. Three random examples are shown per type. $w$ stands for the window size of the co-occurrence graph. The concept map examples all have more than one connected component, while all co-occurrence graphs have only one. The shown graphs were randomly chosen from all graphs with $5 \leq |V| \leq 10$.Dataset: \textit{ng20}}\label{fig:graph_examples}
 \end{figure}
 
 \begin{figure}[htb!]
@@ -127,6 +129,7 @@ In Table \ref{table:table_results_structure_vs_content} we report the results ob
 \begin{table}[htb!]
 \centering
 \begin{tabular}{llrrr}
+\toprule
           & & \multicolumn{3}{c}{f1 macro} \\
 Dataset & Type & \textbf{(a)} content only & \textbf{(b)} structure only & \textbf{(c)} combined\\
 \midrule
@@ -199,6 +202,7 @@ On some datasets, the additional stemming of single-word labels after splitting 
 \begin{table}[htb!]
 	\centering
 \begin{tabular}{lrrrr}
+\toprule
 	{} & \multicolumn{3}{c}{F1 macro}  &   \\
 	 &  Un-Split  &  Un-Stemmed &  Stemmed &   $p$-Value  \\
 	\midrule
@@ -230,6 +234,7 @@ In Table \ref{table:edge_label_occurrences} we see that, on average, 76\% of all
 \begin{table}[htb!]
 	\centering
 	\begin{tabular}{lrr}
+\toprule
 		dataset &  $ \%_{unique} $ & $ \%_{all}$  \\
 		\midrule
 		ling-spam       & 69 & 27 \\
@@ -259,6 +264,7 @@ For \textbf{(a)} we use the edge labels for the text, for \textbf{(b)} we omit t
 \begin{table}[htb!]
 	\centering
 \begin{tabular}{lrrr}
+\toprule
 	{} & \multicolumn{2}{c}{Edge Labels}  & p-value \\
 	{}	& without & with & {} \\
 	\midrule
@@ -305,6 +311,7 @@ In Table \ref{table:results_infrequent_nodes} we see the results of removing inf
 \begin{table}[htb!]
 	\centering
 	\begin{tabular}{lrrr}
+\toprule
 		&  \multicolumn{2}{c}{f1 macro} &  \\
 		 &  Plain &  Removed &  p-value \\
 		\midrule
@@ -384,6 +391,7 @@ For the experiments, we tested different thresholds $t \in \{0.5, 0.7, 0.9\}$ an
 \begin{table}[htb!]
 	\centering
 	\begin{tabular}{lrrrr}
+\toprule
 		{} & \multicolumn{3}{c}{F1 Macro} &  \\
 		Threshold $t$ &         0.5 &   0.9 & Plain & p-value \\
 		\midrule
@@ -423,6 +431,7 @@ For all datasets, the directed edges outperform the un-directed ones.
 \begin{table}[htb!]
 	\centering
 \begin{tabular}{lrr}
+\toprule
 	 &  un-directed & directed \\
 	\midrule
 ling-spam       & 0.748 & 0.816 \\
@@ -495,6 +504,7 @@ We also tested other metrics to find correlations, for instance the number of ed
 \begin{table}[htb!]
 	\centering
 	\begin{tabular}{lrr}
+\toprule
 		&  \multicolumn{2}{c}{Spearman correlation} \\
 		&  Graph &  Text \\
 		\midrule
@@ -507,7 +517,7 @@ We also tested other metrics to find correlations, for instance the number of ed
 		ted\_talks       & -0.0232 & -0.0991 \\
 		\bottomrule
 	\end{tabular}
-	\caption[Table: Graph/text size correlations]{Spearman rank correlations between the accuracy and graph/text size. Graph size is the number of nodes in the graph, text size the number of words. The higher the absolute value of the Spearman correlation is to 1, the higher the correlation.
+	\caption[Table: Graph/text size correlations]{Spearman rank correlations between the accuracy and graph/text size. Here, the graph size is the number of nodes in the graph, text size the number of words. The higher the absolute value of the Spearman correlation is to 1, the higher the correlation.
 	A positive correlation value between A and B means that if A increases, B also increases and vice versa.
 	A negative correlation means that when A increases, B decreases and vice versa.}%
 	\label{table:correlations_size}
@@ -542,6 +552,7 @@ That said, because co-occurrence graphs contain more information, creating the f
 \begin{table}[htb!]
 	\centering
 	\begin{tabular}{lrrr}
+	\toprule
 		{} &  \multicolumn{2}{c}{F1 macro} &  {} \\
 		&  concept\_map &  cooccurrence &   ratio \\
 		\midrule
@@ -554,6 +565,8 @@ That said, because co-occurrence graphs contain more information, creating the f
 	\end{tabular}
 	\caption[Results: Co-Occurrence vs. Concept Maps]{Comparison of co-occurrence results with concept maps}\label{table:comparison_results_cooccurrence}
 \end{table}
+
+\todo{New results!}
 
 \answersummary{
 	Our results show significant higher scores of co-occurrence based classification over concept maps.
@@ -646,23 +659,28 @@ However, it has to be noted that no hyper-parameter tuning was performed and onl
 
 \begin{table}[htb!]
 \centering
-\begin{tabular}{lrrrrrrrrr}
+\begin{tabular}{lrrrr|rrrr|r}
 	\toprule
 	{} & \multicolumn{9}{c}{F1 macro} \\
-	type & \multicolumn{4}{c}{Concept Map} & \multicolumn{4}{c}{Co-Occurrence} &  Text \\
-	&     Plain & Split & To-Text & Infrequent &   Plain & Split & To-Text & Infrequent &  \\
+	{} & \multicolumn{4}{c|}{Concept Map} & \multicolumn{4}{c|}{Co-Occurrence} &  Text \\
+	&     Plain & Split & To-Text & Infreq. & Plain & Split & To-Text & Infreq. &  \\
 	\midrule
-	ling-spam       & 0.990 & 0.986 & 0.980 & 0.990 & 0.984 & 0.997 & 0.994 & 0.997 & 0.990 \\
-	ng20            & 0.791 & 0.737 & 0.756 & 0.781 & 0.672 & 0.694 & 0.712 & 0.694 & 0.781 \\
-	nyt\_200         & 0.917 & 0.891 & 0.904 & 0.888 & 0.875 & 0.892 & 0.921 & 0.892 & 0.921 \\
-	r8              & 0.921 & 0.929 & 0.931 & 0.929 & 0.914 & 0.931 & 0.939 & 0.933 & 0.921 \\
-	review\_polarity & 0.870 & 0.837 & 0.850 & 0.880 & 0.855 & 0.850 & 0.857 & 0.850 & 0.877 \\
-	rotten\_imdb     & 0.885 & 0.877 & 0.883 & 0.890 & 0.910 & 0.907 & 0.913 & 0.904 & 0.886 \\
-	ted\_talks       & 0.481 & 0.433 & 0.436 & 0.468 & 0.442 & 0.482 & 0.485 & 0.491 & 0.464 \\
+ling-spam       & 0.990 & 0.986 & 0.980 & 0.990 & 0.984 & 0.997 & 0.994 & 0.997 & 0.990 \\
+ng20            & 0.791 & 0.737 & 0.756 & 0.781 & 0.672 & 0.694 & 0.712 & 0.694 & 0.781 \\
+nyt\_200         & 0.917 & 0.891 & 0.904 & 0.888 & 0.875 & 0.892 & 0.921 & 0.892 & 0.921 \\
+r8              & 0.921 & 0.929 & 0.931 & 0.929 & 0.914 & 0.931 & 0.939 & 0.933 & 0.921 \\
+review\_polarity & 0.870 & 0.837 & 0.850 & 0.880 & 0.855 & 0.850 & 0.857 & 0.850 & 0.877 \\
+rotten\_imdb     & 0.885 & 0.877 & 0.883 & 0.890 & 0.910 & 0.907 & 0.913 & 0.904 & 0.886 \\
+ted\_talks       & 0.481 & 0.433 & 0.436 & 0.468 & 0.442 & 0.482 & 0.485 & 0.491 & 0.464 \\
 	\bottomrule
 \end{tabular}
 
-\caption[Results: Combined text- and graph features]{Comparison of classification using both concept maps and text.}%
+\caption[Results: Combined text- and graph features]{Classification results for combined graph- and text features classification.
+\textit{Split} stands for the WL extension where the multi-word labels are split, see answer to Question \ref{subquestionanswer:question:multi_labels}.
+\textit{To-Text} converted the graph back to text, then a classifical Tfidf-BoW approach was used, see answer to Question \ref{subquestionanswer:question:importance_structure}.
+\textit{Infreq.} is the WL extension where infrequent nodes are ignored, see answer to Question \ref{subquestionanswer:question:infrequent_nodelabels}.
+No significant improvement found over the text-only approach using the permutation test.
+}%
 \label{table:results_comparison_combined}
 \end{table}
 
@@ -696,6 +714,7 @@ For example, the extraction of relevant concepts and their relation from a text 
 \begin{table}[htb!]
 	\centering
 	\begin{tabular}{lrrrrrrrr}
+\toprule
 		& \multicolumn{2}{c}{Classifier Size} &  \multicolumn{2}{c}{Runtime} &  \multicolumn{2}{c}{Feature Runtime} &  \multicolumn{2}{c}{\# Features} \\
 		\midrule
 		&  Graph &  Text &  Graph &  Text & Graph &  Text  & Graph &  Text \\
@@ -874,6 +893,7 @@ We used only datasets from the website consisting of more than 1000 graphs and n
 \begin{table}[htb!]
 	\centering
 \begin{tabular}{lrrr}
+\toprule
 	{} & \multicolumn{2}{c}{F1 macro} & {p-value} \\
 	{} &  plain &  node weights &  \\
 	\midrule
