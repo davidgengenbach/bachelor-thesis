@@ -31,7 +31,7 @@ class FastWLGraphKernelTransformer(sklearn.base.BaseEstimator, sklearn.base.Tran
             truncate_to_highest_label: bool = True,
             norm: str = None,
             use_cached: bool = False,
-            use_nx: bool = False
+            use_nx: bool = True
     ):
         self.h = h
         self.phi_dim = phi_dim

@@ -128,39 +128,48 @@ In Table \ref{table:table_results_structure_vs_content} we report the results ob
 
 \begin{table}[htb!]
 \centering
-\begin{tabular}{llrrr}
+\begin{tabular}{llrrr|r}
 \toprule
-          & & \multicolumn{3}{c}{f1 macro} \\
-Dataset & Type & \textbf{(a)} content only & \textbf{(b)} structure only & \textbf{(c)} combined\\
+          & & \multicolumn{4}{c}{f1 macro} \\
+Dataset & Type & \textbf{(a)} content only & \textbf{(b)} structure only & \textbf{(c)} combined & Dummy\\
 \midrule
-ling-spam & concept map &  0.933020 &  0.468187 &  0.741138 \\
-          & cooccurrence &  0.959041 &  0.519897 &  0.794719 \\
+ling-spam & Concept Map & 0.934 & 0.544 & 0.816 & \multirow{2}{*}{0.421} \\
+& Cooccurrence & 0.997 & 0.620 & 0.987 & \\
 \midrule
-ng20 & concept map &  0.592340 &  0.035334 &  0.263055 \\
-          & cooccurrence &  0.679036 &  0.049227 &  0.511980 \\
+ng20 & Concept Map & 0.622 & 0.057 & 0.419 & \multirow{2}{*}{0.051} \\
+& Cooccurrence & 0.627 & 0.068 & 0.593 & \\
 \midrule
-reuters-21578 & concept map &  0.241263 &  0.005962 &  0.085752 \\
-          & cooccurrence &  0.293941 &  0.012733 &  0.229710 \\
+nyt\_200 & Concept Map & 0.899 & 0.324 & 0.744 & \multirow{2}{*}{0.170} \\
+& Cooccurrence & 0.891 & 0.422 & 0.881 & \\
 \midrule
-webkb & concept map &  0.472472 &  0.162010 &  0.222296 \\
-          & cooccurrence &  0.714741 &  0.170633 &  0.472485 \\
+r8 & Concept Map & 0.892 & 0.184 & 0.677 & \multirow{2}{*}{0.087} \\
+& Cooccurrence & 0.890 & 0.300 & 0.890 & \\
+\midrule
+review\_polarity & Concept Map & 0.737 & 0.575 & 0.609 & \multirow{2}{*}{0.502} \\
+& Cooccurrence & 0.762 & 0.526 & 0.785 & \\
+\midrule
+rotten\_imdb & Concept Map & 0.828 & 0.579 & 0.635 & \multirow{2}{*}{0.504} \\
+& Cooccurrence & 0.831 & 0.561 & 0.825 & \\
+\midrule
+ted\_talks & Concept Map & 0.359 & 0.279 & 0.244 & \multirow{2}{*}{0.236} \\
+& Cooccurrence & 0.461 & 0.141 & 0.443 & \\
 \bottomrule
 \end{tabular}
-\caption[Results: Linearized vs. WL]{Comparison of linearized graph with CountVectorizer and results of WL}\label{table:table_results_structure_vs_content}
+\caption[Results: Linearized vs. WL]{Results for linearized graphs. \textit{Combined} are features generated using plain WL, using both structure and content. With \textit{Structure-only}, all node labels are omitted, then also plain WL. \textit{Content-only} linearizes the graph into text, then does conventional BoW feature extraction.}\label{table:table_results_structure_vs_content}
 \end{table}
 
 Here, we see that the content-only approach works the best for both concept maps and cooccurrence graphs.
-The structure-only approach performs far worse, even worse than the dummy classifier which only predicts the most-common label.
+The structure-only approach performs far worse, nearly as worse as the dummy classifier which only predicts the most-common label.
 The combined approach, ie. plain WL, performs better than the structure-only but worse than the content-only approach.
 
 While it is no surprise that removing the labels from the graphs results in a far lower classification score, the extent in which co-occurrence graphs still perform better than concept maps has to be noted.
-This could indicate that the structure of co-occurrence graphs, while relatively simple, is at least as, if not more, useful than the structure of concept maps.
+This could indicate that the structure of co-occurrence graphs, while relatively simple, might also be useful for classification.
 
 \answersummary{
-The content-only graph kernel, which un-rolls the graph into text and then uses a conventional uni-gram \textit{BoW} approach, performs the best for both concept maps and co-occurrence graphs.
-Removing the content, ie. the labels, from the graphs and then running WL results in classification scores close to the most-frequent dummy classifier.
-When combining both, content and structure, the score is lower as content-only.
-This all indicates that the content of the graphs has a greater importance than the structure since the structure gets discarded by the content-only approach and still performs the best.
+The content-only graph kernel, which un-rolls the graph into text and then uses a conventional uni-gram \textit{BoW} vectorizer approach, performs the best for both concept maps and co-occurrence graphs.
+Removing the content, ie. the labels, from the graphs and then running WL results in classification scores comparable to the most-frequent dummy classifier.
+When combining both, content and structure, ie. plain WL, the score is lower than content-only.
+This all indicates that the content of the graphs, for graph-only classification, has a greater importance than the structure since the structure gets completely discarded by the content-only approach and still performs the best.
 }
 
 \subquestionref{question:multi_labels}
@@ -312,8 +321,8 @@ In Table \ref{table:results_infrequent_nodes} we see the results of removing inf
 	\centering
 	\begin{tabular}{lrrr}
 \toprule
-		&  \multicolumn{2}{c}{f1 macro} &  \\
-		 &  Plain &  Removed &  p-value \\
+		&  \multicolumn{2}{c}{F1 macro} &  \\
+		 &  Plain &  Removed &  $p$-value \\
 		\midrule
 			ling-spam       & 0.8105 & 0.8064 & 0.6835 \\
 			ng20            & *0.4157 & 0.3536 & 0.0002 \\
@@ -432,6 +441,7 @@ For all datasets, the directed edges outperform the un-directed ones.
 	\centering
 \begin{tabular}{lrr}
 \toprule
+	&  \multicolumn{2}{c}{F1 macro} \\
 	 &  un-directed & directed \\
 	\midrule
 ling-spam       & 0.748 & 0.816 \\
