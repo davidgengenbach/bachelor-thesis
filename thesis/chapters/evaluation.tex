@@ -497,8 +497,13 @@ This is done by extracting binary relations from the text. A binary relation con
 Also, a concept can consist of multiple words, eg. for ``David likes something else.", the concepts would be ``David" and ``something else".
 The extracted concepts are later used as node labels, and the relation between them as the edges between concepts.
 
+
+
 \textbf{Filtering}:
 Next, the extracted relations get filtered so that only concepts are kept which contain at least one noun and which consist of fewer words than some a given threshold, in our case 10 words. This filtering is done to ensure the brevity and practical usefulness of the concepts when visualizing the graphs.
+
+\todo{Add grouping step}
+
 After these steps, we can create and export the concept maps.
 
 \textbf{Summarization}:

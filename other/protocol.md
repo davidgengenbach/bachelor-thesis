@@ -1,3 +1,38 @@
+## 10.01.2018
+- Conversation with Tobias
+    - Presentation
+        - Conclusion
+            - mention other results, summarize them into coherent
+    - TuBama and two versions of BA
+    - Provide CD/DVD with code and results for UKP
+    - Thesis
+        - Citation style should be less irritant
+            - First author name complete
+            - https://de.sharelatex.com/learn/biblatex_bibliography_styles
+            - Nikolentzos2017a is wrong
+        - Implementation subsection
+            - Add grouping step
+                - Paper: 3.2
+        - When significant, report p-value!
+        - Structure of Questions
+            - Order of questions? More like a story
+            - Question 11: combined -> Question 1
+                - Reference other approaches
+        - Question 8: Size
+            - Pearson correlation
+                - Add to table, add assumptions of Pearson r
+            - Spearman is appropiate?
+            - Use binning, f1 macro
+                - Table
+                - Show bin interval
+                - Show bin size (= number of documents)
+                - For coo, cmap and text
+                - QCut, remove 99th percentile?
+                    - No, keep them
+        - Question 11: combined
+            - show non-combined scores
+
+
 ## 21.12.2017
 - Conversation with Tobias
     - Thesis feedback
