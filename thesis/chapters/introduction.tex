@@ -5,9 +5,9 @@ However, language itself is an inherently ambiguous information medium, which in
 Still, numerous approaches have been devised to extract information from text to solve different natural language processing tasks, such as text classification/categorization \cite[p.~575]{Manning2000}, summarization \cite{Mani1999} or language translation \cite{Weaver1955}, to name but a few.
 
 In this work, we concentrate on text classification \cite[p.~232]{Manning2000}, or categorization, which entails the task of predicting the class of a text document based on its content.
-In this context, finding an appropriate representation of text is crucial and can greatly influence the success of solving the task.
+In this context, finding an appropriate representation of text is crucial and can greatly influences the success of solving the task.
 More conventional text representations are often based on counting the words of a text and representing the text content by these word counts.
-The \textit{Bag-Of-Word} \cite[p.~237]{Manning2000}, or BoW, representation is a widely used example of such a procedure which has also shown great real-world performance on several tasks, not limited to text classification.
+The \textit{Bag-Of-Word} \cite[p.~237]{Manning2000}, or BoW, representation is a widely used example of such a procedure which has also shown great real-world performance on several tasks, not only in text classification.
 However, simple word-count based text representations come at the expense of losing information about their underlying text, eg. the sentence structure and word order.
 That said, there are several other, more sophisticated text representations, for instance co-occurrence graphs \cite{Rousseau2013}, concept maps \cite{Novak2008,Falke2017b} or document embeddings \cite{Dai2015,Lau2016}.
 Each of these representations is also subject to different trade-offs, for instance in the ability to capture the needed information and its compute time.
@@ -17,7 +17,7 @@ In our work, we are interested in graph-based text representations, especially c
 For this, we first generate concept maps for several text corpora and subsequently devise a number of experiments to gain a better insight into the retained information and structure of these concept maps.
 Additionally, we capitalize on so-called graph kernels \cite{Kulharia2008} to operate on the concept maps which in turn enables us to perform graph classification.
 At the core of this works stands the question how we can use graph-based approaches to improve on current, conventional text representations like BoW.
-Similar ways to use graph-based text representations in the context of text classification have been explored in the literature, namely using co-occurrence graphs \cite{Rousseau2015a, Nikolentzos2017a}, DRS graphs \cite{Gaspar2011} and concept graphs \cite{Gulrandhe2015}.
+Similar ways to use graph-based text representations in the context of text classification have been explored in the literature, namely using co-occurrence graphs \cite{Rousseau2015a, Nikolentzos2017a}, DRS graphs \cite{Gaspar2011} and concept graphs \cite{Gulrandhe2015} also.
 In Section \ref{subsec:graph_kernel_based_text_classification} we will both introduce the history of this approach more throughly and explain the differences to our work.
 
 \paragraph{Text Classification}
@@ -52,7 +52,7 @@ Social Networks & Users & Are Friends & Bot Detection (binary) & \cite{Wang2014}
 \end{table}
 
 For our work, we explore the usefulness of graph representations of text, namely co-occurrence graphs and concept maps.
-In Section \ref{subsec:graphs} we will introduce graphs and approaches to classify them more throughly.
+In Section \ref{subsec:graphs} we will introduce the graphs and approaches to classify them more throughly.
 
 \labelsection{Hypothesis and Goals}{subsec:hypothesis_and_goals}
 In this work, we evaluate the usefulness of graph representations generated from text in the context of text classification. In particular, we work out how or whether we can harness the structure of concept maps to improve text-based classification performance.

@@ -19,11 +19,12 @@ We will provide a summary for each of the questions in the next chapter, revisit
 When the structure of the graphs is homogeneous or the structural differences are not distinct between graphs of different classes, the structure by itself will most likely not contribute to the classification performance.
 When comparing the graph similarity under some graph kernel, the graphs of a given class should be distinguishable from the graphs of the other classes.
 
-To understand the diversity in the structure of concept maps, look at different metrics, eg. a histogram of the connected components per graph or the average node/edge ratio for each graph.
-All these metrics aim to find out the diversity of the connectedness of concept maps. There a lot of other metrics, but as we will see later on these metrics suffice to get a good picture about the structure of the concept maps.
+To understand the diversity in the structure of concept maps, we look at different metrics, eg. a histogram of the connected components per graph or the average node/edge ratio for each graph.
+All these metrics aim to find out the diversity of the connectedness of concept maps.
+There a lot of other metrics, but as we will see later on ,these metrics suffice to get a good picture about the structure of the concept maps.
 
 \subquestion{How important is the structure of concept maps compared to the content?}{question:importance_structure}
-Another important question is the relative importance of the structure compared to the content, ie. the labels of the graphs.
+Another important question is the relative importance of the structure compared to the content, ie. the node and edge labels.
 For this, we compare the results of different graph kernels that use \textbf{(a)} only content and \textbf{(b)} only structure and \textbf{(c)} both content and structure.
 
 For the \textbf{content-only kernel}, we will simply count the number of occurrences of labels in the graphs and essentially create a bag-of-words representation of the graph. The kernel then creates the similarity score by calculating the inner product on these vector representations, effectively counting the number of common labels.
@@ -104,7 +105,7 @@ After conducting the experiments and gathering the results, we will further expl
 
 \begin{figure}[htb!]
 	\centering
-	\includegraphics[width=0.6\linewidth]{assets/figures/graph_classification_phi_combined_text.pdf}
+	\includegraphics[width=0.7\linewidth]{assets/figures/graph_classification_phi_combined_text.pdf}
 	\caption[Diagram: Graph kernel and text combined text classification]{Combined graph and text classification pipeline.}
 \end{figure}
 
@@ -191,6 +192,7 @@ We report the results in Table \ref{table:results_min_df}.
 
 \paragraph{Graph-based representations}
 To compare the performance of concept maps with other graphs, we generated co-occurrence graphs with window sizes $w \in \{1, 4\}$.
+\todo{This is not true anymore}
 We also evaluated the performance of co-occurrence graphs where only nouns are retained to mimic the compression factor of concept maps.
 
 For the extraction of the concept maps from the text, we used the implementation by Falke, introduced in \cite{Falke2017}.
@@ -282,7 +284,7 @@ To filter out the tags, we first looked at the most-frequent tags and create a c
 We then selected a subset of four tags, namely $Y = (\mathrm{economics, environment, brain, entertainment})$  which were loosely correlated.
 We discarded all transcripts with tags $y$ which contain more than one of the tags $Y$, ie. $|Y \cap y| > 1$.
 All tags besides $Y$ were ignored.
-The resulting datasets contains 682 documents, containing a large number of words per document.
+The resulting datasets contains 682 documents, each consisting a large number of words per document.
 
 \begin{table}[htb!]
 \centering
@@ -301,6 +303,7 @@ ted\_talks       & 4 &  682 &  1.353k & 2027 & 0.09 \\
 \end{tabular}
 \caption[Statistics: Datasets]{Dataset statistics. \textit{\# words} in thousands.}\label{table:dataset_statistics}
 \end{table}
+\todo{Explain \textit{\#unique. words} metric}
 
 \labelsection{Methods}{subsec:methods}
 
@@ -311,6 +314,7 @@ For all the classification tasks we use train-/validation- and test set splits.
 The split is done as follows: 80\% for train- and validation set together and 20\% for the test set.
 We then use stratified 4-fold cross-validation to further split the train- and validation set.
 The stratification ensures that the class distribution in the different sets is \textit{almost} the same as in the class distribution of the complete dataset.
+\todo{Cite!}
 
 \paragraph{Model Selection}
 Hyperparameter tuning, or model selection, is done using cross-validation on the train-/ validation set, ie. we first train classifiers for all hyperparameter choices on all $k$ train-/validation splits, and after finding the best hyper-parameters on these sets, we retrain the best classifier on the whole train-/validation set and then evaluate the performance on the test set \textbf{once}.
@@ -352,7 +356,7 @@ Interpreting the resulting confidence value dampens the effect of not doing nest
 \todo{More elegant sentence, please?}
 
 \subsection{Metrics}
-As a classification metric, we mostly focus on the F1 macro score since it captures the overall performance of classification algorithms by merging two other metrics, precision and recall.
+As a classification metric, we mostly focus on the F1 macro score since it captures the overall performance of classification algorithms by merging two other metrics, namely precision and recall.
 For an overview and definition of the used metrics, please see Section \ref{subsec:classification_task}.
 We will provide all our results online\footnote{TODO} with additional metrics, like the accuracy, precision and recall.
 We do not report standard deviations for our experiments since we, as mentioned before, do not use nested cross-validation, so we only have results on a single static test set.
@@ -362,7 +366,7 @@ To analyze the significance of a difference between two models, we use significa
 An introduction to and an example for significance tests are given in Section \ref{subsec:significance_test}.
 
 \subsection{Feature Scaling and Centering}
-Classifiers, especially \textit{SVMs}, profit from scaled and centered features \cite{Graf2001}, ie.s features which have a mean of 0 and are in the range of $[-1, 1]$.
+Classifiers, especially \textit{SVMs}, profit from scaled and centered features \cite{Graf2001}, ie. features which have a mean of 0 and are in the range of $[-1, 1]$.
 
 \paragraph{Scaling}
 For our purposes, we scaled the feature vectors by using feature-wise scaling\footnote{Implementation: \url{http://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.MaxAbsScaler.html\#sklearn.preprocessing.MaxAbsScaler}} \cite[p.~567]{Bishop2006}.
@@ -462,6 +466,7 @@ This is far too high to accept the hypothesis on ground of these predictions.
 
 \labelsection{Implementation}{sec:implementation}
 We mostly used Python to implement the code required to run the experiments.
+\todo{Link to Python paper?}
 The code and instructions on how set-up the experiments can be found on GitHub \footnote{\url{https://github.com/davidgengenbach/bachelor-thesis}}.
 Our work heavily relies on open source software and in this form would not be possible without it.
 In particular, we implemented most of the experiments using \textit{scikit-learn} \cite{Pedregosa2012}, \textit{networkx} \cite{Hagberg2008} and \textit{pandas} \cite{McKinney2010}, \textit{numpy/scipy} \cite{VanderWalt2011}, \textit{SymPy} \cite{Meurer2017} and several other open-source projects.
@@ -496,7 +501,6 @@ First, the algorithm extracts concepts and their relations to another.
 This is done by extracting binary relations from the text. A binary relation consists of three parts: two concepts and the relation between them. An example for a binary relation is ``David likes something", here ``David" and ``something`` are the concepts and ``likes" the relation them. Note that the binary relation is directed, eg. ``Something likes David" is not the same binary relation as ``David likes something."
 Also, a concept can consist of multiple words, eg. for ``David likes something else.", the concepts would be ``David" and ``something else".
 The extracted concepts are later used as node labels, and the relation between them as the edges between concepts.
-
 
 
 \textbf{Filtering}:

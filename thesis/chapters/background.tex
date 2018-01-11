@@ -35,9 +35,9 @@ A graph $G'=(V', E', \pi)$ is called a subgraph of graph $G = (V, E, \pi)$ when 
 The (outgoing) neighbors $n(v)$ of a node $v$ are defined as the set $n(v) = \{v' | (v, v') \in E \}$.
 
 \paragraph{Walks and Paths}
-A walk on a graph is a (finite) sequence of edges, $w = (e_1, \cdots, e_n)$ with the constraint that $\forall 0 < i < n: \forall e_i = (v_1, v_2) \in w: \exists v_3: e_{i + 1} = (v_2, v_3)$. The length of the walk is $n$.
+A walk on a graph is a (finite) sequence of edges, $w = (e_1, \cdots, e_n)$ with the constraint that $\forall 0 < i < n: \forall e_i = (v_1, v_2) \in w: \exists v_3: e_{i + 1} = (v_2, v_3)$ \cite{Vishwanathan2006}	. The length of the walk is $n$.
 The set of all possible walks is denoted $W_G$.
-A random walk starting from vertex $v$ is a walk where the first element of walk $w$ is $e = (v, v')$ for some $v'$.
+A random walk \cite{Vishwanathan2006} starting from vertex $v$ is a walk where the first element of walk $w$ is $e = (v, v')$ for some $v'$.
 
 A path is the sequence of the vertices visited on a walk, ie. for the walk $w = ((v_1, v_2), (v_2, v_3), \dots, (v_{n-1}, v_n)$, the path is $(v_1, v_2, v_3, \dots, v_n)$.
 The set of all possible paths is denoted $P_G$.
@@ -99,7 +99,7 @@ Through the degree of a concept node, one can also infer the relative importance
 By combining different texts of the same topic, one can also create a concept map for the whole topic.
 In this case, the concepts are not confined to a single text.
 The visualization with concept maps of one or more individual texts therefor enables the non-linear exploration of multiple texts of a topic at the same time.
-This property makes concept maps interesting in the learning context where visual components become crucial for understanding.
+This property makes concept maps interesting in the learning context where visual components become crucial for understanding \cite{Novak1984}.
 Text, on the other hand, is a linear medium, eg. one often has to read the preceding paragraphs/sections and understand its contents to learn about a new concept.
 Extending text, eg. combining several texts of the same topic, also becomes quite laborious since text is inherently linear, so one has to either manually merge the new texts or add side-notes or references to later text passages.
 The same task for concept maps can be far easier since one must ``only" find relevant concepts in the texts and their relations to each other. After that the graph can easily constructed.
@@ -109,7 +109,7 @@ One can also augment a node with attributes, eg. add a text that is relevant for
 All these properties enable the iterative construction of concept maps by incurring little to no overhead when extending or augmenting concept maps.
 
 Since the concepts in a concept map often contain only a small subset of the text, concept maps also summarize the underlying text.
-Only relevant concepts and their relation to each other are captured, making concept maps interesting for (multi-document) text summarization.
+Only relevant concepts and their relation to each other are captured, making concept maps interesting for (multi-document) text summarization \cite{Falke2017b}.
 
 Another interesting property is of concept maps with its directed edges is that they can be ``unrolled" into text again, enabling conventional text-processing.
 Figure \ref{fig:concept_map_linearization} shows an example of such an unrolled concept map.
@@ -175,7 +175,7 @@ Figure \ref{fig:cooccurrence_graphs} shows examples of co-occurrence graphs with
 Since co-occurrence graphs not only contain the words of the underlying text but also their co-occurrence, they are able to capture structural information about the text.
 But, given a co-occurrence graph, it is not possible to recover the underlying text since all information about word-order or sentence structure is omitted.
 That said, one could augment co-occurrence graphs by using directed edges and therefor keep the word-order intact.
-However, even with this extension, one can not reconstruct the original text.
+That said, even with this extension, one can not reconstruct the original text.
 
 Because of their similarity to concept maps, we will use co-occurrence maps as a baseline for the graph classification.
 It has to be noted that this comparison is not entirely fair since co-occurrence graphs contain all words of the text and there is only a small loss of information.
@@ -188,7 +188,7 @@ Classification using machine learning is the task of automatically assigning cla
 Given a dataset $D = \{(x_1, y_1), (x_2, y_2), \ldots, (x_n, y_n) \} \subseteq X \times Y$ of $n$ items where $(x_i, y_i)$ are dataset instances, the supervised single-label classification task is to create a classifier which automatically predicts a label $y' \in Y$ for a given $x \in X$.
 The labels $Y$ of dataset $D$ are denoted with $Y_D = (y_1, y_2, \ldots, y_n )$, the predicted labels are denoted as $Y'_D = (y'_1, y'_2, \ldots, y'_n )$.
 When the number of classes $|Y| = 2$, the classification task is called binary classification. For $|Y| > 2$ the task falls into the multi-class classification domain.
-In this work we will restrict ourself to single-label classification, in contrast to the multi-label classification task where each document can have one or more labels attached instead of only one per document.
+In this work we will restrict ourself to single-label classification, in contrast to the multi-label classification task where each document can have one or more labels attached instead of only one as in our case.
 
 In Figure \ref{table:classification_notation} we summarize the classification notation.
 Our notation is similar to the notation used in \cite[p.~11]{Bishop2006}.
@@ -212,7 +212,7 @@ Our notation is similar to the notation used in \cite[p.~11]{Bishop2006}.
 	\caption[Notation: Classification]{Classification notation.}\label{table:classification_notation}
 \end{table}
 
-To automatically assign the labels in a supervised way, generally a learning algorithm is used to train a classifier by providing it datapoints and its labels.
+To automatically assign the labels in a supervised way, generally a learning algorithm is used to train a classifier by providing it datapoints and the corresponding labels.
 The classifier algorithm then, internally, creates a model of the data and often optimizes internal parameters to fit the data.
 During prediction, that is when wanting to automatically assign a label to a (new) datapoint $x_i$, the new datapoint is fed into the classifier which in turn returns the predicted label, $y'_i$.
 
@@ -305,10 +305,10 @@ k_{combined}(x, x') = k_1(x, x') \cdot k_2(x, x')
 One can easily confirm that, when $k_1$ and $k_2$ are valid kernels, $k_{\mathrm{combined}}$ is also a valid kernel.
 This property enables composite kernels to capture multiple means of similarity in one metric.
 
-For example, a simple kernel on two numbers (or vectors) is $k(x, x') = | x \cdot x' |$, where $| \cdot |$ is the absolute value (or a norm).
+As an example for a kernel, a simple kernel on two numbers (or vectors) is $k(x, x') = | x \cdot x' |$, where $| \cdot |$ is the absolute value (or a norm).
 Another example of a kernel between strings is $k(s, s') = \delta(s = s')$, where $\delta(\cdot)$ is the Kronecker delta. This kernel returns 1 if the two given strings are the same, and 0 if they are different.
 Note that both these kernels are indeed valid.
-That said, when using kernels in the real world, one can also use non-valid kernels, ie. kernels which are non-symmetric and/or return negative numbers. While such ``kernel" are not strictly valid, they can nevertheless perform good in real-world applications, even better than valid kernels.
+That said, when using kernels in the real world, one can also use non-valid kernels, ie. kernels which are non-symmetric and/or return negative numbers. While such ``kernels" are not strictly valid, they can nevertheless perform good in real-world applications.
 
 While it is not immediately clear, how one might use kernels instead of a vector representations, we will see that kernels indeed can be utilized to enable operating on non-vector based data, such as graphs or strings.
 For this, we will introduce several so-called kernel methods, a class of algorithms that can be used for a variety of tasks by using kernels at their core.
@@ -345,12 +345,11 @@ The gram matrix is symmetric by definition since the underlying kernel is also s
 
 \labelsubsection{Kernel Methods and Kernel trick}{sec:kernel_method_and_kernel_trick}
 We have seen that a kernel can be used to calculate a measure of similarity between two objects, eg. graphs.
-Some kernels can be expressed as an inner product $k(X, X') = \langle \phi(X), \phi(X') \rangle$ on two (implicit) vector representations of the objects $X$ and $X'$.
+Also, some kernels can be expressed as an inner product $k(X, X') = \langle \phi(X), \phi(X') \rangle$ on two vector representations of the objects $X$ and $X'$.
 In this case, the vector representations $\phi(X)$ can be used in conventional classification algorithms.
-Yet, calculating these representations is not always possible or feasible since the dimension of such a representation is quite high or even infinite, making the calculation unfeasible.
+Yet, calculating these representations is not always possible or feasible since the dimension of such a representation is quite high or even infinite, making the calculation infeasible.
 There is another approach for classification and other tasks, the aforementioned kernel methods.
 Kernel methods \cite[p.~291]{Bishop2006} operate directly with the kernel and do not use the explicit feature representations $\phi(X)$.
-Instead, kernel methods use the similarities $k(X, X')$ directly.
 This feature also enables kernel methods to operate on arbitrary objects, given that there exists a kernel operating on these objects.
 
 One popular example for a kernel method is the Support Vector Machine, or SVM.
@@ -363,14 +362,14 @@ The vector $v$ contains the similarities of $X_{test}$ to all training instances
 This vector $v$ is then fed into the SVM which predicts the label for $X_{test}$.
 Note that this kernel method approach does not use explicit feature maps of the instances, only their pairwise similarities.
 This feature of not needing to calculate the explicit feature map $\phi$ is called \textit{kernel trick} \cite[p.~292]{Bishop2006}.
-The kernel trick also enables linear algorithms, such as the un-kernelized \textit{SVM}, to solve non-linear problems, since the kernel can operate in higher-dimensional spaces	.
+The kernel trick also enables linear algorithms, such as the \textit{SVM}, to solve non-linear problems, since the kernel can operate in higher-dimensional spaces.
 The kernel trick can be applied to any algorithm where the core of the algorithm uses vector representations to calculate an inner product. These inner products on the vectors can be replaced with kernels, resulting in a kernelized version of the algorithm \cite{Wu}.
 Apart from the kernelized \textit{SVM}, the class of kernel methods also includes kernelized \textit{Principal Components Analysis} \cite{Scholkopf1998}, kernelized \textit{k-Means} \cite{Jain2010}, \textit{Gaussian Processes} \cite[p.~303]{Bishop2006} and others.
 
 In our work, we will use both the kernelized version of the \textit{SVM}, ie. learning with the gram matrix, as well as the version using explicit feature maps $\phi$.
 
 \labelsubsection{Graph Kernels}{subsec:graph_kernels}
-A graph kernel simply is a kernel that operates on graphs.
+A graph kernel is a kernel that operates on graphs.
 Graph kernels that measure the similarity of two graphs are related to the isomorphism test \cite[p.~4]{Bondy1976} between two graphs.
 The (structural) graph isomorphism test returns whether two graphs are structurally the same.
 In this test, the labels of the vertices and edges are ignored. Otherwise the task would be far easier since one could simply compare the labels and edges of the graphs - when they are both exactly the same, the graphs are the same \cite[p.~4]{Bondy1976}.
@@ -404,7 +403,7 @@ The kernels of this kind are sometimes called R-Convolution graph kernels \cite{
 In the next section, we introduce some examples of graph kernels to get a feeling for the possibilities and trade-offs different approaches have.
 As mentioned before, any set of valid kernels can be combined easily to form a composite kernel \cite[p.~296]{Bishop2006}.
 So, any of the algorithms we will introduce in the next section can be combined and extended using other kernels.
-As we will also see in this next section, graph kernels can be quite diverse and capture different information of the objects they are operating on.
+As we will also see in the section, graph kernels can be quite diverse and capture different information of the objects they are operating on.
 The scope of a graph kernel can therefor also vary widely from only capturing narrow aspects of the graph to actually incorporating the complete graph structure and content.
 
 For a more detailed overview on graph kernels, \cite{Gartner2003a} contains a survey of current graph kernel approaches.
@@ -456,7 +455,7 @@ This graph kernel takes both structure and content into account.
 The Weisfeiler-Lehman graph kernel is also a kernel that works by counting common sub-structures on two graphs.
 Here, the sub-structures are subtrees starting from each vertex.
 In each iteration $i$ with $0 < i < h$ for a given number of iterations $h$ , or until convergence, the WL graph kernel relabels the vertices of the two given graphs.
-This relabeling is also called recoloring or color refinement.
+This relabeling is also called recoloring or color refinement \cite{Kersting2013}.
 
 The WL graph kernel relabels a vertex $v$ by concatenating two components:
 \begin{enumerate}
@@ -465,10 +464,10 @@ The WL graph kernel relabels a vertex $v$ by concatenating two components:
 \end{enumerate}
 where $\pi_{i}$ is the labeling function for iteration $i$ with $\pi_0 = \pi$.
 The resulting new label of $v$ is the sequence $(\pi_{i-1}(v), \pi_{i-1}(v_{neighbour,1}), \dots , \pi_{i-1}(v_{neighbour,n}))$.
-After the iteration, a new labeling function is created accordingly: $\pi_i(v)$ now returns to the new label of $v$.
+After each iteration, a new labeling function is created accordingly: $\pi_i(v)$ now returns to the new label of $v$.
 So, for each iteration, a node gets the same label as another node if they have the same label and neighborhood.
 For the first iteration, the labels of a node consist of the immediate neighborhood.
-In the next iteration, the label of a node than encodes the neighborhood of the neighborhood, and so on.
+In the next iteration, the label of a node then encodes the neighborhood of the neighborhood, and so on.
 The Weisfeiler-Lehman graph kernel is said to have converged in iteration $h = i$ when the number of used labels does not increase in the next iteration, so
 \begin{equation*}
 \max(\{x | x = \pi_{i}(v), v \in V\}) = \max(\{x | x = \pi_{i  + 1}(v), v \in V\})
@@ -522,7 +521,7 @@ Our implementation also uses label compression, explained in Figure \ref{fig:wl_
 \labelsection{Graph Kernel Based Text Classification}{subsec:graph_kernel_based_text_classification}
 The idea of converting the text classification task into a graph classification task has been explored before.
 In this section, we will briefly recap the history of this approach by explaining several papers related to our work.
-While most of the graph classification approaches are used in context where graphs are the default representation of the data at hand, here we mostly explore papers which also derive graphs from existing text.
+While most of the graph classification approaches are used in contexts where graphs are the default representation of the data at hand, here we mostly explore papers which also derive graphs from existing text.
 
 \labelsubsection{Related Work}{subsection:related_work}
 

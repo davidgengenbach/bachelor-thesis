@@ -1,11 +1,11 @@
-In our work, we conducted several experiments to test the usefulness of graph-representations of text, especially the concept map, for text classification.
+In our work, we conducted several experiments to test the usefulness of graph-representations of text, especially concept maps, for text classification.
 Our experiments ranged from gathering information about the structure of the graphs to actually performing the classification task with different approaches.
 For our graph-based classification, we mostly capitalized on graph kernels.
 Through all these experiments, we aimed to leverage the particular properties of concept maps, especially the structure.
 
 When directly comparing the performance of graph-based and conventional text-based classification, we saw that the text-only features outperformed the graph-based approach by a high margin, for both co-occurrence graphs and concept maps.
 So, our next approach was to combine text- and graph features and classify them together.
-This combined approach, while having a far higher runtime due to the increased dimension of the feature vectors, presents no significant improvement in classification scores over the text-only approach.
+This combined approach, while having a far higher runtime due to the increased dimension of the feature vectors, presents no significant improvement of classification scores upon the text-only approach.
 On some datasets, the classification score even was a little lower than the text-only approach.
 This is also most likely due to the high dimensionality of the combined features and the subsequent risk of overfitting to too specific features.
 
@@ -29,8 +29,8 @@ For concept maps, the classification scores with this simple linearized graph ke
 
 We subsequently repeat the experiments of text- and graph combined features with our extensions, eg. the multi-word label splitting or the relabeling.
 Here, interestingly, the classification performance was lower than without these extensions, so with the plain WL graph kernel.
-This observation is somewhat surprising since these extensions all improved the classification score when only classifying the graphs, not the combined features.
-One possible explanation is, that all these WL extensions aim to transform the concept maps into graph where the neighborhoods are equalized, that is more similar to each other.
+This observation is somewhat surprising since these extensions all improved the classification score when only classifying the graphs.
+One possible explanation is, that all these WL extensions aim to transform the concept maps into graphs where the neighborhoods are equalized, ie. more similar to each other.
 For instance, the relabeling extension aims to merge infrequent with frequent labels, in order to increase the likelihood of same neighborhoods.
 On the other hand, doing this also removes (structural) information from the concept maps, which can not be used for text classification.
 For the multi-word label splitting extension, one possible explanation for the lower classification performance when combining the resulting features with text features, is, that it significantly increases the dimensionality of the feature vectors created by WL.
@@ -63,11 +63,11 @@ Several levels of detail have to be assessed and introduced by the author, thoug
 In concept maps, on the other hand, concepts have explicit relations to each other.
 One can start at every node of a concept map and explore the relationships between concepts by following edges.
 This enables the non-linear and visual exploration of the topic of a concept map.
-Also, one might also image creating concept maps with different levels of details, therefor adding the possibility to add/remove parts of the graph based on their level of detail.
+Apart from that, one might also imagine creating concept maps with different levels of details, therefor adding the possibility to add/remove parts of the graph based on their level of detail.
 One can think of guided tours through concept maps where parts of the graphs get revealed after each other.
 The interactive possibilities of concept maps are numerous, the key being their easy modifiability.
-While adding information to texts can be quite laborious since one must find the appropriate section in the text where to add the new parts, concept maps, on the other hand, extending concept maps is as easy as adding a new node or edge to the graph.
-The merge multiple concept maps with common concepts is also far easier since one must \textit{only} merge common nodes/concepts.
+While adding information to texts can be quite laborious since one must find the appropriate section in the text where to add the new parts, with concept maps, on the other hand, extending the graph is as easy as adding a new node or edge to the graph.
+Merging multiple concept maps with common concepts is also far easier since one must \textit{only} merge common nodes/concepts.
 All these properties and possibilities lead to our opinion that concept maps will become an important information medium alongside text.
 Not only side by side, but also a merging of the two mediums is conceivable.
 For instance, concept maps could not only have nodes with single labels but assigned texts, images and so on.
