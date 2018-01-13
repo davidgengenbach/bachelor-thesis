@@ -29,11 +29,6 @@ ted\_talks       & 0.219 & 0.244 \\
 \end{table}
 
 This is most likely due to the aforementioned property that the neighborhoods are smaller with directed edges, making exact matches of neighborhoods more probable.
-\todo{
-Note that using directed edges in WL could be compared with using n-grams since they also are directed.
-Instead of word n-grams these are concept n-grams, consisting of three components, the two sink and target vertex labels plus the edge label between them.
-For bigger WL iterations, these concept 3-grams then capture longer $n$-grams and so on.
-}
 When the order of words/nodes is fixed in one direction, vertices with no outgoing edges do not have a neighborhood. Thus they are, for all WL iterations, considered to be the same label, ie. they get no new color assigned.
 
 As a result of these better classification results with directed edges, we will use the directed version of WL.

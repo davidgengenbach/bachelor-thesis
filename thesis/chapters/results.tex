@@ -139,7 +139,7 @@ Plotting the $\phi$ distribution like so, we gain a better insight into the grap
 When WL converges at iteration $h$, so when the height of the green line does not change from iteration $h-1$ to $h$, this means that all neighborhoods that are different, have been marked as so and got a unique label.
 If the number of labels is equal to the number of vertices, all neighborhoods are different.
 
-\todo{Add co-occurrence graph feature map visualization?}
+%\todo{Add co-occurrence graph feature map visualization?}
 
 \subsection{Weisfeiler-Lehman Node Weighting Extension}
 With increasing iterations $h$ of the Weisfeiler-Lehman algorithm, exact matches of subtrees of height $h$ become more difficult.
@@ -150,7 +150,7 @@ These two difficulties, \textbf{(1)} the increased difficulty of a match with hi
 
 As a possible solution for these issues, we propose an extension to the Weisfeiler-Lehman algorithm.
 Our extension augments the WL algorithm by adding node weights.
-For each of the nodes in all graphs, we first calculate node weights which encode the importance of the nodes or the difficulty of getting an exact match in WL.
+For each of the nodes $n$ in all graphs, we first calculate node weight $n_w$ which encodes the importance of the nodes or the difficulty of getting an exact match in WL.
 An example of such node weights are the node degrees or node weights extracted by the \textit{PageRank} algorithm \cite{Page1998}.
 The node degree is an interesting metric for node weights since it actually encodes the size of the immediate neighborhood of a node and therefore could possibly address both difficulty \textbf{(1)} and \textbf{(2)}.
 
@@ -158,20 +158,18 @@ One could see our extension as similar to binary \textit{BoW}, ie. only using wh
 
 When using this extension, one has to be careful with feature scaling. As we use the node weights to scale individual features, using a separate feature-wise scaler would effectively revert our weighting.
 
-\todo{Explain how to actually use the node weights.}
-
 \paragraph{Experiment}
-To test our extension, we compare results of the WL algorithm with and without our extension.
+To test our extension, we compare results of using WL feature maps with and without our extension.
 We classify our concept maps datasets as well as a number of other graph benchmark datasets, obtained from \cite{Kersting2016}.
-For statistics about the additional datasets, please consult the authors website\footnote{\url{https://ls11-www.cs.tu-dortmund.de/staff/morris/graphkerneldatasets}}.
-We used only datasets from the website consisting of more than 1000 graphs and node labels.
+For statistics about the additional datasets, consult the author's website\footnote{\url{https://ls11-www.cs.tu-dortmund.de/staff/morris/graphkerneldatasets}}.
+We only used datasets from the website consisting of more than 1000 graphs and which contain node labels.
 
 \begin{table}[htb!]
 	\centering
 	\begin{tabular}{lrrr}
 		\toprule
-		{} & \multicolumn{2}{c}{F1 macro} & {p-value} \\
-		{} &  plain &  node weights &  \\
+		{} & \multicolumn{2}{c}{F1 macro} & {$p$-value} \\
+		{} &  Plain &  Node-Weights  &  \\
 		\midrule
 		ling-spam       & \textbf{0.8160} & 0.7760 & 0.0542 \\
 		ng20            & \textbf{0.4188} & 0.4127 & 0.2340 \\
@@ -187,7 +185,6 @@ We used only datasets from the website consisting of more than 1000 graphs and n
 		NCI1             & \textbf{0.8425} & 0.8334 & 0.2821 \\
 		NCI109           & \textbf{0.7929} & 0.7877 & 0.4971 \\
 		PROTEINS         & 0.7266 & \textbf{0.7317} & 0.8554 \\
-		%PROTEINS\_full    & 0.7266 & \textbf{0.7317} & 0.8574 \\
 		Tox21\_AHR        & 0.7009 & \textbf{0.7056} & 0.6705 \\
 		Tox21\_AR         & \textbf{0.8147} & 0.7978 & 0.1172 \\
 		Tox21\_AR-LBD     & \textbf{*0.8477} & 0.8284 & 0.2318 \\
@@ -207,7 +204,9 @@ We used only datasets from the website consisting of more than 1000 graphs and n
 
 As we can see, the classification performance of our extension varies greatly per dataset.
 Especially on the concept maps, our WL extension does not perform as good the plain WL graph kernel.
-On some of the graph benchmark datasets, we can also observe significant improvements.
+On some of the graph benchmark datasets, on the other hand, we can observe significant improvements.
+While these results are interesting, a more throughout analysis of the performance is advisable to assert the usefulness of this extension.
+Especially adding further normalization might prove to be effective.
 
 \if
 We also tried another extension to the Weisfeiler-Lehman graph kernel, namely augmenting the default node label counts with a iteration factor.

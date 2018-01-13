@@ -24,40 +24,54 @@ For the \textit{ng20} dataset, the results indicate that classification performa
 In other datasets, this correlation is not as distinguished.
 \fi
 
-In Table \ref{table:correlations_size} we report the Spearman rank correlations \cite{Hauke2011} between the accuracy, ie. whether the label for the document/graph was predicted right, and the size of the document/graph.
-Here, we also see a (weak) correlation for the graph sizes in some datasets.
+In Table \ref{table:correlations_size} we report the Spearman rank and Pearson correlations  \cite{Hauke2011} between the accuracy, ie. whether the label for the document/graph was predicted right, and the size of the document/graph.
+Here, we also see a (weak) correlation for the graph/text sizes in some datasets.
 In the \textit{ling-spam} and \textit{ng20} dataset, the accuracy correlates far more with the document/graph size than in other datasets.
 It has to be noted that there is no partial similarity in accuracy, only 1 if the label was predicted right and 0 otherwise.
 This might also explain that the relatively low correlation between the graph/document size and the accuracy, even in \textit{ng20}.
+Interestingly, on some datasets, the accuracy correlated far stronger with the concept map size than with the size of the texts, eg. \textit{rotten\_imdb} or \textit{nyt\_200}.
 
-These results also highlights another finding: one observation for some dataset might not be consistent with observations from another dataset, eg. for our results the correlations are sometimes weak, sometimes practically not present at all.
+These results also highlights another finding: one observation for some dataset might not be consistent with observations from another dataset, eg. for our results the correlations are sometimes weak, other times practically not present at all.
 
 We also tested other metrics to find correlations, for instance the number of edges or the number of connected components, yet we could not see relevant correlations.
 
 \begin{table}[htb!]
     \centering
-    \begin{tabular}{lrr}
-\toprule
-        &  \multicolumn{2}{c}{Spearman correlation} \\
-        &  Graph &  Text \\
+    \begin{tabular}{lrr|rr}
+		\toprule
+		&  \multicolumn{2}{c}{Graph}&  \multicolumn{2}{c}{Text} \\
+        &  Spearman & Pearson &  Spearman & Pearson \\
         \midrule
-        ling-spam       &  0.2135 &  0.1490 \\
-        ng20            &  0.2699 &  0.2415 \\
-        nyt\_200         & -0.1986 &  0.0077 \\
-        r8              & -0.0212 & -0.0499 \\
-        review\_polarity & -0.0311 & -0.0286 \\
-        rotten\_imdb     &  0.1680 &  0.0313 \\
-        ted\_talks       & -0.0232 & -0.0991 \\
+		ling-spam       &  0.2135 &  0.1294 &  0.1490 &  0.1073 \\
+		ng20            &  0.2699 &  0.1554 &  0.2415 &  0.1395 \\
+		nyt\_200         & -0.1986 & -0.1692 &  0.0077 &  0.0230 \\
+		r8              & -0.0212 & -0.0455 & -0.0499 & -0.0699 \\
+		review\_polarity & -0.0311 & -0.0334 & -0.0286 & -0.0301 \\
+		rotten\_imdb     &  0.1680 &  0.1629 &  0.0313 &  0.0513 \\
+		ted\_talks       & -0.0232 & -0.0586 & -0.0991 & -0.1337 \\
         \bottomrule
     \end{tabular}
-    \caption[Table: Graph/text size correlations]{Spearman rank correlations between the accuracy and graph/text size. Here, the graph size is the number of nodes in the graph, text size the number of words. The higher the absolute value of the Spearman correlation is to 1, the higher the correlation.
+    \caption[Table: Graph/text size correlations]{Spearman rank correlations and Pearson correlation coefficient between the accuracy and graph/text size. Here, the graph size is the number of nodes in the graph, text size the number of words. The higher the absolute value of the Spearman/Pearson coefficient is to 1, the higher the correlation.
     A positive correlation value between A and B means that if A increases, B also increases and vice versa.
     A negative correlation means that when A increases, B decreases and vice versa.}%
     \label{table:correlations_size}
 \end{table}
 
+
+\begin{table}[htb!]
+	\centering
+	\begin{tabular}{lrrrr|rrrr}
+		\toprule
+		ling-spam &  (1, 7] &  (7, 17] &  (17, 30] &  (30, 252]  & (18, 241] &  (241, 447] &  (447, 832] &  (832, 5390] \\
+		 & 0.707 & 0.776 & 0.934 & 0.909 & 0.989 & 0.986 & 0.979 & 0.988 \\
+		\bottomrule
+	\end{tabular}
+\caption[Table: Graph/text size correlations]{TODO}%
+\label{table:concept_map_size_binned}
+\end{table}
+
 \answersummary{
-    In some datasets, we see a correlation between the size of graph/documents and the prediction accuracy.
+    In some datasets, we detect a correlation between the size of graph/documents and prediction accuracy.
     For other datasets, this correlation can not be measured distinctly.
-    The results vary widely across datasets. 
+    The results vary widely across datasets and between graphs/texts.
 }

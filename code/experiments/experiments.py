@@ -106,7 +106,7 @@ def get_task_text(dataset_name: str) -> ExperimentTask:
     return ExperimentTask('text', 'text_' + dataset_name, process)
 
 
-def get_task_combined(graph_cache_file: str) -> ExperimentTask:
+def get_task_combined(graph_cache_file: str) -> typing.List[ExperimentTask]:
     def process() -> tuple:
         X, Y = graph_helper.get_combined_text_graph_dataset(graph_cache_file)
         X = [(graph, text) for (graph, text, _) in X]
