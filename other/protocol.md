@@ -1,3 +1,10 @@
+## 11.01.2018
+- Thesis
+    - Learning to learn
+        - In the epigraph to Educational Psycholo.8.,A'Y:Cognitive View, David Ausubel says, "If I had to reduce all of educational psychology to just one principle, I would say this: The most important single factor influencing learning is what the learner already knows. Ascertain this and teach him accordingly" (Ausubel 1968[2nd ed. 1978]).
+        - Page 54: "Written or spoken messages are necessarily linear sequences of concepts and propositions.""
+
+
 ## 10.01.2018
 - Conversation with Tobias
     - Presentation
@@ -21,7 +28,7 @@
         - Question 8: Size
             - Pearson correlation
                 - Add to table, add assumptions of Pearson r
-            - Spearman is appropiate?
+            - Spearman is appropriate?
             - Use binning, f1 macro
                 - Table
                 - Show bin interval
@@ -37,9 +44,9 @@
 - Conversation with Tobias
     - Thesis feedback
         - \phi Visualization
-        - Gliederung
-            2.4 - Graph kernel examples nicht als Section
-        - \newpage bei neuem Chapter
+        - ToC
+            2.4 - Graph kernel examples not as Section
+        - \newpage at new chapter Chapter
         - Table Metrics
             - Padding
         - "d_{istance}"

@@ -1,0 +1,47 @@
+The concept maps we extracted have directed edges.
+In this question, we evaluate the usefulness of these two cases.
+We compare the classification performance of using the directed versus un-directed case with the Weisfeiler-Lehman graph kernel.
+
+When using WL with undirected edges, the neighbors $n_v$ of a node $v$ are all nodes $v'$ that are connected by an edge to $v$, or $n_v = \{v' | (v, v') \in E \lor (v', v ) \in E \}$.
+With directed edges, on the other hand, the neighbors $n_v$ of a node $v$ are only nodes $v'$ where there exists a directed edge from $v$ to $v'$, or $n_v = \{v' | (v, v') \in E \}$.
+So, the size of neighborhoods per node are expected to decrease, since there is an additional constraint to what constitutes a neighbor.
+
+In Table \ref{table:results_directed_vs_undirected} we see the results of using WL with directed and un-directed edges.
+On all datasets, the directed edges outperform the un-directed ones.
+
+\begin{table}[htb!]
+    \centering
+\begin{tabular}{lrr}
+\toprule
+    &  \multicolumn{2}{c}{F1 macro} \\
+     &  un-directed & directed \\
+    \midrule
+ling-spam       & 0.748 & 0.816 \\
+ng20            & 0.416 & 0.419 \\
+nyt\_200         & 0.743 & 0.744 \\
+r8              & 0.576 & 0.677 \\
+review\_polarity & 0.581 & 0.609 \\
+rotten\_imdb     & 0.633 & 0.635 \\
+ted\_talks       & 0.219 & 0.244 \\
+    \bottomrule
+\end{tabular}
+\caption[Results: WL with directed and un-directed edges]{Classification results when using directed versus un-directed edges with WL.}\label{table:results_directed_vs_undirected}
+\end{table}
+
+This is most likely due to the aforementioned property that the neighborhoods are smaller with directed edges, making exact matches of neighborhoods more probable.
+\todo{
+Note that using directed edges in WL could be compared with using n-grams since they also are directed.
+Instead of word n-grams these are concept n-grams, consisting of three components, the two sink and target vertex labels plus the edge label between them.
+For bigger WL iterations, these concept 3-grams then capture longer $n$-grams and so on.
+}
+When the order of words/nodes is fixed in one direction, vertices with no outgoing edges do not have a neighborhood. Thus they are, for all WL iterations, considered to be the same label, ie. they get no new color assigned.
+
+As a result of these better classification results with directed edges, we will use the directed version of WL.
+Later on, we will also evaluate whether or how using (un-) directed edges affects the score when combining graph and text features.
+
+
+\answersummary{
+    Using directed instead of un-directed edges results in significantly better performance with the WL graph kernel.
+    A possible explanation for this better performance is that neighborhood matches with directed edges are far easier since the neighborhood of a vertex is only defined through its outgoing edges, and not the in-going as well.
+    The smaller neighborhood in turn makes exact matches of neighborhoods in different graphs more probable.
+}

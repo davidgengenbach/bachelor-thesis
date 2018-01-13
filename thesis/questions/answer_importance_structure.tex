@@ -1,0 +1,61 @@
+After investigating the structure of concept maps, we now aim to quantify the importance of the structure compared to the content.
+The content, that is the node and edge labels, of concept maps are also captured in co-occurrence graphs and with conventional text-based approaches. So, the next interesting question about concept maps is, how much or whether the structure adds to the classification performance.
+For this, we compare the results of using graph kernels which use \textbf{(a)} only the content, \textbf{(b)} only the structure and \textbf{(c)} both content and structure.
+
+For \textbf{(a)} (content only), we use a kernel that discards all edges and uses only the labels of nodes and edges. Next, we create a bag-of-words vector representation out of the labels and edges.
+In this step, we also evaluated using not only single words and counting them, but also using word n-grams of size 2, or bi-grams.
+For this, we create pairs of words by joining node labels together that have an edge between them.
+The resulting vector representations of the graph then get fed into a conventional classifier, in our case a SVM.
+
+For \textbf{(b)} (structure only), we use a modified version of the Weisfeiler-Lehman graph kernel. Before applying the actual WL kernel, we discard all node labels and give every node in all graphs the same label, effectively ridding the graphs of content. Next, we apply the WL graph kernel. This variant of WL only takes the structure of the graph into account.
+After executing WL on the graphs, we obtain the feature maps which get subsequently get fed into a SVM also.
+
+For \textbf{(c)} (structure and content combined), we use the Weisfeiler-Lehman that takes both structure and content into account.
+
+In Table \ref{table:table_results_structure_vs_content} we report the results obtained from these experiments.
+
+\begin{table}[htb!]
+	\centering
+	
+	\begin{tabular}{llrrr|r}
+		\toprule
+		&             &  (a) content only &  (b) structure only &  (c) both &  Dummy \\
+		\midrule
+		ling-spam & Concept Map & 0.934 & 0.544 & 0.816 & \multirow{2}{*}{0.421} \\
+		& Cooccurrence & 0.997 & 0.620 & 0.987 & \\
+		\midrule
+		ng20 & Concept Map & 0.622 & 0.057 & 0.419 & \multirow{2}{*}{0.051} \\
+		& Cooccurrence & 0.627 & 0.068 & 0.593 & \\
+		\midrule
+		nyt\_200 & Concept Map & 0.899 & 0.324 & 0.744 & \multirow{2}{*}{0.170} \\
+		& Cooccurrence & 0.891 & 0.422 & 0.881 & \\
+		\midrule
+		r8 & Concept Map & 0.892 & 0.184 & 0.677 & \multirow{2}{*}{0.087} \\
+		& Cooccurrence & 0.890 & 0.300 & 0.890 & \\
+		\midrule
+		review\_polarity & Concept Map & 0.737 & 0.575 & 0.609 & \multirow{2}{*}{0.502} \\
+		& Cooccurrence & 0.762 & 0.526 & 0.785 & \\
+		\midrule
+		rotten\_imdb & Concept Map & 0.828 & 0.579 & 0.635 & \multirow{2}{*}{0.504} \\
+		& Cooccurrence & 0.831 & 0.561 & 0.825 & \\
+		\midrule
+		ted\_talks & Concept Map & 0.359 & 0.279 & 0.244 & \multirow{2}{*}{0.236} \\
+		& Cooccurrence & 0.461 & 0.141 & 0.443 & \\
+		\bottomrule
+	\end{tabular}
+	\caption[Results: Linearized vs. WL]{Results for linearized graphs. \textit{Combined} are features generated using plain WL, using both structure and content. With \textit{Structure-only}, all node labels are omitted, then also plain WL. \textit{Content-only} linearizes the graph into text, then does conventional BoW feature extraction.}\label{table:table_results_structure_vs_content}
+\end{table}
+
+Here, we see that the content-only approach works the best for both concept maps and cooccurrence graphs.
+The structure-only approach performs far worse, nearly as worse as the dummy classifier which only predicts the most-common label.
+The combined approach, ie. plain WL, performs better than the structure-only but worse than the content-only approach.
+
+While it is no surprise that removing the labels from the graphs results in a far lower classification score, the extent in which co-occurrence graphs still perform better than concept maps has to be noted.
+This could indicate that the structure of co-occurrence graphs, while relatively simple, might also be useful for classification.
+
+\answersummary{
+	The content-only graph kernel, which un-rolls the graph into text and then uses a conventional uni-gram \textit{BoW} vectorizer approach, performs the best for both concept maps and co-occurrence graphs.
+	Removing the content, ie. the labels, from the graphs and then running WL results in classification scores comparable to the most-frequent dummy classifier.
+	When combining both, content and structure, ie. plain WL, the score is lower than content-only.
+	This all indicates that the content of the graphs, for graph-only classification, has a greater importance than the structure since the structure gets completely discarded by the content-only approach and still performs the best.
+}

@@ -21,6 +21,8 @@
 \newpage%
 }
 
+
+
 \newcommand{\answersummary}[1]{%
 \vspace{0.5cm}%
 \begin{mdframed}[nobreak=true]
@@ -55,6 +57,18 @@
 \newcommand{\subquestionref}[1]{%
 	\vspace{0.4cm}
     \paragraph{Answer to \nameref{#1}}\label{subquestionanswer:#1}
+}
+
+\newcommand{\subquestionrefnew}[1]{%
+\vspace{0.4cm}
+\paragraph{Answer to \nameref{question:#1}}\label{subquestionanswer:question:#1}
+\input{questions/answer_#1.tex}
+}
+
+
+\newcommand{\subquestionnew}[2] {
+	\subquestion{#1}{question:#2}
+	\input{questions/question_#2.tex}
 }
 
 \newcommand{\subquestionrefnormal}[1]{%

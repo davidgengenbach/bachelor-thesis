@@ -1,0 +1,44 @@
+As a baseline, we also look at another graph representation for text, namely co-occurrence graphs.
+The comparison between concept maps and co-occurrence graphs is somewhat unfair since co-occurrence graphs retain much more of the content of its underlying text.
+While both concept maps and co-occurrence graph are graph representations, they have several differences. While concept maps have directed edges with labels, co-occurrence edges are, in the our version, undirected and have no edge labels.
+The node labels for concept maps also contain multiple words while co-occurrence graphs have single-word labels per definition.
+
+We use the comparison of co-occurrence graphs to concept maps to establish a baseline for graph representations.
+Since our main hypothesis assumes that concept maps contain useful structural information, the co-occurrence graph is a good candidate for comparison, since its structure is quite simple.
+For window size $w=1$, the co-occurrence graphs have a mainly linear structure. With higher window sizes, the co-occurrence graphs get more connected until they eventually become fully connected.
+
+In Table \ref{table:comparison_results_cooccurrence} we report our results.
+
+
+\begin{table}[htb!]
+    \centering
+    \begin{tabular}{lcc|c}
+    \toprule
+        {} &  \multicolumn{2}{c}{F1 macro} \\
+        & Concept &  Co-Occurrence & Difference \\
+        \midrule
+            ling-spam       & 0.816 & 0.987 & 0.171 \\
+            ng20            & 0.419 & 0.593 & 0.174 \\
+            nyt\_200         & 0.744 & 0.881 & 0.138 \\
+            r8              & 0.677 & 0.890 & 0.213 \\
+            review\_polarity & 0.609 & 0.785 & 0.175 \\
+            rotten\_imdb     & 0.635 & 0.825 & 0.191 \\
+            ted\_talks       & 0.244 & 0.443 & 0.199 \\
+        \bottomrule
+    \end{tabular}
+    \caption[Results: Co-Occurrence vs. Concept Maps]{Classification scores for co-occurrence graphs and concept maps.}\label{table:comparison_results_cooccurrence}
+\end{table}
+
+As we can see, graph classification using co-occurrence graphs performs significantly better than the concept maps.
+Co-occurrence graphs also perform nearly as good as the conventional, text-based approach.
+That said, co-occurrence graphs contain far more information than concepts, as we have seen in Table \ref{table:graph_statistics}.
+Concept maps on the other hand summarize the text by filtering out only important concepts.
+Conversely, co-occurrence graphs actually contain all words of its underlying text.
+For this comparison, we used co-occurrence graphs where we only keep the nouns of the text to mimic the summarization of concept maps.
+Apart from that, since co-occurrence graphs contain more information, creating the feature maps with WL also incurs more compute time.
+
+\answersummary{
+    Using WL, co-occurrence graphs perform far better than concept maps in graph-only classification.
+    One explanation is that co-occurrence graphs actually retain more information about the text, ie. all words and their co-occurrence, while concept maps have a far higher compression factor, even though the co-occurrence graphs were created from nouns-only.
+    However, this increased number of nodes/edges in co-occurrence graphs also increases the runtime and memory footprint when extracting WL features.
+}

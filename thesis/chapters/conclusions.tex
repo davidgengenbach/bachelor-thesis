@@ -73,10 +73,12 @@ Not only side by side, but also a merging of the two mediums is conceivable.
 For instance, concept maps could not only have nodes with single labels but assigned texts, images and so on.
 Several fields could greatly benefit from concept maps, not only in the learning context \cite{Novak1984}.
 
-\todo{comparison\_combined}
 %So, while we were not able to achieve a classification score improvement by augmenting text classification with concept map based features, our observations and approaches nevertheless can be useful for other, graph-related tasks.
 
 \labelsection{Future Work}{subsec:future_work}
+
+\epigraph{If I had to reduce all of educational psychology to just one principle, I would say this: The most important single factor influencing learning is what the learner already knows. Ascertain this and teach him accordingly.}{--- \textup{David Paul Ausubel}, Educational Psychology: A Cognitive View \cite{Ausubel1968}}
+
 There are several aspects which have not been covered in this work.
 New graph kernels and approaches to graph processing appear constantly.
 These new approaches could also be explored in their usefulness for text-classification.
@@ -93,7 +95,7 @@ Finding correlations between the classification performance and properties of co
 In our work, we mainly explored concept maps as a text representation.
 However, there are a number of other structured representations, not limited to co-occurrence graphs or (semantic) parsing trees.
 These other graph representations might also capture structural information about the underlying text and could be interesting candidates for further exploration.
-Here, the idea is also to specially leverage the particularities and structures of the graphs.
+Here, the idea is also to specially leverage the particularities and structures of these graph types.
 
 As a more far-fetching idea, one could also research how the modifiability and composability of concept maps can be harnessed more effectively in the learning context to enable more personalized learning experiences.
 For example, when a person wants to learn about some topic using a concept map, he/she most likely has some previous knowledge about that topic.
@@ -110,13 +112,5 @@ Another task would entail further summarizing concept maps, effectively changing
 For example, given three concepts $c_1$, $c_2$, and $c_3$, where $c_1$ is connected to $c_2$ and $c_2$ to $c_3$, how can we remove node $c_2$ and add an edge from $c_1$ to $c_3$ in a meaningful way.
 In this example, if the two concept $c_1$ and $c_3$ are important concepts and $c_2$ is less important by some metric, eg. its node degree or some metric of abstractness/detail, this procedure could lower the level of detail of the concept map.
 This in turn could enable the interactive exploration of concept maps with varying levels of details.
-\todo{Specially try to leverage knowledge bases to connect connected components to each other}
 So, instead of approaching the topic of concept maps as yet another way to represent text, this proposed idea would really leverage the particularities and advantages of concept maps and graphs in general.
 Utilizing these aspects in learning contexts might then improve the usefulness of concept maps in other domains.
-
-\todo{More detailled error analysis}
-\todo{Add stemming/lemmatization to multi-word splitting}
-
-%\todo{Mention \cite{Valerio2007} and their approach (``Reverse" classification: given a document, find a concept map)}
-
-

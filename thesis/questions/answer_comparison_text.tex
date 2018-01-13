@@ -1,0 +1,32 @@
+As one can see in Figure \ref{fig:results_cmap_vs_text}, the text-only approach outperforms graph-only approaches by a high margin.
+This is most likely due to the high compression factor of both concept maps and co-occurrence graphs.
+
+\begin{table}[htb!]
+    \centering
+    \begin{tabular}{lrrrr}
+        \toprule
+         & \multicolumn{4}{c}{F1 macro} \\
+        type &  Concept &  Co-Occurrence & Text (Count) & Text (Tfidf) \\
+        \midrule
+        ling-spam       & 0.816 & 0.987 & 0.986 & 0.990 \\
+        ng20            & 0.419 & 0.593 & 0.754 & 0.781 \\
+        nyt\_200         & 0.744 & 0.881 & 0.921 & 0.912 \\
+        r8              & 0.677 & 0.890 & 0.921 & 0.919 \\
+        review\_polarity & 0.609 & 0.785 & 0.862 & 0.877 \\
+        rotten\_imdb     & 0.635 & 0.825 & 0.881 & 0.886 \\
+        ted\_talks       & 0.244 & 0.443 & 0.443 & 0.464 \\
+        \bottomrule
+    \end{tabular}
+    \caption[Results: Concept Maps vs. Text]{Results for graph- and text-based classification}
+    \label{fig:results_cmap_vs_text}
+\end{table}
+
+So, we see that graph-only approaches seem to perform worse than text-only approaches by default.
+When linearizing the graphs into text again and apply conventional text vectorizers, eg. BoW with Tfidf, we get the best results, also hinting to the fact that the structure is far harder to leverage than simple node counts.
+That said, we are interested in whether graph representations are useful in text classification, therefor we will also test the performance of graph-based approaches when combining them with conventional text approaches.
+
+\answersummary{
+    In our experiments, the text-only approach performs better than both our graph-only approaches, namely WL with concept maps and co-occurrence graphs.
+    One possible explanation can be found in the compression factor of both co-occurrence and concept maps.
+    So, while additional structural information might be captured by concept maps, in direct comparison, it 
+}

@@ -15,76 +15,29 @@ We will provide a summary for each of the questions in the next chapter, revisit
 
 \labelsubsection{Questions}{subsec:questions}
 
-\subquestion{How diverse is the structure of concept maps?}{question:structure_diversity}
-When the structure of the graphs is homogeneous or the structural differences are not distinct between graphs of different classes, the structure by itself will most likely not contribute to the classification performance.
-When comparing the graph similarity under some graph kernel, the graphs of a given class should be distinguishable from the graphs of the other classes.
+\subquestionnew{How useful are features obtained from concept maps combined with text features in the context of text classification?}{comparison_combined}
 
-To understand the diversity in the structure of concept maps, we look at different metrics, eg. a histogram of the connected components per graph or the average node/edge ratio for each graph.
-All these metrics aim to find out the diversity of the connectedness of concept maps.
-There a lot of other metrics, but as we will see later on ,these metrics suffice to get a good picture about the structure of the concept maps.
+\subquestionnew{How diverse is the structure of concept maps?}{structure_diversity}
 
-\subquestion{How important is the structure of concept maps compared to the content?}{question:importance_structure}
-Another important question is the relative importance of the structure compared to the content, ie. the node and edge labels.
-For this, we compare the results of different graph kernels that use \textbf{(a)} only content and \textbf{(b)} only structure and \textbf{(c)} both content and structure.
+\subquestionnew{How important is the structure of concept maps compared to the content?}{importance_structure}
 
-For the \textbf{content-only kernel}, we will simply count the number of occurrences of labels in the graphs and essentially create a bag-of-words representation of the graph. The kernel then creates the similarity score by calculating the inner product on these vector representations, effectively counting the number of common labels.
+\subquestionnew{How useful are multi-word labels in concept maps?}{multi_labels}
 
-For the \textbf{structure-only kernel}, we will use a modified version of the Weisfeiler-Lehman kernel: before executing the WL kernel on the graphs, we first discard all labels on the graph. All nodes of all graphs get the same label. This way, only the structure gets used for the similarity score.
+\subquestionnew{How diverse and useful are edge labels in concept maps?}{edge_labels}
 
-For the \textbf{structure-and-content kernel}, we use the plain Weisfeiler-Lehman graph kernel. 
+\subquestionnew{Does removing infrequent node labels from the concept map improve classification performance?}{infrequent_nodelabels}
 
-The difference in the results will give an additional insight into the structure of concept maps and their usefulness for classification.
+\subquestionnew{Does merging infrequent concepts increase the classification score?}{relabeling_infrequent}
 
+\subquestionnew{How does the performance of using the directed edges in concept maps compare to undirected edges?}{directed_vs_undirected}
 
-\subquestion{How useful are multi-word labels in concept maps?}{question:multi_labels}
-Concept map node labels often consist of more than one word which constitutes one of the differences to co-occurrence graphs and other graph text-representations.
-Yet, our default approach, ie. the Weisfeiler-Lehman graph kernel, does not leverage these multi-word labels.
-So, for this questions we evaluate other approaches which make use of the multi-word labels and evaluate the usefulness of them.
-This approach will later on also be used for the combined classification of text and graph features.
+\subquestionnew{How does the size of concept maps relate to classification performance?}{concept_map_size}
 
-\subquestion{How diverse and useful are edge labels in concept maps?}{question:edge_labels}
-Another difference of concept maps to co-occurrence graphs is that the former have edge labels.
-For this question we evaluate the importance and role of these edge labels in graph classification.
-To make use of the edge label, we will also further introduce the linearized, or un-rolled, graph, ie. a graph converted into text.
+\subquestionnew{How does the classification results of co-occurrence graphs compare to concept maps?}{comparison_coo}
 
-\subquestion{Does removing infrequent node labels from the concept map improve classification performance?}{question:infrequent_nodelabels}
-As with text, there are often a great number of words which only occur once in the whole dataset.
-The same applies to concept maps.
-In text-based classification approaches, infrequent words are often removed from the text for two reasons: (1) the resulting classifier has less parameters to be trained, thus lower complexity, (2) removing infrequent words greatly reduces the size of feature vectors which, in some cases, can prevent overfitting to too specific features.
-Another WL specific problem of infrequent words is that when a concept only occurs once and it is in the neighborhood of another node, matches in higher iterations of WL are impossible since the concept only occurs once and can not be in any other neighborhood apart from the only occurrence.
-For this question, we will evaluate whether removing infrequent node labels will result in better scores.
+\subquestionnew{How does the classification performance with concept maps compare to non-structural, text-based approaches?}{comparison_text}
 
-\subquestion{Does merging infrequent concepts increase the classification score?}{question:relabeling_infrequent}
-To overcome the issue of infrequent concepts in concept maps, we merge infrequent concepts with more frequent concepts.
-
-\subquestion{How does the performance of using the directed edges in concept maps compare to undirected edges?}{question:directed_vs_undirected}
-Concept maps, in contrast to co-occurrence graphs, also have directed edges.
-To test the effect of using directed versus un-directed edges, we evaluate the classification performance for both cases.
-
-\subquestion{How does the size of concept maps relate to classification performance?}{question:concept_map_size}
-The size of a concept map, ie. the number of nodes and edges, is correlated to the size of its underlying text.
-Also, the number of occurrences of a single concept in a given text is important for the degree of the corresponding node, ie. when a concept occurs only once in a given text, the corresponding node in the concept map will have a low degree.
-On the other hand, when a concept occurs multiple times in a text, the degree of this concept will most likely increase.
-These observations give rise to the question whether the size of the concept maps is correlated with the classification performance.
-In this experiment we look at the classification scores of concept maps created from texts with varying length.
-
-\subquestion{How does the classification results of co-occurrence graphs compare to concept maps?}{question:comparison_coo}
-For this question, we compare the classification results for concept maps and co-occurrence graphs. As noted before, this comparison is slightly unfair since co-occurrence graphs have far more content than concept maps.
-Nevertheless, it is an interesting baseline for graph-based text-classification.
-
-\subquestion{How does the classification performance with concept maps compare to non-structural, text-based approaches?}{question:comparison_text}
-Here we test the classification performance of graph-based classification directly with the performance of text-only approaches.
-This experiment will serve as a baseline in later experiments.
-
-\subquestion{How useful are features obtained from concept maps combined with text features for text classification?}{question:comparison_combined}
-This question aims to directly test our hypothesis. 
-When concept maps indeed have a structure that is useful for classification and when this structure is not captured by text-only approaches, the classification performance could increase when combining graph- and text based approaches.
-We test the performance of the combined text- and graph features by concatenating the vectors of both approaches and then training a classifier with these vectors.
-We also compare the results with both text-only and graph-only approaches.
-
-\subquestion{How does the compute time of graph-based- compare to text-based  approaches?}{question:comparison_runtime}
-Another important question concerns the complexity or run-time of our approach.
-While graph kernels like the Weisfeiler-Lehman or the Random-Walk kernels haves seen a rise in efficiency and improvement in runtime, there is still also an overhead associated when generating concept maps.
+\subquestionnew{How does the compute time of graph-based- compare to text-based  approaches?}{comparison_runtime}
 
 \hspace{2cm}
 \paragraph{Summary}

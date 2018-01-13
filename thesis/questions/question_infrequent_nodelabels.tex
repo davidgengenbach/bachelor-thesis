@@ -1,0 +1,5 @@
+As with text, there are often a great number of words which only occur once in the whole dataset.
+The same applies to concept maps.
+In text-based classification approaches, infrequent words are often removed from the text for two reasons: (1) the resulting classifier has less parameters to be trained, thus lower complexity, (2) removing infrequent words greatly reduces the size of feature vectors which, in some cases, can prevent overfitting to too specific features.
+Another WL specific problem of infrequent words is that when a concept only occurs once and it is in the neighborhood of another node, matches in higher iterations of WL are impossible since the concept only occurs once and can not be in any other neighborhood apart from the only occurrence.
+For this question, we will evaluate whether removing infrequent node labels will result in better scores.

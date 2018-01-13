@@ -13,6 +13,13 @@
 \usepackage{mdframed}
 \usepackage{titlesec}
 \usepackage{csquotes}
+\usepackage[inline]{showlabels}
+\usepackage{epigraph}
+% \epigraphsize{\small}% Default
+\setlength\epigraphwidth{12cm}
+\setlength\epigraphrule{0pt}
+
+\usepackage{etoolbox}
 
 %\titlespacing*{\chapter}{0ex}{-1cm}{1cm}
 
@@ -61,12 +68,10 @@
 
   \printbibliography[heading=bibintoc]
 
-  %\vspace{3cm}
-  
-  \listoffigures
-  
-%  \vspace{3cm}
-  \listoftables
+%\vspace{3cm}
+% \listoffigures
+% \vspace{3cm}
+% \listoftables
   
   \newpage
   \section*{Acknowledgements}

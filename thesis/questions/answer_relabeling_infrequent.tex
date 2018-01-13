@@ -1,0 +1,81 @@
+In the previous question, we looked at infrequent node labels and removed them.
+For this question, we actually merge infrequent nodes label with other, more frequent nodes labels.
+To do this, we have to find a measure of similarity between two node labels to determine whether they should be merged or not.
+There are a great number of approaches to define similarity between two word labels, eg. for example the edit distance between word sequences.
+For our purpose, we use word embeddings \cite{Mikolov2013,Pennington,Goldberg2014} to obtain a measure of similarity between multi-word labels.
+We leverage the pre-trained word embeddings introduced and provided in \cite{Pennington}.
+Each word $w$ in the vocabulary of the pre-trained word embedding has a relatively low-dimensional vector $v_w$ assigned, the embedding.
+Roughly speaking, the intuition of word embeddings is that when an word $w$ is semantically similar to another word $w'$, the distance $|| v_w - v_w' ||$ between their embeddings is low, while dissimilar words have higher distances.
+Pre-trained word embeddings, as a downside, have a fixed vocabulary.
+So, we actually have two problems when using word embeddings for our multi-word node labels, namely (1) we have multi-word labels, while our pre-trained word embeddings only contain single single-word embeddings, (2) some node labels will not be in the vocabulary of the pre-trained vocabulary.
+Preliminary tests show us that both problems, (1) and (2), are very common in our datasets and therefor must be addressed.
+
+\paragraph{Multi-Word and Missing Node Label Lookup}
+Our idea to solve these issues was to first create a Word2Vec \cite{Mikolov2013} word embedding \textit{(TrainedEmbedding)} from the texts in the datasets.
+In the next step, we resolve (1) multi-word labels and (2) labels which are not in the vocabulary of the pre-trained word embedding \textit{(Pretrained Embedding)}.
+For each node label $n$, (a) we split $n$ into single words if it is a multi-word label and then (b) obtain the embeddings for the single words from the \textit{(TrainedEmbedding)}, then (c) create the average of the found embeddings.
+If the node label contains only one word, we need not average the found embeddings.
+So, in this stage we have obtained a (multi-) word embedding $v_n$ for the node label $n$ from the  \textit{(TrainedEmbedding)}.
+Next, we search for similar words $ws$ to $v_n$ with the constraint that each word in $ws$ also has to be in the \textit{(Pretrained Embedding)}.
+We obtain the similar words by using the multi-word embedding $v_n$ to search for similar word embeddings in the \textit{(TrainedEmbedding)}.
+The similar words $ws$ also contain the similarity between the nodes, ie. their distance.
+We only keep the top $n$ similar words in $ws$. In our case, $n = 10$.
+
+So, at this stage, for each (multi-word) node label $n$ in the concept maps, we have similar words $ws_n$ which are both in the \textit{(Pretrained Embedding)} and the \textit{(TrainedEmbedding)}.
+Now, we solved both problems, (1) the multi-word labels and (2) words which are not in the vocabulary of the \textit{(Pretrained Embedding)}.
+
+\paragraph{Node Label Clustering}
+In the next step, we have to find node label sets which should be merged.
+For this, we greedily merge labels into clusters with unique identifiers, eg. consecutive numbers, where each label $n$ in a cluster have a similarity, or distance, greater than a given threshold, $t$, to \textit{any} node label in the cluster.
+After this step, each node label in the concept maps has a assigned cluster with one or more node labels in it.
+The intuition of these clusters is that a cluster only contains similar labels.
+This also means that we could merge the labels in some cluster.
+
+\paragraph{Infrequent Node Label Merging}
+So now, we actually can replace infrequent node labels with the cluster identifier.
+We also replace each node label in that cluster with 
+Assuming that both the \textit{(TrainedEmbedding)} and the \textit{(Pretrained Embedding)} actually capture semantical similarities, this new label will be semantically similar to the original, but infrequent node label.
+
+\paragraph{Discussion}
+There are several assumptions made here for this approach to be useful, namely that a semantically meaningful word embedding for infrequent node labels can be obtained.
+When a node label only occurs once in the whole dataset, creating a meaningful word embedding for this single occurrence can be quite difficult since word embeddings actually work by defining a word by its context.
+Yet, in this instance, we have only one context since the node label occurs only once.
+That said, this caveat only applies partially since most of the node labels we merge actually are multi-word labels and the individual words in them occur, most likely, more than once.
+Another important caveat to keep in mind is that we used the complete text corpus to train our \textit{(TrainedEmbedding)}.
+This means that we did no trainings- and validation split nor cross-validation at all.
+This was done to reduce the already quite high compute time of training the embeddings and merging them.
+The results are most likely tainted by the omission of the clear separation between train- and test data.
+
+\paragraph{Results}
+After relabeling the infrequent labels as explained above, we then use our default approach, applying WL to the relabeled concept maps to obtain feature maps, then classifying them.
+As a baseline, we also apply the same approach to un-relabeled concept maps.
+In Table \ref{table:results_infrequent_relabeled} we report our results.
+For the experiments, we tested different thresholds $t \in \{0.5, 0.7, 0.9\}$ and $n=10$, that is we only considered the top-10 words when creating the new embeddings, see above.
+
+\begin{table}[htb!]
+    \centering
+    \begin{tabular}{lrrrr}
+\toprule
+        {} & \multicolumn{3}{c}{F1 Macro} &  \\
+        Threshold $t$ &         0.5 &   0.9 & Plain & p-value \\
+        \midrule
+        ling-spam       & \textbf{0.831} & 0.817 & 0.816 & 0.515 \\
+        ng20            & 0.377 & 0.383 & \textbf{*0.419} & 0.000 \\
+        nyt\_200         & 0.739 & 0.727 & \textbf{0.744} & 0.885 \\
+        r8              & \textbf{0.705} & 0.693 & 0.677 & 0.268 \\
+        review\_polarity & \textbf{0.616} & 0.606 & 0.609 & 0.780 \\
+        rotten\_imdb     & 0.577 & 0.605 & \textbf{0.635} & 0.194 \\
+        ted\_talks       & 0.281 & \textbf{0.317} & 0.244 & 0.188 \\
+        \bottomrule
+    \end{tabular}
+    \caption[Results: Merge infrequent nodes]{Classification results for relabeled concept maps. The $p$-value is obtained by a significance test between the plain and the best relabeled version, eg. 0.5 or 0.9. Plain corresponds to the un-relabeled approach. }
+    \label{table:results_infrequent_relabeled}
+\end{table}
+
+As we can see, on some datasets, relabeling the nodes can improve the classification score, while others do not profit from this additional pre-processing step.
+
+\answersummary{
+    After devising and applying an approach to merge (multi-word) node labels of concept maps, we classify them.
+    In most datasets, this results in a significant improvement in classification performance.
+    Nevertheless, there are also big caveats to this approach, for instance the additional overhead of computing word embeddings for the whole dataset.
+}

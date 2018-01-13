@@ -1,0 +1,10 @@
+Another important question is the relative importance of the structure compared to the content, ie. the node and edge labels.
+For this, we compare the results of different graph kernels that use \textbf{(a)} only content and \textbf{(b)} only structure and \textbf{(c)} both content and structure.
+
+For the \textbf{content-only kernel}, we will simply count the number of occurrences of labels in the graphs and essentially create a bag-of-words representation of the graph. The kernel then creates the similarity score by calculating the inner product on these vector representations, effectively counting the number of common labels.
+
+For the \textbf{structure-only kernel}, we will use a modified version of the Weisfeiler-Lehman kernel: before executing the WL kernel on the graphs, we first discard all labels on the graph. All nodes of all graphs get the same label. This way, only the structure gets used for the similarity score.
+
+For the \textbf{structure-and-content kernel}, we use the plain Weisfeiler-Lehman graph kernel. 
+
+The difference in the results will give an additional insight into the structure of concept maps and their usefulness for classification.

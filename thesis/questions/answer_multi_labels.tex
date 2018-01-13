@@ -1,0 +1,62 @@
+In Figure \ref{fig:statistics_percentage_multi_word_labels} we see, that most concept map node labels consist of more than one word.
+
+\begin{figure}[htb!]
+    \centering
+    \includegraphics[width=0.7\linewidth]{assets/figures/tmp/statistics_percentage_multi_word_labels.pdf}
+    \caption[Statistics: Percentage multi-word node labels]{Percentage of multi-word to single-word node labels per dataset.}\label{fig:statistics_percentage_multi_word_labels}
+\end{figure}
+
+However, with the normal approach, like counting the node labels, these multi-word labels are treated as single labels, effectively discarding important information.
+In the experiments of the last question, Question \ref{question:importance_structure}, we actually implicitly used the multi-word labels since we un-rolled the graph into text again and then used conventional text vectorizer, ie. BoW.
+In these experiments, we saw an improvement over the graph based approach, possibly due to the multi-word labels being split.
+So, for our next graph-based approach, we also split nodes with multi-word labels into multiple single-word nodes.
+This is done by splitting the node labels into individual words, than creating nodes with these single words and adding all the (directed) edges of the original node.
+When a resulting single-word label is a stopword, the corresponding node is removed from the graph.
+See Figure \ref{fig:example_split_labels} for an example.
+
+Additionally, we also evaluate the stemming or lemmatizing [p.~4]\cite{Manning2000} the split single-words.
+
+\begin{figure}[htb!]
+    \centering
+    \begin{subfigure}[t]{.4\linewidth}  {\includegraphics[width=\linewidth]{assets/figures/tmp/graph_example_split_labels_before.pdf}}
+        \caption{Before}
+    \end{subfigure}
+\hspace{2cm}
+    \begin{subfigure}[t]{.4\linewidth}  {\includegraphics[width=\linewidth]{assets/figures/tmp/graph_example_split_labels_after.pdf}}
+        \caption{After}
+    \end{subfigure}
+    \caption[Example: Multi-word node labels Splitting]{Example for multi-word label splits. Here, both the ``concept maps" and ``multi-word concepts" node labels are  split.}\label{fig:example_split_labels}
+\end{figure}
+
+In Figure \ref{table:results_multi_label_split} we report the results when doing graph classification with and without multi-word label splitting.
+For this experiment, we use the Weisfeiler-Lehman graph kernel to extract the feature maps.
+As we can see, the splitting actually improves the performance quite a lot, consistently outperforming the non-split version on all datasets.
+On some datasets, the additional stemming of single-word labels after splitting also further improves the score.
+
+\begin{table}[htb!]
+    \centering
+\begin{tabular}{lrrrr}
+\toprule
+    {} & \multicolumn{3}{c}{F1 macro}  &   \\
+     &  Un-Split  &  Un-Stemmed &  Stemmed &   $p$-Value  \\
+    \midrule
+    ling-spam       & 0.8160 & 0.8835 & \textbf{0.9131} & 0.0008 \\
+    ng20            & 0.4188 & 0.5680 & \textbf{0.5741} & 0.0001 \\
+    nyt\_200         & 0.7436 & \textbf{0.8464} & 0.8294 & 0.0001 \\
+    r8              & 0.6772 & \textbf{0.8599} & 0.8441 & 0.0001 \\
+    review\_polarity & 0.6094 & \textbf{0.7150} & 0.6699 & 0.0036 \\
+    rotten\_imdb     & 0.6346 & \textbf{0.7805} & 0.7775 & 0.0001 \\
+    ted\_talks       & 0.2436 & 0.3934 & \textbf{0.4126} & 0.0035 \\
+    \bottomrule
+\end{tabular}
+\caption[Results: Multi-label split]{Results for multi-label node label split. The $p$-value is calculated with the best split-word approach, ie. stemmed and un-stemmed, versus the plain version.}\label{table:results_multi_label_split}
+\end{table}
+
+The classification scores for this multi-word splitting nearly performs as well as the linearized, BoW approach from the previous Question \ref{question:importance_structure}, ranging from 1\% to 3\% difference in F1 macro.
+However, it has to be noted that splitting the multi-word node labels, and subsequently extracting features with WL, produces higher dimensional feature vectors than the un-split approach.
+
+
+\answersummary{
+Splitting the multi-word labels shows the greatest performance improvement for WL, ranging from a raise of 10\% to 24\% better F1 macro score over the un-split approach.
+Splitting the node labels and then using WL performs nearly as good as the best graph kernel we saw, the linearized content-only approach from Question \ref{question:importance_structure}.
+}
