@@ -107,7 +107,7 @@ An example of pre-processing can be seen in Figure \ref{fig:preprocessing_exampl
 For the co-occurrence graphs, we also optionally filtered out the non-nouns to increase the compression and thus achieve more comparability to concept maps.
 
 \paragraph{Text-based representations}
-For the text classification pipeline, we used two \textit{Bag-Of-Words}, or \textit{BoW}, based text vectorization algorithms, namely
+For the text classification pipeline we used two \textit{Bag-Of-Words}, or \textit{BoW}, based text vectorization algorithms, namely
 \begin{itemize}
 \item{\textit{Word Frequency} (Wf): this algorithm simply gathers all words in the corpus and creates a mapping between words and consecutive indices. Then it creates a vector representation for each text so that the i-th vector component is the count of the corresponding word in the text. Ie. $i$ is the index of the word in the mapping.}
 \item{\textit{Term-Frequency-Inverse-Document-Frequency} (TfIdf): this approach is an extension to the \textit{Word Frequency BoW} approach. Instead of using only the counts of a word in the text, this approach also incorporates the term frequency and the inverse document frequency of the words into the vector representation.}
@@ -139,16 +139,15 @@ We report the results in Table \ref{table:results_min_df}.
 	ted\_talks       & 0.453 & 0.466 \\
 	\bottomrule
 \end{tabular}
-\caption[Results: BoW minimum word frequency]{Classification results for BoW with (1) all labels and (2) only labels that occur more than once.}
+\caption[Results: BoW minimum word frequency]{Text classification results for BoW with (1) all words and (2) only words that occur more than once.}
 \label{table:results_min_df}
 \end{table}
 
 \paragraph{Graph-based representations}
-To compare the performance of concept maps with other graphs, we generated co-occurrence graphs with window sizes $w \in \{1, 4\}$.
-\todo{This is not true anymore}
-We also evaluated the performance of co-occurrence graphs where only nouns are retained to mimic the compression factor of concept maps.
+To compare the performance of concept maps with other graphs, we generated co-occurrence graphs with window sizes $w \in \{1, 3\}$.
+We evaluated the performance of co-occurrence graphs where only nouns are retained to mimic the compression factor of concept maps.
 
-For the extraction of the concept maps from the text, we used the implementation by Falke, introduced in \cite{Falke2017}.
+For the extraction of the concept maps from the text, we used the implementation introduced in \cite{Falke2017b}.
 An explanation of the steps to create the concept maps is given in Section \ref{sec:implementation}.
 
 \labelsection{Datasets}{subsec:datasets}
@@ -159,7 +158,7 @@ We provide download links for all the datasets except for the commercial \textit
 A script to download these datasets is also provided alongside our other code.
 
 \paragraph{ling-spam}
-The Ling-Spam dataset was created and introduced by Androutsopoulos et al. in  \cite{Androutsopoulos2000}.
+The Ling-Spam dataset was created and introduced in \cite{Androutsopoulos2000}.
 The corpus contains email texts which are categorized as ``spam" and ``no spam".
 One thing to note is that the classification scores with standard methods are quite high by default, so most likely no substantial increase in performance is to be expected.
 
@@ -256,7 +255,6 @@ ted\_talks       & 4 &  682 &  1.353k & 2027 & 0.09 \\
 \end{tabular}
 \caption[Statistics: Datasets]{Dataset statistics. \textit{\# words} in thousands.}\label{table:dataset_statistics}
 \end{table}
-\todo{Explain \textit{\#unique. words} metric}
 
 \labelsection{Methods}{subsec:methods}
 
@@ -267,7 +265,6 @@ For all the classification tasks we use train-/validation- and test set splits.
 The split is done as follows: 80\% for train- and validation set together and 20\% for the test set.
 We then use stratified 4-fold cross-validation to further split the train- and validation set.
 The stratification ensures that the class distribution in the different sets is \textit{almost} the same as in the class distribution of the complete dataset.
-\todo{Cite!}
 
 \paragraph{Model Selection}
 Hyperparameter tuning, or model selection, is done using cross-validation on the train-/ validation set, ie. we first train classifiers for all hyperparameter choices on all $k$ train-/validation splits, and after finding the best hyper-parameters on these sets, we retrain the best classifier on the whole train-/validation set and then evaluate the performance on the test set \textbf{once}.
@@ -304,14 +301,11 @@ To increase the reproducibility of our results, we utilized the same random gene
 We also evaluated results obtained with nested cross-validation to further de-bias our results \cite{Varma2006}. Yet, when inspecting the results from tests with nested cross-validation we saw that the standard deviations of the results are relatively low.
 This observation and the fact that nested cross-validation also increases the compute-time significantly, led us to abandon nested cross-validation for our experiments.
 However, to be able comparing the results of two different models, we consistently used the permutation significance test. 
-Interpreting the resulting confidence value dampens the effect of not doing nested cross-validation.
-
-\todo{More elegant sentence, please?}
 
 \subsection{Metrics}
 As a classification metric, we mostly focus on the F1 macro score since it captures the overall performance of classification algorithms by merging two other metrics, namely precision and recall.
 For an overview and definition of the used metrics, please see Section \ref{subsec:classification_task}.
-We will provide all our results online\footnote{TODO} with additional metrics, like the accuracy, precision and recall.
+We will provide all our results online\footnote{See \url{https://github.com/davidgengenbach/bachelor-thesis}} with additional metrics, like accuracy, precision and recall.
 We do not report standard deviations for our experiments since we, as mentioned before, do not use nested cross-validation, so we only have results on a single static test set.
 See the previous Section \ref{subsec:cross_validation_and_model_selection} for a more throughout explanation.
 
@@ -343,8 +337,10 @@ Since we use only highly sparse and high-dimensional vectors, centering the feat
 This is due to the fact that centering a vector often means adding or subtracting another vector from it which creates non-zero entries for all entries.
 Only when the vector is already centered, the centering would not affect the sparsity.
 
+\iffalse
 \todo{There are possible solutions to circumvent this problem and nevertheless center sparse vectors, namely by augmenting the sparse vector data-structure by also saving the means for each feature entry.
 Yet, to our knowledge there is no implementation actually having this feature.}
+\fi
 
 Fortunately, since we have very sparse features, the mean for each feature is very close to zero.
 This is due to the fact that most features occur very infrequently. Together with the high number of elements in the dataset, the mean of each feature will be close to zero since the average, $\hat{f}_x$, for each feature $f_x$ is calculated by taking the sum of the feature for all elements and dividing it by the number of elements in the dataset
@@ -418,8 +414,7 @@ This is far too high to accept the hypothesis on ground of these predictions.
 
 
 \labelsection{Implementation}{sec:implementation}
-We mostly used Python to implement the code required to run the experiments.
-\todo{Link to Python paper?}
+We mostly used Python\footnote{\url{https://www.python.org/}} to implement the code required to run the experiments.
 The code and instructions on how set-up the experiments can be found on GitHub \footnote{\url{https://github.com/davidgengenbach/bachelor-thesis}}.
 Our work heavily relies on open source software and in this form would not be possible without it.
 In particular, we implemented most of the experiments using \textit{scikit-learn} \cite{Pedregosa2012}, \textit{networkx} \cite{Hagberg2008} and \textit{pandas} \cite{McKinney2010}, \textit{numpy/scipy} \cite{VanderWalt2011}, \textit{SymPy} \cite{Meurer2017} and several other open-source projects.
@@ -455,11 +450,16 @@ This is done by extracting binary relations from the text. A binary relation con
 Also, a concept can consist of multiple words, eg. for ``David likes something else.", the concepts would be ``David" and ``something else".
 The extracted concepts are later used as node labels, and the relation between them as the edges between concepts.
 
-
 \textbf{Filtering}:
 Next, the extracted relations get filtered so that only concepts are kept which contain at least one noun and which consist of fewer words than some a given threshold, in our case 10 words. This filtering is done to ensure the brevity and practical usefulness of the concepts when visualizing the graphs.
 
-\todo{Add grouping step}
+\textbf{Grouping}:
+In the next step, related concepts are merged to reduce the redundancy of node labels.
+Here, the idea is to group similar concepts together.
+Often concepts are referenced by a synonym or implicitly mentioned through co-references, eg. by using ``this" without explicitly specifying what is referenced.
+To find concepts which should be merged, the authors propose a solution based on pairwise classification.
+Here, for each two given concept mentions, a feature vector $\phi(x, x')$ is calculated which is subsequently used to train a one-layer neural net to classify whether two given concept mentions refer to the same concept. 
+The feature vector $\phi$ for two concept mentions are created using several metrics, eg. the cosine similarity of word embeddings and the normalized Levenshtein distance.
 
 After these steps, we can create and export the concept maps.
 

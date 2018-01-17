@@ -8,8 +8,8 @@ Language is a highly complex method to convey information.
 Text often creates its own context, eg. by mentioning some concept in the beginning of a text and only implicitly relating to it at the end. Or by using different words to represent the same concept.
 Other difficulties arise due to varying writing styles by different authors.
 Another obvious problem is the ambiguous nature of language\cite{Britton1978}, eg. in English the word ``bear" can relate to the animal or the verb.
-Often the meaning of a word is defined by its (immediate) context.
-Manually defining rules or algorithms to remove the ambiguity of language have been shown to be very laborious if not impossible \cite[p.~11]{Weikum2002}.
+Often the meaning of a word is defined by its context.
+Manually defining rules or algorithms to remove the ambiguity of language have been shown to be labor intensive if not impossible \cite[p.~11]{Weikum2002}.
 
 These and other difficulties harden the task of processing natural language text significantly \cite{Chowdhury2003,Weikum2002}.
 Yet, the task of processing text emerges in important real-world applications.
@@ -20,12 +20,12 @@ Since text is most often of non-fixed size, several fixed-size representations h
 One common approach to represent texts is by counting all unique words in a text. The counts of unique words can then be, together with a fixed-size vocabulary, transformed into fixed-size vector representations.
 With this approach, some information about the text is omitted, namely the sentence structure, word-order, word-dependency to name just a few \cite{Chowdhury2003}.
 So, after transforming a text into this representation, recovering the original text becomes impossible.
-That said, while this representation is quite simple and does not capture all information of the text, when using it in the context of text-classification, these representations actually perform very well.
+While this representation is quite simple and does not capture all information of the text, when using it in the context of text-classification, these representations actually perform very well.
 Count-based text representations provide an easy-to-implement baseline and starting point for further improvements.
-For example, one extension to this representation does not only gathers the simple one-word counts but also word pairs or consecutive word sequences. These sequences are called $n$-grams, where $n$ stands for the size of such the sequence, eg. $2$-grams consist of 2 words and so on.
+For example, one extension to this representation does not only gather the simple one-word counts but also word pairs or consecutive word sequences. These sequences are called $n$-grams, where $n$ stands for the size of such the sequence, eg. $2$-grams consist of 2 words and so on.
 In section \ref{sec:evaluation} we will explain these text-based approaches more throughly.
 
-For an recent survey of the history and challenges of natural language processing, see \cite{Chowdhury2003,DeCastilho2014}.
+For a recent survey of the history and challenges of natural language processing, see \cite{Chowdhury2003,DeCastilho2014}.
 
 \labelsection{Graphs}{subsec:graphs}
 A labeled graph \cite[p.~1]{Bondy1976} is a triple $G = (V, E, \pi)$, where $V$ is the set of vertices or nodes, $E \subseteq V \times V$ are the edges and $\pi: V \to X$ is a labeling function which assigns a label to a given vertex. 
@@ -93,7 +93,7 @@ For an example of a concept map, see Figure \ref{fig:concept_map}.
 \end{figure}
 
 Concept maps are useful for visualizing concepts and their relation to each other.
-They can be used to quickly explore a given topic and immediately see connections between concepts visually.
+They can be used to quickly explore a given topic and immediately see connections between concepts.
 Through the degree of a concept node, one can also infer the relative importance of that concept in the underlying text.
 
 By combining different texts of the same topic, one can also create a concept map for the whole topic.
@@ -102,16 +102,16 @@ The visualization with concept maps of one or more individual texts therefor ena
 This property makes concept maps interesting in the learning context where visual components become crucial for understanding \cite{Novak1984}.
 Text, on the other hand, is a linear medium, eg. one often has to read the preceding paragraphs/sections and understand its contents to learn about a new concept.
 Extending text, eg. combining several texts of the same topic, also becomes quite laborious since text is inherently linear, so one has to either manually merge the new texts or add side-notes or references to later text passages.
-The same task for concept maps can be far easier since one must ``only" find relevant concepts in the texts and their relations to each other. After that the graph can easily constructed.
+The same task for concept maps can be far easier since one must ``only" find relevant concepts in the texts and their relations to each other. After that the graph can easily be constructed.
 When the same concept appears in two texts, so the idea, they will be mapped to the same node.
-Also, extending a concept map is only a matter of adding new concepts or edges.
-One can also augment a node with attributes, eg. add a text that is relevant for this node.
+Additionally, extending a concept map is only a matter of adding new concepts or edges.
+One can also augment a node with attributes, eg. add a text that is relevant for some node.
 All these properties enable the iterative construction of concept maps by incurring little to no overhead when extending or augmenting concept maps.
 
 Since the concepts in a concept map often contain only a small subset of the text, concept maps also summarize the underlying text.
 Only relevant concepts and their relation to each other are captured, making concept maps interesting for (multi-document) text summarization \cite{Falke2017b}.
 
-Another interesting property is of concept maps with its directed edges is that they can be ``unrolled" into text again, enabling conventional text-processing.
+Another interesting property of concept maps with its directed edges is that they can be ``unrolled" into text again, enabling conventional text-processing.
 Figure \ref{fig:concept_map_linearization} shows an example of such an unrolled concept map.
 
 \begin{figure}[htb!]
@@ -125,15 +125,15 @@ Figure \ref{fig:concept_map_linearization} shows an example of such an unrolled 
 		\centering
 		\noindent\fbox{%
 			\parbox{\textwidth}{%
-				\textsf{concept maps \enspace\textbf{are used in}\enspace text summarization.
+				\textsf{concept maps \textbf{are used in} text summarization.
 					\\
-					concept maps \enspace\textbf{are created from}\enspace binary relations.
+					concept maps \textbf{are created from} binary relations.
 					\\
-					text summarization \enspace\textbf{tries to capture}\enspace relevant information.
+					text summarization \textbf{tries to capture} relevant information.
 					\\
 					relevant information \enspace\textbf{is captured in}\enspace concept maps.
 		}}}
-		\vspace{0.7in}
+		\vspace{0.8in}
 		\caption{Extracted sentences}
 	\end{subfigure}%
 	\caption[Example: Linearized Concept Map]{Example of a concept map with its linearized version.
@@ -144,13 +144,13 @@ Figure \ref{fig:concept_map_linearization} shows an example of such an unrolled 
 \end{figure}
 
 While text is currently arguably the most common medium for information storage, due to the rise of more interactive information mediums, eg. computers, concept maps might become more important in the future.
-There are several advantages of concept maps over text, being more structured and visual just to name a few.
+There are several advantages of concept maps over text, being more structured and visual amongst other things.
 
-In Chapter \ref{sec:implementation} we introduce the concept map extraction implementation we use and further explain the steps in creating the concept maps automatically from given.
+In Chapter \ref{sec:implementation} we introduce the concept map extraction implementation we use and further explain the steps in creating the concept maps automatically from given text.
 
 \subsection{Co-Occurrence Graph}
-A co-occurrence graph \cite{Novak1984, Rousseau2015a, Nikolentzos2017a}, or graph-of-words, is generated from a text by creating a graph with all the words of the underlying text as nodes.
-In the next step, an edge between two nodes is added if the words corresponding to the nodes co-occur in the text.
+A co-occurrence graph \cite{Novak1984, Rousseau2015a, Nikolentzos2017b}, or graph-of-words, is generated from a text by creating a graph with all the words of the underlying text as nodes.
+In the next step an edge between two nodes is added if the words corresponding to the nodes co-occur in the text.
 Two words co-occur when the distance between the words in the text is below a given threshold, the window size.
 Co-occurrence graphs can have edge weights corresponding to the counts of the co-occurrence of the words in the text.
 
@@ -173,9 +173,9 @@ Figure \ref{fig:cooccurrence_graphs} shows examples of co-occurrence graphs with
 \end{figure}
 
 Since co-occurrence graphs not only contain the words of the underlying text but also their co-occurrence, they are able to capture structural information about the text.
-But, given a co-occurrence graph, it is not possible to recover the underlying text since all information about word-order or sentence structure is omitted.
+Given a co-occurrence graph, it is not possible to recover the underlying text since all information about word-order or sentence structure is omitted.
 That said, one could augment co-occurrence graphs by using directed edges and therefor keep the word-order intact.
-That said, even with this extension, one can not reconstruct the original text.
+Even with this extension, one can not reconstruct the original text.
 
 Because of their similarity to concept maps, we will use co-occurrence maps as a baseline for the graph classification.
 It has to be noted that this comparison is not entirely fair since co-occurrence graphs contain all words of the text and there is only a small loss of information.
@@ -212,17 +212,16 @@ Our notation is similar to the notation used in \cite[p.~11]{Bishop2006}.
 	\caption[Notation: Classification]{Classification notation.}\label{table:classification_notation}
 \end{table}
 
-To automatically assign the labels in a supervised way, generally a learning algorithm is used to train a classifier by providing it datapoints and the corresponding labels.
+To automatically assign the labels in a supervised way, a learning algorithm is used to train a classifier by providing it datapoints and the corresponding labels.
 The classifier algorithm then, internally, creates a model of the data and often optimizes internal parameters to fit the data.
-During prediction, that is when wanting to automatically assign a label to a (new) datapoint $x_i$, the new datapoint is fed into the classifier which in turn returns the predicted label, $y'_i$.
+During prediction, that is when wanting to automatically assign a label to a datapoint $x_i$, the new datapoint is fed into the classifier which in turn returns the predicted label, $y'_i$.
 
 \labelsubsection{Classifiers}{subsec:classifiers}
 In this work, we will mostly use a classification algorithm called \textit{Support Vector Machine} \cite{Cortes1995}, or \textit{SVM}.
-The SVM has shown to be robust in its performance \cite{Joachims1998}, having not to deal with local optima as in neural networks or other machine learning algorithms.
-The SVM also exhibits state-of-the art performance on several tasks and is the go-to classification algorithm in a great number of previous works in the field \cite{Joachims1998, Vitale2012, Neuhaus2006a,Kriege2012, Koronacki2008}.
+The SVM has shown to be robust in its performance \cite{Joachims1998} and exhibits state-of-the art performance on several tasks and is the go-to classification algorithm in a great number of previous works in the field \cite{Joachims1998, Vitale2012, Neuhaus2006a,Kriege2012, Koronacki2008}.
 
 For an more throughout explanation of the SVM and its advantages especially for the text classification task, please see \cite{Joachims1998}.
-We will also further explain the SVM and its parameters in Section \ref{subsec:cross_validation_and_model_selection}.
+We will further explain the SVM and its parameters in Section \ref{subsec:cross_validation_and_model_selection}.
 
 \labelsubsection{Performance Metrics}{subsec:classification_metrics}
 The performance or score of a trained classifier is evaluated by comparing the labels it predicts, $y'_i$,  for datapoints $x_i$ with the real label $y_i$ in the dataset.
@@ -230,7 +229,7 @@ There are several metrics for evaluating the performance of a classifier.
 The classification metrics we use in this work are summarized in Figure \ref{fig:classification_metrics}.
 For an extensive overview of classification metrics, see \cite{Forman2003}.
 In this work, we will use the term classification performance synonymously with classification score, unless otherwise stated.
-On the other hand, we will refer to the complexity or run-time of a classification algorithm by the classification run-time.
+On the other hand, we will refer to the run-time of a classification algorithm by the classification run-time.
 
 \begin{figure}[htb!]
 	\centering
@@ -277,7 +276,7 @@ On the other hand, we will refer to the complexity or run-time of a classificati
 		$F1_{\text{macro}} = \displaystyle \frac{\sum\nolimits_{y \in Y} F1_y}{|Y|}$
 		\\
 	\end{tabular}
-	\caption[Notation: Classification metrics]{Classification performance metric notation. As performance metrics, we will us accuracy, macro precision, macro recall and the macro F1 score. The macro version of a metric takes into account how many elements there are in each class which is helpful for skewed datasets, ie. where the number of instances per label is not distributed uniformly per label.}\label{fig:classification_metrics}
+	\caption[Notation: Classification metrics]{Classification performance metric notation.  We will use accuracy, macro precision, macro recall and the macro F1 score. The macro version of a metric takes into account how many elements there are in each class which is helpful for skewed datasets, ie. where the number of instances per label is not distributed uniformly per label.}\label{fig:classification_metrics}
 \end{figure}
 
 
@@ -516,8 +515,6 @@ Our implementation also uses label compression, explained in Figure \ref{fig:wl_
 	\label{fig:wl_example}
 \end{figure}
 
-\todo{Use early stopping!}
-
 \labelsection{Graph Kernel Based Text Classification}{subsec:graph_kernel_based_text_classification}
 The idea of converting the text classification task into a graph classification task has been explored before.
 In this section, we will briefly recap the history of this approach by explaining several papers related to our work.
@@ -560,7 +557,7 @@ This extension is indeed needed since the number of possible sub-graphs grows su
 Also, considering all possible subgraphs in all graphs in the dataset would not only require significant computational resources but would also result in sparse feature vectors since most sub-graphs occur infrequently.
 This, in turn, would harden the classifier training problem.
 
-As another measure to lower the runtime complexity of their algorithm, they also first extract the main core of each co-occurrence graph and only extract sub-graphs from them, not from the whole graphs.
+As another measure to lower the runtime complexity of their algorithm, they also first extract the main core of each co-occurrence graph and only extract sub-graphs from these, not from the whole graphs.
 A $k$-core is a subgraph $G_k$ of graph $G$ where all vertices have a degree greater or equal to $k$. The main core of a graph is the $k$-core with the highest possible $k$.
 Thus the main core is the most connected subgraph of graph $G$, which includes only the most ``important" vertices and their edges to each other.
 
@@ -576,12 +573,12 @@ They also stress the importance of choosing an adequate support value for the su
 
 This paper is quite similar to our approach since it also poses the text classification task as a graph classification task. Yet, they consider only one type of graph, the co-occurrence graph.
 Also, they do not evaluate the effect of combining text- and graph features.
-That said, they provide interesting comparisons of text- and graph based approaches, pointing out the similarity of n-grams with the relationships which are captured in co-occurrence graphs.
+That being said, they provide interesting comparisons of text- and graph based approaches, pointing out the similarity of n-grams with the relationships which are captured in co-occurrence graphs.
 
 \paragraph{``Concept Graph Preserving Semantic Relationship for Biomedical Text Categorization" \cite{Gulrandhe2015}}
-The paper explores also explores the usefulness of using automatically generated concept graphs for text classification.
-They first extract a concept graph for each of the articles in a medical dataset. Constructing the concept graph was done by extracting noun phrases with a \textit{Part-of-Speech} short \textit{POS}, tagger.
-Next, these extracted noun phrases are then looked up in the medical database called \textit{UMLS}. When a noun phrase is found in this database, it becomes a node for the concept graph that is generated from th text. Other noun phrases are ignored.
+The paper also explores the usefulness of using automatically generated concept graphs for text classification.
+They first extract a concept graph for each of the articles in a medical dataset. Constructing the concept graph was done by extracting noun phrases with a \textit{Part-of-Speech} tagger, short \textit{POS}.
+Next, these extracted noun phrases are then looked up in the medical database called \textit{UMLS}. When a noun phrase is found in this database, it becomes a node for the concept graph that is generated from the text. Other noun phrases are ignored.
 This additional filtering is done to find important concepts in a controlled vocabulary which can be further enriched by relationships which are also stored in the \textit{UMLS} database.
 The relationships between concepts in the \textit{UMLS} database are semantic, eg. whether two concepts are synonyms for each other.
 These relationships are then used as the edges between the concepts in the generated concept graph.
@@ -593,7 +590,7 @@ The kernel they use is similar to the graph kernel we introduced before, namely 
 As a final step, they train a kernelized \textit{SVM} and a kernelized \textit{k-Nearest-Neighbor} classifier with the gram matrix for the concept graphs and the labels as input.
 
 Unfortunately, the authors do not report their classification scores or provide the means to obtain the used dataset. 
-Therefore an analysis of the claim is hardly testable that their approach shows statistically significant improvement over conventional, text-based approaches.
+Therefore an analysis of the claim that their approach shows statistically significant improvement over conventional, text-based approaches is hardly testable.
 That said, their approach is quite similar to our approach: they also use noun phrases extracted from a text to subsequently train a kernelized \textit{SVM}.
 Yet, while they use semantic relationships obtained from a database as edges, we obtain the edges directly from the text.
 Also, we use different kernels to leverage multiple aspects of the structure and content of the concept maps. The authors, on the other hand, only evaluate one kernel capitalizing on the edges between concepts.
@@ -619,7 +616,7 @@ The equality of two walks is determined by comparing the labels of the visited n
 In the case of DRS graphs, this would not yield a good kernel since the labels of the nodes are placeholders, ie. two vertices with the same label, for example $x1$, can correspond to totally different entities.
 So, the standard definition of walk equality can not be used in the case of DRS graphs.
 Instead, the authors introduce an approach which, for a given node $v_1$ of graph $G$, returns an ``equal" node $v_2$ in graph $G'$ that has similar edge \textbf{labels}.
-This enables the random-walk graph kernel to ``merge" nodes with different node labels, that is placeholder like $x1$, on the two graphs, thus enabling random walks with meaningful node equality in the case of the DRS graphs.
+This enables the random-walk graph kernel to ``merge" nodes with different node labels, that is placeholders like $x1$, on the two graphs, thus enabling random walks with meaningful node equality in the case of the DRS graphs.
 After extracting the gram matrix of the DRS graphs with this extended random-walk graph kernel, the authors then use a SVM to evaluate their approach on the \textit{reuters-21578} dataset.
 They use only a subset of 50 texts in the five most frequent classes of the dataset as their corpus. Then they create the DRS graphs for these texts and randomly select 25 of each class to create a gram matrix.
 This gram matrix then gets used to train a one-versus-one SVM classifier. So, they do binary classification and present the results of the performance of the pairs of the 5 classes they considered.
@@ -636,7 +633,7 @@ k(G, G') = \phi^T(G) \cdot \phi(G')
 \end{equation*}
 they add a weighting matrix $M$
 \begin{equation*}
-k(G, G') = \phi^T(G) \cdot M \cdot \phi(G')
+k(G, G') = \phi^T(G) \cdot M \cdot \phi(G').
 \end{equation*}
 
 The intuition here is that each vector entry of $\phi(G)$ corresponds to the count of some substructure of $G$ and that these substructures are not independent of each other, ie. they can be similar to each other.

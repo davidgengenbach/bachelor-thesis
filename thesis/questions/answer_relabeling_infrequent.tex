@@ -57,7 +57,7 @@ For the experiments, we tested different thresholds $t \in \{0.5, 0.7, 0.9\}$ an
     \begin{tabular}{lrrrr}
 \toprule
         {} & \multicolumn{3}{c}{F1 Macro} &  \\
-        Threshold $t$ &         0.5 &   0.9 & Plain & p-value \\
+        Threshold $t$ &         0.5 &   0.9 & Plain & $p$-value \\
         \midrule
         ling-spam       & \textbf{0.831} & 0.817 & 0.816 & 0.515 \\
         ng20            & 0.377 & 0.383 & \textbf{*0.419} & 0.000 \\
@@ -76,6 +76,6 @@ As we can see, on some datasets, relabeling the nodes can improve the classifica
 
 \answersummary{
     After devising and applying an approach to merge (multi-word) node labels of concept maps, we classify them.
-    In most datasets, this results in a significant improvement in classification performance.
+    In most datasets, this results in a great improvement in classification performance.
     Nevertheless, there are also big caveats to this approach, for instance the additional overhead of computing word embeddings for the whole dataset.
 }

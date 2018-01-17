@@ -11,18 +11,18 @@ On all datasets, the directed edges outperform the un-directed ones.
 
 \begin{table}[htb!]
     \centering
-\begin{tabular}{lrr}
+\begin{tabular}{lrrr}
 \toprule
-    &  \multicolumn{2}{c}{F1 macro} \\
-     &  un-directed & directed \\
+    &  \multicolumn{2}{c}{F1 macro} & $p$-value\\
+     &  un-directed & directed & \\
     \midrule
-ling-spam       & 0.748 & 0.816 \\
-ng20            & 0.416 & 0.419 \\
-nyt\_200         & 0.743 & 0.744 \\
-r8              & 0.576 & 0.677 \\
-review\_polarity & 0.581 & 0.609 \\
-rotten\_imdb     & 0.633 & 0.635 \\
-ted\_talks       & 0.219 & 0.244 \\
+ling-spam       & 0.7482 & *\textbf{0.8160} & 0.0001 \\
+ng20            & 0.4165 & \textbf{0.4188} & 0.6944 \\
+nyt\_200         & 0.7430 & \textbf{0.7436} & 0.9784 \\
+r8              & 0.5764 & \textbf{*0.6772} & 0.0001 \\
+review\_polarity & 0.5807 & \textbf{0.6094} & 0.1326 \\
+rotten\_imdb     & 0.6328 & \textbf{0.6346} & 0.7433 \\
+ted\_talks       & 0.2189 & \textbf{0.2436} & 0.3107 \\
     \bottomrule
 \end{tabular}
 \caption[Results: WL with directed and un-directed edges]{Classification results when using directed versus un-directed edges with WL.}\label{table:results_directed_vs_undirected}
@@ -36,7 +36,7 @@ Later on, we will also evaluate whether or how using (un-) directed edges affect
 
 
 \answersummary{
-    Using directed instead of un-directed edges results in significantly better performance with the WL graph kernel.
+    Using directed instead of un-directed edges results in (significantly) better performance with the WL graph kernel.
     A possible explanation for this better performance is that neighborhood matches with directed edges are far easier since the neighborhood of a vertex is only defined through its outgoing edges, and not the in-going as well.
     The smaller neighborhood in turn makes exact matches of neighborhoods in different graphs more probable.
 }

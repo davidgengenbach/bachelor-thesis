@@ -32,7 +32,7 @@ Here, interestingly, the classification performance was lower than without these
 This observation is somewhat surprising since these extensions all improved the classification score when only classifying the graphs.
 One possible explanation is, that all these WL extensions aim to transform the concept maps into graphs where the neighborhoods are equalized, ie. more similar to each other.
 For instance, the relabeling extension aims to merge infrequent with frequent labels, in order to increase the likelihood of same neighborhoods.
-On the other hand, doing this also removes (structural) information from the concept maps, which can not be used for text classification.
+On the other hand, doing this also removes (structural) information from the concept maps, which in turn can not be used for  classification.
 For the multi-word label splitting extension, one possible explanation for the lower classification performance when combining the resulting features with text features, is, that it significantly increases the dimensionality of the feature vectors created by WL.
 This, in turn, might have lead to overfitting.
 

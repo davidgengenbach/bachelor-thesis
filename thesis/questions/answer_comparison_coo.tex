@@ -14,16 +14,16 @@ In Table \ref{table:comparison_results_cooccurrence} we report our results.
     \centering
     \begin{tabular}{lcc|c}
     \toprule
-        {} &  \multicolumn{2}{c}{F1 macro} \\
+        {} &  \multicolumn{3}{c}{F1 macro} \\
         & Concept &  Co-Occurrence & Difference \\
         \midrule
-            ling-spam       & 0.816 & 0.987 & 0.171 \\
-            ng20            & 0.419 & 0.593 & 0.174 \\
-            nyt\_200         & 0.744 & 0.881 & 0.138 \\
-            r8              & 0.677 & 0.890 & 0.213 \\
-            review\_polarity & 0.609 & 0.785 & 0.175 \\
-            rotten\_imdb     & 0.635 & 0.825 & 0.191 \\
-            ted\_talks       & 0.244 & 0.443 & 0.199 \\
+            ling-spam       & 0.816 & \textbf{0.987} & 0.171 \\
+            ng20            & 0.419 & \textbf{0.593} & 0.174 \\
+            nyt\_200         & 0.744 &\textbf{0.881 }& 0.138 \\
+            r8              & 0.677 &\textbf{0.890} & 0.213 \\
+            review\_polarity & 0.609 & \textbf{0.785} & 0.175 \\
+            rotten\_imdb     & 0.635 & \textbf{0.825} & 0.191 \\
+            ted\_talks       & 0.244 & \textbf{0.443} & 0.199 \\
         \bottomrule
     \end{tabular}
     \caption[Results: Co-Occurrence vs. Concept Maps]{Classification scores for co-occurrence graphs and concept maps.}\label{table:comparison_results_cooccurrence}
@@ -36,9 +36,12 @@ Concept maps on the other hand summarize the text by filtering out only importan
 Conversely, co-occurrence graphs actually contain all words of its underlying text.
 For this comparison, we used co-occurrence graphs where we only keep the nouns of the text to mimic the summarization of concept maps.
 Apart from that, since co-occurrence graphs contain more information, creating the feature maps with WL also incurs more compute time.
+Interestingly, for the combined graph- and text feature approach, we have actually seen that co-occurrence graphs perform worse than concept maps.
+This is most likely due to the high dimensionality of the co-occurrence graphs which subsequently leads to overfitting.
 
 \answersummary{
     Using WL, co-occurrence graphs perform far better than concept maps in graph-only classification.
     One explanation is that co-occurrence graphs actually retain more information about the text, ie. all words and their co-occurrence, while concept maps have a far higher compression factor, even though the co-occurrence graphs were created from nouns-only.
     However, this increased number of nodes/edges in co-occurrence graphs also increases the runtime and memory footprint when extracting WL features.
+    Also, when combining graph- with text features, co-occurrence graphs perform not as good as concept maps, as seen in the answer for Question 1.
 }

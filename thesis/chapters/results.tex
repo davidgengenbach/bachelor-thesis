@@ -33,9 +33,9 @@ In some of these questions, we explored the particularities of concept maps, nam
 
 For (1), we tried splitting the multi-word concepts of the concept maps into single-word nodes.
 This resulted in a high increase in classification score.
-This was done in \ref{question:multi_labels}.
+This was done in Question \ref{question:multi_labels}.
 
-In Question \ref{question:importance_structure}, we also split the multi-word concepts. We linearized the graph into text again, un-rolling the edges into sentences. Afterwards we used conventional, text-based approaches like BoW to classify the resulting text.
+In Question \ref{question:importance_structure}, we also implicitly split the multi-word concepts. Since we linearized the graph into text again, ie. un-rolling the edges into sentences. Afterwards we used conventional, text-based approaches like uni-gram BoW extracted from the resulting text.
 This approach resulted in the best classification performance we achieved using the concept maps, except when combining the graph features with text features.
 This observation alludes to the explanation that the structure of concept maps is either not that important for classification or the structure could not be captured usefully using the graph-based approaches we tried.
 
@@ -48,23 +48,24 @@ For (3), the edge labels, in Question \ref{question:edge_labels} we first analyz
 The top edge labels, ie. the edge labels which had the most occurrences in the concept maps of a dataset, were almost exclusively non-topic related words, like ``are" or ``is".
 Next, we linearized the concept map into text with (a) all words and (b) no edge labels.
 Finally, we used a Tfidf-BoW to create features and classify them.
-Using or omitting the edge labels resulted in nearly the performance, hinting to the observation that edge labels are not as important for the graph-based approach.
+Using or omitting the edge labels resulted in comparable performances, hinting to the observation that edge labels are not as important for the graph-based approach.
 
 Finally, for the last Question \ref{question:comparison_runtime}, we report the classification times and classifier model size of our graph- and text based approaches.
 Here, we observe that the runtime for our graph-based approaches is higher than that for the conventional text-based classification.
 We also saw the additional overhead produced by the need to generate the concept maps from the text.
 
-One thing to note, and this is common to all the questions and observations in this work, is that we evaluated our questions on multiple datasets. Often times, the observations differed quite heavily from dataset to dataset.
-For instance, the performance of one WL extensions might show great improvement over another on one dataset, while showing a low performance on another dataset. 
+One thing to note, and this is common to all the questions and observations in this work, is that we evaluated our questions on multiple datasets. Often times, the observations varied quite heavily from dataset to dataset.
+For instance, the performance of one WL extensions might show great improvement on one dataset, while showing a low performance on another dataset. 
 Especially when trying to find correlations and explanations for the performance of our approaches, the differing datasets proved to harden the task.
 This further highlights the importance of using model selection.
 Arguably more than in other domains,  graph-kernel based classification performance relies heavily on the used graphs, structure, graph kernels and particularities of the domain.
 We evaluated several other graph kernels, for instance shortest-path- or random-walk based graph kernels, and observed poorer performance than with our default graph kernel, Weisfeiler-Lehman.
-Yet, even the Weisfeiler-Lehman kernel with our extensions and several graph pre-processing approaches, we did not outperform the linearized graph approach, ie. where we un-roll the concept map into text then use a conventional BoW-based approach.
+Yet, even with the Weisfeiler-Lehman kernel with our extensions and several graph pre-processing approaches, we did not outperform the linearized graph approach, ie. where we un-roll the concept map into text then use a conventional BoW-based approach.
 A possible explanation for this observation is, that the concept maps are generated from the text by extracting multi-word concepts and their relation to each other from the text.
 In order for this approach to create structurally interesting concept maps, concepts have to occur multiple times.
 If that is not the case, that is when the concepts occur only once, the resulting concept maps consist of a number of connected components which contain only two nodes and one edge.
 These two-node connected components are like tri-grams, with multi-concepts and edge label instead of single-words.
+A similar observation was done in Question \ref{question:importance_structure}.
 
 In the next Section \ref{sec:conclusions} we will further summarize our results and provide some approaches we have not tried yet which could further improve the classification scores.
 
@@ -152,7 +153,7 @@ As a possible solution for these issues, we propose an extension to the Weisfeil
 Our extension augments the WL algorithm by adding node weights.
 For each of the nodes $n$ in all graphs, we first calculate node weight $n_w$ which encodes the importance of the nodes or the difficulty of getting an exact match in WL.
 An example of such node weights are the node degrees or node weights extracted by the \textit{PageRank} algorithm \cite{Page1998}.
-The node degree is an interesting metric for node weights since it actually encodes the size of the immediate neighborhood of a node and therefore could possibly address both difficulty \textbf{(1)} and \textbf{(2)}.
+The node degree is an interesting metric for node weights since it actually encodes the size of the immediate neighborhood of a node and therefore could possibly address both issues, \textbf{(1)} and \textbf{(2)}.
 
 One could see our extension as similar to binary \textit{BoW}, ie. only using whether a word has occurred or not, and the extension that also uses the term frequency where the number of occurrences is taken into account, too.
 
@@ -203,9 +204,9 @@ We only used datasets from the website consisting of more than 1000 graphs and w
 \end{table}
 
 As we can see, the classification performance of our extension varies greatly per dataset.
-Especially on the concept maps, our WL extension does not perform as good the plain WL graph kernel.
+Especially on the concept maps, our WL extension does not perform as good as plain WL.
 On some of the graph benchmark datasets, on the other hand, we can observe significant improvements.
-While these results are interesting, a more throughout analysis of the performance is advisable to assert the usefulness of this extension.
+While these results are interesting, a more throughout analysis of the performance is needed to assert the usefulness of this extension.
 Especially adding further normalization might prove to be effective.
 
 \if

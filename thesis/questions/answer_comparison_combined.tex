@@ -47,7 +47,7 @@ For our purposes, we do not look at single features, or input neurons, but on a 
 
 Figure \ref{fig:combined_coefs_l1_l2_regularization} then shows an example of a weight analysis for the \textit{ng20} dataset and for two regularizations, namely \textit{L1} and \textit{L2}.
 
-Both regularization terms are used to discourage ``big" weights, effectively forcing the training algorithm to chose important features to generalize the data instead of over-fitting the data.
+Both regularization terms are used to discourage ``big" weights, effectively forcing the training algorithm to choose important features to generalize the data instead of over-fitting the data.
 While both \textit{L1} and \textit{L2} regularization discourage big weights, \textit{L1} penalizes small weights harder than \textit{L2}, leading to more zero coefficients \cite[p.~13]{Hastie2009}.
 Therefore, the selection of important features is enforced more with \textit{L1} regularization.
 We leverage this phenomenon to analyze how important the features, graph and text, are for classification.
@@ -114,7 +114,7 @@ No significant improvement of the combined approach was found upon the text-only
 \end{table}
 
 \answersummary{
-    When combining the graph- and text features we do not achieve no significantly higher classification scores and even observe a degradation.
-    Examining the weights of one-layer neural net shows us that, when training on combined text- and graph feature, graph features get lower absolute weights assigned.
+    When combining the graph- and text features we do not achieve significantly higher classification scores and even observe a degradation in performance.
+    Examining the weights of one-layer neural net shows us that, when training on combined text- and graph features, graph features get lower absolute weights assigned.
     A possible explanation is that the graph features are not as important for the combined text- and graph feature classification.
 }
