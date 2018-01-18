@@ -1,6 +1,8 @@
 # Text Classification using Concept Maps
 
-[Protocol](other/protocol.md)
+[Final Presentation](https://docs.google.com/presentation/d/1cZ0KkTSfdDqs0BmzlHUAouNDboCK6j0ZO3NyNDmASmI/edit?usp=sharing)
+
+[Thesis](thesis/main.pdf)
 
 ## Instructions
 

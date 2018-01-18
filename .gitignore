@@ -14,7 +14,7 @@ other/ted_talks/data/*
 
 # Latex files
 thesis/test/
-thesis/*.pdf
+#thesis/*.pdf
 thesis/*.xml
 thesis/main.synctex.gz
 *.fmt
