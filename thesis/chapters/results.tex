@@ -67,7 +67,7 @@ If that is not the case, that is when the concepts occur only once, the resultin
 These two-node connected components are like tri-grams, with multi-concepts and edge label instead of single-words.
 A similar observation was done in Question \ref{question:importance_structure}.
 
-In the next Section \ref{sec:conclusions} we will further summarize our results and provide some approaches we have not tried yet which could further improve the classification scores.
+In the next Section \ref{sec:conclusions} we will further summarize our results.
 
 \labelsection{Related And Intermediate Observations}{subsec:related_and_intermediate_observation}
 In this section we report observations which are not directly related to our hypothesis, but have provided us valuable insights into our analysis.
@@ -96,7 +96,7 @@ It has to be noted that we implemented WL where the labels are assigned when the
 This is the \textit{label compression} step.
 So, we iterate over the graphs one by one and create feature maps $\phi$.
 When the first processed graph, $G_1$, has the new compressed labels $\{1, 2, \ldots, n\}$, the next processed graph, $G_2$, will have labels that are either \textbf{(1)} new, in which case they get a new, compressed label that is higher than $n$ or \textbf{(2)} they were already encountered in $G_1$, so they get the label from the lookup.
-This way we get incrementing labels for each graph.
+This way we get incrementing labels.
 When we also sort the graphs by their assigned class, ie. all graphs of class $y_i$ are processed after another, then one can look at the labels that are assigned to each class and also see the nice pattern which arises in Figure \ref{fig:phi_distribution_example}.
 
 This plot also gives an insight about the convergence of WL.
@@ -134,7 +134,7 @@ Because of the aforementioned implementation, we now are able to see a pattern f
 For the test set, we can also see how many new labels have been found in a given iteration.
 As we said before, the horizontal green line, in both plots, signifies the last label that has been encountered.
 In the case of the split sets, it also marks the last label that has been encountered in the train set.
-All points, that is labels, above this line have are new to the test set and do not occur in the train set.
+All points, that is labels, above this line are new in the test set and do not occur in the train set.
 
 Plotting the $\phi$ distribution like so, we gain a better insight into the graph connectedness and the similarity or uniqueness of neighborhoods.
 When WL converges at iteration $h$, so when the height of the green line does not change from iteration $h-1$ to $h$, this means that all neighborhoods that are different, have been marked as so and got a unique label.

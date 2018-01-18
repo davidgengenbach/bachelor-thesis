@@ -56,7 +56,7 @@ This could indicate that the structure of co-occurrence graphs, while relatively
 
 \answersummary{
 	The content-only graph kernel, which un-rolls the graph into text and then uses a conventional uni-gram \textit{BoW} vectorizer approach, performs the best for both concept maps and co-occurrence graphs.
-	Removing the content, ie. the labels, from the graphs and then running WL results in classification scores comparable to the most-frequent dummy classifier.
+	Ignoring the labels and then running WL results in low classification scores comparable to the most-frequent dummy classifier.
 	When combining both, content and structure, ie. plain WL, the score is lower than content-only.
 	This all indicates that the content of the graphs, for graph-only classification, has a greater importance than the structure since the structure gets completely discarded by the content-only approach and still performs the best.
 }

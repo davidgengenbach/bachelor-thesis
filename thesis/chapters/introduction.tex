@@ -9,15 +9,15 @@ In this context, finding an appropriate representation of text is crucial and ca
 More conventional text representations are often based on counting the words of a text and representing the text content by these word counts.
 The \textit{Bag-Of-Word} \cite[p.~237]{Manning2000}, or BoW, representation is a widely used example of such a procedure which has also shown great real-world performance on several tasks, not only in text classification.
 However, simple word-count based text representations come at the expense of losing information about their underlying text, eg. the sentence structure and word order.
-That said, there are several other, more sophisticated text representations, for instance co-occurrence graphs \cite{Rousseau2013}, concept maps \cite{Novak2008,Falke2017b} or document embeddings \cite{Dai2015,Lau2016}.
-Each of these representations is also subject to different trade-offs, for instance in the ability to capture the needed information and its compute time.
+That being said, there are several other, more sophisticated text representations, for instance co-occurrence graphs \cite{Rousseau2013}, concept maps \cite{Novak2008,Falke2017b} or document embeddings \cite{Dai2015,Lau2016}.
+Each of these representations is also subject to different trade-offs, for instance in the ability to capture appropriate information and its compute time.
 
 In our work we are interested in graph-based text representations, especially concept maps \cite{Novak2008,Falke2017b}, to overcome the aforementioned shortcomings of simple text representations like \textit{BoW}.
 %We explore the usefulness of more structured graph representations in the context of text classification.
 For this, we first generate concept maps for several text corpora and subsequently devise a number of experiments to gain a better insight into the retained information and structure of these concept maps.
 Additionally, we capitalize on graph kernels \cite{Kulharia2008} to operate on the concept maps which in turn enables us to perform graph classification.
 At the core of this work stands the question how we can use graph-based approaches to improve on current, conventional text representations like BoW.
-Similar ways to use graph-based text representations in the context of text classification have been explored in the literature, namely using co-occurrence graphs \cite{Rousseau2015a, Nikolentzos2017b}, DRS graphs \cite{Gaspar2011} and concept graphs \cite{Gulrandhe2015} also.
+Similar ways to use graph-based text representations in the context of text classification have been explored in the literature, namely using co-occurrence graphs \cite{Rousseau2015a, Nikolentzos2017b}, DRS graphs \cite{Gaspar2011} and even concept graphs \cite{Gulrandhe2015}.
 In Section \ref{subsec:graph_kernel_based_text_classification} we will both introduce the history of this approach more throughly and explain the differences to our work.
 
 \paragraph{Text Classification}

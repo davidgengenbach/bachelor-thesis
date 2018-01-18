@@ -88,7 +88,7 @@ For an example of a concept map, see Figure \ref{fig:concept_map}.
 \begin{figure}[htb!]
 \centering
 \includegraphics[width=0.5\linewidth]{assets/figures/concept_map.pdf}
-\caption[Example: Concept map]{Example of a concept map. The nodes are the concepts. The directed edges connect the concepts to each other and have labels. In this example of a concept map, one could recover sentences from this graph, for example ``Caffeine \textit{is} a mild CNS stimulant". Taken and adapted from: \cite{Falke2017}}
+\caption[Example: Concept map]{Example of a concept map. The nodes are the concepts. The directed edges connect the concepts to each other and have labels. In this example of a concept map, one could recover sentences from this graph, for example ``Caffeine \textit{is} a mild CNS stimulant". Taken and adapted from: \cite{Falke2017b}}
 \label{fig:concept_map}
 \end{figure}
 
@@ -100,7 +100,7 @@ By combining different texts of the same topic, one can also create a concept ma
 In this case, the concepts are not confined to a single text.
 The visualization with concept maps of one or more individual texts therefor enables the non-linear exploration of multiple texts of a topic at the same time.
 This property makes concept maps interesting in the learning context where visual components become crucial for understanding \cite{Novak1984}.
-Text, on the other hand, is a linear medium, eg. one often has to read the preceding paragraphs/sections and understand its contents to learn about a new concept.
+Text or spoken language, on the other hand, is a linear medium \cite[p.~54]{Novak1984}, eg. one often has to read the preceding paragraphs and understand its contents to learn about some new concept.
 Extending text, eg. combining several texts of the same topic, also becomes quite laborious since text is inherently linear, so one has to either manually merge the new texts or add side-notes or references to later text passages.
 The same task for concept maps can be far easier since one must ``only" find relevant concepts in the texts and their relations to each other. After that the graph can easily be constructed.
 When the same concept appears in two texts, so the idea, they will be mapped to the same node.
@@ -522,8 +522,8 @@ While most of the graph classification approaches are used in contexts where gra
 
 \labelsubsection{Related Work}{subsection:related_work}
 
-\paragraph{``Shortest-Path Graph Kernels for Document Similarity" \cite{Nikolentzos2017a}}
-The most similar and recent work to our approach that we found was \cite{Nikolentzos2017a}. In this work, the authors first create co-occurrence graphs out of the text. Next, they create the gram matrix for the graphs with their own graph kernel and use a SVM to classify them.
+\paragraph{``Shortest-Path Graph Kernels for Document Similarity" \cite{Nikolentzos2017}}
+The most similar and recent work to our approach that we found was \cite{Nikolentzos2017}. In this work, the authors first create co-occurrence graphs out of the text. Next, they create the gram matrix for the graphs with their own graph kernel and use a SVM to classify them.
 
 Their graph kernel is a combination of two sub-kernels:
 \begin{enumerate}

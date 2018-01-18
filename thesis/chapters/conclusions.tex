@@ -1,34 +1,34 @@
-In our work, we conducted several experiments to test the usefulness of graph-representations of text, especially concept maps, for text classification.
+In our work, we conduct several experiments to test the usefulness of graph-representations of text, especially concept maps, for text classification.
 Our experiments ranged from gathering information about the structure of the graphs to actually performing the classification task with different approaches.
 For our graph-based classification, we mostly capitalized on graph kernels.
 Through all these experiments, we aimed to leverage the particular properties of concept maps, especially the structure.
 
-When directly comparing the performance of graph-based and conventional text-based classification, we saw that the text-only features outperformed the graph-based approach by a high margin, for both co-occurrence graphs and concept maps.
-So, our next approach was to combine text- and graph features and classify them together.
+When directly comparing the performance of graph-based and conventional text-based classification, we see that the text-only features outperform the graph-based approach by a high margin, for both co-occurrence graphs and concept maps.
+So, our next approach is to combine text- and graph features and classify them together.
 This combined approach, while having a far higher runtime due to the increased dimension of the feature vectors, presents no significant improvement of classification scores upon the text-only approach.
-On some datasets, the classification score even was a little lower than the text-only approach.
+On some datasets, the classification score even is a little lower than the text-only approach.
 This is also most likely due to the high dimensionality of the combined features and the subsequent risk of overfitting to too specific features.
 
-However, after re-evaluating and extending our graph-based approach, we saw significant improvement in our graph-only classification performance.
-Especially splitting the multi-word node labels of the concept maps into single-word nodes resulted in significant improvement on all datasets.
-As another extension, we pre-processed the graphs by removing infrequent nodes to further reduce the dimensionality of the resulting feature vectors.
-Since we capitalized on the Weisfeiler-Lehman graph kernel to extract our graph features, our guess was that the removal of infrequent words could improve the quality of the features since WL, roughly speaking, counts the matching neighborhoods of nodes.
+However, after re-evaluating and extending our graph-based approach, we see significant improvement in our graph-only classification performance.
+Especially splitting the multi-word node labels of the concept maps into single-word nodes results in significant improvement on all datasets.
+As another extension, we pre-process the graphs by removing infrequent nodes to further reduce the dimensionality of the resulting feature vectors.
+Since we capitalize on the Weisfeiler-Lehman graph kernel to extract our graph features, our guess is that the removal of infrequent words could improve the quality of the features since WL, roughly speaking, counts the matching neighborhoods of nodes.
 So, a node label which only occurs infrequently could ``taint" its neighborhood, making an exact match of that neighborhood less likely.
-However, when classifying the graphs with the infrequent labels removed, we actually saw mixed results, ranging from great improvements on some datasets to lower scores on others.
-Another approach we evaluated was merging infrequent nodes by creating embeddings for each (multi-word) node label using both pre-trained embeddings and creating our own word2vec embeddings from the text.
-In the next step, we merged node labels with a similarity above some given threshold.
-We then assigned identifiers to the resulting label clusters.
-Finally, we relabeled each node in the concept with the identifier of its cluster.
-On most datasets, this approach improved the graph-only classification scores.
+However, when classifying the graphs with the infrequent labels removed, we actually see mixed results, ranging from great improvements on some datasets to lower scores on others.
+Another approach we evaluate is merging infrequent nodes by creating embeddings for each (multi-word) node label using both pre-trained embeddings and creating our own word2vec embeddings from the text.
+In the next step, we merge node labels with a similarity above some given threshold.
+We then assign identifiers to the resulting label clusters.
+Finally, we relabel each node in the concept with the identifier of its cluster.
+On most datasets, this approach improves the graph-only classification scores.
 
-Besides all these Weisfeiler-Lehman specific extensions and improvements, we also evaluated ``linearizing" the concept maps into text.
-By un-rolling the graph into text, we were able to perform text-based classification on them, which - surprisingly - provided the highest classification score we achieved using graphs, for both co-occurrence graphs and concept maps.
-For this ``graph kernel" we discarded all structural information since we only used uni-grams, ie. single word frequencies.
-In the case of co-occurrence graphs, the performance was nearly as good as the text-only approach, which is not entirely surprising since co-occurrence graphs capture \textit{nearly} all information beside the word order which was not used by our uni-gram \textit{BoW} approach anyway.
-For concept maps, the classification scores with this simple linearized graph kernel were also the best, yet still approximately 5-10\% lower in the F1 macro score than both co-occurrence graphs and the text-only approach.
+Besides all these Weisfeiler-Lehman specific extensions and improvements, we also evaluate ``linearizing" the concept maps into text.
+By un-rolling the graph into text, we are able to perform text-based classification on them, which - surprisingly - provides the highest classification score we achieve using graphs, for both co-occurrence graphs and concept maps.
+For this ``graph kernel" we discard all structural information since we only use uni-grams, ie. single word frequencies.
+In the case of co-occurrence graphs, the performance is nearly as good as the text-only approach, which is not entirely surprising since co-occurrence graphs capture \textit{nearly} all information beside the word order which we do not use with our uni-gram \textit{BoW} approach anyway.
+For concept maps, the classification scores with this simple linearized graph kernel are also the best, yet still approximately 5-10\% lower in the F1 macro score than both co-occurrence graphs and the text-only approach.
 
 We subsequently repeat the experiments of text- and graph combined features with our extensions, eg. the multi-word label splitting or the relabeling.
-Here, interestingly, the classification performance was lower than without these extensions, so with the plain WL graph kernel.
+Here, interestingly, the classification performance is lower than without these extensions, ie. using the plain WL graph kernel.
 This observation is somewhat surprising since these extensions all improved the classification score when only classifying the graphs.
 One possible explanation is, that all these WL extensions aim to transform the concept maps into graphs where the neighborhoods are equalized, ie. more similar to each other.
 For instance, the relabeling extension aims to merge infrequent with frequent labels, in order to increase the likelihood of same neighborhoods.
@@ -36,11 +36,11 @@ On the other hand, doing this also removes (structural) information from the con
 For the multi-word label splitting extension, one possible explanation for the lower classification performance when combining the resulting features with text features, is, that it significantly increases the dimensionality of the feature vectors created by WL.
 This, in turn, might have lead to overfitting.
 
-Apart the graph kernel customizations we devised for the concept maps, eg. splitting the labels or using directed instead of un-directed edges, we also proposed our own extension to WL, namely node weighting.
+Apart the graph kernel customizations we devised for concept maps, eg. splitting the labels, we also propose our own extension to WL, namely node weighting.
 Here, our intuition was taken from the fact that WL matches of big neighborhoods are far more difficult than with low-size neighborhoods.
-Since this issue is not explicitly encoded in the feature maps of WL, we proposed to scale each feature map entry, corresponding to the label of a node, with a node weight, eg. the degree of that node.
+Since this issue is not explicitly encoded in the feature maps of WL, we propose to scale each feature map entry, corresponding to the label of a node, with a node weight, eg. the degree of that node.
 That way, the importance, or frequency, of a node is also encoded in the feature map.
-Although this resulted in lower classification scores for our concept map datasets, we saw significant improvement on datasets obtained from \cite{Kersting2016}.
+Although this results in lower classification scores for our concept map datasets, we see significant improvement on datasets obtained from \cite{Kersting2016}.
 However, a more throughout analysis would be appropriate to confirm the usefulness of our WL extension.
 
 Beyond all the different approaches and experiments, the importance of evaluating the classification scores on different datasets became clear immediately.
@@ -77,14 +77,19 @@ Several fields could greatly benefit from concept maps, not only in the learning
 
 \labelsection{Future Work}{subsec:future_work}
 
-\epigraph{If I had to reduce all of educational psychology to just one principle, I would say this: The most important single factor influencing learning is what the learner already knows. Ascertain this and teach him accordingly.}{--- \textup{David Paul Ausubel}, Educational Psychology: A Cognitive View \cite{Ausubel1968}}
+\epigraph{Written or spoken messages are necessarily linear sequences of concepts and propositions.}{--- \textup{Joseph D.  Novak, Bob D. Gowin}, ``Learning How to Learn" \cite[p.~54]{Novak1984}}
+\epigraph{If I had to reduce all of educational psychology to just one principle, I would say this: The most important single factor influencing learning is what the learner already knows. Ascertain this and teach him accordingly.}{--- \textup{David Paul Ausubel}, ``Educational Psychology: A Cognitive View" \cite{Ausubel1968}}
 
 There are several aspects which have not been covered in this work.
 New graph kernels and approaches to graph processing appear constantly.
 These new approaches could also be explored in their usefulness for text-classification.
 In our work, we capitalized on the Weisfeiler-Lehman graph kernel, not only because its ability to extract explicit feature maps which in turn could be combined with text features, eg. from BoW.
 We proposed an extension to the WL kernel where we augment the plain WL with node weights. Here, it would be interesting to further evaluate the usefulness of this extension on other datasets and with additional normalization.
-That said, there are numerous other graph kernels which might prove to be more useful for our task than WL.
+Another possible extension to WL to reduce the dimensionality of the resulting explicit feature maps would be to only add ``new" labels to the feature map.
+For example, if a graph $G$ has a connected component with only two nodes, $n$ and $n'$, their labels will not change after the first iteration $h=1$.
+So for this connected component, WL will have converged and will not provide new information in higher iterations $h > 1$.
+Therefor adding ignoring the labels of these nodes in higher iterations would decrease the dimensionality of the resulting feature maps.
+That being said, there are numerous other graph kernels which might prove to be more appropriate for our task than WL.
 Applying them with their different extensions to better suit the particularities of concept maps could result in the performance improvement which we were not able to achieve with our approach.
 As we have seen, selecting an appropriate graph kernel is of high importance when doing kernel-based graph processing.
 
